@@ -1513,9 +1513,9 @@ export default function App() {
                 <div className="flex justify-between items-center bg-purple-50 rounded-2xl px-4 py-3 border border-purple-100">
                   <span className="text-xs font-extrabold text-purple-400">المستوى (تعديل)</span>
                   <select 
-                    value={childProfile.level}
+                    value={childProfile.level || "level1"}
                     onChange={(e) => {
-                      const newLevel = e.target.value;
+                      const newLevel = e.target.value as "level1" | "level2" | "level3" | "level4" | null;
                       const updatedChild = { ...childProfile, level: newLevel };
                       setChildProfile(updatedChild);
                       localStorage.setItem("childProfile", JSON.stringify(updatedChild));
