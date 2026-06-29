@@ -1,0 +1,263 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-brand-purple: #4D2B82;
+  --color-brand-purple-light: #6B4E9E;
+  --color-brand-bg: #FAF7FD;
+  --color-brand-pink: #FFECF4;
+  --color-brand-pink-text: #E01E5A;
+  --color-brand-pink-gradient-start: #FF5A92;
+  --color-brand-pink-gradient-end: #C41C5A;
+  --color-brand-mint: #EAFDF3;
+  --color-brand-mint-text: #198754;
+  --color-brand-yellow: #FFFCE6;
+  --color-brand-yellow-text: #D97706;
+  --color-brand-blue: #EBF8FF;
+  --color-brand-blue-text: #2B6CB0;
+  
+  --font-sans: "Baloo Bhaijaan 2", "Fredoka", sans-serif;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--color-brand-bg);
+    color: var(--color-brand-purple);
+    overflow-x: hidden;
+  }
+}
+
+/* Custom Bubbly 3D Button Style */
+.btn-bubbly-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  border-radius: 9999px;
+  border: 3px solid #4D2B82;
+  background: linear-gradient(135deg, #FF659F 0%, #E01E5A 100%);
+  color: white;
+  padding: 0.75rem 2rem;
+  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 6px 0 0 #4D2B82;
+  cursor: pointer;
+  transform: translateY(0);
+}
+
+.btn-bubbly-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 0 #4D2B82;
+  filter: brightness(1.05);
+}
+
+.btn-bubbly-primary:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 0 #4D2B82;
+}
+
+.btn-bubbly-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  border-radius: 9999px;
+  border: 3px solid #4D2B82;
+  background: white;
+  color: #4D2B82;
+  padding: 0.75rem 2rem;
+  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 6px 0 0 #4D2B82;
+  cursor: pointer;
+  transform: translateY(0);
+}
+
+.btn-bubbly-secondary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 0 #4D2B82;
+  background: #FAF7FD;
+}
+
+.btn-bubbly-secondary:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 0 #4D2B82;
+}
+
+.btn-bubbly-purple {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  border-radius: 9999px;
+  border: 3px solid #4D2B82;
+  background: #A855F7;
+  color: white;
+  padding: 0.75rem 2rem;
+  transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 6px 0 0 #4D2B82;
+  cursor: pointer;
+  transform: translateY(0);
+}
+
+.btn-bubbly-purple:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 0 0 #4D2B82;
+  background: #9333EA;
+}
+
+.btn-bubbly-purple:active {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 0 #4D2B82;
+}
+
+/* Playful Cards */
+.card-bubbly {
+  background: white;
+  border: 3px solid #4D2B82;
+  border-radius: 24px;
+  box-shadow: 0 8px 0 0 rgba(77, 43, 130, 0.15);
+  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card-bubbly:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 0 0 rgba(77, 43, 130, 0.2);
+}
+
+/* Background soft blobs */
+.bg-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.45;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.bg-blob-green {
+  background-color: #E6F7ED;
+  width: 400px;
+  height: 400px;
+}
+
+.bg-blob-yellow {
+  background-color: #FEF7D2;
+  width: 350px;
+  height: 350px;
+}
+
+.bg-blob-pink {
+  background-color: #FFEAF4;
+  width: 450px;
+  height: 450px;
+}
+
+/* Animations */
+@keyframes float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(2deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+@keyframes slow-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-spin-slow {
+  animation: slow-spin 20s linear infinite;
+}
+
+.animate-bounce-slow {
+  animation: bounce-slow 3s ease-in-out infinite;
+}
+
+/* Balloon Catcher Game CSS Animations */
+@keyframes floatUp {
+  from { top: 110%; }
+  to   { top: -15%; }
+}
+
+@keyframes fallDown {
+  from { top: -15%; }
+  to   { top: 110%; }
+}
+
+.catch-float-up {
+  animation-name: floatUp;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+.catch-fall-down {
+  animation-name: fallDown;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+/* Highlight Underline effect */
+.highlight-underline {
+  position: relative;
+  display: inline-block;
+}
+
+.highlight-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 100%;
+  height: 12px;
+  background-image: url("data:image/svg+xml,%3Csvg width='200' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M2 15 C 50 2, 150 2, 198 15' stroke='%23FF9E2A' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  z-index: -1;
+}
+
+/* Direction Utilities */
+[dir="rtl"] .ltr-only {
+  direction: ltr;
+  display: inline-block;
+}
+
+/* Turbo Arrow Racer Road Scroll Animation */
+@keyframes scrollRoad {
+  from { background-position-y: 0px; }
+  to { background-position-y: 40px; }
+}
+
+.animate-scroll-road {
+  background-image: linear-gradient(to bottom, #1e293b 0%, #1e293b 80%, #334155 80%, #334155 100%);
+  background-size: 100% 40px;
+  animation: scrollRoad 0.5s linear infinite;
+}
+
+/* Turbo Arrow Racer Parallax Background Elements (Trees & Clouds) */
+@keyframes parallaxMove {
+  0% {
+    transform: translateY(-80px) scale(0.4);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.8;
+  }
+  85% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(280px) scale(1.3);
+    opacity: 0;
+  }
+}
+
+.animate-parallax-element {
+  animation: parallaxMove 2s linear infinite;
+}

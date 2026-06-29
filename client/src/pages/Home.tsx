@@ -113,7 +113,7 @@ export default function Home() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1.0, ease: "easeOut" }}
+        transition={{ duration: 0.75, ease: "easeOut" }}
       >
         <Navbar />
       </motion.div>
@@ -134,7 +134,7 @@ export default function Home() {
           <motion.h1
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.3, ease: "easeOut" }}
+            transition={{ duration: 0.95, delay: 0.05, ease: "easeOut" }}
             className="text-5xl md:text-7xl font-bold text-white mb-6 drop-shadow-xl font-arabic tracking-wide"
           >
             مؤسسة الهدى التعليمية
@@ -142,7 +142,7 @@ export default function Home() {
           <motion.p
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.7, ease: "easeOut" }}
+            transition={{ duration: 0.95, delay: 0.45, ease: "easeOut" }}
             className="text-xl md:text-2xl text-white/90 max-w-2xl mx-auto font-normal leading-relaxed font-sans"
           >
             نسعى لبناء جيل واعٍ، متميز خلقاً وعلماً، من خلال بيئة تعليمية محفزة وكوادر مؤهلة
@@ -155,7 +155,7 @@ export default function Home() {
         initial={{ opacity: 0, y: 50 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
-        transition={{ duration: 1.0, ease: "easeOut" }}
+        transition={{ duration: 0.75, ease: "easeOut" }}
       >
         <AboutSection />
       </motion.div>
@@ -166,7 +166,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 25 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 1.0, ease: "easeOut" }}
+          transition={{ duration: 0.75, ease: "easeOut" }}
           className="text-3xl font-bold text-primary text-center mb-12 font-arabic"
         >
           برامجنا وخدماتنا التعليمية
