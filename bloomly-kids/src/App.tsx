@@ -63,8 +63,16 @@ export default function App() {
 
   // Dynamic backend API URL resolver
   const getApiUrl = (path: string) => {
+    const savedBase = localStorage.getItem("bloomly_api_base_url");
+    if (savedBase) {
+      return `${savedBase.replace(/\/$/, '')}${path}`;
+    }
     const hostname = window.location.hostname;
-    const base = hostname.includes('loca.lt') ? 'https://bloomly-kids-api.loca.lt' : `http://${hostname}:5000`;
+    const base = hostname.includes('loca.lt') 
+      ? 'https://bloomly-kids-api.loca.lt' 
+      : hostname.includes('pages.dev') || hostname.includes('github.io')
+      ? 'http://localhost:5000'
+      : `http://${hostname}:5000`;
     return `${base}${path}`;
   };
 
@@ -131,6 +139,19 @@ export default function App() {
       localStorage.removeItem("childProfile");
       localStorage.removeItem("bloomly_stars");
       setGlobalStars(0);
+    }
+  };
+
+  const openParentDashboardWithGate = () => {
+    const num1 = Math.floor(Math.random() * 8) + 6; // 6 to 13
+    const num2 = Math.floor(Math.random() * 8) + 6; // 6 to 13
+    const ans = num1 + num2;
+    const input = prompt(`سؤال حماية للأبوين لمنع دخول الأطفال:\nما هو ناتج: ${num1} + ${num2}؟`);
+    if (input && parseInt(input, 10) === ans) {
+      setShowAdminDashboard(true);
+      fetchAllProfiles();
+    } else if (input) {
+      alert("إجابة خاطئة! هذه المنطقة مخصصة للأبوين فقط.");
     }
   };
 
@@ -808,8 +829,41 @@ export default function App() {
                     </table>
                   </div>
                 )}
-                
-                <ParentVoiceSettings />
+                               {/* API Server URL Settings */}
+                <div className="card-bubbly p-6 bg-white border-2 border-purple-200 mt-6 text-right select-none">
+                  <h3 className="text-lg font-black text-[#4D2B82] mb-2 flex items-center justify-start gap-2 flex-row-reverse">
+                    <span>🌐</span>
+                    <span>عنوان خادم قاعدة البيانات المشتركة (API Backend)</span>
+                  </h3>
+                  <p className="text-xs text-purple-400 mb-4 leading-relaxed">
+                    من هنا يمكنك تحديد عنوان خادم الـ API (مثل Render أو Railway أو IP الكمبيوتر المحلي) لمزامنة حسابات الأطفال ونقاط النجوم تلقائياً بين جميع الأجهزة (الهاتف، التابلت، اللابتوب).
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <input 
+                      type="url"
+                      placeholder="مثال: https://my-bloomly-api.onrender.com"
+                      defaultValue={localStorage.getItem("bloomly_api_base_url") || ""}
+                      id="bloomly-api-url-input"
+                      className="flex-1 bg-purple-50/50 border-2 border-purple-200 rounded-2xl px-4 py-2.5 text-sm font-bold text-[#4D2B82] focus:outline-none focus:border-[#4D2B82]"
+                    />
+                    <button
+                      onClick={() => {
+                        const val = (document.getElementById("bloomly-api-url-input") as HTMLInputElement)?.value.trim();
+                        if (val) {
+                          localStorage.setItem("bloomly_api_base_url", val);
+                          alert("تم حفظ عنوان خادم الـ API بنجاح! سيتم المزامنة عبره الآن.");
+                        } else {
+                          localStorage.removeItem("bloomly_api_base_url");
+                          alert("تم مسح عنوان الخادم، سيعود التطبيق للتخزين المحلي التلقائي.");
+                        }
+                        fetchAllProfiles();
+                      }}
+                      className="btn-bubbly-purple text-sm py-2.5 px-6 font-black cursor-pointer"
+                    >
+                      حفظ الخادم 💾
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -868,6 +922,12 @@ export default function App() {
                 >
                   <span>تعديل الملف الشخصي ⚙️</span>
                 </button>
+                <button
+                  onClick={openParentDashboardWithGate}
+                  className="btn-bubbly-secondary text-xs py-1.5 px-3.5 flex items-center gap-1 cursor-pointer shadow-[0_4px_0_0_#4D2B82] hover:translate-y-[-1px] hover:shadow-[0_5px_0_0_#4D2B82] active:translate-y-[2px] active:shadow-[0_1px_0_0_#4D2B82]"
+                >
+                  <span>🔒 إعدادات الأبوين</span>
+                </button>
               </div>
             )}
             <button 
@@ -883,6 +943,12 @@ export default function App() {
                   className="btn-bubbly-secondary text-sm py-2 px-4 border-2 border-[#4D2B82] text-[#4D2B82] bg-white rounded-full font-black hover:bg-purple-50 transition-colors shadow-[0_3px_0_0_#4D2B82] cursor-pointer"
                 >
                   تسجيل الدخول 🔑
+                </button>
+                <button
+                  onClick={openParentDashboardWithGate}
+                  className="btn-bubbly-secondary text-sm py-2 px-4 border-2 border-[#4D2B82] text-[#4D2B82] bg-white rounded-full font-black hover:bg-purple-50 transition-colors shadow-[0_3px_0_0_#4D2B82] cursor-pointer"
+                >
+                  🔒 إعدادات الأبوين
                 </button>
                 <button
                   onClick={() => { setShowRegister(true); playBubbleSound(); }}
@@ -925,6 +991,12 @@ export default function App() {
             <a href="#what-we-teach" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">ماذا نتعلّم؟</a>
             <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">كيف نعمل؟</a>
             <a href="#parents" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">أولياء الأمور</a>
+            <button
+              onClick={() => { setMobileMenuOpen(false); openParentDashboardWithGate(); }}
+              className="py-2 border-b border-purple-100 hover:text-[#E01E5A] font-bold text-center flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <span>🔒 إعدادات الأبوين (تسجيل الصوت)</span>
+            </button>
             <button 
               onClick={scrollToGames}
               className="btn-bubbly-primary w-full py-3 mt-2"
@@ -1653,143 +1725,4 @@ export default function App() {
   );
 }
 
-function ParentVoiceSettings() {
-  const [recordingSlot, setRecordingSlot] = useState<"welcome" | "correct" | "wrong" | null>(null);
-  const [isRecording, setIsRecording] = useState(false);
-  const [hasVoice, setHasVoice] = useState({
-    welcome: !!localStorage.getItem("parent_voice_welcome"),
-    correct: !!localStorage.getItem("parent_voice_correct"),
-    wrong: !!localStorage.getItem("parent_voice_wrong"),
-  });
-  
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const audioChunksRef = useRef<Blob[]>([]);
 
-  const startRecording = async (slot: "welcome" | "correct" | "wrong") => {
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      audioChunksRef.current = [];
-      const mediaRecorder = new MediaRecorder(stream);
-      mediaRecorderRef.current = mediaRecorder;
-      
-      mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          audioChunksRef.current.push(event.data);
-        }
-      };
-      
-      mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
-        const reader = new FileReader();
-        reader.readAsDataURL(audioBlob);
-        reader.onloadend = () => {
-          const base64data = reader.result as string;
-          localStorage.setItem(`parent_voice_${slot}`, base64data);
-          setHasVoice(prev => ({ ...prev, [slot]: true }));
-        };
-        
-        stream.getTracks().forEach(track => track.stop());
-      };
-      
-      mediaRecorder.start();
-      setRecordingSlot(slot);
-      setIsRecording(true);
-    } catch (err) {
-      alert("يرجى تفعيل صلاحية الميكروفون للتسجيل 🎙️");
-      console.error(err);
-    }
-  };
-
-  const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
-      mediaRecorderRef.current.stop();
-      setIsRecording(false);
-      setRecordingSlot(null);
-    }
-  };
-
-  const playVoice = (slot: "welcome" | "correct" | "wrong") => {
-    const data = localStorage.getItem(`parent_voice_${slot}`);
-    if (data) {
-      const audio = new Audio(data);
-      audio.volume = 0.95;
-      audio.play().catch(e => console.warn(e));
-    }
-  };
-
-  const deleteVoice = (slot: "welcome" | "correct" | "wrong") => {
-    localStorage.removeItem(`parent_voice_${slot}`);
-    setHasVoice(prev => ({ ...prev, [slot]: false }));
-  };
-
-  return (
-    <div className="bg-white border-3 border-[#4D2B82] rounded-[24px] p-6 shadow-[0_6px_0_0_#4D2B82] mt-8 text-right font-sans">
-      <h3 className="text-xl font-black text-[#4D2B82] mb-2 flex items-center justify-start gap-2 flex-row-reverse">
-        <span>🎙️</span>
-        <span>تسجيل وتخصيص صوت الأبوين الحقيقي</span>
-      </h3>
-      <p className="text-xs font-bold text-purple-400 mb-6">
-        سجّل رسائل تشجيعية بصوتك الحقيقي لكي يسمعها طفلك داخل الألعاب بدلاً من الصوت الصناعي الآلي! ميزة رائعة تمنح طفلك دفءاً حقيقياً أثناء اللعب والتعلم.
-      </p>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {[
-          { slot: "welcome" as const, title: "1. رسالة الترحيب والبدء 👋", desc: "تُسمع عند فتح التطبيق أو بدء اللعبة (مثال: 'أهلاً بك يا بطل! جاهز لنتعلم؟')" },
-          { slot: "correct" as const, title: "2. صوت الإجابة الصحيحة 🎉", desc: "تُسمع عند الفوز والإجابة الصحيحة (مثال: 'ممتاز يا حبيبي شاطر!')" },
-          { slot: "wrong" as const, title: "3. صوت المحاولة مجدداً 🦾", desc: "تُسمع عند الإجابة الخاطئة (مثال: 'حاول تاني يا بطل، أنت ذكي وهتقدر!')" },
-        ].map((item) => {
-          const recorded = hasVoice[item.slot];
-          const isRecordingThis = isRecording && recordingSlot === item.slot;
-
-          return (
-            <div key={item.slot} className="bg-purple-50/50 border-2 border-purple-100 rounded-2xl p-4 flex flex-col justify-between">
-              <div>
-                <h4 className="font-black text-[#4D2B82] text-sm mb-1">{item.title}</h4>
-                <p className="text-[11px] font-medium text-purple-400 leading-relaxed mb-4">{item.desc}</p>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                {isRecordingThis ? (
-                  <button
-                    onClick={stopRecording}
-                    className="w-full py-2 bg-red-500 hover:bg-red-600 text-white font-black text-xs rounded-xl border-2 border-red-700 shadow-[0_3px_0_0_#b91c1c] active:translate-y-[2px] active:shadow-none transition-all flex items-center justify-center gap-1.5 cursor-pointer animate-pulse"
-                  >
-                    <span className="w-2.5 h-2.5 rounded-full bg-white block animate-ping" />
-                    <span>إيقاف وحفظ التسجيل ⏹️</span>
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => startRecording(item.slot)}
-                    disabled={isRecording}
-                    className="w-full py-2 bg-[#E01E5A] hover:bg-[#c6184d] text-white font-black text-xs rounded-xl border-2 border-[#a0133c] shadow-[0_3px_0_0_#a0133c] active:translate-y-[2px] active:shadow-none transition-all flex items-center justify-center gap-1 cursor-pointer disabled:opacity-50"
-                  >
-                    <span>🎙️</span>
-                    <span>سجل صوتك الآن</span>
-                  </button>
-                )}
-
-                {recorded && !isRecordingThis && (
-                  <div className="flex gap-1.5 mt-1">
-                    <button
-                      onClick={() => playVoice(item.slot)}
-                      className="flex-1 py-1.5 bg-[#2ECC71] hover:bg-[#27ae60] text-white font-black text-xs rounded-xl border-2 border-[#219653] shadow-[0_2.5px_0_0_#219653] active:translate-y-[1.5px] active:shadow-none transition-all flex items-center justify-center gap-1 cursor-pointer"
-                    >
-                      <span>🔊 تشغيل</span>
-                    </button>
-                    <button
-                      onClick={() => deleteVoice(item.slot)}
-                      className="py-1.5 px-3 bg-red-50 text-red-500 hover:bg-red-100 font-black text-xs rounded-xl border-2 border-red-200 transition-colors flex items-center justify-center cursor-pointer"
-                      title="حذف الصوت"
-                    >
-                      🗑️
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}

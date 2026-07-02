@@ -938,6 +938,7 @@ interface GameZoneProps {
 export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, childLevel: propChildLevel = "level1" }: GameZoneProps = {}) {
   const [activeGame, setActiveGame] = useState<"menu" | "math" | "spelling" | "memory" | "catcher" | "coloring" | "spellingEn" | "sorting" | "spaceCatcher" | "connectDots" | "maze" | "safari" | "chef" | "farm" | "train" | "arrowRacer">("menu");
   const gameZoneRef = useRef<HTMLElement>(null);
+  const mapScrollRef = useRef<HTMLDivElement>(null);
   
   // Game Level Map & Loading States
   const [showLevelMap, setShowLevelMap] = useState(false);
@@ -950,6 +951,31 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
 
   const [effectiveLevel, setEffectiveLevel] = useState<"level1" | "level2" | "level3" | "level4">("level1");
   
+  // Find current active level (first level with 0 stars)
+  const getActiveLevelNumber = () => {
+    for (let l = 1; l <= 100; l++) {
+      const starKey = `bloomly_stars_${activeGame}_level_${l}`;
+      const stars = parseInt(localStorage.getItem(starKey) || "0", 10);
+      if (stars === 0) {
+        return l;
+      }
+    }
+    return 100;
+  };
+
+  useEffect(() => {
+    if (showLevelMap && mapScrollRef.current) {
+      setTimeout(() => {
+        const activeLvl = getActiveLevelNumber();
+        // Centering calculation
+        const targetX = (activeLvl - 1) * 180 - window.innerWidth / 2 + 100;
+        if (mapScrollRef.current) {
+          mapScrollRef.current.scrollLeft = Math.max(0, targetX);
+        }
+      }, 100);
+    }
+  }, [showLevelMap, activeGame]);
+
   useEffect(() => {
     if (propChildLevel) {
       setEffectiveLevel(propChildLevel as any);
@@ -3488,33 +3514,6 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
         </AnimatePresence>
       </div>
 
-      {/* Global Star Indicator Header */}
-      <div className="flex flex-col sm:flex-row items-center justify-between bg-white border-3 border-[#4D2B82] rounded-[24px] p-6 mb-12 shadow-[0_6px_0_0_#4D2B82] gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-[#E8F5E9] border-2 border-[#4CAF50] flex items-center justify-center text-2xl">
-            🎮
-          </div>
-          <div className="text-right">
-            <h2 className="text-2xl font-extrabold text-[#4D2B82]">منطقة الألعاب السحرية</h2>
-            <p className="text-sm font-bold text-purple-400">العب، تعلّم، واكسب النجوم الحقيقية لبروفايلك!</p>
-          </div>
-        </div>
-
-        {/* Global Score Bubble */}
-        <motion.div
-          id="global-star-bubble"
-          animate={isStarCounterBouncing ? { scale: [1, 1.35, 1.05, 1] } : { scale: [1, 1.05, 1] }}
-          transition={isStarCounterBouncing ? { duration: 0.3 } : { repeat: Infinity, duration: 2, ease: "easeInOut" }}
-          className="flex items-center gap-2 bg-[#FFFDE6] border-2 border-[#D97706] text-[#D97706] font-extrabold text-xl px-6 py-2.5 rounded-full shadow-inner select-none"
-        >
-          <span className="text-2xl text-yellow-400 animate-spin-slow">★</span>
-          <span>مجموع نجومك: {globalStars}</span>
-        </motion.div>
-      </div>
-
-
-
-      
       {/* 1. Loading Screen with custom Star Mascot */}
       {isLoadingGame && (
         <div className="fixed inset-0 bg-gradient-to-br from-[#FFE3E3] via-white to-[#E3F2FD] z-[10030] flex flex-col items-center justify-center p-6 select-none">
@@ -3562,6 +3561,30 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
           </p>
         </div>
       )}
+
+      {/* Global Star Indicator Header */}
+      <div className="flex flex-col sm:flex-row items-center justify-between bg-white border-3 border-[#4D2B82] rounded-[24px] p-6 mb-12 shadow-[0_6px_0_0_#4D2B82] gap-4">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 rounded-full bg-[#E8F5E9] border-2 border-[#4CAF50] flex items-center justify-center text-2xl">
+            🎮
+          </div>
+          <div className="text-right">
+            <h2 className="text-2xl font-extrabold text-[#4D2B82]">منطقة الألعاب السحرية</h2>
+            <p className="text-sm font-bold text-purple-400">العب، تعلّم، واكسب النجوم الحقيقية لبروفايلك!</p>
+          </div>
+        </div>
+
+        {/* Global Score Bubble */}
+        <motion.div
+          id="global-star-bubble"
+          animate={isStarCounterBouncing ? { scale: [1, 1.35, 1.05, 1] } : { scale: [1, 1.05, 1] }}
+          transition={isStarCounterBouncing ? { duration: 0.3 } : { repeat: Infinity, duration: 2, ease: "easeInOut" }}
+          className="flex items-center gap-2 bg-[#FFFDE6] border-2 border-[#D97706] text-[#D97706] font-extrabold text-xl px-6 py-2.5 rounded-full shadow-inner select-none"
+        >
+          <span className="text-2xl text-yellow-400 animate-spin-slow">★</span>
+          <span>مجموع نجومك: {globalStars}</span>
+        </motion.div>
+      </div>
 
       {/* 3. Themed Level Map Screen */}
       {activeGame !== "menu" && showLevelMap && (() => {
@@ -3622,78 +3645,120 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
               </div>
             </div>
 
-            {/* Winding Map Path */}
-            <div className="relative w-full h-[320px] flex items-center justify-center my-6 z-10">
-              {/* Connect levels with dashed path line */}
-              <svg className="absolute inset-0 w-full h-full stroke-white/35 stroke-[8px] fill-none pointer-events-none z-0">
-                <path d="M 80 220 Q 180 100 350 200 T 650 150 T 900 180" strokeDasharray="12, 16" strokeLinecap="round" />
-              </svg>
+            {/* Horizontal Scrollable 100-Level winding Map Path */}
+            {(() => {
+              const totalLevels = 100;
+              const levels = Array.from({ length: totalLevels }).map((_, idx) => {
+                const lvlNum = idx + 1;
+                const x = 100 + idx * 180;
+                const y = 160 + Math.sin(idx * 0.7) * 90; // smooth sine wave
+                
+                // Determine difficulty
+                const difficulty = lvlNum <= 25 ? "level1" : lvlNum <= 50 ? "level2" : lvlNum <= 75 ? "level3" : "level4";
+                
+                // Lock system: Level 1 is always unlocked. Any other is unlocked if the previous has >= 1 star.
+                const isLocked = lvlNum === 1 ? false : (() => {
+                  const prevStarKey = `bloomly_stars_${activeGame}_level_${lvlNum - 1}`;
+                  const prevStars = parseInt(localStorage.getItem(prevStarKey) || "0", 10);
+                  return prevStars === 0;
+                })();
 
-              {/* Path level nodes */}
-              {(() => {
-                const nodes = [
-                  { x: "12%", y: "70%", label: "المستوى ١", difficulty: "level1" },
-                  { x: "32%", y: "30%", label: "المستوى ٢", difficulty: "level2" },
-                  { x: "52%", y: "65%", label: "المستوى ٣", difficulty: "level3" },
-                  { x: "72%", y: "25%", label: "المستوى ٤", difficulty: "level4" },
-                  { x: "88%", y: "60%", label: "المستوى ٥ (فائق)", difficulty: "level4" },
-                ];
-                return nodes.map((node, idx) => {
-                  const starKey = `bloomly_stars_${activeGame}_level_${idx + 1}`;
-                  const stars = parseInt(localStorage.getItem(starKey) || "0", 10);
-                  
-                  return (
-                    <motion.button
-                      key={idx}
-                      whileHover={{ scale: 1.15 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => {
-                        setActiveDifficulty(node.difficulty as any);
-                        setSelectedLevelIndex(idx + 1);
-                        setShowLevelMap(false);
-                        
-                        // Trigger specific game startup
-                        if (activeGame === "math") startMathGame();
-                        else if (activeGame === "spelling") startSpellingGame();
-                        else if (activeGame === "memory") initMemoryGame();
-                        else if (activeGame === "arrowRacer") startRacerGame();
-                        else {
-                          // Fallback trigger for other games
-                          if (activeGame === "catcher") startCatcherGame();
-                          else if (activeGame === "coloring") startColoringGame();
-                          else if (activeGame === "spellingEn") startSpellingEnGame();
-                          else if (activeGame === "sorting") startSortingGame();
-                          else if (activeGame === "spaceCatcher") startSpaceCatcherGame();
-                          else if (activeGame === "connectDots") startConnectDotsGame();
-                          else if (activeGame === "maze") startMazeGame();
-                          else if (activeGame === "safari") startSafariGame();
-                          else if (activeGame === "chef") startChefGame();
-                          else if (activeGame === "farm") startFarmGame();
-                          else if (activeGame === "train") startTrainGame();
-                        }
-                      }}
-                      className={`absolute w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 ${theme.nodeBg} shadow-[0_8px_0_0_#4D2B82] flex flex-col items-center justify-center cursor-pointer transition-all active:translate-y-1 active:shadow-[0_4px_0_0_#4D2B82]`}
-                      style={{ left: node.x, top: node.y, transform: "translate(-50%, -50%)" }}
+                return { x, y, label: `المستوى ${lvlNum}`, difficulty, lvlNum, isLocked };
+              });
+
+              // Construct winding connecting path line
+              let pathD = `M ${levels[0].x} ${levels[0].y}`;
+              for (let i = 1; i < levels.length; i++) {
+                const prev = levels[i - 1];
+                const curr = levels[i];
+                const cpX1 = prev.x + 90;
+                const cpY1 = prev.y;
+                const cpX2 = curr.x - 90;
+                const cpY2 = curr.y;
+                pathD += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${curr.x} ${curr.y}`;
+              }
+
+              return (
+                <div 
+                  ref={mapScrollRef} 
+                  className="w-full overflow-x-auto scrollbar-none py-10 relative select-none z-10 cursor-grab active:cursor-grabbing"
+                >
+                  <div 
+                    className="relative h-[320px]" 
+                    style={{ width: `${totalLevels * 180 + 200}px` }}
+                  >
+                    {/* SVG Connecting Path */}
+                    <svg 
+                      className="absolute inset-0 h-full stroke-white/35 stroke-[8px] fill-none pointer-events-none z-0"
+                      style={{ width: `${totalLevels * 180 + 200}px` }}
                     >
-                      <span className="text-2xl sm:text-3xl mb-0.5">{theme.nodeEmoji}</span>
-                      <span className="text-[11px] sm:text-xs font-black tracking-tight">{node.label}</span>
+                      <path d={pathD} strokeDasharray="12, 16" strokeLinecap="round" />
+                    </svg>
+
+                    {/* Nodes mapping */}
+                    {levels.map((node, idx) => {
+                      const starKey = `bloomly_stars_${activeGame}_level_${node.lvlNum}`;
+                      const stars = parseInt(localStorage.getItem(starKey) || "0", 10);
                       
-                      {/* Render Star progress */}
-                      <div className="flex items-center gap-0.5 mt-1">
-                        {[1, 2, 3].map((s) => (
-                          <span 
-                            key={s} 
-                            className={`text-xs ${s <= stars ? "text-yellow-400" : "text-gray-300"}`}
-                          >
-                            ★
-                          </span>
-                        ))}
-                      </div>
-                    </motion.button>
-                  );
-                });
-              })()}
-            </div>
+                      return (
+                        <motion.button
+                          key={idx}
+                          disabled={node.isLocked}
+                          whileHover={node.isLocked ? {} : { scale: 1.15 }}
+                          whileTap={node.isLocked ? {} : { scale: 0.95 }}
+                          onClick={() => {
+                            setActiveDifficulty(node.difficulty as any);
+                            setSelectedLevelIndex(node.lvlNum);
+                            setShowLevelMap(false);
+                            
+                            // Trigger specific game startup
+                            if (activeGame === "math") startMathGame();
+                            else if (activeGame === "spelling") startSpellingGame();
+                            else if (activeGame === "memory") initMemoryGame();
+                            else if (activeGame === "arrowRacer") startRacerGame();
+                            else {
+                              // Generic start mapping for other games
+                              if (activeGame === "catcher") startCatcherGame();
+                              else if (activeGame === "coloring") startColoringGame();
+                              else if (activeGame === "spellingEn") startSpellingEnGame();
+                              else if (activeGame === "sorting") startSortingGame();
+                              else if (activeGame === "spaceCatcher") startSpaceCatcherGame();
+                              else if (activeGame === "connectDots") startConnectDotsGame();
+                              else if (activeGame === "maze") startMazeGame();
+                              else if (activeGame === "safari") startSafariGame();
+                              else if (activeGame === "chef") startChefGame();
+                              else if (activeGame === "farm") startFarmGame();
+                              else if (activeGame === "train") startTrainGame();
+                            }
+                          }}
+                          className={`absolute w-20 h-20 sm:w-22 sm:h-22 rounded-full border-4 ${theme.nodeBg} shadow-[0_8px_0_0_#4D2B82] flex flex-col items-center justify-center cursor-pointer transition-all active:translate-y-1 active:shadow-[0_4px_0_0_#4D2B82] ${node.isLocked ? "opacity-50 cursor-not-allowed filter grayscale" : ""}`}
+                          style={{ left: node.x, top: node.y, transform: "translate(-50%, -50%)" }}
+                        >
+                          {node.isLocked ? (
+                            <span className="text-2xl sm:text-3xl mb-0.5">🔒</span>
+                          ) : (
+                            <span className="text-2xl sm:text-3xl mb-0.5">{theme.nodeEmoji}</span>
+                          )}
+                          <span className="text-[10px] sm:text-xs font-black tracking-tight">{node.label}</span>
+                          
+                          {/* Render Star progress */}
+                          <div className="flex items-center gap-0.5 mt-0.5">
+                            {[1, 2, 3].map((s) => (
+                              <span 
+                                key={s} 
+                                className={`text-[10px] ${s <= stars ? "text-yellow-400" : "text-gray-300"}`}
+                              >
+                                ★
+                              </span>
+                            ))}
+                          </div>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
 
             {/* Footer tips */}
             <div className="w-full text-center text-xs text-white/85 bg-black/15 py-2 px-6 rounded-full border border-white/10 relative z-10">
@@ -3835,7 +3900,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                           <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2">ورشة الفنان للتلوين</h3>
                           <p className="text-sm font-medium text-purple-400 mb-4">لوّن الأشكال الكرتونية الجميلة أو ارسم بحرية.</p>
                           <button
-                            onClick={() => requireProfile(startColoringGame)}
+                            onClick={() => requireProfile(() => startLoadingAndOpenMap("coloring"))}
                             className="w-full btn-bubbly-primary mt-auto text-sm py-2.5"
                           >
                             العب الآن 🚀
@@ -3859,7 +3924,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                           <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2">مغامرة الحروف (EN)</h3>
                           <p className="text-sm font-medium text-purple-400 mb-4">تعرّف على الحرف الأول للكلمات بالإنجليزية.</p>
                           <button
-                            onClick={() => requireProfile(startSpellingEnGame)}
+                            onClick={() => requireProfile(() => startLoadingAndOpenMap("spellingEn"))}
                             className="w-full btn-bubbly-purple mt-auto text-sm py-2.5"
                           >
                             العب الآن 🚀
@@ -3885,7 +3950,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                           <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2">تصنيف بلومي السحري</h3>
                           <p className="text-sm font-medium text-purple-400 mb-4">صنّف الكائنات السحرية داخل السلال المناسبة.</p>
                           <button
-                            onClick={() => requireProfile(startSortingGame)}
+                            onClick={() => requireProfile(() => startLoadingAndOpenMap("sorting"))}
                             className="w-full btn-bubbly-primary mt-auto text-sm py-2.5"
                           >
                             العب الآن 🚀
@@ -3908,7 +3973,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                           <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2">صائد الحروف الفضائي</h3>
                           <p className="text-sm font-medium text-purple-400 mb-4">انطلق في الفضاء وصِد النيازك التي تحمل الحروف!</p>
                           <button
-                            onClick={() => requireProfile(startSpaceCatcherGame)}
+                            onClick={() => requireProfile(() => startLoadingAndOpenMap("spaceCatcher"))}
                             className="w-full btn-bubbly-purple mt-auto text-sm py-2.5"
                           >
                             العب الآن 🚀
@@ -3929,7 +3994,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                           <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2">توصيل الأرقام السحرية</h3>
                           <p className="text-sm font-medium text-purple-400 mb-4">وصّل النقاط بالترتيب الرقمي لتكشف الشكل السري.</p>
                           <button
-                            onClick={() => requireProfile(startConnectDotsGame)}
+                            onClick={() => requireProfile(() => startLoadingAndOpenMap("connectDots"))}
                             className="w-full btn-bubbly-primary mt-auto text-sm py-2.5"
                           >
                             العب الآن 🚀
@@ -3950,7 +4015,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                           <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2">متاهة بلومي السحرية</h3>
                           <p className="text-sm font-medium text-purple-400 mb-4">وجّه البطل في المتاهة وجمّع النجوم الطائرة لتصل للهدف.</p>
                           <button
-                            onClick={() => requireProfile(startMazeGame)}
+                            onClick={() => requireProfile(() => startLoadingAndOpenMap("maze"))}
                             className="w-full btn-bubbly-purple mt-auto text-sm py-2.5"
                           >
                             العب الآن 🚀
@@ -3971,7 +4036,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                           <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2">سفاري الأصوات السحرية</h3>
                           <p className="text-sm font-medium text-purple-400 mb-4">استمع للأصوات الطبيعية والحيوانات لتكشف سرها.</p>
                           <button
-                            onClick={() => requireProfile(startSafariGame)}
+                            onClick={() => requireProfile(() => startLoadingAndOpenMap("safari"))}
                             className="w-full btn-bubbly-primary mt-auto text-sm py-2.5"
                           >
                             العب الآن 🚀
@@ -3992,7 +4057,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                           <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2">مطبخ الحلوى السحري</h3>
                           <p className="text-sm font-medium text-purple-400 mb-4">اخلط المكونات بالترتيب لتصنع أشهى الحلوى السحرية.</p>
                           <button
-                            onClick={() => requireProfile(startChefGame)}
+                            onClick={() => requireProfile(() => startLoadingAndOpenMap("chef"))}
                             className="w-full btn-bubbly-purple mt-auto text-sm py-2.5"
                           >
                             العب الآن 🚀
@@ -4034,7 +4099,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                           <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2">مزرعة الحيوانات الجائعة</h3>
                           <p className="text-sm font-medium text-purple-400 mb-4">أطعم الحيوانات طعامها المفضل لتكسب النجوم.</p>
                           <button
-                            onClick={() => requireProfile(startFarmGame)}
+                            onClick={() => requireProfile(() => startLoadingAndOpenMap("farm"))}
                             className="w-full btn-bubbly-primary mt-auto text-sm py-2.5"
                           >
                             العب الآن 🚀
@@ -4055,7 +4120,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                           <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2">قطار الأشكال السحري</h3>
                           <p className="text-sm font-medium text-purple-400 mb-4">ركّب الأشكال الناقصة في القطار ليتحرك بسرعة!</p>
                           <button
-                            onClick={() => requireProfile(startTrainGame)}
+                            onClick={() => requireProfile(() => startLoadingAndOpenMap("train"))}
                             className="w-full btn-bubbly-purple mt-auto text-sm py-2.5"
                           >
                             العب الآن 🚀
