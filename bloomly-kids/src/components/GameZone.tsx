@@ -2,6 +2,82 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 
+export function SproutMascot({ className = "w-24 h-24", state = "idle" }: { className?: string; state?: "idle" | "happy" | "sad" }) {
+  const mouthPath = state === "sad" 
+    ? "M 44 65 Q 50 58 56 65" // frown
+    : "M 42 58 Q 50 68 58 58"; // smile
+    
+  const leafAnimation = state === "happy"
+    ? { rotate: [0, -15, 15, -15, 0], scale: [1, 1.1, 1] }
+    : { rotate: [0, -5, 5, 0] };
+    
+  const bodyAnimation = state === "happy"
+    ? { y: [0, -20, 0], scaleY: [1, 0.9, 1.1, 1] }
+    : { scaleY: [1, 0.96, 1] };
+
+  return (
+    <motion.div
+      animate={bodyAnimation}
+      transition={state === "happy" 
+        ? { duration: 0.6, repeat: 2 } 
+        : { repeat: Infinity, duration: 2, ease: "easeInOut" }}
+      className={`relative select-none ${className}`}
+    >
+      <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-md">
+        {/* Main Body */}
+        <ellipse cx="50" cy="55" rx="28" ry="24" fill="url(#sproutBodyGrad)" stroke="#27AE60" strokeWidth="3.5" />
+        
+        {/* Leaf on head */}
+        <motion.g
+          animate={leafAnimation}
+          transition={{ repeat: Infinity, duration: state === "happy" ? 0.4 : 2, ease: "easeInOut" }}
+          style={{ transformOrigin: "50px 32px" }}
+        >
+          {/* Stem */}
+          <path d="M 50 32 Q 52 20 58 15" fill="none" stroke="#27AE60" strokeWidth="3.5" strokeLinecap="round" />
+          {/* Leaf 1 */}
+          <path d="M 58 15 C 64 12 68 18 58 15 Z" fill="#2ECC71" stroke="#27AE60" strokeWidth="1.5" />
+          {/* Leaf 2 */}
+          <path d="M 50 25 C 42 22 45 28 50 25 Z" fill="#2ECC71" stroke="#27AE60" strokeWidth="1.5" />
+        </motion.g>
+
+        {/* Eyes */}
+        {state === "sad" ? (
+          <>
+            <path d="M 32 50 Q 38 46 42 52" fill="none" stroke="#2C3E50" strokeWidth="4.5" strokeLinecap="round" />
+            <path d="M 68 50 Q 62 46 58 52" fill="none" stroke="#2C3E50" strokeWidth="4.5" strokeLinecap="round" />
+          </>
+        ) : (
+          <>
+            <circle cx="36" cy="48" r="7.5" fill="#2C3E50" />
+            <circle cx="34" cy="45" r="2.5" fill="#FFF" />
+            <circle cx="38" cy="50" r="1.2" fill="#FFF" />
+
+            <circle cx="64" cy="48" r="7.5" fill="#2C3E50" />
+            <circle cx="62" cy="45" r="2.5" fill="#FFF" />
+            <circle cx="66" cy="50" r="1.2" fill="#FFF" />
+          </>
+        )}
+
+        {/* Blush cheeks */}
+        <circle cx="26" cy="56" r="4.5" fill="#FF5A92" opacity="0.45" />
+        <circle cx="74" cy="56" r="4.5" fill="#FF5A92" opacity="0.45" />
+
+        {/* Mouth */}
+        <path d={mouthPath} fill="none" stroke="#2C3E50" strokeWidth="3.5" strokeLinecap="round" />
+
+        {/* Gradient Definition */}
+        <defs>
+          <linearGradient id="sproutBodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#A3E4D7" />
+            <stop offset="100%" stopColor="#2ECC71" />
+          </linearGradient>
+        </defs>
+      </svg>
+    </motion.div>
+  );
+}
+
 // --- Browser Sound Synthesizer (Zero Dependencies) ---
 class SoundEffects {
   private ctx: AudioContext | null = null;
@@ -527,8 +603,18 @@ class SoundEffects {
     }
   }
 
-  speakArabic(text: string) {
+  speakArabic(text: string, voiceType?: "welcome" | "correct" | "wrong") {
     try {
+      if (voiceType) {
+        const savedVoice = localStorage.getItem(`parent_voice_${voiceType}`);
+        if (savedVoice) {
+          const audio = new Audio(savedVoice);
+          audio.volume = 0.9;
+          audio.play().catch(e => console.warn("Parent voice playback failed, falling back:", e));
+          return;
+        }
+      }
+
       if ("speechSynthesis" in window) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
@@ -542,47 +628,24 @@ class SoundEffects {
     }
   }
 
-  private bgMusicInterval: any = null;
+  private bgAudio: HTMLAudioElement | null = null;
   private isBgMusicPlaying = false;
-  private currentNoteIndex = 0;
 
   playBackgroundMusic() {
     try {
-      this.init();
-      if (!this.ctx || this.isBgMusicPlaying) return;
+      if (this.isBgMusicPlaying) return;
       this.isBgMusicPlaying = true;
-      this.currentNoteIndex = 0;
 
-      const melody = [
-        261.63, 293.66, 329.63, 392.00, 440.00, 392.00, 329.63, 293.66,
-        329.63, 392.00, 523.25, 440.00, 392.00, 329.63, 293.66, 261.63
-      ];
+      if (!this.bgAudio) {
+        // Stream high-quality nursery rhyme instrumental loop from Wikimedia Commons
+        this.bgAudio = new Audio("https://upload.wikimedia.org/wikipedia/commons/f/fb/Alphabet_song.ogg");
+        this.bgAudio.loop = true;
+        this.bgAudio.volume = 0.18; // soft background volume
+      }
 
-      const playNextNote = () => {
-        if (!this.isBgMusicPlaying || !this.ctx) return;
-        const now = this.ctx.currentTime;
-        const freq = melody[this.currentNoteIndex];
-        
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        osc.connect(gain);
-        gain.connect(this.ctx.destination);
-        
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(freq, now);
-        
-        gain.gain.setValueAtTime(0, now);
-        gain.gain.linearRampToValueAtTime(0.04, now + 0.05); // very soft
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
-        
-        osc.start(now);
-        osc.stop(now + 1.2);
-        
-        this.currentNoteIndex = (this.currentNoteIndex + 1) % melody.length;
-      };
-
-      playNextNote();
-      this.bgMusicInterval = setInterval(playNextNote, 850);
+      this.bgAudio.play().catch(err => {
+        console.warn("Background music autoplay failed:", err);
+      });
     } catch (e) {
       console.warn("playBackgroundMusic error:", e);
     }
@@ -590,9 +653,8 @@ class SoundEffects {
 
   stopBackgroundMusic() {
     this.isBgMusicPlaying = false;
-    if (this.bgMusicInterval) {
-      clearInterval(this.bgMusicInterval);
-      this.bgMusicInterval = null;
+    if (this.bgAudio) {
+      this.bgAudio.pause();
     }
   }
 }
@@ -1808,7 +1870,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       setRacerTimeLeft(35); // 35 seconds time trial!
       setRacerActive(true);
       setActiveGame("arrowRacer");
-      sfx.speakArabic("أهلاً بك في سباق الاتجاهات الخارق! وجه بالأسهم وتفادى العقبات!");
+      sfx.speakArabic("أهلاً بك في سباق الاتجاهات الخارق! وجه بالأسهم وتفادى العقبات!", "welcome");
       generateRacerRound(1);
     });
   };
@@ -2141,34 +2203,19 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
     setShowVictoryModal(true);
     sfx.playVictory();
     
-    // Speak congrats message in Arabic using native browser SpeechSynthesis (1.2s delay to prevent sfx overlap)
+    // Speak congrats message in Arabic using speakArabic (1.2s delay to prevent sfx overlap)
     setTimeout(() => {
       try {
-        if ('speechSynthesis' in window) {
-          window.speechSynthesis.cancel();
-          
-          let congratsText = "";
-          if (starsEarnedThisSession >= 5) {
-            congratsText = "ممتاز يا بطل! لقد حصلت على الدرجة الكاملة!";
-          } else if (starsEarnedThisSession >= 3) {
-            congratsText = "أحسنت! عمل رائع جداً!";
-          } else {
-            congratsText = "عمل جيد! حاول مجدداً لتحصل على نجوم أكثر!";
-          }
-          
-          const utterance = new SpeechSynthesisUtterance(congratsText);
-          utterance.lang = "ar-SA"; // Saudi Arabic (or Egyptian Arabic, etc.)
-          utterance.rate = 0.85; // child-friendly reading speed
-          utterance.pitch = 1.15; // friendly higher pitch
-          
-          const voices = window.speechSynthesis.getVoices();
-          const arVoice = voices.find(v => v.lang.includes("ar"));
-          if (arVoice) {
-            utterance.voice = arVoice;
-          }
-          
-          window.speechSynthesis.speak(utterance);
+        let congratsText = "";
+        if (starsEarnedThisSession >= 5) {
+          congratsText = "ممتاز يا بطل! لقد حصلت على الدرجة الكاملة!";
+        } else if (starsEarnedThisSession >= 3) {
+          congratsText = "أحسنت! عمل رائع جداً!";
+        } else {
+          congratsText = "عمل جيد! حاول مجدداً لتحصل على نجوم أكثر!";
         }
+        
+        sfx.speakArabic(congratsText, "correct");
       } catch (err) {
         console.warn("Speech synthesis failed:", err);
       }
@@ -2364,12 +2411,12 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
     if (option === mathQuestion.correct) {
       setMathFeedback("correct");
       sfx.playSuccess();
-      sfx.speakArabic("ممتاز!");
+      sfx.speakArabic("ممتاز!", "correct");
       addStars(1);
     } else {
       setMathFeedback("wrong");
       sfx.playWrong();
-      sfx.speakArabic("حاول مرة أخرى!");
+      sfx.speakArabic("حاول مرة أخرى!", "wrong");
     }
 
     setTimeout(() => {
@@ -2386,7 +2433,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
     setMathRound(1);
     setStarsEarnedThisSession(0);
     setActiveGame("math");
-    sfx.speakArabic("أهلاً بك في حديقة الحساب! احسب العملية الحسابية واختر الإجابة!");
+    sfx.speakArabic("أهلاً بك في حديقة الحساب! احسب العملية الحسابية واختر الإجابة!", "welcome");
     // Generate initial question
     setTimeout(() => generateMathQuestion(), 50);
   };
@@ -2475,12 +2522,12 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
     if (letter === spellingQuestion.correctLetter) {
       setSpellingFeedback("correct");
       sfx.playSuccess();
-      sfx.speakArabic("ممتاز!");
+      sfx.speakArabic("ممتاز!", "correct");
       addStars(1);
     } else {
       setSpellingFeedback("wrong");
       sfx.playWrong();
-      sfx.speakArabic("حاول مرة أخرى!");
+      sfx.speakArabic("حاول مرة أخرى!", "wrong");
     }
 
     setTimeout(() => {
@@ -2497,7 +2544,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
     setSpellingRound(1);
     setStarsEarnedThisSession(0);
     setActiveGame("spelling");
-    sfx.speakArabic("أهلاً بك في مغامرة الحروف! اختر الحرف الصحيح أو الكلمة المطابقة للصورة!");
+    sfx.speakArabic("أهلاً بك في مغامرة الحروف! اختر الحرف الصحيح أو الكلمة المطابقة للصورة!", "welcome");
     setTimeout(() => generateSpellingQuestion(), 50);
   };
 
@@ -3262,13 +3309,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
             className="card-bubbly bg-gradient-to-r from-emerald-50/70 to-green-50/70 border-3 border-emerald-400 p-5 flex items-center justify-between gap-4 select-none"
           >
             <div className="flex items-center gap-3">
-              <motion.div 
-                animate={{ y: [0, -8, 0], rotate: [0, 5, -5, 0] }}
-                transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-                className="text-5xl select-none"
-              >
-                🌱
-              </motion.div>
+              <SproutMascot className="w-16 h-16" state="idle" />
               <div className="text-right flex-1">
                 <span className="text-xs font-black text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-200">
                   صديقك برعم يرحب بك! 👋
@@ -5711,13 +5752,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
             </div>
 
             <div className="flex flex-col items-center justify-center gap-1 mb-3">
-              <motion.div
-                animate={{ y: [0, -15, 0], scale: [1, 1.1, 1] }}
-                transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
-                className="text-6xl select-none"
-              >
-                🌱✨
-              </motion.div>
+              <SproutMascot className="w-20 h-20 mb-1" state="happy" />
               <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                 صديقك برعم فخور بك! 🌿
               </span>
