@@ -3,77 +3,45 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 
 export function SproutMascot({ className = "w-24 h-24", state = "idle" }: { className?: string; state?: "idle" | "happy" | "sad" }) {
-  const mouthPath = state === "sad" 
-    ? "M 44 65 Q 50 58 56 65" // frown
-    : "M 42 58 Q 50 68 58 58"; // smile
-    
-  const leafAnimation = state === "happy"
-    ? { rotate: [0, -15, 15, -15, 0], scale: [1, 1.1, 1] }
-    : { rotate: [0, -5, 5, 0] };
-    
   const bodyAnimation = state === "happy"
-    ? { y: [0, -20, 0], scaleY: [1, 0.9, 1.1, 1] }
-    : { scaleY: [1, 0.96, 1] };
+    ? { 
+        y: [0, -28, 0], 
+        scale: [1, 1.15, 0.95, 1],
+        rotate: [0, 15, -15, 0] 
+      }
+    : state === "sad"
+    ? { 
+        scale: [1, 0.92, 1],
+        rotate: [0, -3, 3, 0]
+      }
+    : { 
+        y: [0, -4, 0],
+        scale: [1, 1.03, 1] 
+      };
 
   return (
     <motion.div
       animate={bodyAnimation}
       transition={state === "happy" 
-        ? { duration: 0.6, repeat: 2 } 
-        : { repeat: Infinity, duration: 2, ease: "easeInOut" }}
-      className={`relative select-none ${className}`}
+        ? { duration: 0.6, repeat: 2, ease: "easeInOut" } 
+        : { repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
+      className={`relative select-none flex items-center justify-center ${className}`}
     >
-      <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-md">
-        {/* Main Body */}
-        <ellipse cx="50" cy="55" rx="28" ry="24" fill="url(#sproutBodyGrad)" stroke="#27AE60" strokeWidth="3.5" />
-        
-        {/* Leaf on head */}
-        <motion.g
-          animate={leafAnimation}
-          transition={{ repeat: Infinity, duration: state === "happy" ? 0.4 : 2, ease: "easeInOut" }}
-          style={{ transformOrigin: "50px 32px" }}
+      <img 
+        src="/star_mascot.png" 
+        alt="Star Mascot" 
+        className={`w-full h-full object-contain filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.15)] ${state === "sad" ? "brightness-90 saturate-75" : ""}`}
+      />
+      {state === "happy" && (
+        <motion.div 
+          initial={{ scale: 0, opacity: 0 }}
+          animate={{ scale: [1, 1.5, 0], opacity: [0, 1, 0] }}
+          transition={{ duration: 0.8, repeat: Infinity }}
+          className="absolute -top-2 text-xl pointer-events-none select-none"
         >
-          {/* Stem */}
-          <path d="M 50 32 Q 52 20 58 15" fill="none" stroke="#27AE60" strokeWidth="3.5" strokeLinecap="round" />
-          {/* Leaf 1 */}
-          <path d="M 58 15 C 64 12 68 18 58 15 Z" fill="#2ECC71" stroke="#27AE60" strokeWidth="1.5" />
-          {/* Leaf 2 */}
-          <path d="M 50 25 C 42 22 45 28 50 25 Z" fill="#2ECC71" stroke="#27AE60" strokeWidth="1.5" />
-        </motion.g>
-
-        {/* Eyes */}
-        {state === "sad" ? (
-          <>
-            <path d="M 32 50 Q 38 46 42 52" fill="none" stroke="#2C3E50" strokeWidth="4.5" strokeLinecap="round" />
-            <path d="M 68 50 Q 62 46 58 52" fill="none" stroke="#2C3E50" strokeWidth="4.5" strokeLinecap="round" />
-          </>
-        ) : (
-          <>
-            <circle cx="36" cy="48" r="7.5" fill="#2C3E50" />
-            <circle cx="34" cy="45" r="2.5" fill="#FFF" />
-            <circle cx="38" cy="50" r="1.2" fill="#FFF" />
-
-            <circle cx="64" cy="48" r="7.5" fill="#2C3E50" />
-            <circle cx="62" cy="45" r="2.5" fill="#FFF" />
-            <circle cx="66" cy="50" r="1.2" fill="#FFF" />
-          </>
-        )}
-
-        {/* Blush cheeks */}
-        <circle cx="26" cy="56" r="4.5" fill="#FF5A92" opacity="0.45" />
-        <circle cx="74" cy="56" r="4.5" fill="#FF5A92" opacity="0.45" />
-
-        {/* Mouth */}
-        <path d={mouthPath} fill="none" stroke="#2C3E50" strokeWidth="3.5" strokeLinecap="round" />
-
-        {/* Gradient Definition */}
-        <defs>
-          <linearGradient id="sproutBodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#A3E4D7" />
-            <stop offset="100%" stopColor="#2ECC71" />
-          </linearGradient>
-        </defs>
-      </svg>
+          ✨
+        </motion.div>
+      )}
     </motion.div>
   );
 }
