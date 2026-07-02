@@ -526,6 +526,75 @@ class SoundEffects {
       console.warn(e);
     }
   }
+
+  speakArabic(text: string) {
+    try {
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "ar-EG";
+        utterance.rate = 0.92; // kid-friendly rate
+        utterance.pitch = 1.35; // cute, animated pitch
+        window.speechSynthesis.speak(utterance);
+      }
+    } catch (e) {
+      console.warn("speakArabic error:", e);
+    }
+  }
+
+  private bgMusicInterval: any = null;
+  private isBgMusicPlaying = false;
+  private currentNoteIndex = 0;
+
+  playBackgroundMusic() {
+    try {
+      this.init();
+      if (!this.ctx || this.isBgMusicPlaying) return;
+      this.isBgMusicPlaying = true;
+      this.currentNoteIndex = 0;
+
+      const melody = [
+        261.63, 293.66, 329.63, 392.00, 440.00, 392.00, 329.63, 293.66,
+        329.63, 392.00, 523.25, 440.00, 392.00, 329.63, 293.66, 261.63
+      ];
+
+      const playNextNote = () => {
+        if (!this.isBgMusicPlaying || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const freq = melody[this.currentNoteIndex];
+        
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, now);
+        
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(0.04, now + 0.05); // very soft
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+        
+        osc.start(now);
+        osc.stop(now + 1.2);
+        
+        this.currentNoteIndex = (this.currentNoteIndex + 1) % melody.length;
+      };
+
+      playNextNote();
+      this.bgMusicInterval = setInterval(playNextNote, 850);
+    } catch (e) {
+      console.warn("playBackgroundMusic error:", e);
+    }
+  }
+
+  stopBackgroundMusic() {
+    this.isBgMusicPlaying = false;
+    if (this.bgMusicInterval) {
+      clearInterval(this.bgMusicInterval);
+      this.bgMusicInterval = null;
+    }
+  }
 }
 
 const sfx = new SoundEffects();
@@ -771,6 +840,22 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
   const [showVictoryModal, setShowVictoryModal] = useState(false);
   const [confetti, setConfetti] = useState<ConfettiParticle[]>([]);
   
+  // Music & Volume States
+  const [isMusicMuted, setIsMusicMuted] = useState(() => {
+    return localStorage.getItem("isMusicMuted") !== "false"; // Default to muted (true) on first launch
+  });
+
+  useEffect(() => {
+    if (activeGame !== "menu" && !isMusicMuted) {
+      sfx.playBackgroundMusic();
+    } else {
+      sfx.stopBackgroundMusic();
+    }
+    return () => {
+      sfx.stopBackgroundMusic();
+    };
+  }, [activeGame, isMusicMuted]);
+
   // Celebration & Flying Stars States
   const [flyingStars, setFlyingStars] = useState<{ id: number; startX: number; startY: number; endX: number; endY: number }[]>([]);
   const [isStarCounterBouncing, setIsStarCounterBouncing] = useState(false);
@@ -1723,6 +1808,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       setRacerTimeLeft(35); // 35 seconds time trial!
       setRacerActive(true);
       setActiveGame("arrowRacer");
+      sfx.speakArabic("أهلاً بك في سباق الاتجاهات الخارق! وجه بالأسهم وتفادى العقبات!");
       generateRacerRound(1);
     });
   };
@@ -2278,10 +2364,12 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
     if (option === mathQuestion.correct) {
       setMathFeedback("correct");
       sfx.playSuccess();
+      sfx.speakArabic("ممتاز!");
       addStars(1);
     } else {
       setMathFeedback("wrong");
       sfx.playWrong();
+      sfx.speakArabic("حاول مرة أخرى!");
     }
 
     setTimeout(() => {
@@ -2298,6 +2386,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
     setMathRound(1);
     setStarsEarnedThisSession(0);
     setActiveGame("math");
+    sfx.speakArabic("أهلاً بك في حديقة الحساب! احسب العملية الحسابية واختر الإجابة!");
     // Generate initial question
     setTimeout(() => generateMathQuestion(), 50);
   };
@@ -2386,10 +2475,12 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
     if (letter === spellingQuestion.correctLetter) {
       setSpellingFeedback("correct");
       sfx.playSuccess();
+      sfx.speakArabic("ممتاز!");
       addStars(1);
     } else {
       setSpellingFeedback("wrong");
       sfx.playWrong();
+      sfx.speakArabic("حاول مرة أخرى!");
     }
 
     setTimeout(() => {
@@ -2406,6 +2497,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
     setSpellingRound(1);
     setStarsEarnedThisSession(0);
     setActiveGame("spelling");
+    sfx.speakArabic("أهلاً بك في مغامرة الحروف! اختر الحرف الصحيح أو الكلمة المطابقة للصورة!");
     setTimeout(() => generateSpellingQuestion(), 50);
   };
 
@@ -3162,7 +3254,40 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
 
       {/* --- MENU VIEW --- */}
       {activeGame === "menu" && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="flex flex-col gap-6 w-full">
+          {/* Sprout Mascot Welcome Card */}
+          <motion.div 
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="card-bubbly bg-gradient-to-r from-emerald-50/70 to-green-50/70 border-3 border-emerald-400 p-5 flex items-center justify-between gap-4 select-none"
+          >
+            <div className="flex items-center gap-3">
+              <motion.div 
+                animate={{ y: [0, -8, 0], rotate: [0, 5, -5, 0] }}
+                transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
+                className="text-5xl select-none"
+              >
+                🌱
+              </motion.div>
+              <div className="text-right flex-1">
+                <span className="text-xs font-black text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                  صديقك برعم يرحب بك! 👋
+                </span>
+                <p className="text-sm font-extrabold text-[#4D2B82] mt-2">
+                  "أهلاً بك يا بطل! اختر لعبة لكي نلعب ونجمع النجوم السحرية معاً!"
+                </p>
+              </div>
+            </div>
+            <button 
+              onClick={() => sfx.speakArabic("أهلاً بك يا بطل! اختر لعبة لكي نلعب ونجمع النجوم السحرية معاً!")}
+              className="w-10 h-10 rounded-full bg-yellow-400 border-2 border-purple-900 flex items-center justify-center text-lg shadow-sm hover:scale-105 active:scale-95 transition-transform cursor-pointer"
+              title="استمع لصوت برعم 🔊"
+            >
+              🔊
+            </button>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
 
             {/* Game 1 Card */}
                         <motion.div 
@@ -3491,8 +3616,9 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                             العب الآن 🚀
                           </button>
                         </motion.div>
+          </div>
         </div>
-)}
+      )}
 
       {/* --- MATH GAME PLAY VIEW --- */}
       {activeGame === "math" && (
@@ -5584,7 +5710,20 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
               </motion.div>
             </div>
 
-                <h2 className="text-3xl font-extrabold text-[#4D2B82] mb-3">عمل رائع يا بطل!</h2>
+            <div className="flex flex-col items-center justify-center gap-1 mb-3">
+              <motion.div
+                animate={{ y: [0, -15, 0], scale: [1, 1.1, 1] }}
+                transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
+                className="text-6xl select-none"
+              >
+                🌱✨
+              </motion.div>
+              <span className="text-xs font-black text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                صديقك برعم فخور بك! 🌿
+              </span>
+            </div>
+
+            <h2 className="text-3xl font-extrabold text-[#4D2B82] mb-3">عمل رائع يا بطل!</h2>
                 
                 <p className="text-lg font-bold text-[#6B4E9E] mb-6 leading-relaxed">
                   لقد تفوّقت وحققت فوزاً مذهلاً! طفلك ذكي جداً ويستحق هذه النجوم.
@@ -5652,6 +5791,21 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
           </div>
         )}
       </AnimatePresence>
+
+      {/* Floating Music Box Toggle Button */}
+      {activeGame !== "menu" && (
+        <button
+          onClick={() => {
+            const nextVal = !isMusicMuted;
+            setIsMusicMuted(nextVal);
+            localStorage.setItem("isMusicMuted", nextVal.toString());
+          }}
+          className="fixed bottom-6 left-6 z-50 w-14 h-14 rounded-full bg-yellow-400 border-4 border-[#4D2B82] flex items-center justify-center text-3xl shadow-xl hover:scale-110 active:scale-95 transition-transform cursor-pointer"
+          title={isMusicMuted ? "تشغيل الموسيقى 🎵" : "كتم الموسيقى 🔇"}
+        >
+          {isMusicMuted ? "🔇" : "🎵"}
+        </button>
+      )}
 
     </section>
   );
