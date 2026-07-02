@@ -1,21 +1,23 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
+import { ScreenOrientation as CapScreenOrientation } from '@capacitor/screen-orientation';
 
-export function SproutMascot({ className = "w-24 h-24", state = "idle" }: { className?: string; state?: "idle" | "happy" | "sad" }) {
+export function SproutMascot({ className = "w-24 h-24", state = "idle" }: { className?: string; state?: "idle" | "happy" | "sad" | "talking" }) {
   const bodyAnimation = state === "happy"
     ? { 
-        y: [0, -28, 0], 
+        y: [0, -25, 0], 
         scale: [1, 1.15, 0.95, 1],
         rotate: [0, 15, -15, 0] 
       }
     : state === "sad"
     ? { 
+        y: [0, 2, 0],
         scale: [1, 0.92, 1],
         rotate: [0, -3, 3, 0]
       }
     : { 
-        y: [0, -4, 0],
+        y: [0, -6, 0],
         scale: [1, 1.03, 1] 
       };
 
@@ -27,17 +29,96 @@ export function SproutMascot({ className = "w-24 h-24", state = "idle" }: { clas
         : { repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
       className={`relative select-none flex items-center justify-center ${className}`}
     >
-      <img 
-        src="/star_mascot.png" 
-        alt="Star Mascot" 
-        className={`w-full h-full object-contain filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.15)] ${state === "sad" ? "brightness-90 saturate-75" : ""}`}
-      />
+      <svg viewBox="0 0 100 100" className="w-full h-full filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.15)]">
+        {/* Star Body with golden gradient */}
+        <path 
+          d="M 50 10 Q 52 22 62 28 Q 72 34 85 36 Q 74 46 72 56 Q 70 66 78 76 Q 66 72 56 70 Q 46 68 34 76 Q 32 66 30 56 Q 28 46 17 36 Q 30 34 40 28 Q 48 22 50 10 Z" 
+          fill="url(#starMascotGrad)" 
+          stroke="#4D2B82" 
+          strokeWidth="3.5" 
+          strokeLinejoin="round"
+        />
+
+        {/* Eyes (Blinking Animation) */}
+        <g style={{ transformOrigin: "50% 48%" }}>
+          {state === "sad" ? (
+            <>
+              {/* Sad/crying eyes */}
+              <path d="M 33 50 Q 38 46 43 51" fill="none" stroke="#2C3E50" strokeWidth="4" strokeLinecap="round" />
+              <path d="M 67 50 Q 62 46 57 51" fill="none" stroke="#2C3E50" strokeWidth="4" strokeLinecap="round" />
+            </>
+          ) : (
+            <>
+              {/* Left Eye */}
+              <motion.ellipse 
+                cx="38" 
+                cy="48" 
+                rx="6" 
+                ry="8" 
+                fill="#2C3E50"
+                animate={{ scaleY: [1, 1, 0.1, 1, 1] }}
+                transition={{ repeat: Infinity, duration: 4.5, times: [0, 0.94, 0.96, 0.98, 1] }}
+                style={{ transformOrigin: "38px 48px" }}
+              />
+              <circle cx="36" cy="45" r="2.2" fill="#FFF" />
+              <circle cx="39" cy="50" r="1" fill="#FFF" />
+
+              {/* Right Eye */}
+              <motion.ellipse 
+                cx="62" 
+                cy="48" 
+                rx="6" 
+                ry="8" 
+                fill="#2C3E50"
+                animate={{ scaleY: [1, 1, 0.1, 1, 1] }}
+                transition={{ repeat: Infinity, duration: 4.5, times: [0, 0.94, 0.96, 0.98, 1] }}
+                style={{ transformOrigin: "62px 48px" }}
+              />
+              <circle cx="60" cy="45" r="2.2" fill="#FFF" />
+              <circle cx="63" cy="50" r="1" fill="#FFF" />
+            </>
+          )}
+        </g>
+
+        {/* Blush Cheeks */}
+        <circle cx="28" cy="56" r="5" fill="#FF5A92" opacity="0.5" />
+        <circle cx="72" cy="56" r="5" fill="#FF5A92" opacity="0.5" />
+
+        {/* Interactive Mouth (Talking Animation) */}
+        {state === "talking" ? (
+          <motion.ellipse 
+            cx="50" 
+            cy="58" 
+            rx="4" 
+            ry="6" 
+            fill="#2C3E50"
+            animate={{ scaleY: [1, 0.4, 1.4, 0.5, 1.2, 0.4, 1] }}
+            transition={{ repeat: Infinity, duration: 0.6 }}
+            style={{ transformOrigin: "50px 58px" }}
+          />
+        ) : state === "sad" ? (
+          <path d="M 45 61 Q 50 56 55 61" fill="none" stroke="#2C3E50" strokeWidth="3.5" strokeLinecap="round" />
+        ) : (
+          <path d="M 43 56 Q 50 64 57 56" fill="none" stroke="#2C3E50" strokeWidth="3.5" strokeLinecap="round" />
+        )}
+
+        {/* Gradients */}
+        <defs>
+          <linearGradient id="starMascotGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stopColor="#FFE57F" />
+            <stop offset="60%" stopColor="#FFC107" />
+            <stop offset="100%" stopColor="#FF8F00" />
+          </linearGradient>
+        </defs>
+      </svg>
+
+      {/* Sparkles overlay on happy state */}
       {state === "happy" && (
         <motion.div 
           initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: [1, 1.5, 0], opacity: [0, 1, 0] }}
+          animate={{ scale: [1, 1.6, 0], opacity: [0, 1, 0] }}
           transition={{ duration: 0.8, repeat: Infinity }}
-          className="absolute -top-2 text-xl pointer-events-none select-none"
+          className="absolute -top-3 text-2xl pointer-events-none select-none"
         >
           ✨
         </motion.div>
@@ -854,9 +935,86 @@ interface GameZoneProps {
   childLevel?: "level1" | "level2" | "level3" | "level4" | null;
 }
 
-export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, childLevel = "level1" }: GameZoneProps = {}) {
+export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, childLevel: propChildLevel = "level1" }: GameZoneProps = {}) {
   const [activeGame, setActiveGame] = useState<"menu" | "math" | "spelling" | "memory" | "catcher" | "coloring" | "spellingEn" | "sorting" | "spaceCatcher" | "connectDots" | "maze" | "safari" | "chef" | "farm" | "train" | "arrowRacer">("menu");
   const gameZoneRef = useRef<HTMLElement>(null);
+  
+  // Game Level Map & Loading States
+  const [showLevelMap, setShowLevelMap] = useState(false);
+  const [isLoadingGame, setIsLoadingGame] = useState(false);
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [loadingGameName, setLoadingGameName] = useState("");
+  const [selectedLevelIndex, setSelectedLevelIndex] = useState<number | null>(null);
+  const [showPortraitPrompt, setShowPortraitPrompt] = useState(false);
+  const [activeDifficulty, setActiveDifficulty] = useState<"level1" | "level2" | "level3" | "level4">("level1");
+
+  const [effectiveLevel, setEffectiveLevel] = useState<"level1" | "level2" | "level3" | "level4">("level1");
+  
+  useEffect(() => {
+    if (propChildLevel) {
+      setEffectiveLevel(propChildLevel as any);
+    }
+  }, [propChildLevel]);
+
+  const childLevel = showLevelMap ? activeDifficulty : effectiveLevel;
+
+  const lockOrientationLandscape = async () => {
+    try {
+      await CapScreenOrientation.lock({ orientation: 'landscape' });
+    } catch (e) {
+      console.warn("Capacitor Screen Orientation lock failed, attempting web standard:", e);
+      try {
+        const anyOrientation = screen.orientation as any;
+        if (anyOrientation && anyOrientation.lock) {
+          await anyOrientation.lock('landscape');
+        }
+      } catch (err) {
+        console.warn("Web Screen Orientation lock failed:", err);
+      }
+    }
+  };
+
+  const unlockOrientation = async () => {
+    try {
+      await CapScreenOrientation.unlock();
+    } catch (e) {
+      console.warn("Capacitor Screen Orientation unlock failed, attempting web standard:", e);
+      try {
+        const anyOrientation = screen.orientation as any;
+        if (anyOrientation && anyOrientation.unlock) {
+          anyOrientation.unlock();
+        }
+      } catch (err) {
+        console.warn("Web Screen Orientation unlock failed:", err);
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (activeGame === "menu") {
+      setShowPortraitPrompt(false);
+      unlockOrientation();
+      return;
+    }
+
+    lockOrientationLandscape();
+
+    const checkOrientation = () => {
+      if (window.innerHeight > window.innerWidth) {
+        setShowPortraitPrompt(true);
+      } else {
+        setShowPortraitPrompt(false);
+      }
+    };
+
+    checkOrientation();
+    window.addEventListener("resize", checkOrientation);
+    
+    return () => {
+      window.removeEventListener("resize", checkOrientation);
+      unlockOrientation();
+    };
+  }, [activeGame]);
 
   useEffect(() => {
     if (activeGame !== "menu" && gameZoneRef.current) {
@@ -865,6 +1023,28 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       }, 100);
     }
   }, [activeGame]);
+
+  const startLoadingAndOpenMap = (gameName: typeof activeGame) => {
+    setLoadingGameName(gameName);
+    setLoadingProgress(0);
+    setIsLoadingGame(true);
+    
+    // Play a friendly intro voice-over
+    sfx.speakArabic("استعد يا بطل! سنقوم الآن بفتح خريطة المغامرة السحرية!", "welcome");
+    
+    const interval = setInterval(() => {
+      setLoadingProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setIsLoadingGame(false);
+          setActiveGame(gameName);
+          setShowLevelMap(true);
+          return 100;
+        }
+        return prev + 5;
+      });
+    }, 80);
+  };
 
   const [starsEarnedThisSession, setStarsEarnedThisSession] = useState(0);
   const [showVictoryModal, setShowVictoryModal] = useState(false);
@@ -2171,6 +2351,16 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
     setShowVictoryModal(true);
     sfx.playVictory();
     
+    // Save level stars to map progress
+    if (selectedLevelIndex !== null) {
+      const starKey = `bloomly_stars_${activeGame}_level_${selectedLevelIndex}`;
+      const calculatedStars = starsEarnedThisSession >= 5 ? 3 : starsEarnedThisSession >= 3 ? 2 : 1;
+      const currentSaved = parseInt(localStorage.getItem(starKey) || "0", 10);
+      if (calculatedStars > currentSaved) {
+        localStorage.setItem(starKey, String(calculatedStars));
+      }
+    }
+    
     // Speak congrats message in Arabic using speakArabic (1.2s delay to prevent sfx overlap)
     setTimeout(() => {
       try {
@@ -2277,7 +2467,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
   }, [showVictoryModal]);
 
   const quitGame = () => {
-    setActiveGame("menu");
+    setShowLevelMap(true);
     setStarsEarnedThisSession(0);
     setRacerActive(false);
     if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
@@ -3054,6 +3244,61 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
     sfx.playPop();
   };
 
+  const getMapTheme = () => {
+    switch (activeGame) {
+      case "math":
+        return {
+          name: "حديقة الحساب الساحرة 🍎",
+          bgClass: "bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600",
+          nodeBg: "bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border-emerald-600",
+          nodeEmoji: "🌸",
+          decor: ["🐞", "🌸", "🦋", "🐝", "🥕"],
+          pathColor: "border-emerald-300",
+          title: "امشِ على كروت الزهور لحل العمليات الحسابية!"
+        };
+      case "spelling":
+        return {
+          name: "مغامرة الحروف والرمال 🏜️",
+          bgClass: "bg-gradient-to-br from-amber-400 via-orange-500 to-yellow-600",
+          nodeBg: "bg-yellow-100 hover:bg-yellow-200 text-yellow-800 border-yellow-600",
+          nodeEmoji: "🐫",
+          decor: ["🌵", "🐫", "🌴", "☀️", "🏺"],
+          pathColor: "border-yellow-300",
+          title: "اعبر الأهرامات لتكشف أسرار الحروف العربية!"
+        };
+      case "memory":
+        return {
+          name: "كروت بحر الذاكرة السري 🌊",
+          bgClass: "bg-gradient-to-br from-cyan-400 via-blue-500 to-indigo-600",
+          nodeBg: "bg-cyan-100 hover:bg-cyan-200 text-cyan-800 border-cyan-600",
+          nodeEmoji: "🐚",
+          decor: ["🐠", "🐚", "🐙", "🦀", "🐬"],
+          pathColor: "border-cyan-300",
+          title: "طابق كروت الحيوانات المائية في أعماق المحيط!"
+        };
+      case "arrowRacer":
+        return {
+          name: "سباق الاتجاهات الخارق 🏁",
+          bgClass: "bg-gradient-to-br from-gray-700 via-slate-800 to-zinc-900",
+          nodeBg: "bg-red-100 hover:bg-red-200 text-red-800 border-red-600",
+          nodeEmoji: "🏎️",
+          decor: ["🏁", "🏆", "🚦", "🔥", "💨"],
+          pathColor: "border-red-400",
+          title: "وجّه الموتوسيكل بالسرعة القصوى وتفادى العوائق!"
+        };
+      default:
+        return {
+          name: "جزيرة بلومي الطائرة ☁️",
+          bgClass: "bg-gradient-to-br from-purple-400 via-indigo-500 to-pink-500",
+          nodeBg: "bg-pink-100 hover:bg-pink-200 text-pink-800 border-pink-600",
+          nodeEmoji: "⭐",
+          decor: ["⭐", "🎈", "☁️", "🚀", "🪐"],
+          pathColor: "border-pink-300",
+          title: "امشِ في مسار النجوم الطائرة وحل الألغاز!"
+        };
+    }
+  };
+
   return (
     <section id="game-zone" ref={gameZoneRef} className="container mx-auto px-4 py-20 relative z-20">
       
@@ -3267,6 +3512,197 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
         </motion.div>
       </div>
 
+
+
+      
+      {/* 1. Loading Screen with custom Star Mascot */}
+      {isLoadingGame && (
+        <div className="fixed inset-0 bg-gradient-to-br from-[#FFE3E3] via-white to-[#E3F2FD] z-[10030] flex flex-col items-center justify-center p-6 select-none">
+          <div className="text-center max-w-md w-full flex flex-col items-center gap-6">
+            <SproutMascot className="w-48 h-48" state="talking" />
+            
+            <div className="text-right w-full">
+              <h3 className="text-2xl font-black text-[#4D2B82] text-center mb-1">
+                جاري تحميل مغامرة بلومي السحرية...
+              </h3>
+              <p className="text-sm font-bold text-purple-400 text-center">
+                استعد للمتعة واللعب بالنجوم! ✨
+              </p>
+            </div>
+
+            {/* Bouncy Progress Bar */}
+            <div className="w-full bg-purple-100 h-6 rounded-full border-3 border-[#4D2B82] overflow-hidden p-0.5 shadow-md relative">
+              <motion.div 
+                className="h-full bg-gradient-to-r from-pink-400 via-yellow-400 to-emerald-400 rounded-full"
+                style={{ width: `${loadingProgress}%` }}
+                initial={{ width: 0 }}
+                animate={{ width: `${loadingProgress}%` }}
+              />
+              <span className="absolute inset-0 flex items-center justify-center font-black text-xs text-[#4D2B82]">
+                {loadingProgress}%
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2. Portrait Mode Prompt Overlay */}
+      {showPortraitPrompt && (
+        <div className="fixed inset-0 bg-[#4D2B82]/95 backdrop-blur-md z-[10040] flex flex-col items-center justify-center p-6 text-white text-center font-extrabold select-none">
+          <motion.div 
+            animate={{ rotate: [0, 90, 90, 0] }}
+            transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
+            className="text-8xl mb-8"
+          >
+            🔄📱
+          </motion.div>
+          <h2 className="text-3xl font-black text-yellow-300 mb-3">اقلب هاتفك بالعرض!</h2>
+          <p className="text-base text-purple-100 max-w-md">
+            لكي تستمتع بمغامرة بلومي السحرية وخريطة المراحل، يرجى إمساك الهاتف أفقياً (بالعرض)
+          </p>
+        </div>
+      )}
+
+      {/* 3. Themed Level Map Screen */}
+      {activeGame !== "menu" && showLevelMap && (() => {
+        const theme = getMapTheme();
+        return (
+          <div className={`relative min-h-[500px] w-full rounded-[32px] border-4 border-[#4D2B82] ${theme.bgClass} p-8 overflow-hidden shadow-2xl flex flex-col items-center justify-between text-white font-extrabold select-none z-10`}>
+            
+            {/* Background elements / Floating clouds */}
+            <div className="absolute inset-0 pointer-events-none opacity-20">
+              <div className="absolute top-10 left-10 text-6xl animate-pulse">☁️</div>
+              <div className="absolute bottom-10 right-20 text-6xl animate-pulse">☁️</div>
+              <div className="absolute top-1/2 left-1/3 text-4xl">✨</div>
+              <div className="absolute bottom-1/3 right-1/4 text-4xl">✨</div>
+              {theme.decor.map((emoji, i) => (
+                <span 
+                  key={i} 
+                  className="absolute text-5xl opacity-40 animate-bounce" 
+                  style={{
+                    left: `${15 + i * 20}%`, 
+                    top: `${20 + (i % 2) * 40}%`,
+                    animationDelay: `${i * 0.3}s`
+                  }}
+                >
+                  {emoji}
+                </span>
+              ))}
+            </div>
+
+            {/* Header: Title and mascot welcoming them */}
+            <div className="w-full flex items-center justify-between border-b-2 border-white/20 pb-4 relative z-10">
+              <button 
+                onClick={() => {
+                  setShowLevelMap(false);
+                  setActiveGame("menu");
+                  unlockOrientation();
+                }}
+                className="btn-bubbly-secondary text-sm py-2 px-5 text-[#4D2B82] bg-white rounded-full flex items-center gap-1 cursor-pointer border-2 border-[#4D2B82] shadow-[0_4px_0_0_#4D2B82] active:translate-y-1 active:shadow-[0_0_0_0_#4D2B82] transition-all"
+              >
+                <span>🏠 العودة للقائمة</span>
+              </button>
+
+              <div className="text-center flex-1">
+                <h2 className="text-2xl sm:text-3xl font-black text-yellow-300 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+                  {theme.name}
+                </h2>
+                <p className="text-xs sm:text-sm text-white/95 mt-1 font-bold">
+                  {theme.title}
+                </p>
+              </div>
+
+              {/* Star Mascot small inside header */}
+              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-2 border border-white/20 flex items-center gap-2">
+                <SproutMascot className="w-12 h-12" state="idle" />
+                <div className="text-right hidden sm:block">
+                  <span className="text-[10px] text-yellow-300 font-bold block">مساعدك السحري ⭐</span>
+                  <span className="text-xs font-black">اختر مستوى للبدء!</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Winding Map Path */}
+            <div className="relative w-full h-[320px] flex items-center justify-center my-6 z-10">
+              {/* Connect levels with dashed path line */}
+              <svg className="absolute inset-0 w-full h-full stroke-white/35 stroke-[8px] fill-none pointer-events-none z-0">
+                <path d="M 80 220 Q 180 100 350 200 T 650 150 T 900 180" strokeDasharray="12, 16" strokeLinecap="round" />
+              </svg>
+
+              {/* Path level nodes */}
+              {(() => {
+                const nodes = [
+                  { x: "12%", y: "70%", label: "المستوى ١", difficulty: "level1" },
+                  { x: "32%", y: "30%", label: "المستوى ٢", difficulty: "level2" },
+                  { x: "52%", y: "65%", label: "المستوى ٣", difficulty: "level3" },
+                  { x: "72%", y: "25%", label: "المستوى ٤", difficulty: "level4" },
+                  { x: "88%", y: "60%", label: "المستوى ٥ (فائق)", difficulty: "level4" },
+                ];
+                return nodes.map((node, idx) => {
+                  const starKey = `bloomly_stars_${activeGame}_level_${idx + 1}`;
+                  const stars = parseInt(localStorage.getItem(starKey) || "0", 10);
+                  
+                  return (
+                    <motion.button
+                      key={idx}
+                      whileHover={{ scale: 1.15 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => {
+                        setActiveDifficulty(node.difficulty as any);
+                        setSelectedLevelIndex(idx + 1);
+                        setShowLevelMap(false);
+                        
+                        // Trigger specific game startup
+                        if (activeGame === "math") startMathGame();
+                        else if (activeGame === "spelling") startSpellingGame();
+                        else if (activeGame === "memory") initMemoryGame();
+                        else if (activeGame === "arrowRacer") startRacerGame();
+                        else {
+                          // Fallback trigger for other games
+                          if (activeGame === "catcher") startCatcherGame();
+                          else if (activeGame === "coloring") startColoringGame();
+                          else if (activeGame === "spellingEn") startSpellingEnGame();
+                          else if (activeGame === "sorting") startSortingGame();
+                          else if (activeGame === "spaceCatcher") startSpaceCatcherGame();
+                          else if (activeGame === "connectDots") startConnectDotsGame();
+                          else if (activeGame === "maze") startMazeGame();
+                          else if (activeGame === "safari") startSafariGame();
+                          else if (activeGame === "chef") startChefGame();
+                          else if (activeGame === "farm") startFarmGame();
+                          else if (activeGame === "train") startTrainGame();
+                        }
+                      }}
+                      className={`absolute w-20 h-20 sm:w-24 sm:h-24 rounded-full border-4 ${theme.nodeBg} shadow-[0_8px_0_0_#4D2B82] flex flex-col items-center justify-center cursor-pointer transition-all active:translate-y-1 active:shadow-[0_4px_0_0_#4D2B82]`}
+                      style={{ left: node.x, top: node.y, transform: "translate(-50%, -50%)" }}
+                    >
+                      <span className="text-2xl sm:text-3xl mb-0.5">{theme.nodeEmoji}</span>
+                      <span className="text-[11px] sm:text-xs font-black tracking-tight">{node.label}</span>
+                      
+                      {/* Render Star progress */}
+                      <div className="flex items-center gap-0.5 mt-1">
+                        {[1, 2, 3].map((s) => (
+                          <span 
+                            key={s} 
+                            className={`text-xs ${s <= stars ? "text-yellow-400" : "text-gray-300"}`}
+                          >
+                            ★
+                          </span>
+                        ))}
+                      </div>
+                    </motion.button>
+                  );
+                });
+              })()}
+            </div>
+
+            {/* Footer tips */}
+            <div className="w-full text-center text-xs text-white/85 bg-black/15 py-2 px-6 rounded-full border border-white/10 relative z-10">
+              💡 نصيحة سحرية: احصل على ٣ نجوم في كل مستوى لتثبت جدارتك وتتفوق على الجميع!
+            </div>
+          </div>
+        );
+      })()}
+
       {/* --- MENU VIEW --- */}
       {activeGame === "menu" && (
         <div className="flex flex-col gap-6 w-full">
@@ -3312,7 +3748,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                           <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2">حديقة الحساب السريع</h3>
                           <p className="text-sm font-medium text-purple-400 mb-4">مسائل حسابية وعد مبسطة للأطفال الأذكياء.</p>
                           <button
-                            onClick={() => requireProfile(startMathGame)}
+                            onClick={() => requireProfile(() => startLoadingAndOpenMap("math"))}
                             className="w-full btn-bubbly-primary mt-auto text-sm py-2.5"
                           >
                             العب الآن 🚀
@@ -3336,7 +3772,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                           <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2">مغامرة الحروف والكلمات</h3>
                           <p className="text-sm font-medium text-purple-400 mb-4">تعرف على الحرف الأول للحيوانات والأشكال.</p>
                           <button
-                            onClick={() => requireProfile(startSpellingGame)}
+                            onClick={() => requireProfile(() => startLoadingAndOpenMap("spelling"))}
                             className="w-full btn-bubbly-purple mt-auto text-sm py-2.5"
                           >
                             العب الآن 🚀
@@ -3357,7 +3793,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                           <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2">كروت الذاكرة السحرية</h3>
                           <p className="text-sm font-medium text-purple-400 mb-4">طابق كروت الحيوانات المتشابهة لتفوز.</p>
                           <button
-                            onClick={() => requireProfile(initMemoryGame)}
+                            onClick={() => requireProfile(() => startLoadingAndOpenMap("memory"))}
                             className="w-full btn-bubbly-primary mt-auto text-sm py-2.5"
                           >
                             العب الآن 🚀
@@ -3378,7 +3814,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                           <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2">صائد النجوم والبالونات</h3>
                           <p className="text-sm font-medium text-purple-400 mb-4">اختبر سرعتك وصِد البالونات والنجوم الطائرة.</p>
                           <button
-                            onClick={() => requireProfile(startCatcherGame)}
+                            onClick={() => requireProfile(() => startLoadingAndOpenMap("catcher"))}
                             className="w-full btn-bubbly-purple mt-auto text-sm py-2.5"
                           >
                             العب الآن 🚀
@@ -3577,7 +4013,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                           <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2">سباق الاتجاهات الخارق</h3>
                           <p className="text-sm font-medium text-purple-400 mb-4">وجّه الموتوسيكل بالأسهم الصحيحة ليتفادى العقبات ويفوز!</p>
                           <button
-                            onClick={() => requireProfile(startRacerGame)}
+                            onClick={() => requireProfile(() => startLoadingAndOpenMap("arrowRacer"))}
                             className="w-full btn-bubbly-primary mt-auto text-sm py-2.5"
                           >
                             العب الآن 🚀
@@ -3630,7 +4066,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       )}
 
       {/* --- MATH GAME PLAY VIEW --- */}
-      {activeGame === "math" && (
+      {activeGame === "math" && !showLevelMap && (
         <div className="card-bubbly bg-white max-w-2xl mx-auto p-8 relative overflow-hidden">
           
           {/* Header */}
@@ -3713,7 +4149,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       )}
 
       {/* --- SPELLING GAME PLAY VIEW --- */}
-      {activeGame === "spelling" && (
+      {activeGame === "spelling" && !showLevelMap && (
         <div className="card-bubbly bg-white max-w-2xl mx-auto p-8 relative overflow-hidden">
           
           {/* Header */}
@@ -3810,7 +4246,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       )}
 
       {/* --- MEMORY GAME PLAY VIEW --- */}
-      {activeGame === "memory" && (
+      {activeGame === "memory" && !showLevelMap && (
         <div className="card-bubbly bg-white max-w-2xl mx-auto p-8">
           
           {/* Header */}
@@ -3862,7 +4298,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       )}
 
       {/* --- BALLOON & STAR CATCHER GAME PLAY VIEW --- */}
-      {activeGame === "catcher" && (
+      {activeGame === "catcher" && !showLevelMap && (
         <div className="card-bubbly bg-white max-w-2xl mx-auto p-6 relative overflow-hidden">
           
           {/* Header */}
@@ -5057,7 +5493,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       )}
 
       {/* --- TURBO ARROW RACER PLAY VIEW --- */}
-      {activeGame === "arrowRacer" && (
+      {activeGame === "arrowRacer" && !showLevelMap && (
         <div className="card-bubbly bg-[#0F172A] max-w-2xl mx-auto p-6 relative overflow-hidden text-white border-4 border-yellow-400">
           
           {/* Header */}
