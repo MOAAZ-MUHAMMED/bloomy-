@@ -910,7 +910,7 @@ export default function App() {
           </div>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-8 font-bold text-base text-[#4D2B82]">
+          <nav className="hidden lg:flex items-center gap-5 xl:gap-8 font-bold text-sm xl:text-base text-[#4D2B82]">
             <a href="#game-zone" onClick={(e) => { e.preventDefault(); scrollToGames(); }} className="hover:text-[#E01E5A] transition-colors">الألعاب السحرية 🎮</a>
             <button onClick={() => { playBubbleSound(); startLoadingGarden(); }} className="hover:text-[#E01E5A] transition-colors cursor-pointer font-bold bg-transparent border-none">الحديقة السحرية 🌿</button>
             <a href="#characters" onClick={(e) => { e.preventDefault(); setShowCharactersView(true); playBubbleSound(); }} className="hover:text-[#E01E5A] transition-colors">شخصيات بلومي 🦉</a>
@@ -948,7 +948,7 @@ export default function App() {
             )}
             <button 
               onClick={() => { setShowCharactersView(true); playBubbleSound(); }}
-              className="md:hidden btn-bubbly-purple text-xs py-1.5 px-3 flex items-center justify-center gap-1 cursor-pointer"
+              className="lg:hidden btn-bubbly-purple text-xs py-1.5 px-3 flex items-center justify-center gap-1 cursor-pointer"
             >
               <span>الشخصيات 🦉</span>
             </button>
@@ -970,7 +970,7 @@ export default function App() {
             )}
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-full border-2 border-[#4D2B82] hover:bg-purple-50 cursor-pointer"
+              className="lg:hidden p-2 rounded-full border-2 border-[#4D2B82] hover:bg-purple-50 cursor-pointer"
             >
               {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -979,7 +979,7 @@ export default function App() {
 
         {/* Mobile Menu Dropdown */}
         {mobileMenuOpen && (
-          <div className="absolute top-[85px] left-4 right-4 bg-white border-3 border-[#4D2B82] rounded-[24px] p-6 shadow-[0_6px_0_0_#4D2B82] flex flex-col gap-4 text-center font-bold text-lg md:hidden z-50">
+          <div className="absolute top-[85px] left-4 right-4 bg-white border-3 border-[#4D2B82] rounded-[24px] p-6 shadow-[0_6px_0_0_#4D2B82] flex flex-col gap-4 text-center font-bold text-lg lg:hidden z-50">
             {!childProfile && (
               <div className="flex flex-col gap-3 pb-3 border-b-2 border-purple-100">
                 <button
