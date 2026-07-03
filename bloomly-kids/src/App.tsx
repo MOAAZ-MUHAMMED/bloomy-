@@ -4,6 +4,7 @@ import { GameZone } from "./components/GameZone";
 import { IntroScreen } from "./components/IntroScreen";
 import { RegisterScreen } from "./components/RegisterScreen";
 import { BoyAvatar, GirlAvatar } from "./components/Avatars";
+import MagicGarden from "./components/MagicGarden";
 import { 
   Sparkles, 
   Gamepad2, 
@@ -17,6 +18,11 @@ export default function App() {
   const [showIntro, setShowIntro] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showCharactersView, setShowCharactersView] = useState(false);
+
+  // Magic Garden State
+  const [showMagicGarden, setShowMagicGarden] = useState(false);
+  const [isLoadingGarden, setIsLoadingGarden] = useState(false);
+  const [gardenLoadingProgress, setGardenLoadingProgress] = useState(0);
 
   // Stored child profile state
   const [childProfile, setChildProfile] = useState<{
@@ -287,6 +293,31 @@ export default function App() {
     } catch (e) {
       console.error(e);
     }
+  };
+
+  const startLoadingGarden = () => {
+    // Check profile
+    const saved = localStorage.getItem("childProfile");
+    if (!saved) {
+      setShowRegister(true);
+      return;
+    }
+    
+    setMobileMenuOpen(false);
+    setGardenLoadingProgress(0);
+    setIsLoadingGarden(true);
+
+    const interval = setInterval(() => {
+      setGardenLoadingProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setIsLoadingGarden(false);
+          setShowMagicGarden(true);
+          return 100;
+        }
+        return prev + 5;
+      });
+    }, 60);
   };
 
   // Helper to render beautiful custom logos for each game on the map
@@ -881,6 +912,7 @@ export default function App() {
           {/* Desktop Nav Links */}
           <nav className="hidden md:flex items-center gap-8 font-bold text-base text-[#4D2B82]">
             <a href="#game-zone" onClick={(e) => { e.preventDefault(); scrollToGames(); }} className="hover:text-[#E01E5A] transition-colors">الألعاب السحرية 🎮</a>
+            <button onClick={() => { playBubbleSound(); startLoadingGarden(); }} className="hover:text-[#E01E5A] transition-colors cursor-pointer font-bold bg-transparent border-none">الحديقة السحرية 🌿</button>
             <a href="#characters" onClick={(e) => { e.preventDefault(); setShowCharactersView(true); playBubbleSound(); }} className="hover:text-[#E01E5A] transition-colors">شخصيات بلومي 🦉</a>
             <a href="#what-we-teach" className="hover:text-[#E01E5A] transition-colors">ماذا نتعلّم؟</a>
             <a href="#how-it-works" className="hover:text-[#E01E5A] transition-colors">كيف نعمل؟</a>
@@ -965,6 +997,7 @@ export default function App() {
               </div>
             )}
             <a href="#game-zone" onClick={(e) => { e.preventDefault(); scrollToGames(); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">الألعاب السحرية 🎮</a>
+            <button onClick={() => { playBubbleSound(); startLoadingGarden(); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A] cursor-pointer text-right w-full font-bold bg-transparent border-none">الحديقة السحرية 🌿</button>
             <a href="#characters" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); setShowCharactersView(true); playBubbleSound(); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">شخصيات بلومي 🦉</a>
             <a href="#what-we-teach" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">ماذا نتعلّم؟</a>
             <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">كيف نعمل؟</a>
@@ -1045,12 +1078,24 @@ export default function App() {
           </div>
 
           {/* Right Interactive Garden Column */}
-          <div className="lg:col-span-5 flex justify-center items-center relative">
+          <div className="lg:col-span-5 flex flex-col items-center justify-center gap-6 relative">
             {/* Little background decor */}
             <div className="absolute -top-6 -right-6 text-yellow-300 text-3xl animate-pulse">✨</div>
             <div className="absolute -bottom-6 -left-6 text-purple-300 text-3xl animate-float">🌸</div>
             
             <InteractiveGarden />
+
+            {/* Entry button to Large Garden */}
+            <button
+              onClick={() => {
+                playBubbleSound();
+                startLoadingGarden();
+              }}
+              className="btn-bubbly-primary text-base px-8 py-3.5 flex items-center gap-2 animate-bounce-slow"
+            >
+              <span>🚪🌿</span>
+              <span>دخول الحديقة السحرية الكبيرة</span>
+            </button>
           </div>
 
         </div>
@@ -1691,6 +1736,48 @@ export default function App() {
             </button>
           </div>
 
+        </div>
+      )}
+
+      {/* 9. Large Magic Garden View Overlay */}
+      {showMagicGarden && (
+        <MagicGarden 
+          onClose={() => {
+            setShowMagicGarden(false);
+          }} 
+          globalStars={globalStars} 
+          setGlobalStars={setGlobalStars} 
+        />
+      )}
+
+      {/* 10. Magic Garden Loading Overlay */}
+      {isLoadingGarden && (
+        <div className="fixed inset-0 bg-gradient-to-br from-[#E8F5E9] via-white to-[#E3F2FD] z-[10030] flex flex-col items-center justify-center p-6 select-none">
+          <div className="text-center max-w-md w-full flex flex-col items-center gap-6">
+            <span className="text-6xl animate-bounce">🌿</span>
+            
+            <div className="text-center w-full">
+              <h3 className="text-2xl font-black text-[#4D2B82] mb-1">
+                جاري الانتقال إلى حديقتك السحرية...
+              </h3>
+              <p className="text-sm font-bold text-emerald-600">
+                استعد لزرع البذور وري النباتات وملاعبة الحيوانات! 🐰🌻
+              </p>
+            </div>
+
+            {/* Bouncy Progress Bar */}
+            <div className="w-full bg-emerald-100 h-6 rounded-full border-3 border-[#4D2B82] overflow-hidden p-0.5 shadow-md relative">
+              <motion.div 
+                className="h-full bg-gradient-to-r from-emerald-400 via-green-400 to-yellow-400 rounded-full"
+                style={{ width: `${gardenLoadingProgress}%` }}
+                initial={{ width: 0 }}
+                animate={{ width: `${gardenLoadingProgress}%` }}
+              />
+              <span className="absolute inset-0 flex items-center justify-center font-black text-xs text-[#4D2B82]">
+                {gardenLoadingProgress}%
+              </span>
+            </div>
+          </div>
         </div>
       )}
 
