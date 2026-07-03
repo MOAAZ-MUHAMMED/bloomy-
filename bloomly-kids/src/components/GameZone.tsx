@@ -964,15 +964,20 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
   };
 
   useEffect(() => {
-    if (showLevelMap && mapScrollRef.current) {
+    if (showLevelMap) {
       setTimeout(() => {
         const activeLvl = getActiveLevelNumber();
-        // Centering calculation
-        const targetX = (activeLvl - 1) * 180 - window.innerWidth / 2 + 100;
-        if (mapScrollRef.current) {
-          mapScrollRef.current.scrollLeft = Math.max(0, targetX);
+        const element = document.getElementById(`level-node-${activeLvl}`);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+        } else {
+          // Centering calculation fallback
+          const targetX = (activeLvl - 1) * 180 - window.innerWidth / 2 + 100;
+          if (mapScrollRef.current) {
+            mapScrollRef.current.scrollLeft = Math.max(0, targetX);
+          }
         }
-      }, 100);
+      }, 200);
     }
   }, [showLevelMap, activeGame]);
 
@@ -3545,22 +3550,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
         </div>
       )}
 
-      {/* 2. Portrait Mode Prompt Overlay */}
-      {showPortraitPrompt && (
-        <div className="fixed inset-0 bg-[#4D2B82]/95 backdrop-blur-md z-[10040] flex flex-col items-center justify-center p-6 text-white text-center font-extrabold select-none">
-          <motion.div 
-            animate={{ rotate: [0, 90, 90, 0] }}
-            transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
-            className="text-8xl mb-8"
-          >
-            🔄📱
-          </motion.div>
-          <h2 className="text-3xl font-black text-yellow-300 mb-3">اقلب هاتفك بالعرض!</h2>
-          <p className="text-base text-purple-100 max-w-md">
-            لكي تستمتع بمغامرة بلومي السحرية وخريطة المراحل، يرجى إمساك الهاتف أفقياً (بالعرض)
-          </p>
-        </div>
-      )}
+
 
       {/* Global Star Indicator Header */}
       <div className="flex flex-col sm:flex-row items-center justify-between bg-white border-3 border-[#4D2B82] rounded-[24px] p-6 mb-12 shadow-[0_6px_0_0_#4D2B82] gap-4">
@@ -3679,82 +3669,111 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
               }
 
               return (
-                <div 
-                  ref={mapScrollRef} 
-                  className="w-full overflow-x-auto scrollbar-none py-10 relative select-none z-10 cursor-grab active:cursor-grabbing"
-                >
-                  <div 
-                    className="relative h-[320px]" 
-                    style={{ width: `${totalLevels * 180 + 200}px` }}
+                <div className="relative w-full overflow-hidden select-none">
+                  {/* Left Floating Arrow button to navigate left */}
+                  <button 
+                    onClick={() => {
+                      if (mapScrollRef.current) {
+                        mapScrollRef.current.scrollBy({ left: -360, behavior: "smooth" });
+                      }
+                    }}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/90 hover:bg-white text-[#4D2B82] border-3 border-[#4D2B82] shadow-lg flex items-center justify-center text-2xl cursor-pointer hover:scale-105 active:scale-95 transition-transform"
+                    title="السابق"
                   >
-                    {/* SVG Connecting Path */}
-                    <svg 
-                      className="absolute inset-0 h-full stroke-white/35 stroke-[8px] fill-none pointer-events-none z-0"
+                    ◀
+                  </button>
+
+                  {/* Right Floating Arrow button to navigate right */}
+                  <button 
+                    onClick={() => {
+                      if (mapScrollRef.current) {
+                        mapScrollRef.current.scrollBy({ left: 360, behavior: "smooth" });
+                      }
+                    }}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white/90 hover:bg-white text-[#4D2B82] border-3 border-[#4D2B82] shadow-lg flex items-center justify-center text-2xl cursor-pointer hover:scale-105 active:scale-95 transition-transform"
+                    title="التالي"
+                  >
+                    ▶
+                  </button>
+
+                  <div 
+                    ref={mapScrollRef} 
+                    className="w-full overflow-x-auto scrollbar-none py-10 relative select-none z-10 cursor-grab active:cursor-grabbing"
+                  >
+                    <div 
+                      className="relative h-[320px]" 
                       style={{ width: `${totalLevels * 180 + 200}px` }}
                     >
-                      <path d={pathD} strokeDasharray="12, 16" strokeLinecap="round" />
-                    </svg>
+                      {/* SVG Connecting Path */}
+                      <svg 
+                        className="absolute inset-0 h-full stroke-white/35 stroke-[8px] fill-none pointer-events-none z-0"
+                        style={{ width: `${totalLevels * 180 + 200}px` }}
+                      >
+                        <path d={pathD} strokeDasharray="12, 16" strokeLinecap="round" />
+                      </svg>
 
-                    {/* Nodes mapping */}
-                    {levels.map((node, idx) => {
-                      const starKey = `bloomly_stars_${activeGame}_level_${node.lvlNum}`;
-                      const stars = parseInt(localStorage.getItem(starKey) || "0", 10);
-                      
-                      return (
-                        <motion.button
-                          key={idx}
-                          disabled={node.isLocked}
-                          whileHover={node.isLocked ? {} : { scale: 1.15 }}
-                          whileTap={node.isLocked ? {} : { scale: 0.95 }}
-                          onClick={() => {
-                            setActiveDifficulty(node.difficulty as any);
-                            setSelectedLevelIndex(node.lvlNum);
-                            setShowLevelMap(false);
+                      {/* Nodes mapping */}
+                      {levels.map((node, idx) => {
+                        const starKey = `bloomly_stars_${activeGame}_level_${node.lvlNum}`;
+                        const stars = parseInt(localStorage.getItem(starKey) || "0", 10);
+                        
+                        return (
+                          <motion.button
+                            key={idx}
+                            id={`level-node-${node.lvlNum}`}
+                            disabled={node.isLocked}
+                            whileHover={node.isLocked ? {} : { scale: 1.15 }}
+                            whileTap={node.isLocked ? {} : { scale: 0.95 }}
+                            onClick={() => {
+                              setActiveDifficulty(node.difficulty as any);
+                              setSelectedLevelIndex(node.lvlNum);
+                              setShowLevelMap(false);
+                              
+                              // Trigger specific game startup
+                              if (activeGame === "math") startMathGame();
+                              else if (activeGame === "spelling") startSpellingGame();
+                              else if (activeGame === "memory") initMemoryGame();
+                              else if (activeGame === "arrowRacer") startRacerGame();
+                              else {
+                                // Generic start mapping for other games
+                                if (activeGame === "catcher") startCatcherGame();
+                                else if (activeGame === "coloring") startColoringGame();
+                                else if (activeGame === "spellingEn") startSpellingEnGame();
+                                else if (activeGame === "sorting") startSortingGame();
+                                else if (activeGame === "spaceCatcher") startSpaceCatcherGame();
+                                else if (activeGame === "connectDots") startConnectDotsGame();
+                                else if (activeGame === "maze") startMazeGame();
+                                else if (activeGame === "safari") startSafariGame();
+                                else if (activeGame === "chef") startChefGame();
+                                else if (activeGame === "farm") startFarmGame();
+                                else if (activeGame === "train") startTrainGame();
+                              }
+                            }}
+                            className={`absolute w-20 h-20 sm:w-22 sm:h-22 rounded-full border-4 ${theme.nodeBg} shadow-[0_8px_0_0_#4D2B82] flex flex-col items-center justify-center cursor-pointer transition-all active:translate-y-1 active:shadow-[0_4px_0_0_#4D2B82] ${node.isLocked ? "opacity-50 cursor-not-allowed filter grayscale" : ""}`}
+                            style={{ left: node.x, top: node.y, transform: "translate(-50%, -50%)" }}
+                          >
+                            {node.isLocked ? (
+                              <span className="text-2xl sm:text-3xl mb-0.5">🔒</span>
+                            ) : (
+                              <span className="text-2xl sm:text-3xl mb-0.5">{theme.nodeEmoji}</span>
+                            )}
+                            <span className="text-[10px] sm:text-xs font-black tracking-tight">{node.label}</span>
                             
-                            // Trigger specific game startup
-                            if (activeGame === "math") startMathGame();
-                            else if (activeGame === "spelling") startSpellingGame();
-                            else if (activeGame === "memory") initMemoryGame();
-                            else if (activeGame === "arrowRacer") startRacerGame();
-                            else {
-                              // Generic start mapping for other games
-                              if (activeGame === "catcher") startCatcherGame();
-                              else if (activeGame === "coloring") startColoringGame();
-                              else if (activeGame === "spellingEn") startSpellingEnGame();
-                              else if (activeGame === "sorting") startSortingGame();
-                              else if (activeGame === "spaceCatcher") startSpaceCatcherGame();
-                              else if (activeGame === "connectDots") startConnectDotsGame();
-                              else if (activeGame === "maze") startMazeGame();
-                              else if (activeGame === "safari") startSafariGame();
-                              else if (activeGame === "chef") startChefGame();
-                              else if (activeGame === "farm") startFarmGame();
-                              else if (activeGame === "train") startTrainGame();
-                            }
-                          }}
-                          className={`absolute w-20 h-20 sm:w-22 sm:h-22 rounded-full border-4 ${theme.nodeBg} shadow-[0_8px_0_0_#4D2B82] flex flex-col items-center justify-center cursor-pointer transition-all active:translate-y-1 active:shadow-[0_4px_0_0_#4D2B82] ${node.isLocked ? "opacity-50 cursor-not-allowed filter grayscale" : ""}`}
-                          style={{ left: node.x, top: node.y, transform: "translate(-50%, -50%)" }}
-                        >
-                          {node.isLocked ? (
-                            <span className="text-2xl sm:text-3xl mb-0.5">🔒</span>
-                          ) : (
-                            <span className="text-2xl sm:text-3xl mb-0.5">{theme.nodeEmoji}</span>
-                          )}
-                          <span className="text-[10px] sm:text-xs font-black tracking-tight">{node.label}</span>
-                          
-                          {/* Render Star progress */}
-                          <div className="flex items-center gap-0.5 mt-0.5">
-                            {[1, 2, 3].map((s) => (
-                              <span 
-                                key={s} 
-                                className={`text-[10px] ${s <= stars ? "text-yellow-400" : "text-gray-300"}`}
-                              >
-                                ★
-                              </span>
-                            ))}
-                          </div>
-                        </motion.button>
-                      );
-                    })}
+                            {/* Render Star progress */}
+                            <div className="flex items-center gap-0.5 mt-0.5">
+                              {[1, 2, 3].map((s) => (
+                                <span 
+                                  key={s} 
+                                  className={`text-[10px] ${s <= stars ? "text-yellow-400" : "text-gray-300"}`}
+                                >
+                                  ★
+                                </span>
+                              ))}
+                            </div>
+                          </motion.button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               );

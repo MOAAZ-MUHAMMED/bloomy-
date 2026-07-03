@@ -63,17 +63,7 @@ export default function App() {
 
   // Dynamic backend API URL resolver
   const getApiUrl = (path: string) => {
-    const savedBase = localStorage.getItem("bloomly_api_base_url");
-    if (savedBase) {
-      return `${savedBase.replace(/\/$/, '')}${path}`;
-    }
-    const hostname = window.location.hostname;
-    const base = hostname.includes('loca.lt') 
-      ? 'https://bloomly-kids-api.loca.lt' 
-      : hostname.includes('pages.dev') || hostname.includes('github.io')
-      ? 'http://localhost:5000'
-      : `http://${hostname}:5000`;
-    return `${base}${path}`;
+    return `${window.location.origin}${path}`;
   };
 
   // API Call: Fetch all profiles from backend database
@@ -922,12 +912,6 @@ export default function App() {
                 >
                   <span>تعديل الملف الشخصي ⚙️</span>
                 </button>
-                <button
-                  onClick={openParentDashboardWithGate}
-                  className="btn-bubbly-secondary text-xs py-1.5 px-3.5 flex items-center gap-1 cursor-pointer shadow-[0_4px_0_0_#4D2B82] hover:translate-y-[-1px] hover:shadow-[0_5px_0_0_#4D2B82] active:translate-y-[2px] active:shadow-[0_1px_0_0_#4D2B82]"
-                >
-                  <span>🔒 إعدادات الأبوين</span>
-                </button>
               </div>
             )}
             <button 
@@ -943,12 +927,6 @@ export default function App() {
                   className="btn-bubbly-secondary text-sm py-2 px-4 border-2 border-[#4D2B82] text-[#4D2B82] bg-white rounded-full font-black hover:bg-purple-50 transition-colors shadow-[0_3px_0_0_#4D2B82] cursor-pointer"
                 >
                   تسجيل الدخول 🔑
-                </button>
-                <button
-                  onClick={openParentDashboardWithGate}
-                  className="btn-bubbly-secondary text-sm py-2 px-4 border-2 border-[#4D2B82] text-[#4D2B82] bg-white rounded-full font-black hover:bg-purple-50 transition-colors shadow-[0_3px_0_0_#4D2B82] cursor-pointer"
-                >
-                  🔒 إعدادات الأبوين
                 </button>
                 <button
                   onClick={() => { setShowRegister(true); playBubbleSound(); }}
@@ -991,12 +969,7 @@ export default function App() {
             <a href="#what-we-teach" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">ماذا نتعلّم؟</a>
             <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">كيف نعمل؟</a>
             <a href="#parents" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">أولياء الأمور</a>
-            <button
-              onClick={() => { setMobileMenuOpen(false); openParentDashboardWithGate(); }}
-              className="py-2 border-b border-purple-100 hover:text-[#E01E5A] font-bold text-center flex items-center justify-center gap-1.5 cursor-pointer"
-            >
-              <span>🔒 إعدادات الأبوين (تسجيل الصوت)</span>
-            </button>
+
             <button 
               onClick={scrollToGames}
               className="btn-bubbly-primary w-full py-3 mt-2"
