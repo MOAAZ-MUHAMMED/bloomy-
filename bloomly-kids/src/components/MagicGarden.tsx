@@ -784,13 +784,15 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
         )}
       </AnimatePresence>
 
-      {/* Floating Exit Button and Stars Indicator */}
-      <div className="absolute top-4 right-4 z-[9990] flex items-center gap-3 select-none pointer-events-auto">
+      {/* Floating Exit Button (Top-Left) and Stars Indicator (Top-Right) */}
+      <div className="absolute top-4 right-4 z-[9990] select-none pointer-events-auto">
         <div className="flex items-center gap-1.5 bg-[#FFFCE6] border-3 border-[#D97706] text-[#D97706] font-black text-sm px-4 py-2 rounded-full shadow-lg">
           <span className="text-lg text-yellow-400">★</span>
           <span>نجومك: {globalStars}</span>
         </div>
-        
+      </div>
+      
+      <div className="absolute top-4 left-4 z-[9990] select-none pointer-events-auto">
         <button
           onClick={() => {
             synth.playPop();

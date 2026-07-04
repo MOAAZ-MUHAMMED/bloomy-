@@ -2528,6 +2528,42 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
     setCatcherCountdown(null);
   };
 
+  const startNextLevel = () => {
+    try {
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+    } catch (e) {}
+    setShowVictoryModal(false);
+    setVictoryBalloons([]);
+    setConfetti([]);
+
+    if (selectedLevelIndex !== null && selectedLevelIndex < 100) {
+      const nextLvl = selectedLevelIndex + 1;
+      setSelectedLevelIndex(nextLvl);
+      
+      const difficulty = nextLvl <= 25 ? "level1" : nextLvl <= 50 ? "level2" : nextLvl <= 75 ? "level3" : "level4";
+      setActiveDifficulty(difficulty as any);
+      setEffectiveLevel(difficulty as any);
+      
+      if (activeGame === "math") startMathGame();
+      else if (activeGame === "spelling") startSpellingGame();
+      else if (activeGame === "memory") initMemoryGame();
+      else if (activeGame === "catcher") startCatcherGame();
+      else if (activeGame === "coloring") startColoringGame();
+      else if (activeGame === "spellingEn") startSpellingEnGame();
+      else if (activeGame === "sorting") startSortingGame();
+      else if (activeGame === "spaceCatcher") startSpaceCatcherGame();
+      else if (activeGame === "connectDots") startConnectDotsGame();
+      else if (activeGame === "maze") startMazeGame();
+      else if (activeGame === "safari") startSafariGame();
+      else if (activeGame === "chef") startChefGame();
+      else if (activeGame === "farm") startFarmGame();
+      else if (activeGame === "train") startTrainGame();
+      else if (activeGame === "arrowRacer") startRacerGame();
+    } else {
+      setActiveGame("menu");
+    }
+  };
+
   // ==========================================
   // 1. GAME: EASY MATH GARDEN (حديقة الحساب)
   // ==========================================
@@ -2771,6 +2807,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
   const [memoryCards, setMemoryCards] = useState<MemoryCard[]>([]);
   const [selectedCardIds, setSelectedCardIds] = useState<number[]>([]);
   const [memoryMatchesFound, setMemoryMatchesFound] = useState(0);
+  const [memoryTargetMatches, setMemoryTargetMatches] = useState(4);
 
   const initMemoryGame = () => {
     setStarsEarnedThisSession(0);
@@ -2780,6 +2817,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
     if (childLevel === "level2") pairsCount = 6;
     if (childLevel === "level3") pairsCount = 8;
     if (childLevel === "level4") pairsCount = 10;
+    setMemoryTargetMatches(pairsCount);
 
     const allEmojis = ["🦁", "🐰", "🐼", "🦊", "🐸", "🐨", "🐯", "🐻", "🐮", "🐷", "🐧", "🐙"];
     const emojis = allEmojis.slice(0, pairsCount);
@@ -2827,12 +2865,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
             const next = prev + 1;
             addStars(1); // Give a star for every match
             
-            let target = 4;
-            if (childLevel === "level2") target = 6;
-            if (childLevel === "level3") target = 8;
-            if (childLevel === "level4") target = 10;
-
-            if (next === target) {
+            if (next === memoryTargetMatches) {
               setTimeout(() => triggerVictory(), 1000);
             }
             return next;
@@ -4548,7 +4581,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       )}
 
       {/* --- ENGLISH SPELLING GAME PLAY VIEW --- */}
-      {activeGame === "spellingEn" && (
+      {activeGame === "spellingEn" && !showLevelMap && (
         <div className="card-bubbly bg-white max-w-2xl mx-auto p-8 relative overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between border-b-2 border-purple-100 pb-4 mb-6">
@@ -4647,7 +4680,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       )}
 
       {/* --- ART COLORING GAME PLAY VIEW --- */}
-      {activeGame === "coloring" && (
+      {activeGame === "coloring" && !showLevelMap && (
         <div className="card-bubbly bg-white max-w-3xl mx-auto p-6 relative overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between border-b-2 border-purple-100 pb-4 mb-4 relative z-20">
@@ -4795,7 +4828,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       )}
 
       {/* --- MAGIC SORTING BASKET PLAY VIEW --- */}
-      {activeGame === "sorting" && sortingItem && (
+      {activeGame === "sorting" && !showLevelMap && sortingItem && (
         <div className="card-bubbly bg-white max-w-2xl mx-auto p-8 relative overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between border-b-2 border-purple-100 pb-4 mb-6">
@@ -4951,7 +4984,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       )}
 
       {/* --- SPACE LETTER CATCHER PLAY VIEW --- */}
-      {activeGame === "spaceCatcher" && (
+      {activeGame === "spaceCatcher" && !showLevelMap && (
         <div className="card-bubbly bg-[#0F172A] max-w-2xl mx-auto p-6 relative overflow-hidden text-white">
           
           <style dangerouslySetInnerHTML={{__html: `
@@ -5088,7 +5121,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       )}
 
       {/* --- CONNECT THE DOTS PLAY VIEW --- */}
-      {activeGame === "connectDots" && dotsShape && (
+      {activeGame === "connectDots" && !showLevelMap && dotsShape && (
         <div className="card-bubbly bg-white max-w-2xl mx-auto p-6 relative overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between border-b-2 border-purple-100 pb-4 mb-4 relative z-20">
@@ -5226,7 +5259,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       )}
 
       {/* --- MAZE GAME PLAY VIEW --- */}
-      {activeGame === "maze" && (
+      {activeGame === "maze" && !showLevelMap && (
         <div className="card-bubbly bg-white max-w-2xl mx-auto p-6 relative overflow-hidden">
           
           {/* Header */}
@@ -5383,7 +5416,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       )}
 
       {/* --- SOUND SAFARI PLAY VIEW --- */}
-      {activeGame === "safari" && safariTarget && (
+      {activeGame === "safari" && !showLevelMap && safariTarget && (
         <div className="card-bubbly bg-white max-w-2xl mx-auto p-6 relative overflow-hidden">
           
           {/* Header */}
@@ -5473,7 +5506,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       )}
 
       {/* --- CANDY CHEF PLAY VIEW --- */}
-      {activeGame === "chef" && chefRecipe && (
+      {activeGame === "chef" && !showLevelMap && chefRecipe && (
         <div className="card-bubbly bg-white max-w-2xl mx-auto p-6 relative overflow-hidden">
           
           {/* Header */}
@@ -5880,7 +5913,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       )}
 
       {/* --- HUNGRY ANIMALS FARM PLAY VIEW --- */}
-      {activeGame === "farm" && activeAnimal && (
+      {activeGame === "farm" && !showLevelMap && activeAnimal && (
         <div className="card-bubbly bg-[#E8F5E9] max-w-2xl mx-auto p-6 relative overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between border-b-2 border-green-200 pb-4 mb-4 relative z-20">
@@ -6002,7 +6035,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       )}
 
       {/* --- MAGICAL SHAPES TRAIN PLAY VIEW --- */}
-      {activeGame === "train" && trainParts.length > 0 && (
+      {activeGame === "train" && !showLevelMap && trainParts.length > 0 && (
         <div className="card-bubbly bg-[#F8FAFC] max-w-2xl mx-auto p-6 relative overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between border-b-2 border-blue-100 pb-4 mb-4 relative z-20">
@@ -6344,6 +6377,12 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                 {/* Action Buttons */}
                 <div className="flex gap-4">
                    <button
+                    onClick={startNextLevel}
+                    className="flex-1 btn-bubbly-primary text-sm py-3"
+                  >
+                    الدور التالي 🚀
+                  </button>
+                  <button
                     onClick={() => {
                       try {
                         if ('speechSynthesis' in window) window.speechSynthesis.cancel();
@@ -6368,24 +6407,9 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                       else if (activeGame === "train") startTrainGame();
                       else if (activeGame === "arrowRacer") startRacerGame();
                     }}
-                    className="flex-1 btn-bubbly-primary text-sm py-3"
-                  >
-                    العَب مجدداً 🔁
-                  </button>
-                  <button
-                    onClick={() => {
-                      try {
-                        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
-                      } catch (e) {}
-                      setShowVictoryModal(false);
-                      setVictoryBalloons([]);
-                      setConfetti([]);
-                      setActiveGame("menu");
-                      setStarsEarnedThisSession(0);
-                    }}
                     className="flex-1 btn-bubbly-secondary text-sm py-3"
                   >
-                    القائمة الرئيسية 🏠
+                    إعادة الدور 🔁
                   </button>
                 </div>
 

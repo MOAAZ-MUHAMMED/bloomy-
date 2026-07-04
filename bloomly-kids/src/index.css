@@ -429,15 +429,38 @@
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
   
-  /* Sidebar handling in portrait */
+  /* Sidebar handling in portrait (always side-by-side) */
   .quran-main-panel {
-    flex-direction: column !important;
+    flex-direction: row-reverse !important;
+    padding: 0.25rem !important;
+    gap: 0.25rem !important;
   }
   .quran-surah-sidebar {
+    width: 100px !important;
+    flex-shrink: 0 !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    overflow-y: auto !important;
+    padding: 0.25rem !important;
+    border-radius: 12px !important;
+  }
+  .quran-surah-sidebar h3 {
+    display: none !important;
+  }
+  .quran-surah-sidebar button {
     width: 100% !important;
-    height: auto !important;
-    flex-direction: row !important;
-    overflow-x: auto !important;
+    padding: 0.25rem 0.15rem !important;
+    font-size: 0.65rem !important;
+  }
+  .quran-verse-board {
+    padding: 0.35rem !important;
+    border-radius: 12px !important;
+  }
+  .quran-verse-list {
+    max-height: 70vh !important;
+  }
+  .quran-verse-list p {
+    font-size: 0.95rem !important;
   }
   .story-main-wrapper {
     flex-direction: column !important;
