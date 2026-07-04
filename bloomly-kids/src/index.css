@@ -302,10 +302,10 @@
 
   /* Quran Island Landscape Overrides */
   .quran-main-panel {
-    flex-direction: row !important;
+    flex-direction: row-reverse !important;
     padding: 0.35rem !important;
     gap: 0.5rem !important;
-    height: calc(100vh - 54px) !important;
+    height: 96vh !important;
   }
   .quran-surah-sidebar {
     width: 170px !important;
@@ -335,7 +335,7 @@
     font-size: 0.95rem !important;
   }
   .quran-verse-list {
-    max-height: 48vh !important;
+    max-height: 65vh !important;
     margin-bottom: 0.25rem !important;
   }
   .quran-verse-list p {

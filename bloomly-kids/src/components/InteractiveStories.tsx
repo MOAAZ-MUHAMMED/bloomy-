@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Play, Square, ChevronLeft, ChevronRight, BookOpen } from "lucide-react";
+import { ScreenOrientation } from '@capacitor/screen-orientation';
 
 interface StoryPage {
   id: number;
@@ -745,6 +746,22 @@ export default function InteractiveStories({ onClose, globalStars, setGlobalStar
 
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
+  // Lock screen orientation to landscape on mobile
+  useEffect(() => {
+    try {
+      if (ScreenOrientation) {
+        ScreenOrientation.lock({ orientation: 'landscape' }).catch(() => {});
+      }
+    } catch (e) {}
+    return () => {
+      try {
+        if (ScreenOrientation) {
+          ScreenOrientation.unlock().catch(() => {});
+        }
+      } catch (e) {}
+    };
+  }, []);
+
   const triggerNotice = (text: string) => {
     setNoticeText(text);
     setTimeout(() => setNoticeText(null), 2500);
@@ -880,36 +897,25 @@ export default function InteractiveStories({ onClose, globalStars, setGlobalStar
   };
 
   return (
-    <div className="fixed inset-0 z-[9990] bg-gradient-to-b from-[#FFFDF0] via-[#FAF7FD] to-[#FFFCE6] select-none font-sans flex flex-col justify-between overflow-hidden">
+    <div className="fixed inset-0 z-[9990] bg-gradient-to-b from-[#FFFDF0] via-[#FAF7FD] to-[#FFFCE6] select-none font-sans flex flex-col justify-between overflow-y-auto">
       
-      {/* 1. Header Area */}
-      <header className="w-full bg-white/90 backdrop-blur-md border-b-4 border-[#4D2B82] p-4 flex items-center justify-between shadow-md relative z-30">
+      {/* Floating Exit Button and Stars Indicator */}
+      <div className="absolute top-4 right-4 z-[9990] flex items-center gap-3 select-none pointer-events-auto">
+        <div className="flex items-center gap-1.5 bg-[#FFFCE6] border-3 border-[#D97706] text-[#D97706] font-black text-sm px-4 py-2 rounded-full shadow-lg">
+          <span className="text-lg text-yellow-400">★</span>
+          <span>نجومك: {globalStars}</span>
+        </div>
+        
         <button
           onClick={() => {
             handleStopVoiceover();
             onClose();
           }}
-          className="btn-bubbly-secondary text-sm py-2 px-5 text-[#4D2B82] bg-white rounded-full flex items-center gap-1 cursor-pointer border-2 border-[#4D2B82] shadow-[0_4px_0_0_#4D2B82] active:translate-y-1 active:shadow-none transition-all"
+          className="w-12 h-12 bg-white hover:bg-red-50 text-red-500 rounded-full flex items-center justify-center cursor-pointer border-3 border-[#4D2B82] shadow-[0_4px_0_0_#4D2B82] active:translate-y-1 active:shadow-none transition-all"
         >
-          <X className="w-4 h-4" />
-          <span>العودة للرئيسية</span>
+          <X className="w-6 h-6 stroke-[3px]" />
         </button>
-
-        <div className="text-center">
-          <h1 className="text-2xl sm:text-3xl font-black text-[#4D2B82] tracking-wide flex items-center gap-2 justify-center">
-            قصص بلومي التفاعلية المصورة 📚✨
-          </h1>
-          <p className="text-xs font-bold text-emerald-600">
-            شاهد الرسومات، استمع للقصة، وتتبع الكلمات المقروءة لتقرأ مثل الكبار!
-          </p>
-        </div>
-
-        {/* Global Stars */}
-        <div className="flex items-center gap-1.5 bg-[#FFFCE6] border-2 border-[#D97706] text-[#D97706] font-extrabold text-sm px-4 py-1.5 rounded-full shadow-inner">
-          <span className="text-lg text-yellow-400">★</span>
-          <span>نجومك: {globalStars}</span>
-        </div>
-      </header>
+      </div>
 
       {/* 2. Notice Banner */}
       <AnimatePresence>
@@ -930,7 +936,7 @@ export default function InteractiveStories({ onClose, globalStars, setGlobalStar
       </AnimatePresence>
 
       {/* 3. Main Workspace Area */}
-      <main className="flex-grow w-full flex items-center justify-center p-6 relative z-10 overflow-hidden">
+      <main className="flex-grow w-full flex items-center justify-center p-6 relative z-10 overflow-y-auto overflow-x-hidden min-h-0">
         
         <AnimatePresence mode="wait">
           {!activeStory ? (

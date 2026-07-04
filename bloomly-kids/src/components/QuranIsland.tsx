@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Play, Square, RotateCcw, Volume2, Mic, CheckCircle } from "lucide-react";
+import { ScreenOrientation } from '@capacitor/screen-orientation';
 
 interface Surah {
   id: number;
@@ -97,6 +98,22 @@ export default function QuranIsland({ onClose, globalStars, setGlobalStars }: Qu
   const playbackRef = useRef<HTMLAudioElement | null>(null);
 
   const [noticeText, setNoticeText] = useState<string | null>(null);
+
+  // Lock screen orientation to landscape on mobile
+  useEffect(() => {
+    try {
+      if (ScreenOrientation) {
+        ScreenOrientation.lock({ orientation: 'landscape' }).catch(() => {});
+      }
+    } catch (e) {}
+    return () => {
+      try {
+        if (ScreenOrientation) {
+          ScreenOrientation.unlock().catch(() => {});
+        }
+      } catch (e) {}
+    };
+  }, []);
 
   const triggerNotice = (text: string) => {
     setNoticeText(text);
@@ -258,34 +275,23 @@ export default function QuranIsland({ onClose, globalStars, setGlobalStars }: Qu
   return (
     <div className="fixed inset-0 z-[9990] bg-gradient-to-b from-[#E0F2FE] via-[#F0FDFA] to-[#FAF7FD] select-none font-sans flex flex-col justify-between overflow-hidden">
       
-      {/* 1. Header Navigation */}
-      <header className="w-full bg-white/90 backdrop-blur-md border-b-4 border-[#4D2B82] p-4 flex items-center justify-between shadow-md relative z-30">
+      {/* Floating Exit Button and Stars Indicator */}
+      <div className="absolute top-4 right-4 z-[9990] flex items-center gap-3 select-none pointer-events-auto">
+        <div className="flex items-center gap-1.5 bg-[#FFFCE6] border-3 border-[#D97706] text-[#D97706] font-black text-sm px-4 py-2 rounded-full shadow-lg">
+          <span className="text-lg text-yellow-400">★</span>
+          <span>نجومك: {globalStars}</span>
+        </div>
+        
         <button
           onClick={() => {
             stopPlaying();
             onClose();
           }}
-          className="btn-bubbly-secondary text-sm py-2 px-5 text-[#4D2B82] bg-white rounded-full flex items-center gap-1 cursor-pointer border-2 border-[#4D2B82] shadow-[0_4px_0_0_#4D2B82] active:translate-y-1 active:shadow-none transition-all"
+          className="w-12 h-12 bg-white hover:bg-red-50 text-red-500 rounded-full flex items-center justify-center cursor-pointer border-3 border-[#4D2B82] shadow-[0_4px_0_0_#4D2B82] active:translate-y-1 active:shadow-none transition-all"
         >
-          <X className="w-4 h-4" />
-          <span>العودة للرئيسية</span>
+          <X className="w-6 h-6 stroke-[3px]" />
         </button>
-
-        <div className="text-center">
-          <h1 className="text-2xl sm:text-3xl font-black text-[#4D2B82] tracking-wide flex items-center gap-2 justify-center">
-            جزيرة القرآن الكريم والآيات 🕋✨
-          </h1>
-          <p className="text-xs font-bold text-emerald-600">
-            كرر الآيات لتسهيل الحفظ، سجل صوتك بالتلاوة، واكسب ٢٠ نجمة مضاعفة!
-          </p>
-        </div>
-
-        {/* Global Stars */}
-        <div className="flex items-center gap-1.5 bg-[#FFFCE6] border-2 border-[#D97706] text-[#D97706] font-extrabold text-sm px-4 py-1.5 rounded-full shadow-inner">
-          <span className="text-lg text-yellow-400">★</span>
-          <span>نجومك: {globalStars}</span>
-        </div>
-      </header>
+      </div>
 
       {/* 2. Notice Banner */}
       <AnimatePresence>

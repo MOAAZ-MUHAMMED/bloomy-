@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Volume2, VolumeX, Sparkles, Droplet, Clock } from "lucide-react";
+import { ScreenOrientation } from '@capacitor/screen-orientation';
 
 // Web Audio API Synthesizer for Garden Sounds
 class GardenSoundSynth {
@@ -456,7 +457,24 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
   const [activePlotId, setActivePlotId] = useState<number | null>(null);
   const [showSeedShop, setShowSeedShop] = useState(false);
   const [showAnimalShop, setShowAnimalShop] = useState(false);
+  const [selectedPaddockToBuy, setSelectedPaddockToBuy] = useState<"sheep" | "rabbit" | "duck" | "pet" | null>(null);
   const [noticeText, setNoticeText] = useState<string | null>(null);
+
+  // Lock screen orientation to landscape on mobile
+  useEffect(() => {
+    try {
+      if (ScreenOrientation) {
+        ScreenOrientation.lock({ orientation: 'landscape' }).catch(() => {});
+      }
+    } catch (e) {}
+    return () => {
+      try {
+        if (ScreenOrientation) {
+          ScreenOrientation.unlock().catch(() => {});
+        }
+      } catch (e) {}
+    };
+  }, []);
   
   // Time updates trigger
   const [timeTick, setTimeTick] = useState(0);
@@ -766,45 +784,23 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
         )}
       </AnimatePresence>
 
-      {/* 1. Header Navigation */}
-      <header className="garden-header w-full bg-white/90 backdrop-blur-md border-b-4 border-[#4D2B82] p-4 flex items-center justify-between shadow-md relative z-30">
+      {/* Floating Exit Button and Stars Indicator */}
+      <div className="absolute top-4 right-4 z-[9990] flex items-center gap-3 select-none pointer-events-auto">
+        <div className="flex items-center gap-1.5 bg-[#FFFCE6] border-3 border-[#D97706] text-[#D97706] font-black text-sm px-4 py-2 rounded-full shadow-lg">
+          <span className="text-lg text-yellow-400">★</span>
+          <span>نجومك: {globalStars}</span>
+        </div>
+        
         <button
           onClick={() => {
             synth.playPop();
             onClose();
           }}
-          className="btn-bubbly-secondary text-sm py-2 px-5 text-[#4D2B82] bg-white rounded-full flex items-center gap-1 cursor-pointer border-2 border-[#4D2B82] shadow-[0_4px_0_0_#4D2B82] active:translate-y-1 active:shadow-none transition-all"
+          className="w-12 h-12 bg-white hover:bg-red-50 text-red-500 rounded-full flex items-center justify-center cursor-pointer border-3 border-[#4D2B82] shadow-[0_4px_0_0_#4D2B82] active:translate-y-1 active:shadow-none transition-all"
         >
-          <X className="w-4 h-4" />
-          <span>العودة للرئيسية</span>
+          <X className="w-6 h-6 stroke-[3px]" />
         </button>
-
-        <div className="text-center">
-          <h1 className="text-2xl sm:text-3xl font-black text-[#4D2B82] tracking-wide flex items-center gap-2 justify-center">
-            مزرعتك السحرية الكبيرة من الأعلى 🌿🛸
-          </h1>
-          <p className="text-xs font-bold text-emerald-600">
-            أقسام حظائر الحيوانات بحد أقصى ١٢، و٢٠ شجرة مع مؤقت ٣٠ دقيقة!
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button
-            onClick={() => {
-              synth.playPop();
-              setShowAnimalShop(true);
-            }}
-            className="btn-bubbly-primary text-xs py-2 px-4 flex items-center gap-1.5"
-          >
-            🐾 متجر حظائر الحيوانات
-          </button>
-
-          <div className="flex items-center gap-1.5 bg-[#FFFCE6] border-2 border-[#D97706] text-[#D97706] font-extrabold text-sm px-4 py-1.5 rounded-full shadow-inner">
-            <span className="text-lg text-yellow-400">★</span>
-            <span>نجومك: {globalStars}</span>
-          </div>
-        </div>
-      </header>
+      </div>
 
       {/* 2. Notification Overlay Banner */}
       <AnimatePresence>
@@ -845,7 +841,8 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
 
           {/* 1. DUCK POND (بحيرة البط) */}
           <div 
-            className="absolute left-[50px] top-[60px] w-[360px] h-[260px] bg-gradient-to-tr from-[#93C5FD] to-[#3B82F6] rounded-[60px] border-4 border-[#1E3A8A] shadow-lg flex flex-col justify-between p-4 overflow-hidden z-10"
+            onClick={() => { synth.playPop(); setSelectedPaddockToBuy("duck"); }}
+            className="absolute left-[50px] top-[60px] w-[360px] h-[260px] bg-gradient-to-tr from-[#93C5FD] to-[#3B82F6] rounded-[60px] border-4 border-[#1E3A8A] shadow-lg flex flex-col justify-between p-4 overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
           >
             <div className="text-white font-black text-xs bg-blue-900/60 w-fit px-2.5 py-0.5 rounded-full">
               🦆 بحيرة البط ({duckCount}/12)
@@ -867,7 +864,8 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
 
           {/* 2. RABBIT PADDOCK (حظيرة الأرانب) */}
           <div 
-            className="absolute left-[880px] top-[60px] w-[320px] h-[240px] bg-[#C5E1A5] rounded-[32px] border-4 border-[#33691E] shadow-md p-3 flex flex-col justify-between overflow-hidden z-10"
+            onClick={() => { synth.playPop(); setSelectedPaddockToBuy("rabbit"); }}
+            className="absolute left-[880px] top-[60px] w-[320px] h-[240px] bg-[#C5E1A5] rounded-[32px] border-4 border-[#33691E] shadow-md p-3 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
           >
             <div className="text-[#33691E] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#33691E]">
               🐰 حظيرة الأرانب ({rabbitCount}/12)
@@ -889,7 +887,8 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
 
           {/* 3. SHEEP PADDOCK (حظيرة الخراف) */}
           <div 
-            className="absolute left-[50px] top-[480px] w-[350px] h-[280px] bg-[#E8F5E9] rounded-[40px] border-4 border-[#1B5E20] shadow-md p-4 flex flex-col justify-between overflow-hidden z-10"
+            onClick={() => { synth.playPop(); setSelectedPaddockToBuy("sheep"); }}
+            className="absolute left-[50px] top-[480px] w-[350px] h-[280px] bg-[#E8F5E9] rounded-[40px] border-4 border-[#1B5E20] shadow-md p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
           >
             <div className="text-[#1B5E20] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#1B5E20]">
               🐑 حظيرة الخراف ({sheepCount}/12)
@@ -910,7 +909,8 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
 
           {/* 4. CAT & DOG PADDOCK (حظيرة القطط والكلاب) */}
           <div 
-            className="absolute left-[1050px] top-[480px] w-[380px] h-[300px] bg-[#FFE0B2] rounded-[40px] border-4 border-[#E65100] shadow-md p-4 flex flex-col justify-between overflow-hidden z-10"
+            onClick={() => { synth.playPop(); setSelectedPaddockToBuy("pet"); }}
+            className="absolute left-[1050px] top-[480px] w-[380px] h-[300px] bg-[#FFE0B2] rounded-[40px] border-4 border-[#E65100] shadow-md p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
           >
             <div className="text-[#E65100] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#E65100]">
               🐱🐶 حظيرة الأصدقاء ({petCount}/12)
@@ -1081,6 +1081,89 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                   </button>
                 ))}
               </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* 4.5. Paddock Animal Purchase Modal */}
+      <AnimatePresence>
+        {selectedPaddockToBuy && (
+          <div className="fixed inset-0 z-[9995] flex items-center justify-center p-4 bg-black/55 select-none">
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="w-full max-w-sm bg-white border-4 border-[#4D2B82] rounded-[32px] p-6 shadow-2xl relative text-center"
+            >
+              <button
+                onClick={() => {
+                  synth.playPop();
+                  setSelectedPaddockToBuy(null);
+                }}
+                className="absolute top-4 right-4 text-gray-400 hover:text-[#4D2B82] cursor-pointer"
+              >
+                <X className="w-6 h-6" />
+              </button>
+              
+              <div className="text-5xl mb-3 mt-4">
+                {selectedPaddockToBuy === "sheep" ? "🐑" :
+                 selectedPaddockToBuy === "rabbit" ? "🐰" :
+                 selectedPaddockToBuy === "duck" ? "🦆" : "🐱🐶"}
+              </div>
+
+              <h3 className="text-xl font-black text-[#4D2B82] mb-1">
+                {selectedPaddockToBuy === "sheep" ? "حظيرة الخراف 🐑" :
+                 selectedPaddockToBuy === "rabbit" ? "حظيرة الأرانب 🐰" :
+                 selectedPaddockToBuy === "duck" ? "بحيرة البط 🦆" : "حظيرة القطط والكلاب 🐱🐶"}
+              </h3>
+              
+              <p className="text-xs font-bold text-gray-500 mb-6">
+                {selectedPaddockToBuy === "sheep" ? `عدد الخراف الحالي: ${sheepCount}/12` :
+                 selectedPaddockToBuy === "rabbit" ? `عدد الأرانب الحالي: ${rabbitCount}/12` :
+                 selectedPaddockToBuy === "duck" ? `عدد البط الحالي: ${duckCount}/12` :
+                 `عدد الأصدقاء الحالي: ${petCount}/12`}
+              </p>
+
+              <div className="flex gap-3 justify-center">
+                <button
+                  onClick={() => {
+                    synth.playPop();
+                    const cost = selectedPaddockToBuy === "sheep" ? 20 :
+                                 selectedPaddockToBuy === "rabbit" ? 15 :
+                                 selectedPaddockToBuy === "duck" ? 22 : 25;
+                    const name = selectedPaddockToBuy === "sheep" ? "الخراف" :
+                                 selectedPaddockToBuy === "rabbit" ? "الأرانب" :
+                                 selectedPaddockToBuy === "duck" ? "البط" : "الأصدقاء";
+                    handleBuyAnimal(selectedPaddockToBuy, cost, name);
+                    setSelectedPaddockToBuy(null);
+                  }}
+                  disabled={
+                    (selectedPaddockToBuy === "sheep" && sheepCount >= 12) ||
+                    (selectedPaddockToBuy === "rabbit" && rabbitCount >= 12) ||
+                    (selectedPaddockToBuy === "duck" && duckCount >= 12) ||
+                    (selectedPaddockToBuy === "pet" && petCount >= 12)
+                  }
+                  className="bg-yellow-400 hover:bg-yellow-500 disabled:bg-gray-200 disabled:text-gray-400 text-yellow-900 border-3 border-yellow-600 px-6 py-2.5 rounded-full font-black text-sm cursor-pointer shadow-[0_3px_0_0_#D97706] active:translate-y-0.5 active:shadow-none"
+                >
+                  شراء (
+                  {selectedPaddockToBuy === "sheep" ? 20 :
+                   selectedPaddockToBuy === "rabbit" ? 15 :
+                   selectedPaddockToBuy === "duck" ? 22 : 25}
+                  ⭐)
+                </button>
+                
+                <button
+                  onClick={() => {
+                    synth.playPop();
+                    setSelectedPaddockToBuy(null);
+                  }}
+                  className="bg-white hover:bg-gray-50 border-3 border-gray-300 px-6 py-2.5 rounded-full font-black text-sm text-gray-500 cursor-pointer shadow-[0_3px_0_0_#94A3B8] active:translate-y-0.5 active:shadow-none"
+                >
+                  إلغاء
+                </button>
+              </div>
+
             </motion.div>
           </div>
         )}
