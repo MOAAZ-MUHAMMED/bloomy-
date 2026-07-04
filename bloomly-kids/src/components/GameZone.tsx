@@ -3331,7 +3331,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
   };
 
   return (
-    <section id="game-zone" ref={gameZoneRef} className="container mx-auto px-4 py-20 relative z-20">
+    <section id="game-zone" ref={gameZoneRef} className={activeGame === "menu" ? "container mx-auto px-4 py-20 relative z-20" : "fixed inset-0 z-[9900] bg-[#FAF7FD] overflow-y-auto p-4 md:p-8 flex items-center justify-center select-none"}>
       
       {/* self-contained CSS for victory balloons & colorful shapes */}
       <style dangerouslySetInnerHTML={{__html: `
@@ -3553,7 +3553,8 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
 
 
       {/* Global Star Indicator Header */}
-      <div className="flex flex-col sm:flex-row items-center justify-between bg-white border-3 border-[#4D2B82] rounded-[24px] p-6 mb-12 shadow-[0_6px_0_0_#4D2B82] gap-4">
+      {activeGame === "menu" && (
+        <div className="flex flex-col sm:flex-row items-center justify-between bg-white border-3 border-[#4D2B82] rounded-[24px] p-6 mb-12 shadow-[0_6px_0_0_#4D2B82] gap-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-[#E8F5E9] border-2 border-[#4CAF50] flex items-center justify-center text-2xl">
             🎮
@@ -3575,12 +3576,13 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
           <span>مجموع نجومك: {globalStars}</span>
         </motion.div>
       </div>
+      )}
 
       {/* 3. Themed Level Map Screen */}
       {activeGame !== "menu" && showLevelMap && (() => {
         const theme = getMapTheme();
         return (
-          <div className={`relative min-h-[500px] w-full rounded-[32px] border-4 border-[#4D2B82] ${theme.bgClass} p-8 overflow-hidden shadow-2xl flex flex-col items-center justify-between text-white font-extrabold select-none z-10`}>
+          <div className={`relative min-h-[500px] w-full max-w-4xl mx-auto rounded-[32px] border-4 border-[#4D2B82] ${theme.bgClass} p-8 overflow-hidden shadow-2xl flex flex-col items-center justify-between text-white font-extrabold select-none z-10`}>
             
             {/* Background elements / Floating clouds */}
             <div className="absolute inset-0 pointer-events-none opacity-20">

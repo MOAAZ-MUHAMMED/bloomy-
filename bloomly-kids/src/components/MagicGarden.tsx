@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Award, Volume2, VolumeX, Sparkle } from "lucide-react";
+import { X, Volume2, VolumeX, Sparkles, Droplet, Clock } from "lucide-react";
 
 // Web Audio API Synthesizer for Garden Sounds
 class GardenSoundSynth {
@@ -36,7 +36,7 @@ class GardenSoundSynth {
       osc.start(now);
       osc.stop(now + 0.08);
     } catch (e) {
-      console.warn("Synth failed:", e);
+      console.warn(e);
     }
   }
 
@@ -45,17 +45,14 @@ class GardenSoundSynth {
       this.initCtx();
       if (!this.ctx) return;
       const now = this.ctx.currentTime;
-      
       const bufferSize = this.ctx.sampleRate * 0.45;
       const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
       const data = buffer.getChannelData(0);
       for (let i = 0; i < bufferSize; i++) {
         data[i] = Math.random() * 2 - 1;
       }
-      
       const noise = this.ctx.createBufferSource();
       noise.buffer = buffer;
-      
       const filter = this.ctx.createBiquadFilter();
       filter.type = "bandpass";
       filter.frequency.setValueAtTime(1400, now);
@@ -73,11 +70,10 @@ class GardenSoundSynth {
       const osc = this.ctx.createOscillator();
       const oscGain = this.ctx.createGain();
       osc.type = "sine";
-      osc.frequency.setValueAtTime(987.77, now); // B5
-      osc.frequency.exponentialRampToValueAtTime(1479.98, now + 0.25); // F#6
+      osc.frequency.setValueAtTime(987.77, now);
+      osc.frequency.exponentialRampToValueAtTime(1479.98, now + 0.25);
       oscGain.gain.setValueAtTime(0.06, now);
       oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-      
       osc.connect(oscGain);
       oscGain.connect(this.ctx.destination);
 
@@ -86,7 +82,7 @@ class GardenSoundSynth {
       osc.start(now);
       osc.stop(now + 0.3);
     } catch (e) {
-      console.warn("Synth failed:", e);
+      console.warn(e);
     }
   }
 
@@ -109,7 +105,7 @@ class GardenSoundSynth {
         osc.stop(now + idx * 0.07 + 0.4);
       });
     } catch (e) {
-      console.warn("Synth failed:", e);
+      console.warn(e);
     }
   }
 
@@ -132,313 +128,228 @@ class GardenSoundSynth {
         osc.stop(now + idx * 0.05 + 0.3);
       });
     } catch (e) {
-      console.warn("Synth failed:", e);
+      console.warn(e);
     }
   }
 }
 
 const synth = new GardenSoundSynth();
 
-// Vector SVG Illustrations for pets
-export function SVGBunny({ className = "w-16 h-16" }: { className?: string }) {
+// --- Vector SVGs for Animals ---
+export function SVGBunny({ className = "w-12 h-12", isEating = false }: { className?: string; isEating?: boolean }) {
   return (
-    <svg viewBox="0 0 100 100" className={className}>
-      {/* Ears */}
+    <motion.svg 
+      viewBox="0 0 100 100" 
+      className={className}
+      animate={isEating ? { rotate: [0, 15, 0, 15, 0], y: [0, 4, 0, 4, 0] } : {}}
+      transition={{ duration: 1.5 }}
+    >
       <ellipse cx="38" cy="20" rx="7" ry="18" fill="#FFFFFF" stroke="#4D2B82" strokeWidth="3" />
       <ellipse cx="38" cy="20" rx="3.5" ry="12" fill="#FFC0CB" />
       <ellipse cx="62" cy="20" rx="7" ry="18" fill="#FFFFFF" stroke="#4D2B82" strokeWidth="3" />
       <ellipse cx="62" cy="20" rx="3.5" ry="12" fill="#FFC0CB" />
-      {/* Body */}
       <circle cx="50" cy="72" r="24" fill="#FFFFFF" stroke="#4D2B82" strokeWidth="3" />
-      {/* Head */}
       <circle cx="50" cy="46" r="18" fill="#FFFFFF" stroke="#4D2B82" strokeWidth="3" />
-      {/* Eyes */}
       <circle cx="43" cy="43" r="2.5" fill="#4D2B82" />
       <circle cx="57" cy="43" r="2.5" fill="#4D2B82" />
-      {/* Rosy cheeks */}
       <circle cx="36" cy="49" r="3" fill="#FF8A8A" opacity="0.6" />
       <circle cx="64" cy="49" r="3" fill="#FF8A8A" opacity="0.6" />
-      {/* Nose/Mouth */}
       <polygon points="50,48 47,45 53,45" fill="#FF659F" />
       <path d="M 47 52 Q 50 55 53 52" stroke="#4D2B82" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-      {/* Feet */}
       <ellipse cx="36" cy="92" rx="8" ry="5" fill="#FFFFFF" stroke="#4D2B82" strokeWidth="3" />
       <ellipse cx="64" cy="92" rx="8" ry="5" fill="#FFFFFF" stroke="#4D2B82" strokeWidth="3" />
-      {/* Fluffy tail */}
       <circle cx="74" cy="74" r="7" fill="#FFFFFF" stroke="#4D2B82" strokeWidth="2.5" />
-    </svg>
+    </motion.svg>
   );
 }
 
-export function SVGKitty({ className = "w-16 h-16" }: { className?: string }) {
+export function SVGKitty({ className = "w-12 h-12", isEating = false }: { className?: string; isEating?: boolean }) {
   return (
-    <svg viewBox="0 0 100 100" className={className}>
-      {/* Tail */}
+    <motion.svg 
+      viewBox="0 0 100 100" 
+      className={className}
+      animate={isEating ? { rotate: [0, -10, 0, -10, 0], y: [0, 3, 0, 3, 0] } : {}}
+      transition={{ duration: 1.5 }}
+    >
       <path d="M 75 75 Q 85 60 78 45" stroke="#FBBF24" strokeWidth="6" fill="none" strokeLinecap="round" />
-      <path d="M 75 75 Q 85 60 78 45" stroke="#D97706" strokeWidth="2" fill="none" strokeLinecap="round" />
-      {/* Ears */}
       <polygon points="32,32 30,12 48,22" fill="#FBBF24" stroke="#4D2B82" strokeWidth="3" />
       <polygon points="34,28 33,16 45,22" fill="#FCA5A5" />
       <polygon points="68,32 70,12 52,22" fill="#FBBF24" stroke="#4D2B82" strokeWidth="3" />
       <polygon points="66,28 67,16 55,22" fill="#FCA5A5" />
-      {/* Body */}
       <ellipse cx="50" cy="70" rx="20" ry="22" fill="#FBBF24" stroke="#4D2B82" strokeWidth="3" />
-      {/* Stripes */}
-      <path d="M 33 65 Q 40 68 33 71" stroke="#D97706" strokeWidth="2.5" fill="none" />
-      <path d="M 67 65 Q 60 68 67 71" stroke="#D97706" strokeWidth="2.5" fill="none" />
-      {/* Head */}
       <circle cx="50" cy="40" r="18" fill="#FBBF24" stroke="#4D2B82" strokeWidth="3" />
-      {/* Eyes */}
       <ellipse cx="43" cy="38" rx="3.5" ry="4.5" fill="#10B981" stroke="#4D2B82" strokeWidth="1.5" />
-      <circle cx="42.5" cy="36.5" r="1" fill="#FFFFFF" />
       <ellipse cx="57" cy="38" rx="3.5" ry="4.5" fill="#10B981" stroke="#4D2B82" strokeWidth="1.5" />
-      <circle cx="56.5" cy="36.5" r="1" fill="#FFFFFF" />
-      {/* Rosy cheeks */}
-      <circle cx="36" cy="44" r="2.5" fill="#FF8A8A" opacity="0.6" />
-      <circle cx="64" cy="44" r="2.5" fill="#FF8A8A" opacity="0.6" />
-      {/* Nose */}
       <polygon points="50,42 47,40 53,40" fill="#FF8A8A" />
-      {/* Mouth */}
       <path d="M 46 45 Q 50 48 54 45" stroke="#4D2B82" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-      {/* Whiskers */}
-      <line x1="26" y1="43" x2="16" y2="41" stroke="#4D2B82" strokeWidth="2" strokeLinecap="round" />
-      <line x1="26" y1="46" x2="14" y2="47" stroke="#4D2B82" strokeWidth="2" strokeLinecap="round" />
-      <line x1="74" y1="43" x2="84" y2="41" stroke="#4D2B82" strokeWidth="2" strokeLinecap="round" />
-      <line x1="74" y1="46" x2="86" y2="47" stroke="#4D2B82" strokeWidth="2" strokeLinecap="round" />
-      {/* Feet */}
+      <line x1="26" y1="43" x2="16" y2="41" stroke="#4D2B82" strokeWidth="2" />
+      <line x1="74" y1="43" x2="84" y2="41" stroke="#4D2B82" strokeWidth="2" />
       <circle cx="36" cy="90" r="6" fill="#FBBF24" stroke="#4D2B82" strokeWidth="2.5" />
       <circle cx="64" cy="90" r="6" fill="#FBBF24" stroke="#4D2B82" strokeWidth="2.5" />
-    </svg>
+    </motion.svg>
   );
 }
 
-export function SVGDuck({ className = "w-16 h-16" }: { className?: string }) {
+export function SVGDuck({ className = "w-12 h-12", isEating = false }: { className?: string; isEating?: boolean }) {
   return (
-    <svg viewBox="0 0 100 100" className={className}>
-      {/* Tail feathers */}
+    <motion.svg 
+      viewBox="0 0 100 100" 
+      className={className}
+      animate={isEating ? { rotate: [0, 20, 0, 20, 0], y: [0, 4, 0, 4, 0] } : {}}
+      transition={{ duration: 1.5 }}
+    >
       <polygon points="20,55 8,45 22,40" fill="#FDE047" stroke="#4D2B82" strokeWidth="2.5" />
-      {/* Body */}
       <ellipse cx="48" cy="62" rx="26" ry="18" fill="#FDE047" stroke="#4D2B82" strokeWidth="3" />
-      {/* Wing */}
       <ellipse cx="48" cy="62" rx="14" ry="8" fill="#FFF59D" stroke="#4D2B82" strokeWidth="2" />
-      {/* Neck */}
       <path d="M 64 62 C 68 50 68 44 68 38" stroke="#FDE047" strokeWidth="15" strokeLinecap="round" />
-      <path d="M 58 64 L 58 60" stroke="#4D2B82" strokeWidth="3" />
-      {/* Head */}
       <circle cx="70" cy="30" r="14" fill="#FDE047" stroke="#4D2B82" strokeWidth="3" />
-      {/* Eye */}
       <circle cx="74" cy="27" r="2" fill="#4D2B82" />
-      <circle cx="73.5" cy="26" r="0.6" fill="#FFFFFF" />
-      {/* Bill (Orange) */}
-      <path d="M 82 28 Q 94 30 92 36 L 78 36 Z" fill="#F97316" stroke="#4D2B82" strokeWidth="2.5" strokeLinejoin="round" />
-      {/* Feet */}
+      <path d="M 82 28 Q 94 30 92 36 L 78 36 Z" fill="#F97316" stroke="#4D2B82" strokeWidth="2.5" />
       <ellipse cx="38" cy="81" rx="8" ry="4" fill="#F97316" stroke="#4D2B82" strokeWidth="2.5" />
       <ellipse cx="58" cy="81" rx="8" ry="4" fill="#F97316" stroke="#4D2B82" strokeWidth="2.5" />
-    </svg>
+    </motion.svg>
   );
 }
 
-export function SVGPuppy({ className = "w-16 h-16" }: { className?: string }) {
+export function SVGPuppy({ className = "w-12 h-12", isEating = false }: { className?: string; isEating?: boolean }) {
   return (
-    <svg viewBox="0 0 100 100" className={className}>
-      {/* Tail */}
+    <motion.svg 
+      viewBox="0 0 100 100" 
+      className={className}
+      animate={isEating ? { rotate: [0, 15, 0, 15, 0], y: [0, 3, 0, 3, 0] } : {}}
+      transition={{ duration: 1.5 }}
+    >
       <path d="M 76 72 Q 86 64 88 50" stroke="#8D6E63" strokeWidth="6" fill="none" strokeLinecap="round" />
-      {/* Body */}
       <ellipse cx="50" cy="72" rx="22" ry="18" fill="#BCAAA4" stroke="#4D2B82" strokeWidth="3" />
-      <circle cx="36" cy="74" r="8" fill="#8D6E63" />
-      {/* Ears */}
       <ellipse cx="30" cy="44" rx="6" ry="12" fill="#8D6E63" stroke="#4D2B82" strokeWidth="2.5" />
       <ellipse cx="70" cy="44" rx="6" ry="12" fill="#8D6E63" stroke="#4D2B82" strokeWidth="2.5" />
-      {/* Head */}
       <circle cx="50" cy="44" r="17" fill="#BCAAA4" stroke="#4D2B82" strokeWidth="3" />
       <ellipse cx="50" cy="48" rx="8" ry="6" fill="#FFFFFF" />
-      {/* Spot on eye */}
-      <circle cx="42" cy="40" r="5" fill="#8D6E63" />
-      {/* Eyes */}
       <circle cx="42" cy="40" r="2.5" fill="#4D2B82" />
       <circle cx="58" cy="40" r="2.5" fill="#4D2B82" />
-      {/* Nose */}
       <ellipse cx="50" cy="46" rx="3" ry="2" fill="#000000" />
-      {/* Tongue */}
       <path d="M 48 51 Q 50 59 52 51 Z" fill="#FF5A92" stroke="#4D2B82" strokeWidth="1.5" />
-      {/* Feet */}
       <circle cx="38" cy="90" r="6" fill="#8D6E63" stroke="#4D2B82" strokeWidth="2.5" />
       <circle cx="62" cy="90" r="6" fill="#8D6E63" stroke="#4D2B82" strokeWidth="2.5" />
-    </svg>
+    </motion.svg>
   );
 }
 
-// Vector SVG Illustrations for tree and plants growth stages
-export function SVGTree({ type, stage }: { type: "apple" | "orange"; stage: number }) {
-  const fruitColor = type === "apple" ? "#EF4444" : "#F97316";
+export function SVGSheep({ className = "w-12 h-12", isEating = false }: { className?: string; isEating?: boolean }) {
+  return (
+    <motion.svg 
+      viewBox="0 0 100 100" 
+      className={className}
+      animate={isEating ? { rotate: [0, 12, 0, 12, 0], y: [0, 5, 0, 5, 0] } : {}}
+      transition={{ duration: 1.5 }}
+    >
+      {/* Legs */}
+      <rect x="30" y="70" width="6" height="18" fill="#1F2937" rx="2" />
+      <rect x="42" y="72" width="6" height="18" fill="#1F2937" rx="2" />
+      <rect x="52" y="72" width="6" height="18" fill="#1F2937" rx="2" />
+      <rect x="64" y="70" width="6" height="18" fill="#1F2937" rx="2" />
+      {/* Puffy Body */}
+      <path d="M 28 50 C 22 45, 22 30, 32 30 C 28 18, 48 12, 54 22 C 58 12, 78 18, 74 30 C 84 30, 84 45, 78 50 C 84 62, 74 72, 64 70 C 58 78, 42 78, 36 70 C 22 72, 22 62, 28 50 Z" fill="#F3F4F6" stroke="#4D2B82" strokeWidth="3" strokeLinejoin="round" />
+      {/* Head */}
+      <ellipse cx="76" cy="42" rx="10" ry="12" fill="#1F2937" />
+      {/* Eyes */}
+      <circle cx="73" cy="39" r="1.5" fill="#FFFFFF" />
+      <circle cx="79" cy="39" r="1.5" fill="#FFFFFF" />
+      {/* Ears */}
+      <ellipse cx="66" cy="38" rx="4" ry="2" fill="#1F2937" transform="rotate(-20 66 38)" />
+      <ellipse cx="86" cy="38" rx="4" ry="2" fill="#1F2937" transform="rotate(20 86 38)" />
+    </motion.svg>
+  );
+}
+
+// --- Vector SVGs for Plants & Trees (Centered top-down versions) ---
+export function SVGTopDownPlant({ type, stage }: { type: "apple" | "orange" | "flower" | "sunflower"; stage: number }) {
+  const isTree = type === "apple" || type === "orange";
   const leafColor = "#22C55E";
 
   if (stage === 0) {
-    // Stage 0: Little seed sprouting out of rich soil pile
+    // Stage 0: Sprout in soil pile
     return (
-      <svg viewBox="0 0 100 100" className="w-24 h-24">
-        {/* Soil pile */}
-        <path d="M 15 85 Q 50 55 85 85 Z" fill="#5C4033" stroke="#4D2B82" strokeWidth="3.5" />
-        <path d="M 25 80 Q 50 65 75 80 Z" fill="#4E3629" />
-        {/* Little double-leaf sprout */}
-        <motion.path 
-          animate={{ scale: [1, 1.05, 1], rotate: [-2, 2, -2] }}
-          transition={{ repeat: Infinity, duration: 2 }}
-          d="M 50 62 C 45 52, 40 52, 38 56 C 36 60, 44 64, 50 62 C 56 64, 64 60, 62 56 C 60 52, 55 52, 50 62 M 50 62 L 50 72" 
-          stroke="#AEEA00" 
-          strokeWidth="3.5" 
-          fill="#AEEA00" 
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
+      <svg viewBox="0 0 100 100" className="w-16 h-16 mx-auto">
+        <circle cx="50" cy="50" r="30" fill="#5C4033" stroke="#4D2B82" strokeWidth="2.5" />
+        <ellipse cx="50" cy="50" rx="18" ry="10" fill="#4E3629" />
+        <path d="M 50 35 Q 40 25 42 32 Q 45 42 50 35 C 55 42, 58 32, 50 35" fill="#AEEA00" stroke="#4D2B82" strokeWidth="1.5" />
       </svg>
     );
   }
 
   if (stage === 1) {
-    // Stage 1: Budding leafy plant with a small stem
+    // Stage 1: Budding/Leaves
     return (
-      <svg viewBox="0 0 100 100" className="w-24 h-24">
-        {/* Soil base */}
-        <path d="M 20 85 Q 50 65 80 85 Z" fill="#5C4033" stroke="#4D2B82" strokeWidth="3" />
-        {/* Stem */}
-        <path d="M 50 85 L 50 45" stroke="#78350F" strokeWidth="5.5" strokeLinecap="round" />
-        {/* Leaves */}
-        <circle cx="38" cy="55" r="9" fill={leafColor} stroke="#4D2B82" strokeWidth="2.5" />
-        <circle cx="62" cy="55" r="9" fill={leafColor} stroke="#4D2B82" strokeWidth="2.5" />
-        <circle cx="50" cy="40" r="10" fill={leafColor} stroke="#4D2B82" strokeWidth="2.5" />
+      <svg viewBox="0 0 100 100" className="w-16 h-16 mx-auto">
+        <circle cx="50" cy="50" r="32" fill="#5C4033" stroke="#4D2B82" strokeWidth="2.5" />
+        <path d="M 50 50 L 50 25" stroke="#15803D" strokeWidth="4" />
+        <circle cx="36" cy="36" r="10" fill={leafColor} stroke="#4D2B82" strokeWidth="2" />
+        <circle cx="64" cy="36" r="10" fill={leafColor} stroke="#4D2B82" strokeWidth="2" />
       </svg>
     );
   }
 
   if (stage === 2) {
-    // Stage 2: Medium sized bushy tree without fruits
+    // Stage 2: Medium grown plant / Potted or Trunk with small canopy
     return (
-      <svg viewBox="0 0 100 100" className="w-28 h-28">
-        {/* Soil base */}
-        <path d="M 22 88 Q 50 74 78 88 Z" fill="#5C4033" stroke="#4D2B82" strokeWidth="3" />
-        {/* Trunk */}
-        <path d="M 50 88 L 50 50" stroke="#78350F" strokeWidth="9" strokeLinecap="round" />
-        {/* Bushy Green Canopy */}
-        <path 
-          d="M 32 50 C 20 50, 16 34, 30 25 C 22 10, 48 4, 50 16 C 52 4, 78 10, 70 25 C 84 34, 80 50, 68 50 Z" 
-          fill="#16A34A" 
-          stroke="#4D2B82" 
-          strokeWidth="3.5" 
-          strokeLinejoin="round" 
-        />
-        {/* Shadow details in canopy */}
-        <path d="M 38 42 C 44 38, 56 38, 62 42" stroke="#15803D" strokeWidth="4" fill="none" strokeLinecap="round" />
+      <svg viewBox="0 0 100 100" className="w-18 h-18 mx-auto">
+        <circle cx="50" cy="50" r="34" fill="#5C4033" stroke="#4D2B82" strokeWidth="2.5" />
+        {isTree ? (
+          <>
+            <circle cx="50" cy="50" r="28" fill="#16A34A" stroke="#4D2B82" strokeWidth="3" />
+            <circle cx="45" cy="45" r="18" fill="#4ADE80" opacity="0.4" />
+          </>
+        ) : (
+          <>
+            <path d="M 50 50 L 50 20" stroke="#15803D" strokeWidth="5" />
+            <circle cx="50" cy="20" r="12" fill="#FBBF24" stroke="#4D2B82" strokeWidth="2.5" />
+          </>
+        )}
       </svg>
     );
   }
 
-  // Stage 3: Fully bloomed and fruited gorgeous large tree
-  return (
-    <svg viewBox="0 0 120 120" className="w-32 h-32">
-      {/* Soil base */}
-      <path d="M 24 102 Q 60 88 96 102 Z" fill="#5C4033" stroke="#4D2B82" strokeWidth="3" />
-      {/* Trunk */}
-      <path d="M 60 102 L 60 55" stroke="#78350F" strokeWidth="12" strokeLinecap="round" />
-      <path d="M 60 65 L 42 48" stroke="#78350F" strokeWidth="6" strokeLinecap="round" />
-      <path d="M 60 60 L 78 46" stroke="#78350F" strokeWidth="6" strokeLinecap="round" />
-      
-      {/* Giant Bushy Green Canopy with vibrant gradients */}
-      <path 
-        d="M 40 55 C 22 55, 18 36, 36 26 C 26 8, 58 2, 60 18 C 62 2, 94 8, 84 26 C 102 36, 98 55, 80 55 Z" 
-        fill="url(#canopyGrad)" 
-        stroke="#4D2B82" 
-        strokeWidth="4" 
-        strokeLinejoin="round" 
-      />
-
-      {/* Hanging shiny fruits */}
-      <g>
-        {/* Fruit 1 */}
-        <circle cx="38" cy="38" r="7" fill={fruitColor} stroke="#4D2B82" strokeWidth="2.5" />
-        <path d="M 38 31 Q 40 28 38 29" stroke="#78350F" strokeWidth="1.5" fill="none" />
-        
-        {/* Fruit 2 */}
-        <circle cx="52" cy="46" r="7" fill={fruitColor} stroke="#4D2B82" strokeWidth="2.5" />
-        <path d="M 52 39 Q 54 36 52 37" stroke="#78350F" strokeWidth="1.5" fill="none" />
-        
-        {/* Fruit 3 */}
-        <circle cx="68" cy="36" r="7" fill={fruitColor} stroke="#4D2B82" strokeWidth="2.5" />
-        
-        {/* Fruit 4 */}
-        <circle cx="80" cy="44" r="7" fill={fruitColor} stroke="#4D2B82" strokeWidth="2.5" />
-      </g>
-
-      <defs>
-        <linearGradient id="canopyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#4ADE80" />
-          <stop offset="60%" stopColor="#16A34A" />
-          <stop offset="100%" stopColor="#14532D" />
-        </linearGradient>
-      </defs>
-    </svg>
-  );
-}
-
-export function SVGFlower({ type, stage }: { type: "flower" | "sunflower"; stage: number }) {
-  if (stage === 0) {
+  // Stage 3: Fully bloomed
+  if (type === "apple") {
     return (
-      <svg viewBox="0 0 100 100" className="w-24 h-24">
-        <path d="M 15 85 Q 50 55 85 85 Z" fill="#5C4033" stroke="#4D2B82" strokeWidth="3.5" />
-        <motion.path 
-          animate={{ scale: [1, 1.04, 1] }}
-          transition={{ repeat: Infinity, duration: 2.2 }}
-          d="M 50 62 C 45 52, 40 52, 38 56 C 36 60, 44 64, 50 62 C 56 64, 64 60, 62 56 M 50 62 L 50 72" 
-          stroke="#AEEA00" 
-          strokeWidth="3.5" 
-          fill="#AEEA00" 
-        />
+      <svg viewBox="0 0 100 100" className="w-22 h-22 mx-auto">
+        <circle cx="50" cy="50" r="35" fill="#5C4033" stroke="#4D2B82" strokeWidth="2.5" />
+        <circle cx="50" cy="50" r="38" fill="#16A34A" stroke="#4D2B82" strokeWidth="3.5" />
+        {/* Apples */}
+        <circle cx="36" cy="36" r="6" fill="#EF4444" stroke="#4D2B82" strokeWidth="1.5" />
+        <circle cx="64" cy="36" r="6" fill="#EF4444" stroke="#4D2B82" strokeWidth="1.5" />
+        <circle cx="42" cy="62" r="6" fill="#EF4444" stroke="#4D2B82" strokeWidth="1.5" />
+        <circle cx="60" cy="58" r="6" fill="#EF4444" stroke="#4D2B82" strokeWidth="1.5" />
       </svg>
     );
   }
 
-  if (stage === 1) {
+  if (type === "orange") {
     return (
-      <svg viewBox="0 0 100 100" className="w-24 h-24">
-        <path d="M 20 85 Q 50 65 80 85 Z" fill="#5C4033" stroke="#4D2B82" strokeWidth="3" />
-        <path d="M 50 85 L 50 52" stroke="#22C55E" strokeWidth="5.5" strokeLinecap="round" />
-        {/* Closed bud */}
-        <ellipse cx="50" cy="46" rx="8" ry="11" fill="#EF4444" stroke="#4D2B82" strokeWidth="2.5" />
-        <path d="M 44 50 C 47 42, 53 42, 56 50" fill="none" stroke="#22C55E" strokeWidth="2" />
+      <svg viewBox="0 0 100 100" className="w-22 h-22 mx-auto">
+        <circle cx="50" cy="50" r="35" fill="#5C4033" stroke="#4D2B82" strokeWidth="2.5" />
+        <circle cx="50" cy="50" r="38" fill="#16A34A" stroke="#4D2B82" strokeWidth="3.5" />
+        {/* Oranges */}
+        <circle cx="36" cy="36" r="6" fill="#F97316" stroke="#4D2B82" strokeWidth="1.5" />
+        <circle cx="64" cy="36" r="6" fill="#F97316" stroke="#4D2B82" strokeWidth="1.5" />
+        <circle cx="42" cy="62" r="6" fill="#F97316" stroke="#4D2B82" strokeWidth="1.5" />
+        <circle cx="60" cy="58" r="6" fill="#F97316" stroke="#4D2B82" strokeWidth="1.5" />
       </svg>
     );
   }
 
-  if (stage === 2) {
-    return (
-      <svg viewBox="0 0 100 100" className="w-24 h-24">
-        <path d="M 20 85 Q 50 65 80 85 Z" fill="#5C4033" stroke="#4D2B82" strokeWidth="3" />
-        <path d="M 50 85 L 50 42" stroke="#22C55E" strokeWidth="6" strokeLinecap="round" />
-        {/* Semi open flower */}
-        <circle cx="50" cy="34" r="14" fill="#FBBF24" stroke="#4D2B82" strokeWidth="3" />
-        <path d="M 40 34 C 44 26, 56 26, 60 34" fill="none" stroke="#F59E0B" strokeWidth="2" />
-      </svg>
-    );
-  }
-
-  // Stage 3: Fully bloomed and gorgeous flower (Rose or Sunflower)
   if (type === "flower") {
     return (
-      <svg viewBox="0 0 100 100" className="w-28 h-28">
-        <path d="M 20 90 Q 50 72 80 90 Z" fill="#5C4033" stroke="#4D2B82" strokeWidth="3" />
-        <path d="M 50 90 L 50 45" stroke="#22C55E" strokeWidth="7" strokeLinecap="round" />
-        <path d="M 50 65 Q 36 60 40 55" stroke="#22C55E" strokeWidth="4.5" fill="none" strokeLinecap="round" />
-        
-        {/* Rose Petals (Vector Layering) */}
-        <g>
-          {/* Outer petals */}
-          <circle cx="34" cy="38" r="13" fill="#EC4899" stroke="#4D2B82" strokeWidth="2.5" />
-          <circle cx="66" cy="38" r="13" fill="#EC4899" stroke="#4D2B82" strokeWidth="2.5" />
-          <circle cx="50" cy="22" r="13" fill="#EC4899" stroke="#4D2B82" strokeWidth="2.5" />
-          <circle cx="50" cy="54" r="13" fill="#EC4899" stroke="#4D2B82" strokeWidth="2.5" />
-          {/* Inner petals */}
-          <circle cx="50" cy="38" r="14" fill="#F43F5E" stroke="#4D2B82" strokeWidth="3" />
-          <circle cx="50" cy="38" r="7" fill="#E11D48" />
+      <svg viewBox="0 0 100 100" className="w-20 h-20 mx-auto">
+        <circle cx="50" cy="50" r="35" fill="#5C4033" stroke="#4D2B82" strokeWidth="2.5" />
+        <path d="M 50 50 L 50 25" stroke="#15803D" strokeWidth="6" />
+        <g transform="translate(50, 25)">
+          <circle cx="-12" cy="0" r="10" fill="#EC4899" stroke="#4D2B82" strokeWidth="2" />
+          <circle cx="12" cy="0" r="10" fill="#EC4899" stroke="#4D2B82" strokeWidth="2" />
+          <circle cx="0" cy="-12" r="10" fill="#EC4899" stroke="#4D2B82" strokeWidth="2" />
+          <circle cx="0" cy="12" r="10" fill="#EC4899" stroke="#4D2B82" strokeWidth="2" />
+          <circle cx="0" cy="0" r="9" fill="#E11D48" stroke="#4D2B82" strokeWidth="2" />
         </g>
       </svg>
     );
@@ -446,31 +357,24 @@ export function SVGFlower({ type, stage }: { type: "flower" | "sunflower"; stage
 
   // Sunflower
   return (
-    <svg viewBox="0 0 100 100" className="w-28 h-28">
-      <path d="M 20 90 Q 50 72 80 90 Z" fill="#5C4033" stroke="#4D2B82" strokeWidth="3" />
-      <path d="M 50 90 L 50 45" stroke="#22C55E" strokeWidth="7" strokeLinecap="round" />
-      
-      {/* Sunflower Petals ring */}
-      <g>
-        {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((deg) => (
+    <svg viewBox="0 0 100 100" className="w-20 h-20 mx-auto">
+      <circle cx="50" cy="50" r="35" fill="#5C4033" stroke="#4D2B82" strokeWidth="2.5" />
+      <path d="M 50 50 L 50 25" stroke="#15803D" strokeWidth="6" />
+      <g transform="translate(50, 25)">
+        {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => (
           <ellipse
             key={deg}
-            cx="50"
-            cy="36"
-            rx="5"
-            ry="18"
+            cx="0"
+            cy="0"
+            rx="4"
+            ry="14"
             fill="#FBBF24"
             stroke="#4D2B82"
-            strokeWidth="2"
-            transform={`rotate(${deg} 50 36)`}
+            strokeWidth="1.5"
+            transform={`rotate(${deg})`}
           />
         ))}
-        {/* Core Center Seed ring */}
-        <circle cx="50" cy="36" r="11" fill="#78350F" stroke="#4D2B82" strokeWidth="2.5" />
-        {/* Cute Face */}
-        <circle cx="47" cy="34" r="1" fill="#FFF" />
-        <circle cx="53" cy="34" r="1" fill="#FFF" />
-        <path d="M 48 38 Q 50 40 52 38" stroke="#FFF" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+        <circle cx="0" cy="0" r="8" fill="#78350F" stroke="#4D2B82" strokeWidth="2" />
       </g>
     </svg>
   );
@@ -485,9 +389,7 @@ export function SVGSun({ className = "w-20 h-20" }: { className?: string }) {
           <stop offset="100%" stopColor="#FF9F29" />
         </linearGradient>
       </defs>
-      
-      {/* Sun rays path rotation */}
-      <g className="animate-[spin_40s_linear_infinite]" style={{ transformOrigin: "50px 50px" }}>
+      <g className="animate-[spin_45s_linear_infinite]" style={{ transformOrigin: "50px 50px" }}>
         {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => (
           <polygon
             key={deg}
@@ -499,11 +401,7 @@ export function SVGSun({ className = "w-20 h-20" }: { className?: string }) {
           />
         ))}
       </g>
-      
-      {/* Sun Body */}
       <circle cx="50" cy="50" r="24" fill="url(#sunGrad)" stroke="#4D2B82" strokeWidth="3.5" />
-      
-      {/* Face details */}
       <circle cx="43" cy="46" r="2.5" fill="#4D2B82" />
       <circle cx="57" cy="46" r="2.5" fill="#4D2B82" />
       <circle cx="37" cy="51" r="2" fill="#FF8A8A" opacity="0.6" />
@@ -513,20 +411,20 @@ export function SVGSun({ className = "w-20 h-20" }: { className?: string }) {
   );
 }
 
-// Types
+// Interfaces
 interface GardenPlot {
   id: number;
   plantType: "apple" | "orange" | "flower" | "sunflower" | null;
-  growthStage: 0 | 1 | 2 | 3;
-  waterCount: number;
+  isWatered: boolean;
+  growthEndTime: number | null; // Timestamp in ms
 }
 
-interface Pet {
-  id: string;
-  emoji: string;
-  name: string;
-  cost: number;
-  unlocked: boolean;
+interface AnimalState {
+  id: number;
+  x: number;
+  y: number;
+  isEating: boolean;
+  angle: number;
 }
 
 interface MagicGardenProps {
@@ -536,50 +434,82 @@ interface MagicGardenProps {
 }
 
 export default function MagicGarden({ onClose, globalStars, setGlobalStars }: MagicGardenProps) {
-  const [plots, setPlots] = useState<GardenPlot[]>([]);
-  const [unlockedPets, setUnlockedPets] = useState<string[]>([]);
-  const [activePlotId, setActivePlotId] = useState<number | null>(null);
-  
-  // Modals
-  const [showSeedShop, setShowSeedShop] = useState(false);
-  const [showPetShop, setShowPetShop] = useState(false);
-  const [wateringPlotId, setWateringPlotId] = useState<number | null>(null);
-  
-  // Notification banner
-  const [noticeText, setNoticeText] = useState<string | null>(null);
+  // Cloud Intro Animation state
+  const [introActive, setIntroActive] = useState(true);
 
-  // Load state on mount
+  // 20 Plots State
+  const [plots, setPlots] = useState<GardenPlot[]>([]);
+  
+  // Animal Paddock Counts
+  const [sheepCount, setSheepCount] = useState(0);
+  const [rabbitCount, setRabbitCount] = useState(0);
+  const [duckCount, setDuckCount] = useState(0);
+  const [petCount, setPetCount] = useState(0); // combined cat/dog
+
+  // Animal instances for visual wandering
+  const [sheepList, setSheepList] = useState<AnimalState[]>([]);
+  const [rabbitList, setRabbitList] = useState<AnimalState[]>([]);
+  const [duckList, setDuckList] = useState<AnimalState[]>([]);
+  const [petList, setPetList] = useState<AnimalState[]>([]);
+
+  // Modals & Notifications
+  const [activePlotId, setActivePlotId] = useState<number | null>(null);
+  const [showSeedShop, setShowSeedShop] = useState(false);
+  const [showAnimalShop, setShowAnimalShop] = useState(false);
+  const [noticeText, setNoticeText] = useState<string | null>(null);
+  
+  // Time updates trigger
+  const [timeTick, setTimeTick] = useState(0);
+
+  // Seed metadata
+  const seedsData = [
+    { type: "apple", name: "شجرة التفاح 🍎", cost: 10, payout: 25 },
+    { type: "orange", name: "شجرة البرتقال 🍊", cost: 15, payout: 35 },
+    { type: "flower", name: "زهرة الورد الجوري 🌸", cost: 8, payout: 20 },
+    { type: "sunflower", name: "عباد الشمس السعيد 🌻", cost: 12, payout: 30 },
+  ] as const;
+
+  // Initialize/Load State
   useEffect(() => {
-    const savedPlots = localStorage.getItem("bloomly_garden_plots");
+    // Cloud transition trigger
+    setTimeout(() => {
+      setIntroActive(false);
+    }, 2000);
+
+    // Load 20 Plots
+    const savedPlots = localStorage.getItem("bloomly_garden_plots_v2");
     if (savedPlots) {
       setPlots(JSON.parse(savedPlots));
     } else {
-      const defaultPlots: GardenPlot[] = Array.from({ length: 5 }).map((_, i) => ({
+      const defaultPlots: GardenPlot[] = Array.from({ length: 20 }).map((_, i) => ({
         id: i + 1,
         plantType: null,
-        growthStage: 0,
-        waterCount: 0,
+        isWatered: false,
+        growthEndTime: null,
       }));
       setPlots(defaultPlots);
-      localStorage.setItem("bloomly_garden_plots", JSON.stringify(defaultPlots));
+      localStorage.setItem("bloomly_garden_plots_v2", JSON.stringify(defaultPlots));
     }
 
-    const savedPets = localStorage.getItem("bloomly_unlocked_pets");
-    if (savedPets) {
-      setUnlockedPets(JSON.parse(savedPets));
-    } else {
-      setUnlockedPets([]);
-      localStorage.setItem("bloomly_unlocked_pets", JSON.stringify([]));
-    }
+    // Load Animal Counts
+    setSheepCount(Number(localStorage.getItem("bloomly_sheep_count") || "1"));
+    setRabbitCount(Number(localStorage.getItem("bloomly_rabbit_count") || "1"));
+    setDuckCount(Number(localStorage.getItem("bloomly_duck_count") || "1"));
+    setPetCount(Number(localStorage.getItem("bloomly_pet_count") || "1"));
   }, []);
 
-  const saveGardenData = (newPlots: GardenPlot[], newPets?: string[]) => {
+  // Save state helpers
+  const savePlots = (newPlots: GardenPlot[]) => {
     setPlots(newPlots);
-    localStorage.setItem("bloomly_garden_plots", JSON.stringify(newPlots));
-    if (newPets) {
-      setUnlockedPets(newPets);
-      localStorage.setItem("bloomly_unlocked_pets", JSON.stringify(newPets));
-    }
+    localStorage.setItem("bloomly_garden_plots_v2", JSON.stringify(newPlots));
+  };
+
+  const saveAnimalCount = (type: "sheep" | "rabbit" | "duck" | "pet", val: number) => {
+    localStorage.setItem(`bloomly_${type}_count`, val.toString());
+    if (type === "sheep") setSheepCount(val);
+    if (type === "rabbit") setRabbitCount(val);
+    if (type === "duck") setDuckCount(val);
+    if (type === "pet") setPetCount(val);
   };
 
   const updateStars = (diff: number) => {
@@ -592,28 +522,64 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
 
   const triggerNotice = (text: string) => {
     setNoticeText(text);
-    setTimeout(() => {
-      setNoticeText(null);
-    }, 2500);
+    setTimeout(() => setNoticeText(null), 2500);
   };
 
-  // Seed metadata
-  const seedsData = [
-    { type: "apple", name: "شجرة التفاح 🍎", cost: 10, payout: 25 },
-    { type: "orange", name: "شجرة البرتقال 🍊", cost: 15, payout: 35 },
-    { type: "flower", name: "زهرة الورد الجوري 🌸", cost: 8, payout: 20 },
-    { type: "sunflower", name: "عباد الشمس السعيد 🌻", cost: 12, payout: 30 },
-  ] as const;
+  // --- Real-time Countdown Timer tick loop ---
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeTick(prev => prev + 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
-  // Pets metadata
-  const petsData: Pet[] = [
-    { id: "rabbit", emoji: "🐰", name: "أرنوب القفاز", cost: 30, unlocked: false },
-    { id: "cat", emoji: "🐱", name: "كيتي اللطيفة", cost: 40, unlocked: false },
-    { id: "duck", emoji: "🦆", name: "بطوطة السباحة", cost: 50, unlocked: false },
-    { id: "dog", emoji: "🐶", name: "شيبا الصديق", cost: 60, unlocked: false },
-  ];
+  // --- Animal Wandering Simulation Loop ---
+  useEffect(() => {
+    const makeAnimals = (count: number) => {
+      return Array.from({ length: count }).map((_, i) => ({
+        id: i,
+        x: 40 + Math.random() * 160, // random x in paddock box
+        y: 40 + Math.random() * 140, // random y in paddock box
+        isEating: false,
+        angle: Math.random() * 360,
+      }));
+    };
 
-  // Planting logic
+    setSheepList(makeAnimals(sheepCount));
+    setRabbitList(makeAnimals(rabbitCount));
+    setDuckList(makeAnimals(duckCount));
+    setPetList(makeAnimals(petCount));
+  }, [sheepCount, rabbitCount, duckCount, petCount]);
+
+  useEffect(() => {
+    const wanderInterval = setInterval(() => {
+      const updateWander = (list: AnimalState[]) => {
+        return list.map(ani => {
+          // 30% chance to eat, 70% chance to walk
+          const eatChance = Math.random() < 0.3;
+          if (eatChance) {
+            return { ...ani, isEating: true };
+          }
+          return {
+            ...ani,
+            isEating: false,
+            x: Math.max(20, Math.min(220, ani.x + (Math.random() * 60 - 30))),
+            y: Math.max(20, Math.min(180, ani.y + (Math.random() * 50 - 25))),
+            angle: Math.random() * 360,
+          };
+        });
+      };
+
+      setSheepList(prev => updateWander(prev));
+      setRabbitList(prev => updateWander(prev));
+      setDuckList(prev => updateWander(prev));
+      setPetList(prev => updateWander(prev));
+    }, 3500);
+
+    return () => clearInterval(wanderInterval);
+  }, []);
+
+  // --- Actions ---
   const handlePlantSeed = (seedType: typeof seedsData[number]["type"]) => {
     const seed = seedsData.find(s => s.type === seedType);
     if (!seed || activePlotId === null) return;
@@ -624,7 +590,6 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
       return;
     }
 
-    // Spend stars
     updateStars(-seed.cost);
     synth.playPop();
 
@@ -633,120 +598,176 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
         return {
           ...p,
           plantType: seedType,
-          growthStage: 0 as const,
-          waterCount: 0,
+          isWatered: false,
+          growthEndTime: null,
         };
       }
       return p;
     });
-    
-    saveGardenData(newPlots);
+
+    savePlots(newPlots);
     setShowSeedShop(false);
     setActivePlotId(null);
-    triggerNotice(`🌱 تم زراعة بذرة ${seed.name}!`);
+    triggerNotice(`🌱 تم زراعة بذرة ${seed.name}! اسقها الآن لتبدأ النمو.`);
   };
 
-  // Watering logic
-  const handleWaterPlant = (plotId: number) => {
+  const handleWater = (plotId: number) => {
     const plot = plots.find(p => p.id === plotId);
-    if (!plot || plot.plantType === null || plot.growthStage >= 3) return;
+    if (!plot || plot.plantType === null || plot.isWatered) return;
 
-    const waterCost = 2;
-    if (globalStars < waterCost) {
+    if (globalStars < 2) {
       synth.playPop();
-      triggerNotice("❌ لا توجد نجوم كافية للري (تحتاج ٢ نجمة 💧)!");
+      triggerNotice("❌ تحتاج ٢ نجمة 💧 للري!");
       return;
     }
 
-    // Spend stars & trigger animation
-    updateStars(-waterCost);
-    setWateringPlotId(plotId);
+    updateStars(-2);
     synth.playWaterPour();
 
-    setTimeout(() => {
-      setWateringPlotId(null);
-      const nextWaterCount = plot.waterCount + 1;
-      let nextStage = plot.growthStage;
-      let waterReset = nextWaterCount;
+    const endTime = Date.now() + 30 * 60 * 1000; // 30 minutes in future
 
-      if (nextWaterCount >= 3) {
-        nextStage = (plot.growthStage + 1) as typeof plot.growthStage;
-        waterReset = 0;
-        synth.playHarvest();
-        triggerNotice("✨ كبرت النبتة وحصلت على برعم جديد!");
+    const newPlots = plots.map(p => {
+      if (p.id === plotId) {
+        return {
+          ...p,
+          isWatered: true,
+          growthEndTime: endTime,
+        };
       }
+      return p;
+    });
 
-      const newPlots = plots.map(p => {
-        if (p.id === plotId) {
-          return {
-            ...p,
-            growthStage: nextStage,
-            waterCount: waterReset,
-          };
-        }
-        return p;
-      });
-
-      saveGardenData(newPlots);
-    }, 1000);
+    savePlots(newPlots);
+    triggerNotice("💧 تم الري بنجاح! ستبدأ النبتة بالنمو، وتكتمل بعد ٣٠ دقيقة.");
   };
 
-  // Harvesting logic
   const handleHarvest = (plotId: number) => {
     const plot = plots.find(p => p.id === plotId);
-    if (!plot || plot.plantType === null || plot.growthStage < 3) return;
+    if (!plot || plot.plantType === null || !plot.isWatered || !plot.growthEndTime) return;
+
+    if (Date.now() < plot.growthEndTime) return; // not ready
 
     const seed = seedsData.find(s => s.type === plot.plantType);
     if (!seed) return;
 
-    updateStars(seed.payout);
+    updateStars(10); // Reward exactly 10 stars as requested
     synth.playHarvest();
-    triggerNotice(`🎉 تهانينا! قمت بحصاد ${seed.name} وربحت ${seed.payout} نجمة!`);
+    triggerNotice(`🎉 تهانينا! قمت بحصاد النجمة وحصلت على +10 نجوم! ⭐`);
 
     const newPlots = plots.map(p => {
       if (p.id === plotId) {
         return {
           id: p.id,
           plantType: null,
-          growthStage: 0 as const,
-          waterCount: 0,
+          isWatered: false,
+          growthEndTime: null,
         };
       }
       return p;
     });
 
-    saveGardenData(newPlots);
+    savePlots(newPlots);
   };
 
-  // Buy pet logic
-  const handleBuyPet = (petId: string) => {
-    const pet = petsData.find(p => p.id === petId);
-    if (!pet) return;
+  // CHEAT/DEVELOPER Fast-forward helper to instant grow
+  const handleFastForward = (plotId: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const plot = plots.find(p => p.id === plotId);
+    if (!plot || !plot.isWatered) return;
 
-    if (unlockedPets.includes(petId)) {
-      triggerNotice("😊 هذا الحيوان يتجول بالفعل في حديقتك!");
-      return;
-    }
+    synth.playHarvest();
+    const newPlots = plots.map(p => {
+      if (p.id === plotId) {
+        return {
+          ...p,
+          growthEndTime: Date.now() - 1000, // force complete
+        };
+      }
+      return p;
+    });
+    savePlots(newPlots);
+    triggerNotice("⚡ تم تسريع النمو بنجاح للفحص السريع!");
+  };
 
-    if (globalStars < pet.cost) {
+  const handleBuyAnimal = (type: "sheep" | "rabbit" | "duck" | "pet", cost: number, name: string) => {
+    let currentCount = 0;
+    if (type === "sheep") currentCount = sheepCount;
+    if (type === "rabbit") currentCount = rabbitCount;
+    if (type === "duck") currentCount = duckCount;
+    if (type === "pet") currentCount = petCount;
+
+    if (currentCount >= 12) {
       synth.playPop();
-      triggerNotice(`❌ ليس لديك نجوم كافية لشراء ${pet.name}!`);
+      triggerNotice(`❌ عذراً! حظيرة ${name} ممتلئة بالكامل (الحد الأقصى ١٢ حيوان).`);
       return;
     }
 
-    updateStars(-pet.cost);
+    if (globalStars < cost) {
+      synth.playPop();
+      triggerNotice("❌ ليس لديك نجوم كافية لشراء هذا الحيوان!");
+      return;
+    }
+
+    updateStars(-cost);
     synth.playPetUnlock();
-    const nextPets = [...unlockedPets, petId];
-    saveGardenData(plots, nextPets);
-    triggerNotice(`🐣 مرحباً بك يا ${pet.name} في حديقتنا!`);
+    saveAnimalCount(type, currentCount + 1);
+    triggerNotice(`🐣 تم شراء ${name} جديد وإضافته للحظيرة!`);
+  };
+
+  // Timer String helper
+  const getTimerString = (endTime: number | null) => {
+    if (!endTime) return "";
+    const diff = endTime - Date.now();
+    if (diff <= 0) return "جاهز! ★";
+    const minutes = Math.floor(diff / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
   return (
-    <div className="fixed inset-0 z-[9990] bg-gradient-to-b from-[#E0F2FE] via-[#FAF7FD] to-[#DCFCE7] select-none font-sans flex flex-col justify-between overflow-hidden">
+    <div className="fixed inset-0 z-[9990] bg-[#DCFCE7] select-none font-sans flex flex-col justify-between overflow-hidden">
       
-      {/* 1. Header Area */}
-      <header className="w-full bg-white/90 backdrop-blur-md border-b-4 border-[#4D2B82] p-4 flex items-center justify-between shadow-md relative z-30 select-none">
-        {/* Back Button */}
+      {/* --- CLOUD INTRO PARTING ANIMATION --- */}
+      <AnimatePresence>
+        {introActive && (
+          <motion.div
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[10000] flex pointer-events-none select-none"
+          >
+            {/* Left Cloud Panel */}
+            <motion.div
+              initial={{ x: 0 }}
+              animate={{ x: "-100%" }}
+              transition={{ duration: 1.5, ease: "easeInOut" }}
+              className="w-1/2 h-full bg-[#E0F2FE] flex items-center justify-end relative shadow-2xl"
+            >
+              {/* Cloud Puff Vector Layer */}
+              <div className="absolute right-[-80px] w-48 h-full flex flex-col justify-around text-white/95 text-9xl">
+                <span>☁️</span>
+                <span>☁️</span>
+                <span>☁️</span>
+              </div>
+            </motion.div>
+
+            {/* Right Cloud Panel */}
+            <motion.div
+              initial={{ x: 0 }}
+              animate={{ x: "100%" }}
+              transition={{ duration: 1.5, ease: "easeInOut" }}
+              className="w-1/2 h-full bg-[#E0F2FE] flex items-center justify-start relative shadow-2xl"
+            >
+              <div className="absolute left-[-80px] w-48 h-full flex flex-col justify-around text-white/95 text-9xl">
+                <span>☁️</span>
+                <span>☁️</span>
+                <span>☁️</span>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* 1. Header Navigation */}
+      <header className="w-full bg-white/90 backdrop-blur-md border-b-4 border-[#4D2B82] p-4 flex items-center justify-between shadow-md relative z-30">
         <button
           onClick={() => {
             synth.playPop();
@@ -760,33 +781,32 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
 
         <div className="text-center">
           <h1 className="text-2xl sm:text-3xl font-black text-[#4D2B82] tracking-wide flex items-center gap-2 justify-center">
-            حديقتك السحرية الكبيرة 🌿✨
+            مزرعتك السحرية الكبيرة من الأعلى 🌿🛸
           </h1>
-          <p className="text-xs font-extrabold text-emerald-600">
-            ازرع البذور، اروي النباتات، وافتح الحيوانات اللطيفة بالنجوم!
+          <p className="text-xs font-bold text-emerald-600">
+            أقسام حظائر الحيوانات بحد أقصى ١٢، و٢٠ شجرة مع مؤقت ٣٠ دقيقة!
           </p>
         </div>
 
-        {/* Info stats */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <button
             onClick={() => {
               synth.playPop();
-              setShowPetShop(true);
+              setShowAnimalShop(true);
             }}
             className="btn-bubbly-primary text-xs py-2 px-4 flex items-center gap-1.5"
           >
-            🐾 متجر الحيوانات
+            🐾 متجر حظائر الحيوانات
           </button>
 
-          <div className="flex items-center gap-1.5 bg-[#FFFCE6] border-2 border-[#D97706] text-[#D97706] font-extrabold text-sm px-4 py-1.5 rounded-full shadow-inner select-none">
+          <div className="flex items-center gap-1.5 bg-[#FFFCE6] border-2 border-[#D97706] text-[#D97706] font-extrabold text-sm px-4 py-1.5 rounded-full shadow-inner">
             <span className="text-lg text-yellow-400">★</span>
             <span>نجومك: {globalStars}</span>
           </div>
         </div>
       </header>
 
-      {/* 2. Notice Banner */}
+      {/* 2. Notification Overlay Banner */}
       <AnimatePresence>
         {noticeText && (
           <motion.div
@@ -804,130 +824,180 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
         )}
       </AnimatePresence>
 
-      {/* 3. Wide Scrollable Garden Field (Horizontal Scrolling!) */}
-      <main className="flex-grow w-full overflow-x-auto scrollbar-none relative flex flex-col justify-end pb-8">
+      {/* 3. Infinite Scrollable Top-Down Map Field */}
+      <main className="flex-grow w-full overflow-auto scrollbar-none relative bg-[#C2F0C2] border-t-2 border-emerald-800">
         
-        {/* Sky Background Decor */}
-        <div className="absolute inset-0 pointer-events-none z-0">
-          {/* Beautiful Illustrative Sun */}
-          <div className="absolute top-8 left-[10%] z-10">
-            <SVGSun />
+        {/* Large 1500px x 1000px coordinate grid */}
+        <div className="w-[1500px] h-[1000px] relative z-10 bg-gradient-to-br from-[#A2E3A2] via-[#B2EBB2] to-[#AEE8AE] p-8 overflow-hidden select-none">
+          
+          {/* Paths and dirt roads decor */}
+          <div className="absolute top-[380px] left-[50px] w-[1400px] h-12 bg-[#E1C699] border-y-3 border-dashed border-[#8C6D47]/40 z-0" />
+          <div className="absolute top-[80px] left-[450px] w-12 h-[800px] bg-[#E1C699] border-x-3 border-dashed border-[#8C6D47]/40 z-0" />
+
+          {/* Glowing sun element decorative */}
+          <div className="absolute top-8 right-24 pointer-events-none opacity-40 z-0">
+            <SVGSun className="w-28 h-28" />
           </div>
-          
-          <div className="absolute top-12 left-[30%] text-6xl opacity-30 animate-pulse">☁️</div>
-          <div className="absolute top-20 left-[70%] text-5xl opacity-40 animate-bounce-slow">☁️</div>
-          <div className="absolute top-14 right-[10%] text-6xl opacity-30">☁️</div>
-        </div>
 
-        {/* Horizontal Container Width (Large Garden) */}
-        <div className="min-w-[160vw] sm:min-w-[1500px] h-full flex flex-col justify-end relative z-10">
-          
-          {/* Roaming Unlocked Pets */}
-          {unlockedPets.map((petId, idx) => {
-            const pet = petsData.find(p => p.id === petId);
-            if (!pet) return null;
+          {/* ==============================================
+              SECTION A: ANIMAL PADDOCKS (حظائر الحيوانات)
+              ============================================== */}
 
-            const speed = 15 + idx * 4;
-            const direction = idx % 2 === 0 ? 1 : -1;
-
-            return (
-              <motion.div
-                key={petId}
-                animate={{
-                  x: direction > 0 ? ["0vw", "140vw", "0vw"] : ["140vw", "0vw", "140vw"],
-                  y: [0, -16, 0, -22, 0],
-                  scaleX: direction > 0 ? [1, 1, -1, -1, 1] : [-1, -1, 1, 1, -1],
-                }}
-                transition={{
-                  x: { repeat: Infinity, duration: speed, ease: "linear" },
-                  y: { repeat: Infinity, duration: 1.1 + idx * 0.25, ease: "easeInOut" },
-                }}
-                className="absolute bottom-[20%] z-20 pointer-events-none select-none filter drop-shadow-lg"
-              >
-                {petId === "rabbit" && <SVGBunny className="w-18 h-18" />}
-                {petId === "cat" && <SVGKitty className="w-18 h-18" />}
-                {petId === "duck" && <SVGDuck className="w-18 h-18" />}
-                {petId === "dog" && <SVGPuppy className="w-18 h-18" />}
-              </motion.div>
-            );
-          })}
-
-          {/* Landscape Grass Hills & White Picket Fence */}
-          <div className="absolute bottom-0 inset-x-0 h-[48%] z-0 select-none">
-            {/* White Picket Fence */}
-            <div className="absolute top-[-20px] inset-x-0 h-8 flex justify-around pointer-events-none z-10" dir="ltr">
-              {Array.from({ length: 45 }).map((_, i) => (
-                <div key={i} className="w-2.5 h-10 bg-white border-2 border-[#4D2B82] rounded-t-sm shadow-sm relative">
-                  <div className="absolute top-3 inset-x-[-4px] h-1.5 bg-white border-y border-[#4D2B82]" />
+          {/* 1. DUCK POND (بحيرة البط) */}
+          <div 
+            className="absolute left-[50px] top-[60px] w-[360px] h-[260px] bg-gradient-to-tr from-[#93C5FD] to-[#3B82F6] rounded-[60px] border-4 border-[#1E3A8A] shadow-lg flex flex-col justify-between p-4 overflow-hidden z-10"
+          >
+            <div className="text-white font-black text-xs bg-blue-900/60 w-fit px-2.5 py-0.5 rounded-full">
+              🦆 بحيرة البط ({duckCount}/12)
+            </div>
+            
+            {/* Ducks swimming inside pond */}
+            <div className="relative w-full h-full">
+              {duckList.map((duck) => (
+                <div
+                  key={duck.id}
+                  className="absolute transition-all duration-[3000ms] ease-in-out"
+                  style={{ left: `${duck.x}px`, top: `${duck.y}px` }}
+                >
+                  <SVGDuck className="w-10 h-10" isEating={duck.isEating} />
                 </div>
               ))}
             </div>
-
-            {/* Grass Layers with SVG wavy gradients */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" preserveAspectRatio="none" viewBox="0 0 1000 100">
-              <path d="M 0 40 Q 250 20 500 50 Q 750 80 1000 40 L 1000 100 L 0 100 Z" fill="url(#grassGrad1)" stroke="#4D2B82" strokeWidth="2.5" />
-              <path d="M 0 60 Q 300 80 600 50 Q 850 30 1000 70 L 1000 100 L 0 100 Z" fill="url(#grassGrad2)" opacity="0.9" />
-              
-              <defs>
-                <linearGradient id="grassGrad1" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#4ADE80" />
-                  <stop offset="100%" stopColor="#16A34A" />
-                </linearGradient>
-                <linearGradient id="grassGrad2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#22C55E" />
-                  <stop offset="100%" stopColor="#15803D" />
-                </linearGradient>
-              </defs>
-            </svg>
           </div>
 
-          {/* 5 Plant Plots aligned horizontally */}
-          <div className="w-full flex justify-around items-end px-16 relative z-10 pb-8 h-[280px]">
+          {/* 2. RABBIT PADDOCK (حظيرة الأرانب) */}
+          <div 
+            className="absolute left-[880px] top-[60px] w-[320px] h-[240px] bg-[#C5E1A5] rounded-[32px] border-4 border-[#33691E] shadow-md p-3 flex flex-col justify-between overflow-hidden z-10"
+          >
+            <div className="text-[#33691E] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#33691E]">
+              🐰 حظيرة الأرانب ({rabbitCount}/12)
+            </div>
+            <div className="absolute top-12 right-6 text-2xl opacity-40">🥕 🥕</div>
+
+            <div className="relative w-full h-full">
+              {rabbitList.map((rab) => (
+                <div
+                  key={rab.id}
+                  className="absolute transition-all duration-[3000ms] ease-in-out"
+                  style={{ left: `${rab.x}px`, top: `${rab.y}px` }}
+                >
+                  <SVGBunny className="w-10 h-10" isEating={rab.isEating} />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 3. SHEEP PADDOCK (حظيرة الخراف) */}
+          <div 
+            className="absolute left-[50px] top-[480px] w-[350px] h-[280px] bg-[#E8F5E9] rounded-[40px] border-4 border-[#1B5E20] shadow-md p-4 flex flex-col justify-between overflow-hidden z-10"
+          >
+            <div className="text-[#1B5E20] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#1B5E20]">
+              🐑 حظيرة الخراف ({sheepCount}/12)
+            </div>
+
+            <div className="relative w-full h-full">
+              {sheepList.map((sheep) => (
+                <div
+                  key={sheep.id}
+                  className="absolute transition-all duration-[3000ms] ease-in-out"
+                  style={{ left: `${sheep.x}px`, top: `${sheep.y}px` }}
+                >
+                  <SVGSheep className="w-11 h-11" isEating={sheep.isEating} />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 4. CAT & DOG PADDOCK (حظيرة القطط والكلاب) */}
+          <div 
+            className="absolute left-[1050px] top-[480px] w-[380px] h-[300px] bg-[#FFE0B2] rounded-[40px] border-4 border-[#E65100] shadow-md p-4 flex flex-col justify-between overflow-hidden z-10"
+          >
+            <div className="text-[#E65100] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#E65100]">
+              🐱🐶 حظيرة الأصدقاء ({petCount}/12)
+            </div>
+            <div className="absolute top-14 left-6 text-2xl opacity-40">🦴 🧶</div>
+
+            <div className="relative w-full h-full">
+              {petList.map((pet) => (
+                <div
+                  key={pet.id}
+                  className="absolute transition-all duration-[3000ms] ease-in-out"
+                  style={{ left: `${pet.x}px`, top: `${pet.y}px` }}
+                >
+                  {pet.id % 2 === 0 ? (
+                    <SVGKitty className="w-11 h-11" isEating={pet.isEating} />
+                  ) : (
+                    <SVGPuppy className="w-11 h-11" isEating={pet.isEating} />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ==============================================
+              SECTION B: 20 TREE PLOTS GRID (حقول الأشجار العشرون)
+              ============================================== */}
+          <div 
+            className="absolute left-[480px] top-[380px] w-[500px] h-[480px] bg-[#A1887F]/30 rounded-[40px] border-4 border-dashed border-[#8D6E63] p-6 grid grid-cols-5 gap-y-12 gap-x-6 justify-items-center items-center z-10 shadow-inner"
+          >
             {plots.map((plot) => {
               const isEmpty = plot.plantType === null;
-              const isFullyGrown = plot.growthStage === 3;
-              const isWatering = wateringPlotId === plot.id;
+              const isWatered = plot.isWatered;
+              const hasEndTime = plot.growthEndTime !== null;
+              const isFullyGrown = hasEndTime && Date.now() >= (plot.growthEndTime || 0);
 
               return (
-                <div
+                <div 
                   key={plot.id}
-                  className="flex flex-col items-center gap-3 relative"
+                  className="flex flex-col items-center gap-1.5 relative select-none w-18"
                 >
                   
-                  {/* Watering Can Animation Overlay */}
-                  <AnimatePresence>
-                    {isWatering && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -45, x: 25, rotate: 0 }}
-                        animate={{ opacity: 1, y: -25, x: 35, rotate: -35 }}
-                        exit={{ opacity: 0 }}
-                        className="absolute -top-28 left-4 z-40 text-5xl select-none"
-                      >
-                        🚿
-                        <motion.span
-                          animate={{ y: [0, 20, 40], opacity: [0, 1, 0] }}
-                          transition={{ repeat: Infinity, duration: 0.25 }}
-                          className="absolute top-8 left-[-15px] text-xs text-blue-400 block"
+                  {/* Floating Action Button Cue overlay */}
+                  {!isEmpty && (
+                    <div className="absolute top-[-26px] z-20 flex gap-0.5">
+                      
+                      {/* Water requirement droplet icon */}
+                      {!isWatered && (
+                        <button
+                          onClick={() => handleWater(plot.id)}
+                          className="bg-blue-400 hover:bg-blue-500 text-white rounded-full p-1 border-2 border-blue-600 shadow-md animate-bounce cursor-pointer flex items-center justify-center"
+                          title="اسقِ النبتة 💧"
                         >
-                          💧 💧
-                        </motion.span>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                          <Droplet className="w-3.5 h-3.5 fill-white" />
+                        </button>
+                      )}
 
-                  {/* Growth Progress Indicator */}
-                  {!isEmpty && !isFullyGrown && (
-                    <div className="bg-white border-2 border-[#4D2B82] rounded-full px-3 py-0.5 text-[10px] font-black text-blue-500 shadow-sm flex items-center gap-1">
-                      <span>💧 {plot.waterCount}/3</span>
-                      <span className="text-gray-400">|</span>
-                      <span>مستوى {plot.growthStage + 1}</span>
+                      {/* Remaining Timer Countdown or Harvest Golden Star */}
+                      {isWatered && !isFullyGrown && (
+                        <div className="bg-white border-2 border-emerald-600 rounded-full px-1.5 py-0.5 text-[8px] font-black text-emerald-700 flex items-center gap-0.5 shadow-sm">
+                          <Clock className="w-2.5 h-2.5 text-emerald-500" />
+                          <span>{getTimerString(plot.growthEndTime)}</span>
+                          
+                          {/* Cheat Speedup button */}
+                          <button
+                            onClick={(e) => handleFastForward(plot.id, e)}
+                            className="ml-1 bg-yellow-400 text-yellow-900 border border-yellow-600 rounded-full px-1 py-0 text-[6px] hover:bg-yellow-500 font-extrabold cursor-pointer"
+                          >
+                            ⚡
+                          </button>
+                        </div>
+                      )}
+
+                      {/* Ready to Harvest Star button */}
+                      {isFullyGrown && (
+                        <button
+                          onClick={() => handleHarvest(plot.id)}
+                          className="bg-yellow-400 hover:bg-yellow-500 text-yellow-950 rounded-full p-1 border-2 border-yellow-600 shadow-lg animate-bounce-slow flex items-center justify-center cursor-pointer font-black text-xs"
+                          title="احصد النجوم! 🌾"
+                        >
+                          ⭐
+                        </button>
+                      )}
                     </div>
                   )}
 
-                  {/* Custom SVG Tree or Sprout representation */}
-                  <motion.div
-                    whileHover={{ scale: 1.06 }}
-                    whileTap={{ scale: 0.96 }}
+                  {/* Soil Pot/Plant Representation */}
+                  <div
                     onClick={() => {
                       synth.playPop();
                       if (isEmpty) {
@@ -935,65 +1005,29 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                         setShowSeedShop(true);
                       }
                     }}
-                    className={`w-32 h-32 rounded-full flex flex-col items-center justify-end relative cursor-pointer select-none transition-all pb-3`}
+                    className={`w-14 h-14 rounded-full flex flex-col justify-end items-center relative cursor-pointer ${
+                      isEmpty 
+                        ? "bg-[#8D6E63] border-3 border-[#4E342E] hover:bg-[#795548] shadow-inner" 
+                        : "bg-transparent"
+                    }`}
                   >
                     {isEmpty ? (
-                      <div className="w-24 h-24 rounded-full bg-[#8D6E63] border-4 border-[#4E342E] hover:bg-[#795548] flex flex-col items-center justify-center shadow-inner relative z-10">
-                        <span className="text-3xl text-white font-extrabold">+</span>
-                        <span className="text-[10px] text-yellow-100 font-extrabold">بذرة جديدة</span>
-                      </div>
+                      <span className="text-white font-extrabold text-lg mb-1">+</span>
                     ) : (
-                      <motion.div
-                        animate={
-                          isFullyGrown 
-                            ? { scale: [1, 1.05, 1], rotate: [0, 2, -2, 0] } 
-                            : { y: [0, -2, 0] }
-                        }
-                        transition={{ repeat: Infinity, duration: isFullyGrown ? 1.8 : 2 }}
-                        className="relative z-10 mb-[-12px]"
-                      >
-                        {(plot.plantType === "apple" || plot.plantType === "orange") ? (
-                          <SVGTree type={plot.plantType} stage={plot.growthStage} />
-                        ) : (
-                          <SVGFlower type={plot.plantType as "flower" | "sunflower"} stage={plot.growthStage} />
-                        )}
-                      </motion.div>
+                      <div className="mb-[-6px] relative z-10">
+                        <SVGTopDownPlant
+                          type={plot.plantType!}
+                          stage={isFullyGrown ? 3 : isWatered ? 2 : 1}
+                        />
+                      </div>
                     )}
+                    {/* Dirt base plate */}
+                    <div className="absolute bottom-0 w-12 h-3.5 bg-[#5D4037]/60 rounded-full z-0" />
+                  </div>
 
-                    {/* Rich Mud Pile Outline base */}
-                    <div className="absolute bottom-2 w-28 h-5 bg-[#5D4037] border-2 border-[#3E2723] rounded-full z-0" />
-                  </motion.div>
-
-                  {/* Plot Controls buttons */}
-                  {!isEmpty && (
-                    <div className="flex gap-1.5 z-20">
-                      {!isFullyGrown && (
-                        <button
-                          onClick={() => handleWaterPlant(plot.id)}
-                          className="bg-[#38BDF8] hover:bg-[#0EA5E9] text-white font-black text-[11px] px-3.5 py-2 rounded-full border-2 border-[#0369A1] shadow-md active:translate-y-0.5 cursor-pointer flex items-center gap-1"
-                        >
-                          <span>💧</span>
-                          <span>ري (2⭐)</span>
-                        </button>
-                      )}
-
-                      {isFullyGrown && (
-                        <button
-                          onClick={() => handleHarvest(plot.id)}
-                          className="bg-[#FBBF24] hover:bg-[#F59E0B] text-yellow-950 font-black text-[11px] px-3.5 py-2 rounded-full border-2 border-[#B45309] shadow-md active:translate-y-0.5 cursor-pointer flex items-center gap-1 animate-bounce-slow"
-                        >
-                          <span>🌾</span>
-                          <span>احصد النجوم!</span>
-                        </button>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Plot Label */}
-                  <span className="text-xs font-black text-[#4E342E] bg-amber-50/90 px-3 py-0.5 rounded-full border border-amber-200 shadow-xs">
+                  <span className="text-[8px] font-black text-[#5D4037] bg-white/60 px-1 py-0.2 rounded border border-amber-200">
                     أرض {plot.id}
                   </span>
-
                 </div>
               );
             })}
@@ -1041,7 +1075,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                         الشراء: {seed.cost}⭐
                       </span>
                       <span className="text-xs font-black text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-200">
-                        الحصاد: {seed.payout}⭐
+                        الحصاد: 10⭐
                       </span>
                     </div>
                   </button>
@@ -1052,9 +1086,9 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
         )}
       </AnimatePresence>
 
-      {/* 5. PET SHOP MODAL */}
+      {/* 5. ANIMAL SHOP MODAL */}
       <AnimatePresence>
-        {showPetShop && (
+        {showAnimalShop && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-[9999]">
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
@@ -1065,44 +1099,88 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
               <button
                 onClick={() => {
                   synth.playPop();
-                  setShowPetShop(false);
+                  setShowAnimalShop(false);
                 }}
                 className="absolute top-4 right-4 text-gray-400 hover:text-red-500 cursor-pointer"
               >
                 <X className="w-6 h-6" />
               </button>
 
-              <h2 className="text-2xl font-black text-[#4D2B82] mb-1">🐾 متجر الحيوانات الأليفة</h2>
-              <p className="text-xs font-bold text-purple-400 mb-6">افتح حيوانات لطيفة بالنجوم لتتجول وتلعب بالحديقة السحرية!</p>
+              <h2 className="text-2xl font-black text-[#4D2B82] mb-1">🐾 متجر حظائر الحيوانات</h2>
+              <p className="text-xs font-bold text-purple-400 mb-6">افتح حيوانات جديدة لحظائرك باستخدام النجوم! (الحد الأقصى ١٢ حيوان بكل حظيرة)</p>
 
-              <div className="grid grid-cols-2 gap-4">
-                {petsData.map((pet) => {
-                  const isUnlocked = unlockedPets.includes(pet.id);
+              <div className="flex flex-col gap-3 max-h-[350px] overflow-y-auto pr-1">
+                {/* 1. Sheep */}
+                <div className="flex items-center justify-between p-3 border-2 border-purple-100 rounded-2xl bg-slate-50/50">
+                  <div className="flex items-center gap-2">
+                    <span className="text-4xl">🐑</span>
+                    <div className="text-right">
+                      <h4 className="font-extrabold text-sm text-[#4D2B82]">خروف الحظيرة</h4>
+                      <p className="text-[10px] text-gray-500">تم الشراء: {sheepCount}/12</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleBuyAnimal("sheep", 20, "الخراف")}
+                    disabled={sheepCount >= 12}
+                    className="bg-yellow-400 hover:bg-yellow-500 disabled:bg-gray-150 disabled:text-gray-400 text-yellow-900 border-2 border-yellow-600 px-4 py-1.5 rounded-full font-black text-xs cursor-pointer"
+                  >
+                    {sheepCount >= 12 ? "ممتلئ" : "شراء (20⭐)"}
+                  </button>
+                </div>
 
-                  return (
-                    <button
-                      key={pet.id}
-                      onClick={() => handleBuyPet(pet.id)}
-                      disabled={isUnlocked}
-                      className={`card-bubbly p-4 flex flex-col items-center gap-2 border-3 cursor-pointer ${
-                        isUnlocked 
-                          ? "bg-gray-150 border-gray-300 opacity-60 cursor-default" 
-                          : "bg-emerald-50/40 hover:bg-emerald-50"
-                      }`}
-                    >
-                      <span className="text-5xl">{pet.emoji}</span>
-                      <span className="text-sm font-extrabold text-[#4D2B82]">{pet.name}</span>
-                      
-                      <span className={`text-xs font-black px-3 py-1 rounded-full border ${
-                        isUnlocked
-                          ? "bg-gray-100 text-gray-400 border-gray-200"
-                          : "bg-yellow-50 text-yellow-700 border-yellow-200"
-                      }`}>
-                        {isUnlocked ? "تم الفتح ✅" : `${pet.cost} نجمة ★`}
-                      </span>
-                    </button>
-                  );
-                })}
+                {/* 2. Rabbit */}
+                <div className="flex items-center justify-between p-3 border-2 border-purple-100 rounded-2xl bg-slate-50/50">
+                  <div className="flex items-center gap-2">
+                    <span className="text-4xl">🐰</span>
+                    <div className="text-right">
+                      <h4 className="font-extrabold text-sm text-[#4D2B82]">أرنوب القفاز</h4>
+                      <p className="text-[10px] text-gray-500">تم الشراء: {rabbitCount}/12</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleBuyAnimal("rabbit", 15, "الأرانب")}
+                    disabled={rabbitCount >= 12}
+                    className="bg-yellow-400 hover:bg-yellow-500 disabled:bg-gray-150 disabled:text-gray-400 text-yellow-900 border-2 border-yellow-600 px-4 py-1.5 rounded-full font-black text-xs cursor-pointer"
+                  >
+                    {rabbitCount >= 12 ? "ممتلئ" : "شراء (15⭐)"}
+                  </button>
+                </div>
+
+                {/* 3. Duck */}
+                <div className="flex items-center justify-between p-3 border-2 border-purple-100 rounded-2xl bg-slate-50/50">
+                  <div className="flex items-center gap-2">
+                    <span className="text-4xl">🦆</span>
+                    <div className="text-right">
+                      <h4 className="font-extrabold text-sm text-[#4D2B82]">بطوطة البحيرة</h4>
+                      <p className="text-[10px] text-gray-500">تم الشراء: {duckCount}/12</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleBuyAnimal("duck", 22, "البط")}
+                    disabled={duckCount >= 12}
+                    className="bg-yellow-400 hover:bg-yellow-500 disabled:bg-gray-150 disabled:text-gray-400 text-yellow-900 border-2 border-yellow-600 px-4 py-1.5 rounded-full font-black text-xs cursor-pointer"
+                  >
+                    {duckCount >= 12 ? "ممتلئ" : "شراء (22⭐)"}
+                  </button>
+                </div>
+
+                {/* 4. Friends */}
+                <div className="flex items-center justify-between p-3 border-2 border-purple-100 rounded-2xl bg-slate-50/50">
+                  <div className="flex items-center gap-2">
+                    <span className="text-4xl">🐱🐶</span>
+                    <div className="text-right">
+                      <h4 className="font-extrabold text-sm text-[#4D2B82]">القط والكلب الأصدقاء</h4>
+                      <p className="text-[10px] text-gray-500">تم الشراء: {petCount}/12</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => handleBuyAnimal("pet", 25, "الأصدقاء")}
+                    disabled={petCount >= 12}
+                    className="bg-yellow-400 hover:bg-yellow-500 disabled:bg-gray-150 disabled:text-gray-400 text-yellow-900 border-2 border-yellow-600 px-4 py-1.5 rounded-full font-black text-xs cursor-pointer"
+                  >
+                    {petCount >= 12 ? "ممتلئ" : "شراء (25⭐)"}
+                  </button>
+                </div>
               </div>
             </motion.div>
           </div>
