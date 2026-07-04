@@ -314,6 +314,215 @@ function SVGSproutBlooming(isAnimating: boolean) {
   );
 }
 
+function SVGAntStory(pageIdx: number, isAnimating: boolean) {
+  const antAnim = isAnimating ? { scale: [1, 1.05, 1], rotate: [-2, 2, -2] } : {};
+  return (
+    <svg viewBox="0 0 200 150" className="w-full h-full max-h-[220px]">
+      <rect x="0" y="0" width="200" height="150" fill="#FFF8E1" rx="16" />
+      {/* Honey Drop */}
+      <motion.ellipse
+        cx="100" cy="80" rx={pageIdx === 2 ? 22 : 14} ry={pageIdx === 2 ? 30 : 20}
+        fill="#FFB300" stroke="#4D2B82" strokeWidth="2.5"
+        animate={isAnimating && pageIdx === 2 ? { scale: [1, 1.1, 1] } : {}}
+        transition={{ repeat: Infinity, duration: 1.5 }}
+      />
+      {/* Ant */}
+      <motion.g
+        animate={antAnim}
+        transition={{ repeat: Infinity, duration: 1.2 }}
+        transform={
+          pageIdx === 1 ? "translate(50, 80)" :
+          pageIdx === 2 ? "translate(100, 80)" :
+          pageIdx === 3 ? "translate(100, 80)" : "translate(130, 80)"
+        }
+      >
+        <circle cx="0" cy="0" r="7" fill="#2C3E50" stroke="#4D2B82" strokeWidth="1.5" />
+        <circle cx="-10" cy="2" r="6" fill="#2C3E50" />
+        <circle cx="10" cy="-2" r="6" fill="#2C3E50" />
+        {pageIdx === 3 && (
+          <circle cx="13" cy="-4" r="1.5" fill="#E74C3C" />
+        )}
+      </motion.g>
+      {/* Rescuing Friend Ant in page 4 */}
+      {pageIdx === 4 && (
+        <g transform="translate(70, 80)">
+          <circle cx="0" cy="0" r="7" fill="#8D6E63" stroke="#4D2B82" strokeWidth="1.5" />
+          <circle cx="-10" cy="2" r="6" fill="#8D6E63" />
+          <circle cx="10" cy="-2" r="6" fill="#8D6E63" />
+        </g>
+      )}
+    </svg>
+  );
+}
+
+function SVGBirdStory(pageIdx: number, isAnimating: boolean) {
+  return (
+    <svg viewBox="0 0 200 150" className="w-full h-full max-h-[220px]">
+      <rect x="0" y="0" width="200" height="150" fill="#E0F7FA" rx="16" />
+      {/* Cat */}
+      {(pageIdx === 2 || pageIdx === 3 || pageIdx === 4) && (
+        <motion.g
+          animate={isAnimating ? { x: [0, 5, 0] } : {}}
+          transition={{ repeat: Infinity, duration: 1.5 }}
+          transform={pageIdx === 4 ? "translate(60, 95)" : "translate(110, 95)"}
+        >
+          <ellipse cx="0" cy="0" rx="18" ry="12" fill="#F97316" stroke="#4D2B82" strokeWidth="2" />
+          <circle cx="-14" cy="-10" r="8" fill="#F97316" stroke="#4D2B82" strokeWidth="2" />
+          <circle cx="-16" cy="-12" r="1" fill="#FFF" />
+        </motion.g>
+      )}
+      {/* Blue Bird */}
+      <motion.g
+        animate={isAnimating && pageIdx === 4 ? { y: [0, -10, 0] } : {}}
+        transition={{ repeat: Infinity, duration: 1.2 }}
+        transform={
+          pageIdx === 1 ? "translate(100, 100)" :
+          pageIdx === 2 ? "translate(110, 75)" :
+          pageIdx === 3 ? "translate(50, 60)" : "translate(130, 50)"
+        }
+      >
+        <circle cx="0" cy="0" r="10" fill="#38BDF8" stroke="#4D2B82" strokeWidth="2" />
+        <polygon points="8,0 15,-4 8,-8" fill="#FBBF24" />
+        {pageIdx === 1 && (
+          <path d="M -8 10 Q 0 4 8 10" stroke="#EF4444" strokeWidth="2.5" fill="none" />
+        )}
+      </motion.g>
+      {/* Nest in page 3 */}
+      {pageIdx === 3 && (
+        <g transform="translate(50, 80)">
+          <path d="M -20 0 Q 0 16 20 0 Z" fill="#D97706" stroke="#4D2B82" strokeWidth="2" />
+        </g>
+      )}
+    </svg>
+  );
+}
+
+function SVGFishStory(pageIdx: number, isAnimating: boolean) {
+  return (
+    <svg viewBox="0 0 200 150" className="w-full h-full max-h-[220px]">
+      <rect x="0" y="0" width="200" height="150" fill={pageIdx === 1 ? "#ECEFF1" : "#E0F2FE"} rx="16" />
+      {/* Water Waves */}
+      <path d="M 0 120 Q 50 110 100 120 T 200 120 L 200 150 L 0 150 Z" fill="#0EA5E9" opacity="0.4" />
+      {/* Garbage in page 1 & 3 */}
+      {(pageIdx === 1 || pageIdx === 3) && (
+        <g transform="translate(130, 80)" opacity={pageIdx === 3 ? 0.4 : 1}>
+          <rect x="-10" y="-10" width="16" height="20" fill="#94A3B8" rx="2" stroke="#4D2B82" strokeWidth="1.5" />
+          <line x1="-4" y1="-10" x2="-4" y2="10" stroke="#FFF" strokeWidth="1.5" />
+        </g>
+      )}
+      {/* Gold Fish */}
+      <motion.g
+        animate={isAnimating ? { y: [0, -4, 0] } : {}}
+        transition={{ repeat: Infinity, duration: 1.4 }}
+        transform={pageIdx === 4 ? "translate(60, 80)" : "translate(60, 90)"}
+      >
+        <ellipse cx="0" cy="0" rx="14" ry="10" fill="#F97316" stroke="#4D2B82" strokeWidth="2" />
+        <polygon points="-12,0 -22,-8 -22,8" fill="#F97316" stroke="#4D2B82" strokeWidth="1.5" />
+        <circle cx="6" cy="-2" r="1.5" fill="#FFF" />
+      </motion.g>
+      {/* Frog in page 2, 3, 4 */}
+      {(pageIdx === 2 || pageIdx === 3 || pageIdx === 4) && (
+        <motion.g
+          animate={isAnimating && pageIdx === 3 ? { x: [0, -10, 0] } : {}}
+          transition={{ repeat: Infinity, duration: 1.6 }}
+          transform="translate(120, 95)"
+        >
+          <ellipse cx="0" cy="0" rx="12" ry="10" fill="#22C55E" stroke="#4D2B82" strokeWidth="2" />
+          <circle cx="-5" cy="-8" r="4.5" fill="#22C55E" stroke="#4D2B82" strokeWidth="1.5" />
+          <circle cx="5" cy="-8" r="4.5" fill="#22C55E" stroke="#4D2B82" strokeWidth="1.5" />
+        </motion.g>
+      )}
+    </svg>
+  );
+}
+
+function SVGLionStory(pageIdx: number, isAnimating: boolean) {
+  return (
+    <svg viewBox="0 0 200 150" className="w-full h-full max-h-[220px]">
+      <rect x="0" y="0" width="200" height="150" fill="#FEF3C7" rx="16" />
+      {/* Lion Mane */}
+      <motion.g
+        animate={isAnimating && pageIdx !== 1 ? { rotate: [-2, 2, -2] } : {}}
+        transition={{ repeat: Infinity, duration: 2 }}
+        transform="translate(100, 75)"
+      >
+        <circle cx="0" cy="0" r="34" fill="#D97706" stroke="#4D2B82" strokeWidth="2.5" />
+        <circle cx="0" cy="0" r="24" fill="#FBBF24" stroke="#4D2B82" strokeWidth="2" />
+        {/* Face */}
+        <circle cx="-8" cy="-4" r="2.5" fill="#4D2B82" />
+        <circle cx="8" cy="-4" r="2.5" fill="#4D2B82" />
+        <path d="M -6 6 Q 0 11 6 6" stroke="#4D2B82" strokeWidth="2.5" fill="none" />
+      </motion.g>
+      {/* Net lines in page 3 */}
+      {pageIdx === 3 && (
+        <path d="M 50 20 L 150 130 M 150 20 L 50 130 M 50 75 L 150 75 M 100 20 L 100 130" stroke="#78350F" strokeWidth="3" opacity="0.75" />
+      )}
+      {/* Mouse */}
+      <motion.g
+        animate={isAnimating ? { y: [0, -3, 0] } : {}}
+        transition={{ repeat: Infinity, duration: 1 }}
+        transform={
+          pageIdx === 1 ? "translate(100, 36)" :
+          pageIdx === 2 ? "translate(142, 90)" :
+          pageIdx === 3 ? "translate(45, 95)" : "translate(48, 95)"
+        }
+      >
+        <ellipse cx="0" cy="0" rx="8" ry="6" fill="#94A3B8" stroke="#4D2B82" strokeWidth="1.5" />
+        <circle cx="-5" cy="-7" r="4.5" fill="#94A3B8" stroke="#4D2B82" strokeWidth="1" />
+        <circle cx="2" cy="-2" r="1" fill="#4D2B82" />
+      </motion.g>
+    </svg>
+  );
+}
+
+function SVGOwlKnowledgeStory(pageIdx: number, isAnimating: boolean) {
+  return (
+    <svg viewBox="0 0 200 150" className="w-full h-full max-h-[220px]">
+      <rect x="0" y="0" width="200" height="150" fill="#F5F5F5" rx="16" />
+      {/* Books or Chest */}
+      {pageIdx === 1 && (
+        <g transform="translate(140, 75)">
+          <rect x="-15" y="-30" width="10" height="60" fill="#F43F5E" rx="1" />
+          <rect x="-5" y="-30" width="10" height="60" fill="#3B82F6" rx="1" />
+          <rect x="5" y="-30" width="10" height="60" fill="#10B981" rx="1" />
+        </g>
+      )}
+      {pageIdx === 3 && (
+        <g transform="translate(140, 90)">
+          <rect x="-15" y="-10" width="30" height="20" fill="#B45309" stroke="#4D2B82" strokeWidth="2" />
+          <circle cx="0" cy="-16" r="6" fill="#FBBF24" stroke="#4D2B82" strokeWidth="1.5" />
+          <rect x="-2" y="-10" width="4" height="10" fill="#FBBF24" />
+        </g>
+      )}
+      {pageIdx === 4 && (
+        <motion.g
+          animate={{ scale: [1, 1.05, 1] }}
+          transition={{ repeat: Infinity, duration: 1.8 }}
+          transform="translate(130, 80)"
+        >
+          <rect x="-20" y="-15" width="40" height="30" fill="#B45309" stroke="#4D2B82" strokeWidth="2.5" />
+          <circle cx="-15" cy="-25" r="2.5" fill="#FBBF24" />
+          <circle cx="15" cy="-28" r="2.5" fill="#FBBF24" />
+          <circle cx="0" cy="-35" r="3" fill="#FFF" />
+        </motion.g>
+      )}
+      {/* Owl */}
+      <motion.g
+        animate={isAnimating ? { y: [0, -4, 0] } : {}}
+        transition={{ repeat: Infinity, duration: 1.5 }}
+        transform={pageIdx === 3 ? "translate(60, 85)" : "translate(70, 85)"}
+      >
+        <circle cx="0" cy="0" r="16" fill="#8D6E63" stroke="#4D2B82" strokeWidth="2" />
+        <circle cx="-6" cy="-4" r="5" fill="#FFF" stroke="#4D2B82" strokeWidth="1.5" />
+        <circle cx="6" cy="-4" r="5" fill="#FFF" stroke="#4D2B82" strokeWidth="1.5" />
+        <circle cx="-5" cy="-4" r="1.8" fill="#000" />
+        <circle cx="5" cy="-4" r="1.8" fill="#000" />
+        <polygon points="0,0 -3,5 3,5" fill="#F59E0B" />
+      </motion.g>
+    </svg>
+  );
+}
+
 // --- Stories Database ---
 const stories: Story[] = [
   {
@@ -371,6 +580,151 @@ const stories: Story[] = [
         id: 4,
         text: "وبعد قليل، تفتحت على رأس برعم زهرة ذهبية عملاقة وجميلة جداً، ففرح كثيراً وعرف أن ثمرة العمل الجماعي والنشاط هي النجاح!",
         illustration: (isAnim) => SVGSproutBlooming(isAnim)
+      }
+    ]
+  },
+  {
+    id: 3,
+    title: "النملة الذكية وقطرة العسل",
+    desc: "قصة مشوقة تعلم الأطفال القناعة والرضا وتجنب الطمع والمشاكل.",
+    emoji: "🐜🍯",
+    moral: "القناعة كنز عظيم، والطمع يؤدي دائماً للمتاعب والمشاكل!",
+    pages: [
+      {
+        id: 1,
+        text: "وجدت النملة الصغيرة سمسمة قطرة عسل لذيذة على ورقة شجر خضراء، فرحت كثيراً وأكلت منها قليلاً وشعرت بالشبع.",
+        illustration: (isAnim) => SVGAntStory(1, isAnim)
+      },
+      {
+        id: 2,
+        text: "لكن سمسمة طمعت وأرادت أن تأخذ قطرة العسل كلها لنفسها وتسبح فيها، فقفزت داخل القطرة الكبيرة.",
+        illustration: (isAnim) => SVGAntStory(2, isAnim)
+      },
+      {
+        id: 3,
+        text: "التصقت أرجل النملة بالعسل ولم تستطع الحركة أو العودة لبيتها، وبدأت تبكي وتطلب المساعدة من أصدقائها.",
+        illustration: (isAnim) => SVGAntStory(3, isAnim)
+      },
+      {
+        id: 4,
+        text: "جاءت النملات الصديقات وأنقذن سمسمة، فتعلمت أن القناعة كنز عظيم، وأن الطمع يؤدي دائماً للمشاكل.",
+        illustration: (isAnim) => SVGAntStory(4, isAnim)
+      }
+    ]
+  },
+  {
+    id: 4,
+    title: "العصفور كوكو وجناحه الجريح",
+    desc: "قصة رحيمة تحث على الرفق بالحيوان ومساعدة الضعفاء المحتاجين.",
+    emoji: "🐦🩹",
+    moral: "الرفق والرحمة بالضعفاء ينشر الحب والخير بين الجميع!",
+    pages: [
+      {
+        id: 1,
+        text: "كان العصفور الصغير كوكو يحاول الطيران، لكنه سقط على الأرض وجرح جناحه وبدأ يغرد حزيناً يبحث عن مساعدة.",
+        illustration: (isAnim) => SVGBirdStory(1, isAnim)
+      },
+      {
+        id: 2,
+        text: "مر به القط الطيب مشمش، وبدلاً من إيذائه، اقترب منه بلطف وحمله بعناية فوق ظهره الدافئ ليحميه.",
+        illustration: (isAnim) => SVGBirdStory(2, isAnim)
+      },
+      {
+        id: 3,
+        text: "ذهب مشمش بالعصفور إلى عش أمه فوق الشجرة، ووضع له بعض الماء والحبوب الدافئة ليأكل ويستعيد قوته.",
+        illustration: (isAnim) => SVGBirdStory(3, isAnim)
+      },
+      {
+        id: 4,
+        text: "فرحت أم كوكو وشكرت القط، وتعلم الجميع أن الرحمة بالضعفاء تنشر السلام والمحبة بين الحيوانات والبشر.",
+        illustration: (isAnim) => SVGBirdStory(4, isAnim)
+      }
+    ]
+  },
+  {
+    id: 5,
+    title: "السمكة الذهبية والبحيرة النظيفة",
+    desc: "قصة توعوية تحفز الأطفال على الحفاظ على البيئة ونظافة المياه.",
+    emoji: "🐠🧹",
+    moral: "الحفاظ على نظافة بيئتنا واجب ومسؤولية تضمن لنا حياة صحية!",
+    pages: [
+      {
+        id: 1,
+        text: "كانت السمكة الذهبية زينة تسبح سعيدة في البحيرة، لكنها لاحظت وجود مخلفات بلاستيكية تملأ المياه.",
+        illustration: (isAnim) => SVGFishStory(1, isAnim)
+      },
+      {
+        id: 2,
+        text: "شعرت زينة بالتعب ولم تستطع التنفس جيداً، فطلبت من صديقها الضفدع قفاز مساعدتها في تنظيف البحيرة.",
+        illustration: (isAnim) => SVGFishStory(2, isAnim)
+      },
+      {
+        id: 3,
+        text: "تعاونت الأسماك والضفادع وقاموا بجمع كل المخلفات البلاستيكية وإلقائها خارج البحيرة في الصناديق المخصصة.",
+        illustration: (isAnim) => SVGFishStory(3, isAnim)
+      },
+      {
+        id: 4,
+        text: "عاد الماء نقياً ونظيفاً، وعاشت زينة في صحة وسعادة، وتعلّم الجميع أن الحفاظ على نظافة البيئة واجب.",
+        illustration: (isAnim) => SVGFishStory(4, isAnim)
+      }
+    ]
+  },
+  {
+    id: 6,
+    title: "الأسد القوي والفأر الصغير بندق",
+    desc: "قصة كلاسيكية هادفة تعلم الأطفال التواضع وعدم استصغار الآخرين.",
+    emoji: "🦁🐭",
+    moral: "لا تستصغر أحداً أبداً، فالمعروف ورد الجميل يصنع المعجزات!",
+    pages: [
+      {
+        id: 1,
+        text: "كان الأسد زئير نائماً عندما بدأ الفأر الصغير بندق باللعب فوق رأسه، فاستيقظ الأسد غاضباً وأمسك به.",
+        illustration: (isAnim) => SVGLionStory(1, isAnim)
+      },
+      {
+        id: 2,
+        text: "بكى بندق وقال: أرجوك سامحني، فقد أساعدك يوماً ما! ضحك الأسد مستغرباً لكنه أشفق عليه وتركه يرحل.",
+        illustration: (isAnim) => SVGLionStory(2, isAnim)
+      },
+      {
+        id: 3,
+        text: "بعد أيام، وقع الأسد في شبكة الصيادين وبدأ يزأر، فسمعه بندق وجاء مسرعاً وقرض حبال الشبكة بأسنانه.",
+        illustration: (isAnim) => SVGLionStory(3, isAnim)
+      },
+      {
+        id: 4,
+        text: "نجى الأسد وشكر الفأر بحرارة، وتعلم الجميع أن الصغير قد يفعل ما لا يقدر عليه الكبير.",
+        illustration: (isAnim) => SVGLionStory(4, isAnim)
+      }
+    ]
+  },
+  {
+    id: 7,
+    title: "بروفيسور بلومي ومفتاح المعرفة",
+    desc: "قصة مشوقة تشجع الأطفال على حب القراءة والتعلم والبحث العلمي.",
+    emoji: "🦉🔑",
+    moral: "القراءة والبحث العلمي هما المفتاح الحقيقي لكل نجاح وتميز في الحياة!",
+    pages: [
+      {
+        id: 1,
+        text: "كان البومة كوكو يبحث في مكتبته القديمة عن مفتاح ذهبي غامض يفتح صندوق المعرفة السحري المغلق.",
+        illustration: (isAnim) => SVGOwlKnowledgeStory(1, isAnim)
+      },
+      {
+        id: 2,
+        text: "قرأ كوكو العديد من الكتب بجد وتفانٍ، وعرف أن المفتاح مخبأ تحت صخرة الحكمة في قمة الجبل.",
+        illustration: (isAnim) => SVGOwlKnowledgeStory(2, isAnim)
+      },
+      {
+        id: 3,
+        text: "صعد كوكو الجبل وواجه الصعاب، وبفضل علمه وذكائه استطاع حل الألغاز وحصل على المفتاح الذهبي اللامع.",
+        illustration: (isAnim) => SVGOwlKnowledgeStory(3, isAnim)
+      },
+      {
+        id: 4,
+        text: "فتح كوكو الصندوق لتخرج منه كتب ملونة أضاءت الغابة بالعلم، وعرف الجميع أن القراءة هي سر كل نجاح.",
+        illustration: (isAnim) => SVGOwlKnowledgeStory(4, isAnim)
       }
     ]
   }
@@ -622,7 +976,7 @@ export default function InteractiveStories({ onClose, globalStars, setGlobalStar
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="max-w-2xl w-full bg-white border-4 border-[#4D2B82] rounded-[36px] shadow-[0_12px_0_0_#4D2B82] p-6 sm:p-8 flex flex-col justify-between overflow-hidden relative min-h-[500px]"
+              className="story-reader-card max-w-2xl w-full bg-white border-4 border-[#4D2B82] rounded-[36px] shadow-[0_12px_0_0_#4D2B82] p-6 sm:p-8 flex flex-col justify-between overflow-hidden relative min-h-[500px]"
             >
               
               {/* Reader Header */}
@@ -662,18 +1016,26 @@ export default function InteractiveStories({ onClose, globalStars, setGlobalStar
                 </div>
               </div>
 
-              {/* Illustration Area */}
-              <div className="flex-grow flex items-center justify-center p-3 mb-4">
-                <div className="w-full max-w-[320px] rounded-2xl overflow-hidden border-2 border-purple-100 p-2 bg-slate-50 flex items-center justify-center shadow-inner">
-                  {activeStory.pages[currentPageIdx].illustration(isPlaying)}
+              {/* Responsive main wrapper */}
+              <div className="story-main-wrapper flex flex-col md:flex-row flex-grow items-center justify-center gap-4 overflow-hidden mb-4">
+                
+                {/* Left Column: Illustration */}
+                <div className="story-left-col flex items-center justify-center p-2 w-full md:w-1/2">
+                  <div className="story-illustration-container w-full max-w-[320px] rounded-2xl overflow-hidden border-2 border-purple-100 p-2 bg-slate-50 flex items-center justify-center shadow-inner">
+                    {activeStory.pages[currentPageIdx].illustration(isPlaying)}
+                  </div>
                 </div>
-              </div>
 
-              {/* Story Arabic Text (With highlighted word span) */}
-              <div className="text-center leading-relaxed px-4 py-3 bg-purple-50/30 rounded-2xl border border-purple-100 min-h-[100px] flex items-center justify-center">
-                <div className="text-right tracking-wide leading-loose">
-                  {renderTextSpans(activeStory.pages[currentPageIdx].text)}
+                {/* Right Column: Text */}
+                <div className="story-right-col w-full md:w-1/2 flex flex-col justify-center">
+                  {/* Story Arabic Text (With highlighted word span) */}
+                  <div className="text-center leading-relaxed px-4 py-3 bg-purple-50/30 rounded-2xl border border-purple-100 min-h-[100px] flex items-center justify-center">
+                    <div className="text-right tracking-wide leading-loose">
+                      {renderTextSpans(activeStory.pages[currentPageIdx].text)}
+                    </div>
+                  </div>
                 </div>
+
               </div>
 
               {/* Page Flipping Navigation Controls */}

@@ -25,6 +25,16 @@ const surahs: Surah[] = [
     ]
   },
   {
+    id: 108,
+    name: "سورة الكوثر",
+    englishId: "108",
+    verses: [
+      "إِنَّا أَعْطَيْنَاكَ الْكَوْثَرَ",
+      "فَصَلِّ لِرَبِّكَ وَانْحَرْ",
+      "إِنَّ شَانِئَكَ هُوَ الْأَبْتَرُ"
+    ]
+  },
+  {
     id: 112,
     name: "سورة الإخلاص",
     englishId: "112",
@@ -296,10 +306,10 @@ export default function QuranIsland({ onClose, globalStars, setGlobalStars }: Qu
       </AnimatePresence>
 
       {/* 3. Main Workspace Split Panel */}
-      <main className="flex-grow w-full flex flex-col md:flex-row p-6 gap-6 relative z-10 overflow-hidden">
+      <main className="quran-main-panel flex-grow w-full flex flex-col md:flex-row p-6 gap-6 relative z-10 overflow-hidden">
         
         {/* Side Panel: Surah List Carousel */}
-        <div className="w-full md:w-[280px] bg-white/70 backdrop-blur-sm border-3 border-[#4D2B82] rounded-[24px] p-4 flex flex-row md:flex-col gap-3 overflow-x-auto md:overflow-y-auto shadow-sm select-none">
+        <div className="quran-surah-sidebar w-full md:w-[280px] bg-white/70 backdrop-blur-sm border-3 border-[#4D2B82] rounded-[24px] p-4 flex flex-row md:flex-col gap-3 overflow-x-auto md:overflow-y-auto shadow-sm select-none">
           <h3 className="hidden md:block font-black text-base text-[#4D2B82] border-b-2 border-purple-100 pb-2 mb-2 text-right">
             📖 اختر السورة للحفظ:
           </h3>
@@ -326,7 +336,7 @@ export default function QuranIsland({ onClose, globalStars, setGlobalStars }: Qu
         </div>
 
         {/* Center Panel: Verse board and Repetition Control */}
-        <div className="flex-grow bg-white border-3 border-[#4D2B82] rounded-[32px] p-6 flex flex-col justify-between shadow-lg overflow-hidden relative">
+        <div className="quran-verse-board flex-grow bg-white border-3 border-[#4D2B82] rounded-[32px] p-6 flex flex-col justify-between shadow-lg overflow-hidden relative">
           
           {/* Top Panel: Surah Title and Repetitions */}
           <div className="flex items-center justify-between border-b-2 border-purple-100 pb-3 mb-4">
@@ -356,7 +366,7 @@ export default function QuranIsland({ onClose, globalStars, setGlobalStars }: Qu
           </div>
 
           {/* Center Verse List (Scrolling and active highlighting) */}
-          <div className="flex-grow overflow-y-auto custom-scrollbar space-y-4 px-2 py-4 mb-4 text-center">
+          <div className="quran-verse-list flex-grow overflow-y-auto custom-scrollbar space-y-4 px-2 py-4 mb-4 text-center">
             {selectedSurah.verses.map((verse, index) => {
               const isActive = activeVerseIndex === index;
               return (

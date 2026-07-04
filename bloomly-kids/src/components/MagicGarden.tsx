@@ -767,7 +767,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
       </AnimatePresence>
 
       {/* 1. Header Navigation */}
-      <header className="w-full bg-white/90 backdrop-blur-md border-b-4 border-[#4D2B82] p-4 flex items-center justify-between shadow-md relative z-30">
+      <header className="garden-header w-full bg-white/90 backdrop-blur-md border-b-4 border-[#4D2B82] p-4 flex items-center justify-between shadow-md relative z-30">
         <button
           onClick={() => {
             synth.playPop();
