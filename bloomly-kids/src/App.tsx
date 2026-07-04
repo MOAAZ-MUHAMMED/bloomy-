@@ -238,6 +238,8 @@ export default function App() {
     };
   }, []);
 
+  const [forcedGame, setForcedGame] = useState<string | null>(null);
+
   // Keep active profile synced with global stars and backend database
   useEffect(() => {
     if (!childProfile) return;
@@ -570,6 +572,32 @@ export default function App() {
       badge: "طهي ووصفات",
       x: 70,
       y: 85
+    },
+    {
+      title: "جزيرة القرآن 🕋",
+      character: "🦉 الهدهد هدهد (معلم التلاوة)",
+      characterEmoji: "🪶",
+      emoji: "🕋",
+      colorClass: "bg-[#F0FDF4] border-emerald-300 text-emerald-800",
+      gameName: "حفظ قصار السور بالتكرار التفاعلي",
+      quest: "أهلاً بك يا صديقي الصغير! أنا الهدهد هدهد. سنستمع معاً لآيات الله الكريمة ونكررها لنكسب الأجر ونحفظ القرآن الكريم في قلوبنا ونفوز بالنجوم المضاعفة!",
+      superpower: "حفظ سور القرآن وتلاوتها بصوت ندي وجميل! 🕋✨",
+      badge: "تحفيظ وقيم",
+      x: 48,
+      y: 35
+    },
+    {
+      title: "قصص بلومي 📚",
+      character: "🦊 الثعلب حكواتي (راوي القصص)",
+      characterEmoji: "🦊",
+      emoji: "📚",
+      colorClass: "bg-[#FFFDF0] border-amber-300 text-amber-800",
+      gameName: "قصص تفاعلية مصورة تتبع الكلمات",
+      quest: "أهلاً بك في خيمتي السحرية! أنا الراوي حكواتي. سنقرأ معاً أروع القصص المصورة التي تعلمنا القيم والأخلاق، ونتبع الكلمات المقروءة كلمة بكلمة!",
+      superpower: "قراءة القصص بطلاقة وتعلم الأخلاق الكريمة والأمانة! 🌟📖",
+      badge: "قصص وقيم",
+      x: 30,
+      y: 62
     }
   ];
 
@@ -910,9 +938,11 @@ export default function App() {
           </div>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden lg:flex items-center gap-5 xl:gap-8 font-bold text-sm xl:text-base text-[#4D2B82]">
+          <nav className="hidden lg:flex items-center gap-4 xl:gap-6 font-bold text-xs xl:text-sm text-[#4D2B82]">
             <a href="#game-zone" onClick={(e) => { e.preventDefault(); scrollToGames(); }} className="hover:text-[#E01E5A] transition-colors">الألعاب السحرية 🎮</a>
             <button onClick={() => { playBubbleSound(); startLoadingGarden(); }} className="hover:text-[#E01E5A] transition-colors cursor-pointer font-bold bg-transparent border-none">الحديقة السحرية 🌿</button>
+            <button onClick={() => { playBubbleSound(); setForcedGame("quran"); }} className="hover:text-[#E01E5A] transition-colors cursor-pointer font-bold bg-transparent border-none">جزيرة القرآن 🕋</button>
+            <button onClick={() => { playBubbleSound(); setForcedGame("stories"); }} className="hover:text-[#E01E5A] transition-colors cursor-pointer font-bold bg-transparent border-none">قصص بلومي 📚</button>
             <a href="#characters" onClick={(e) => { e.preventDefault(); setShowCharactersView(true); playBubbleSound(); }} className="hover:text-[#E01E5A] transition-colors">شخصيات بلومي 🦉</a>
             <a href="#what-we-teach" className="hover:text-[#E01E5A] transition-colors">ماذا نتعلّم؟</a>
             <a href="#how-it-works" className="hover:text-[#E01E5A] transition-colors">كيف نعمل؟</a>
@@ -998,6 +1028,8 @@ export default function App() {
             )}
             <a href="#game-zone" onClick={(e) => { e.preventDefault(); scrollToGames(); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">الألعاب السحرية 🎮</a>
             <button onClick={() => { playBubbleSound(); startLoadingGarden(); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A] cursor-pointer text-right w-full font-bold bg-transparent border-none">الحديقة السحرية 🌿</button>
+            <button onClick={() => { playBubbleSound(); setMobileMenuOpen(false); setForcedGame("quran"); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A] cursor-pointer text-right w-full font-bold bg-transparent border-none">جزيرة القرآن 🕋</button>
+            <button onClick={() => { playBubbleSound(); setMobileMenuOpen(false); setForcedGame("stories"); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A] cursor-pointer text-right w-full font-bold bg-transparent border-none">قصص بلومي 📚</button>
             <a href="#characters" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); setShowCharactersView(true); playBubbleSound(); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">شخصيات بلومي 🦉</a>
             <a href="#what-we-teach" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">ماذا نتعلّم؟</a>
             <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">كيف نعمل؟</a>
@@ -1107,6 +1139,8 @@ export default function App() {
         globalStars={globalStars} 
         setGlobalStars={setGlobalStars}
         childLevel={childProfile?.level}
+        forcedGame={forcedGame}
+        setForcedGame={setForcedGame}
       />
 
       {/* 4. What We Teach (Curriculums Grid replaced with Magical Adventure Map) */}
@@ -1277,7 +1311,7 @@ export default function App() {
 
                     {/* Age Badge */}
                     <div className="flex items-center justify-between text-xs font-bold text-[#6B4E9E] bg-gray-50 border border-gray-100 rounded-xl p-2.5">
-                      <span>الجزيرة رقم: {selectedIslandIndex + 1} / 12</span>
+                      <span>الجزيرة رقم: {selectedIslandIndex + 1} / {islands.length}</span>
                       <span className="bg-purple-100 text-[#4D2B82] px-2.5 py-0.5 rounded-full font-extrabold text-[10px]">
                         {islands[selectedIslandIndex].badge}
                       </span>
@@ -1289,7 +1323,13 @@ export default function App() {
                     <button
                       onClick={() => {
                         setSelectedIslandIndex(null);
-                        scrollToGames();
+                        if (selectedIslandIndex === 12) {
+                          setForcedGame("quran");
+                        } else if (selectedIslandIndex === 13) {
+                          setForcedGame("stories");
+                        } else {
+                          scrollToGames();
+                        }
                       }}
                       className="flex-1 btn-bubbly-primary text-sm py-3.5 cursor-pointer shadow-[0_5px_0_0_#1B5E20] hover:shadow-[0_2px_0_0_#1B5E20]"
                       style={{

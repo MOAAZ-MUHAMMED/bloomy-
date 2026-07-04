@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { ScreenOrientation as CapScreenOrientation } from '@capacitor/screen-orientation';
+import QuranIsland from "./QuranIsland";
+import InteractiveStories from "./InteractiveStories";
 
 export function SproutMascot({ className = "w-24 h-24", state = "idle" }: { className?: string; state?: "idle" | "happy" | "sad" | "talking" }) {
   const bodyAnimation = state === "happy"
@@ -933,11 +935,24 @@ interface GameZoneProps {
   globalStars?: number;
   setGlobalStars?: React.Dispatch<React.SetStateAction<number>>;
   childLevel?: "level1" | "level2" | "level3" | "level4" | null;
+  forcedGame?: string | null;
+  setForcedGame?: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, childLevel: propChildLevel = "level1" }: GameZoneProps = {}) {
-  const [activeGame, setActiveGame] = useState<"menu" | "math" | "spelling" | "memory" | "catcher" | "coloring" | "spellingEn" | "sorting" | "spaceCatcher" | "connectDots" | "maze" | "safari" | "chef" | "farm" | "train" | "arrowRacer">("menu");
+export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, childLevel: propChildLevel = "level1", forcedGame, setForcedGame }: GameZoneProps = {}) {
+  const [activeGame, setActiveGame] = useState<"menu" | "math" | "spelling" | "memory" | "catcher" | "coloring" | "spellingEn" | "sorting" | "spaceCatcher" | "connectDots" | "maze" | "safari" | "chef" | "farm" | "train" | "arrowRacer" | "quran" | "stories">("menu");
   const gameZoneRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (forcedGame && setForcedGame) {
+      setActiveGame(forcedGame as any);
+      setShowLevelMap(forcedGame !== "quran" && forcedGame !== "stories");
+      setForcedGame(null);
+      if (gameZoneRef.current) {
+        gameZoneRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [forcedGame, setForcedGame]);
   const mapScrollRef = useRef<HTMLDivElement>(null);
   
   // Game Level Map & Loading States
@@ -1061,7 +1076,13 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
     setIsLoadingGame(true);
     
     // Play a friendly intro voice-over
-    sfx.speakArabic("استعد يا بطل! سنقوم الآن بفتح خريطة المغامرة السحرية!", "welcome");
+    if (gameName === "quran") {
+      sfx.speakArabic("استعد يا بطل! سنقوم الآن بفتح جزيرة القرآن الكريم!", "welcome");
+    } else if (gameName === "stories") {
+      sfx.speakArabic("استعد يا بطل! سنقوم الآن بفتح جزيرة القصص التفاعلية!", "welcome");
+    } else {
+      sfx.speakArabic("استعد يا بطل! سنقوم الآن بفتح خريطة المغامرة السحرية!", "welcome");
+    }
     
     const interval = setInterval(() => {
       setLoadingProgress(prev => {
@@ -1069,7 +1090,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
           clearInterval(interval);
           setIsLoadingGame(false);
           setActiveGame(gameName);
-          setShowLevelMap(true);
+          setShowLevelMap(gameName !== "quran" && gameName !== "stories");
           return 100;
         }
         return prev + 5;
@@ -4147,6 +4168,48 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                             العب الآن 🚀
                           </button>
                         </motion.div>
+
+            {/* Game 15 Card: Quran */}
+                        <motion.div 
+                          whileHover={{ scale: 1.05, y: -4 }}
+                          transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                          className="card-bubbly p-6 flex flex-col items-center text-center bg-white cursor-default select-none"
+                        >
+                          <motion.span 
+                            animate={{ rotate: [0, -10, 10, 0] }}
+                            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                            className="text-5xl mb-4 select-none inline-block"
+                          >🕋</motion.span>
+                          <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2">جزيرة القرآن الكريم</h3>
+                          <p className="text-sm font-medium text-purple-400 mb-4">حفظ قصار السور بالتكرار التفاعلي مع تلاوة بصوتك!</p>
+                          <button
+                            onClick={() => requireProfile(() => startLoadingAndOpenMap("quran"))}
+                            className="w-full btn-bubbly-primary mt-auto text-sm py-2.5"
+                          >
+                            العب الآن 🚀
+                          </button>
+                        </motion.div>
+
+            {/* Game 16 Card: Stories */}
+                        <motion.div 
+                          whileHover={{ scale: 1.05, y: -4 }}
+                          transition={{ type: "spring", stiffness: 400, damping: 15 }}
+                          className="card-bubbly p-6 flex flex-col items-center text-center bg-white cursor-default select-none"
+                        >
+                          <motion.span 
+                            animate={{ rotate: [0, -10, 10, 0] }}
+                            transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                            className="text-5xl mb-4 select-none inline-block"
+                          >📚</motion.span>
+                          <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2">قصص بلومي التفاعلية</h3>
+                          <p className="text-sm font-medium text-purple-400 mb-4">قصص مصورة هادفة مع خاصية تتبع الكلمات مسموعة!</p>
+                          <button
+                            onClick={() => requireProfile(() => startLoadingAndOpenMap("stories"))}
+                            className="w-full btn-bubbly-purple mt-auto text-sm py-2.5"
+                          >
+                            العب الآن 🚀
+                          </button>
+                        </motion.div>
           </div>
         </div>
       )}
@@ -6081,6 +6144,22 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
             💡 اضغط على الأشكال الموجودة بالأسفل لتثبيتها في الأماكن الفارغة بالقطار.
           </p>
         </div>
+      )}
+
+      {activeGame === "quran" && (
+        <QuranIsland
+          onClose={() => setActiveGame("menu")}
+          globalStars={globalStars}
+          setGlobalStars={setGlobalStars}
+        />
+      )}
+
+      {activeGame === "stories" && (
+        <InteractiveStories
+          onClose={() => setActiveGame("menu")}
+          globalStars={globalStars}
+          setGlobalStars={setGlobalStars}
+        />
       )}
 
 
