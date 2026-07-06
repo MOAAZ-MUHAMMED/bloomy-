@@ -2413,23 +2413,22 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       }
     }
     
-    // Speak congrats message in Arabic using speakArabic (1.2s delay to prevent sfx overlap)
-    setTimeout(() => {
-      try {
-        let congratsText = "";
-        if (starsEarnedThisSession >= 5) {
-          congratsText = "ممتاز يا بطل! لقد حصلت على الدرجة الكاملة!";
-        } else if (starsEarnedThisSession >= 3) {
-          congratsText = "أحسنت! عمل رائع جداً!";
-        } else {
-          congratsText = "عمل جيد! حاول مجدداً لتحصل على نجوم أكثر!";
-        }
-        
-        sfx.speakArabic(congratsText, "correct");
-      } catch (err) {
-        console.warn("Speech synthesis failed:", err);
+    // Play custom narrator voice audio files as requested by user
+    try {
+      let audioPath = "";
+      if (starsEarnedThisSession === 5) {
+        audioPath = "/excellent.mp3";
+      } else if (starsEarnedThisSession > 0) {
+        audioPath = "/well_done_hero.mp3";
       }
-    }, 1200);
+      if (audioPath) {
+        const audio = new Audio(audioPath);
+        audio.volume = 1.0;
+        audio.play().catch(e => console.warn("Victory custom audio play blocked:", e));
+      }
+    } catch (e) {
+      console.warn("Victory custom audio player error:", e);
+    }
     
     // Spawn 180 confetti particles (falling colored papers) exploding from left and right corners
     const colors = ["#FF5A92", "#5BF8A3", "#FFD700", "#5BC0F8", "#A855F7", "#FF9F29"];

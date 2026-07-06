@@ -172,7 +172,23 @@ export function IntroScreen({ onFinish }: IntroScreenProps) {
   ];
 
   useEffect(() => {
-    // Start splatter triggers at 50ms
+    // Play Welcome Audio (أهلاً بك يا بطل)
+    const playWelcome = () => {
+      const audio = new Audio("/welcome_hero.mp3");
+      audio.volume = 0.95;
+      audio.play().catch(() => {
+        // Fallback: play on first user interaction
+        const playOnInteract = () => {
+          audio.play().catch(() => {});
+          window.removeEventListener("mousedown", playOnInteract);
+          window.removeEventListener("touchstart", playOnInteract);
+        };
+        window.addEventListener("mousedown", playOnInteract);
+        window.addEventListener("touchstart", playOnInteract);
+      });
+    };
+    const welcomeTimer = setTimeout(playWelcome, 200);
+
     // Start splatter triggers at 50ms
     const startSmokeTimer = setTimeout(() => setShowStartSplatter(true), 50);
     const startSmokeOff = setTimeout(() => setShowStartSplatter(false), 500);
@@ -271,6 +287,7 @@ export function IntroScreen({ onFinish }: IntroScreenProps) {
     }, 5500);
 
     return () => {
+      clearTimeout(welcomeTimer);
       clearTimeout(startSmokeTimer);
       clearTimeout(startSmokeOff);
       clearTimeout(playWordTimer);

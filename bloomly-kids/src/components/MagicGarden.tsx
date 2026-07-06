@@ -557,16 +557,16 @@ export function SVGFarmerHouse({ className = "w-full h-full" }: { className?: st
     <svg viewBox="0 0 200 160" className={className}>
       <defs>
         <linearGradient id="roofGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#C0392B" />
-          <stop offset="100%" stopColor="#7B241C" />
+          <stop offset="0%" stopColor="#FF4D4D" />
+          <stop offset="100%" stopColor="#C0392B" />
         </linearGradient>
         <linearGradient id="wallGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#F5CBA7" />
-          <stop offset="100%" stopColor="#EB984E" />
+          <stop offset="0%" stopColor="#FFFFFF" />
+          <stop offset="100%" stopColor="#ECEFF1" />
         </linearGradient>
         <linearGradient id="doorGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#935116" />
-          <stop offset="100%" stopColor="#5C3317" />
+          <stop offset="0%" stopColor="#D32F2F" />
+          <stop offset="100%" stopColor="#B71C1C" />
         </linearGradient>
       </defs>
       {/* Stone Foundation */}
@@ -687,6 +687,13 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
 
   // Dynamic zoom scale state
   const [zoomScale, setZoomScale] = useState<number>(0.8);
+
+  // 3D upright transform to cancel map rotation and make elements stand perpendicular to the ground
+  const uprightStyle = {
+    transform: "rotateZ(45deg) rotateX(-58deg)",
+    transformOrigin: "bottom center",
+    transformStyle: "preserve-3d" as const,
+  };
 
   // Plots
   const [plots, setPlots] = useState<GardenPlot[]>([]);
@@ -1105,24 +1112,32 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
         )}
       </AnimatePresence>
 
-      {/* ─── Main Map (With Dynamic zoomScale transform) ─────────────────────────── */}
-      <main className={`flex-grow w-full overflow-auto scrollbar-none relative border-t-2 ${timeOfDay === "night" ? "border-indigo-900" : "border-emerald-800"} transition-colors duration-1000`}>
-        {/* Scaled viewport wrapper to maintain scrollbar boundaries */}
-        <div style={{
-          width: `${1800 * zoomScale}px`,
-          height: `${1300 * zoomScale}px`,
-          overflow: "hidden",
-          position: "relative",
-          transition: "width 0.3s ease, height 0.3s ease"
-        }}>
+      {/* ─── Main Map (3D Isometric Pop-up View) ─────────────────────────── */}
+      <main 
+        className={`flex-grow w-full overflow-auto scrollbar-none relative border-t-2 ${
+          timeOfDay === "night" ? "bg-gradient-to-b from-[#111827] via-[#311042] to-[#1E1B4B]" : "bg-gradient-to-b from-[#A0C4FF] via-[#E2F0D9] to-[#FDFFB6]"
+        } transition-colors duration-1000`}
+        style={{
+          perspective: "2500px",
+          transformStyle: "preserve-3d"
+        }}
+      >
+        {/* Scrollable container with padding to allow full rotation without clipping */}
+        <div className="flex items-center justify-center p-[200px] md:p-[300px] min-w-max min-h-max" style={{ transformStyle: "preserve-3d" }}>
+          
+          {/* Floating 3D Island */}
           <div 
-            className={`w-[1800px] h-[1300px] p-8 overflow-hidden select-none transition-all duration-1000 ${mapBg}`}
+            className={`w-[1800px] h-[1300px] p-8 select-none transition-all duration-1000 ${mapBg}`}
             style={{
-              transform: `scale(${zoomScale})`,
-              transformOrigin: "top left",
-              position: "absolute",
-              top: 0,
-              left: 0
+              transform: `scale(${zoomScale}) rotateX(56deg) rotateZ(-45deg)`,
+              transformOrigin: "center center",
+              transformStyle: "preserve-3d",
+              borderRadius: "80px",
+              border: "12px solid #4D2B82",
+              boxShadow: timeOfDay === "night" 
+                ? "0 22px 0 0 #2A100B, 0 44px 0 0 #150604, 0 60px 120px rgba(0,0,0,0.8)" 
+                : "0 22px 0 0 #8B5A2B, 0 44px 0 0 #5C3A21, 0 60px 120px rgba(0,0,0,0.45)",
+              position: "relative"
             }}
           >
 
@@ -1163,23 +1178,23 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
             <div className="absolute left-[190px] top-[720px] w-6 h-[290px] bg-amber-900/10 border-x-2 border-dashed border-amber-800/10 pointer-events-none" />
             
             {/* 🌲 Landscape Decors (Trees and Flowers) */}
-            <div className="absolute left-[370px] top-[120px] pointer-events-none opacity-80"><SVGDecorTree className="w-14 h-14" /></div>
-            <div className="absolute left-[780px] top-[130px] pointer-events-none opacity-80"><SVGDecorTree className="w-14 h-14" /></div>
-            <div className="absolute left-[1110px] top-[110px] pointer-events-none opacity-85"><SVGDecorFlowers className="w-10 h-10" /></div>
-            <div className="absolute left-[390px] top-[490px] pointer-events-none opacity-80"><SVGDecorTree className="w-16 h-16" /></div>
-            <div className="absolute left-[820px] top-[500px] pointer-events-none opacity-85"><SVGDecorFlowers className="w-10 h-10" /></div>
-            <div className="absolute left-[380px] top-[800px] pointer-events-none opacity-80"><SVGDecorTree className="w-14 h-14" /></div>
-            <div className="absolute left-[920px] top-[880px] pointer-events-none opacity-80"><SVGDecorTree className="w-16 h-16" /></div>
-            <div className="absolute left-[1420px] top-[390px] pointer-events-none opacity-80"><SVGDecorTree className="w-15 h-15" /></div>
-            <div className="absolute left-[1460px] top-[410px] pointer-events-none opacity-85"><SVGDecorFlowers className="w-10 h-10" /></div>
-            <div className="absolute left-[110px] top-[950px] pointer-events-none opacity-85"><SVGDecorFlowers className="w-9 h-9" /></div>
+            <div className="absolute left-[370px] top-[120px] pointer-events-none opacity-80" style={uprightStyle}><SVGDecorTree className="w-14 h-14" /></div>
+            <div className="absolute left-[780px] top-[130px] pointer-events-none opacity-80" style={uprightStyle}><SVGDecorTree className="w-14 h-14" /></div>
+            <div className="absolute left-[1110px] top-[110px] pointer-events-none opacity-85" style={uprightStyle}><SVGDecorFlowers className="w-10 h-10" /></div>
+            <div className="absolute left-[390px] top-[490px] pointer-events-none opacity-80" style={uprightStyle}><SVGDecorTree className="w-16 h-16" /></div>
+            <div className="absolute left-[820px] top-[500px] pointer-events-none opacity-85" style={uprightStyle}><SVGDecorFlowers className="w-10 h-10" /></div>
+            <div className="absolute left-[380px] top-[800px] pointer-events-none opacity-80" style={uprightStyle}><SVGDecorTree className="w-14 h-14" /></div>
+            <div className="absolute left-[920px] top-[880px] pointer-events-none opacity-80" style={uprightStyle}><SVGDecorTree className="w-16 h-16" /></div>
+            <div className="absolute left-[1420px] top-[390px] pointer-events-none opacity-80" style={uprightStyle}><SVGDecorTree className="w-15 h-15" /></div>
+            <div className="absolute left-[1460px] top-[410px] pointer-events-none opacity-85" style={uprightStyle}><SVGDecorFlowers className="w-10 h-10" /></div>
+            <div className="absolute left-[110px] top-[950px] pointer-events-none opacity-85" style={uprightStyle}><SVGDecorFlowers className="w-9 h-9" /></div>
 
             {/* ════════════ PADDOCK 1: DUCK POND (بحيرة البط) ════════════ */}
             <div 
               onClick={() => { synth.playPop(); setSelectedPaddockToBuy("duck"); }}
-              className="absolute left-[50px] top-[60px] w-[340px] h-[240px] bg-gradient-to-tr from-[#93C5FD] to-[#2563EB] rounded-[60px] border-4 border-[#1E3A8A] shadow-[0_8px_0_0_#1E3A8A] flex flex-col justify-between p-4 overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
+              className="absolute left-[50px] top-[60px] w-[340px] h-[240px] bg-gradient-to-tr from-[#93C5FD] to-[#2563EB] rounded-[60px] border-4 border-[#1E3A8A] shadow-[0_8px_0_0_#1E3A8A] flex flex-col justify-between p-4 overflow-visible z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
             >
-              <div className="text-white font-black text-xs bg-blue-900/60 w-fit px-2.5 py-0.5 rounded-full z-20">
+              <div className="text-white font-black text-xs bg-blue-900/60 w-fit px-2.5 py-0.5 rounded-full z-20" style={uprightStyle}>
                 🦆 بحيرة البط ({animalCounts.duck}/12)
               </div>
               
@@ -1188,6 +1203,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                 <div 
                   onClick={(e) => handleFeedPaddock("duck", e)}
                   className={`absolute bottom-3 right-3 z-30 cursor-pointer select-none transition-transform hover:scale-110 active:scale-95 ${isHungry("duck") ? 'animate-bounce' : ''}`}
+                  style={uprightStyle}
                 >
                   <SVGFeedingDish type="duck" hungry={isHungry("duck")} />
                   {isHungry("duck") && (
@@ -1203,6 +1219,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                   transition={{ repeat: Infinity, duration: 1.5 }}
                   onClick={(e) => handleCollectProduct("duck", e)}
                   className="absolute top-2 left-1/2 -translate-x-1/2 z-30 cursor-pointer"
+                  style={uprightStyle}
                 >
                   <div className="bg-white border-3 border-yellow-500 rounded-full px-3 py-1.5 text-sm font-black shadow-lg hover:bg-yellow-50 transition-all flex items-center gap-1">
                     <span>🥚</span>
@@ -1212,13 +1229,16 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
               )}
 
               {isAdult("duck") && animalCounts.duck > 0 && (
-                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow">⭐ بالغ</div>
+                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow" style={uprightStyle}>⭐ بالغ</div>
               )}
 
-              <div className="relative w-full h-full">
+              <div className="relative w-full h-full" style={{ transformStyle: "preserve-3d" }}>
                 {animalLists.duck.map((a) => (
-                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
-                    {renderAnimalSVG("duck", a, isAdult("duck"))}
+                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px`, transformStyle: "preserve-3d" }}>
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-2 bg-black/15 rounded-full blur-[1px] z-0" />
+                    <div style={uprightStyle} className="relative z-10">
+                      {renderAnimalSVG("duck", a, isAdult("duck"))}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -1227,9 +1247,9 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
             {/* ════════════ PADDOCK 2: BIRD CAGE (قفص العصافير) ════════════ */}
             <div 
               onClick={() => { synth.playPop(); setSelectedPaddockToBuy("bird"); }}
-              className="absolute left-[460px] top-[60px] w-[300px] h-[230px] bg-gradient-to-br from-[#E8F8F5] to-[#A3E4D7] rounded-[36px] border-4 border-[#0E6251] shadow-[0_8px_0_0_#0E6251] p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
+              className="absolute left-[460px] top-[60px] w-[300px] h-[230px] bg-gradient-to-br from-[#E8F8F5] to-[#A3E4D7] rounded-[36px] border-4 border-[#0E6251] shadow-[0_8px_0_0_#0E6251] p-4 flex flex-col justify-between overflow-visible z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
             >
-              <div className="text-[#0E6251] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#0E6251] z-20">
+              <div className="text-[#0E6251] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#0E6251] z-20" style={uprightStyle}>
                 🦜 قفص العصافير ({animalCounts.bird}/12)
               </div>
               
@@ -1238,6 +1258,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                 <div 
                   onClick={(e) => handleFeedPaddock("bird", e)}
                   className={`absolute bottom-3 right-3 z-30 cursor-pointer select-none transition-transform hover:scale-110 active:scale-95 ${isHungry("bird") ? 'animate-bounce' : ''}`}
+                  style={uprightStyle}
                 >
                   <SVGFeedingDish type="bird" hungry={isHungry("bird")} />
                   {isHungry("bird") && (
@@ -1253,6 +1274,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                   transition={{ repeat: Infinity, duration: 1.5 }}
                   onClick={(e) => handleCollectProduct("bird", e)}
                   className="absolute top-2 left-1/2 -translate-x-1/2 z-30 cursor-pointer"
+                  style={uprightStyle}
                 >
                   <div className="bg-white border-3 border-yellow-500 rounded-full px-3 py-1.5 text-sm font-black shadow-lg hover:bg-yellow-50 transition-all flex items-center gap-1">
                     <span>🎵</span>
@@ -1262,13 +1284,20 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
               )}
 
               {isAdult("bird") && animalCounts.bird > 0 && (
-                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow">⭐ بالغ</div>
+                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow" style={uprightStyle}>⭐ بالغ</div>
               )}
 
-              <div className="relative w-full h-full">
+              <div className="relative w-full h-full" style={{ transformStyle: "preserve-3d" }}>
                 {animalLists.bird.map((a) => (
-                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
-                    {renderAnimalSVG("bird", a, isAdult("bird"))}
+                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px`, transformStyle: "preserve-3d" }}>
+                    <div className="absolute bottom-[-15px] left-1/2 -translate-x-1/2 w-6 h-1.5 bg-black/10 rounded-full blur-[1px] z-0" />
+                    <div style={{
+                      transform: "rotateZ(45deg) rotateX(-58deg) translateZ(40px)",
+                      transformOrigin: "bottom center",
+                      transformStyle: "preserve-3d"
+                    }} className="relative z-10">
+                      {renderAnimalSVG("bird", a, isAdult("bird"))}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -1277,17 +1306,18 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
             {/* ════════════ PADDOCK 3: RABBIT (حظيرة الأرانب) ════════════ */}
             <div 
               onClick={() => { synth.playPop(); setSelectedPaddockToBuy("rabbit"); }}
-              className="absolute left-[810px] top-[60px] w-[280px] h-[230px] bg-gradient-to-br from-[#E2F0D9] to-[#C5E1A5] rounded-[32px] border-4 border-[#33691E] shadow-[0_8px_0_0_#33691E] p-3 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
+              className="absolute left-[810px] top-[60px] w-[280px] h-[230px] bg-gradient-to-br from-[#E2F0D9] to-[#C5E1A5] rounded-[32px] border-4 border-[#33691E] shadow-[0_8px_0_0_#33691E] p-3 flex flex-col justify-between overflow-visible z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
             >
-              <div className="text-[#33691E] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#33691E] z-20">
+              <div className="text-[#33691E] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#33691E] z-20" style={uprightStyle}>
                 🐰 حظيرة الأرانب ({animalCounts.rabbit}/12)
               </div>
-
+ 
               {/* Detailed custom food dish for rabbit */}
               {animalCounts.rabbit > 0 && (
                 <div 
                   onClick={(e) => handleFeedPaddock("rabbit", e)}
                   className={`absolute bottom-3 right-3 z-30 cursor-pointer select-none transition-transform hover:scale-110 active:scale-95 ${isHungry("rabbit") ? 'animate-bounce' : ''}`}
+                  style={uprightStyle}
                 >
                   <SVGFeedingDish type="rabbit" hungry={isHungry("rabbit")} />
                   {isHungry("rabbit") && (
@@ -1295,7 +1325,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                   )}
                 </div>
               )}
-
+ 
               {/* Product pickup */}
               {pendingProducts.rabbit && (
                 <motion.div
@@ -1303,6 +1333,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                   transition={{ repeat: Infinity, duration: 1.5 }}
                   onClick={(e) => handleCollectProduct("rabbit", e)}
                   className="absolute top-2 left-1/2 -translate-x-1/2 z-30 cursor-pointer"
+                  style={uprightStyle}
                 >
                   <div className="bg-white border-3 border-yellow-500 rounded-full px-3 py-1.5 text-sm font-black shadow-lg hover:bg-yellow-50 transition-all flex items-center gap-1">
                     <span>🥕</span>
@@ -1310,34 +1341,38 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                   </div>
                 </motion.div>
               )}
-
+ 
               {isAdult("rabbit") && animalCounts.rabbit > 0 && (
-                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow">⭐ بالغ</div>
+                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow" style={uprightStyle}>⭐ بالغ</div>
               )}
-
-              <div className="relative w-full h-full">
+ 
+              <div className="relative w-full h-full" style={{ transformStyle: "preserve-3d" }}>
                 {animalLists.rabbit.map((a) => (
-                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
-                    {renderAnimalSVG("rabbit", a, isAdult("rabbit"))}
+                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px`, transformStyle: "preserve-3d" }}>
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-7 h-2 bg-black/15 rounded-full blur-[1px] z-0" />
+                    <div style={uprightStyle} className="relative z-10">
+                      {renderAnimalSVG("rabbit", a, isAdult("rabbit"))}
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
-
+ 
             {/* ════════════ PADDOCK 4: BEEHIVE (خلية النحل) ════════════ */}
             <div 
               onClick={() => { synth.playPop(); setSelectedPaddockToBuy("bee"); }}
-              className="absolute left-[1140px] top-[60px] w-[280px] h-[230px] bg-gradient-to-br from-[#FEF3C7] to-[#FCD34D] rounded-[36px] border-4 border-[#78350F] shadow-[0_8px_0_0_#78350F] p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
+              className="absolute left-[1140px] top-[60px] w-[280px] h-[230px] bg-gradient-to-br from-[#FEF3C7] to-[#FCD34D] rounded-[36px] border-4 border-[#78350F] shadow-[0_8px_0_0_#78350F] p-4 flex flex-col justify-between overflow-visible z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
             >
-              <div className="text-[#78350F] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#78350F] z-20">
+              <div className="text-[#78350F] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#78350F] z-20" style={uprightStyle}>
                 🐝 خلية النحل ({animalCounts.bee}/12)
               </div>
-
+ 
               {/* Detailed custom food dish for bees */}
               {animalCounts.bee > 0 && (
                 <div 
                   onClick={(e) => handleFeedPaddock("bee", e)}
                   className={`absolute bottom-3 right-3 z-30 cursor-pointer select-none transition-transform hover:scale-110 active:scale-95 ${isHungry("bee") ? 'animate-bounce' : ''}`}
+                  style={uprightStyle}
                 >
                   <SVGFeedingDish type="bee" hungry={isHungry("bee")} />
                   {isHungry("bee") && (
@@ -1345,7 +1380,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                   )}
                 </div>
               )}
-
+ 
               {/* Product pickup */}
               {pendingProducts.bee && (
                 <motion.div
@@ -1353,6 +1388,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                   transition={{ repeat: Infinity, duration: 1.5 }}
                   onClick={(e) => handleCollectProduct("bee", e)}
                   className="absolute top-2 left-1/2 -translate-x-1/2 z-30 cursor-pointer"
+                  style={uprightStyle}
                 >
                   <div className="bg-white border-3 border-yellow-500 rounded-full px-3 py-1.5 text-sm font-black shadow-lg hover:bg-yellow-50 transition-all flex items-center gap-1">
                     <span>🍯</span>
@@ -1360,15 +1396,22 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                   </div>
                 </motion.div>
               )}
-
+ 
               {isAdult("bee") && animalCounts.bee > 0 && (
-                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow">⭐ بالغ</div>
+                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow" style={uprightStyle}>⭐ بالغ</div>
               )}
-
-              <div className="relative w-full h-full">
+ 
+              <div className="relative w-full h-full" style={{ transformStyle: "preserve-3d" }}>
                 {animalLists.bee.map((a) => (
-                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
-                    {renderAnimalSVG("bee", a, isAdult("bee"))}
+                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px`, transformStyle: "preserve-3d" }}>
+                    <div className="absolute bottom-[-10px] left-1/2 -translate-x-1/2 w-5 h-1.5 bg-black/10 rounded-full blur-[1px] z-0" />
+                    <div style={{
+                      transform: "rotateZ(45deg) rotateX(-58deg) translateZ(35px)",
+                      transformOrigin: "bottom center",
+                      transformStyle: "preserve-3d"
+                    }} className="relative z-10">
+                      {renderAnimalSVG("bee", a, isAdult("bee"))}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -1377,9 +1420,9 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
             {/* ════════════ PADDOCK 5: SHEEP (حظيرة الخراف) ════════════ */}
             <div 
               onClick={() => { synth.playPop(); setSelectedPaddockToBuy("sheep"); }}
-              className="absolute left-[50px] top-[400px] w-[320px] h-[250px] bg-[#E8F5E9] rounded-[40px] border-4 border-[#1B5E20] shadow-[0_8px_0_0_#1B5E20] p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
+              className="absolute left-[50px] top-[400px] w-[320px] h-[250px] bg-[#E8F5E9] rounded-[40px] border-4 border-[#1B5E20] shadow-[0_8px_0_0_#1B5E20] p-4 flex flex-col justify-between overflow-visible z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
             >
-              <div className="text-[#1B5E20] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#1B5E20] z-20">
+              <div className="text-[#1B5E20] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#1B5E20] z-20" style={uprightStyle}>
                 🐑 حظيرة الخراف ({animalCounts.sheep}/12)
               </div>
 
@@ -1388,6 +1431,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                 <div 
                   onClick={(e) => handleFeedPaddock("sheep", e)}
                   className={`absolute bottom-3 right-3 z-30 cursor-pointer select-none transition-transform hover:scale-110 active:scale-95 ${isHungry("sheep") ? 'animate-bounce' : ''}`}
+                  style={uprightStyle}
                 >
                   <SVGFeedingDish type="sheep" hungry={isHungry("sheep")} />
                   {isHungry("sheep") && (
@@ -1403,6 +1447,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                   transition={{ repeat: Infinity, duration: 1.5 }}
                   onClick={(e) => handleCollectProduct("sheep", e)}
                   className="absolute top-2 left-1/2 -translate-x-1/2 z-30 cursor-pointer"
+                  style={uprightStyle}
                 >
                   <div className="bg-white border-3 border-yellow-500 rounded-full px-3 py-1.5 text-sm font-black shadow-lg hover:bg-yellow-50 transition-all flex items-center gap-1">
                     <span>🧶</span>
@@ -1412,29 +1457,32 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
               )}
 
               {isAdult("sheep") && animalCounts.sheep > 0 && (
-                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow">⭐ بالغ</div>
+                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow" style={uprightStyle}>⭐ بالغ</div>
               )}
 
-              <div className="relative w-full h-full">
+              <div className="relative w-full h-full" style={{ transformStyle: "preserve-3d" }}>
                 {animalLists.sheep.map((a) => (
-                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
-                    {renderAnimalSVG("sheep", a, isAdult("sheep"))}
+                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px`, transformStyle: "preserve-3d" }}>
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-2 bg-black/15 rounded-full blur-[1px] z-0" />
+                    <div style={uprightStyle} className="relative z-10">
+                      {renderAnimalSVG("sheep", a, isAdult("sheep"))}
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
 
             {/* ════════════ TREE PLOTS (حقول الأشجار) ════════════ */}
-            <div className="absolute left-[450px] top-[380px] w-[500px] h-[460px] bg-[#A1887F]/30 rounded-[40px] border-4 border-dashed border-[#8D6E63] p-6 grid grid-cols-5 gap-y-12 gap-x-6 justify-items-center items-center z-10 shadow-inner">
+            <div className="absolute left-[450px] top-[380px] w-[500px] h-[460px] bg-[#A1887F]/30 rounded-[40px] border-4 border-dashed border-[#8D6E63] p-6 grid grid-cols-5 gap-y-12 gap-x-6 justify-items-center items-center z-10 shadow-inner" style={{ transformStyle: "preserve-3d" }}>
               {plots.map((plot) => {
                 const isEmpty = plot.plantType === null;
                 const isWatered = plot.isWatered;
                 const hasEndTime = plot.growthEndTime !== null;
                 const isFullyGrown = hasEndTime && Date.now() >= (plot.growthEndTime || 0);
                 return (
-                  <div key={plot.id} className="flex flex-col items-center gap-1.5 relative select-none w-18">
+                  <div key={plot.id} className="flex flex-col items-center gap-1.5 relative select-none w-18" style={{ transformStyle: "preserve-3d" }}>
                     {!isEmpty && (
-                      <div className="absolute top-[-26px] z-20 flex gap-0.5">
+                      <div className="absolute top-[-26px] z-20 flex gap-0.5" style={uprightStyle}>
                         {!isWatered && (
                           <button onClick={() => handleWater(plot.id)}
                             className="bg-blue-400 hover:bg-blue-500 text-white rounded-full p-1 border-2 border-blue-600 shadow-md animate-bounce cursor-pointer flex items-center justify-center"
@@ -1464,17 +1512,19 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                     <div onClick={() => { synth.playPop(); if (isEmpty) { setActivePlotId(plot.id); setShowSeedShop(true); } }}
                       className={`w-14 h-14 rounded-full flex flex-col justify-end items-center relative cursor-pointer ${
                         isEmpty ? "bg-[#8D6E63] border-3 border-[#4E342E] hover:bg-[#795548] shadow-inner" : "bg-transparent"
-                      }`}>
+                      }`}
+                      style={{ transformStyle: "preserve-3d" }}
+                    >
                       {isEmpty ? (
-                        <span className="text-white font-extrabold text-lg mb-1">+</span>
+                        <span className="text-white font-extrabold text-lg mb-1" style={uprightStyle}>+</span>
                       ) : (
-                        <div className="mb-[-6px] relative z-10">
+                        <div className="mb-[-6px] relative z-10" style={uprightStyle}>
                           <SVGTopDownPlant type={plot.plantType!} stage={isFullyGrown ? 3 : isWatered ? 2 : 1} />
                         </div>
                       )}
                       <div className="absolute bottom-0 w-12 h-3.5 bg-[#5D4037]/60 rounded-full z-0" />
                     </div>
-                    <span className="text-[8px] font-black text-[#5D4037] bg-white/60 px-1 py-0.2 rounded border border-amber-200">
+                    <span className="text-[8px] font-black text-[#5D4037] bg-white/60 px-1 py-0.2 rounded border border-amber-200" style={uprightStyle}>
                       أرض {plot.id}
                     </span>
                   </div>
@@ -1485,9 +1535,9 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
             {/* ════════════ PADDOCK 6: PET (حظيرة الأصدقاء) ════════════ */}
             <div 
               onClick={() => { synth.playPop(); setSelectedPaddockToBuy("pet"); }}
-              className="absolute left-[1020px] top-[400px] w-[360px] h-[260px] bg-gradient-to-br from-[#FFF3E0] to-[#FFE0B2] rounded-[40px] border-4 border-[#E65100] shadow-[0_8px_0_0_#E65100] p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
+              className="absolute left-[1020px] top-[400px] w-[360px] h-[260px] bg-gradient-to-br from-[#FFF3E0] to-[#FFE0B2] rounded-[40px] border-4 border-[#E65100] shadow-[0_8px_0_0_#E65100] p-4 flex flex-col justify-between overflow-visible z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
             >
-              <div className="text-[#E65100] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#E65100] z-20">
+              <div className="text-[#E65100] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#E65100] z-20" style={uprightStyle}>
                 🐱🐶 حظيرة الأصدقاء ({animalCounts.pet}/12)
               </div>
 
@@ -1496,6 +1546,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                 <div 
                   onClick={(e) => handleFeedPaddock("pet", e)}
                   className={`absolute bottom-3 right-3 z-30 cursor-pointer select-none transition-transform hover:scale-110 active:scale-95 ${isHungry("pet") ? 'animate-bounce' : ''}`}
+                  style={uprightStyle}
                 >
                   <SVGFeedingDish type="pet" hungry={isHungry("pet")} />
                   {isHungry("pet") && (
@@ -1511,6 +1562,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                   transition={{ repeat: Infinity, duration: 1.5 }}
                   onClick={(e) => handleCollectProduct("pet", e)}
                   className="absolute top-2 left-1/2 -translate-x-1/2 z-30 cursor-pointer"
+                  style={uprightStyle}
                 >
                   <div className="bg-white border-3 border-yellow-500 rounded-full px-3 py-1.5 text-sm font-black shadow-lg hover:bg-yellow-50 transition-all flex items-center gap-1">
                     <span>❤️</span>
@@ -1520,13 +1572,16 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
               )}
 
               {isAdult("pet") && animalCounts.pet > 0 && (
-                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow">⭐ بالغ</div>
+                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow" style={uprightStyle}>⭐ بالغ</div>
               )}
 
-              <div className="relative w-full h-full">
+              <div className="relative w-full h-full" style={{ transformStyle: "preserve-3d" }}>
                 {animalLists.pet.map((a) => (
-                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
-                    {renderAnimalSVG("pet", a, isAdult("pet"))}
+                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px`, transformStyle: "preserve-3d" }}>
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-2 bg-black/15 rounded-full blur-[1px] z-0" />
+                    <div style={uprightStyle} className="relative z-10">
+                      {renderAnimalSVG("pet", a, isAdult("pet"))}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -1535,9 +1590,9 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
             {/* ════════════ PADDOCK 7: FISH POND (بركة السمك) ════════════ */}
             <div 
               onClick={() => { synth.playPop(); setSelectedPaddockToBuy("fish"); }}
-              className="absolute left-[50px] top-[730px] w-[340px] h-[240px] bg-gradient-to-br from-[#22D3EE] to-[#0891B2] rounded-[60px] border-4 border-[#164E63] shadow-[0_8px_0_0_#164E63] p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
+              className="absolute left-[50px] top-[730px] w-[340px] h-[240px] bg-gradient-to-br from-[#22D3EE] to-[#0891B2] rounded-[60px] border-4 border-[#164E63] shadow-[0_8px_0_0_#164E63] p-4 flex flex-col justify-between overflow-visible z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
             >
-              <div className="text-white font-black text-xs bg-cyan-900/60 w-fit px-2.5 py-0.5 rounded-full z-20">
+              <div className="text-white font-black text-xs bg-cyan-900/60 w-fit px-2.5 py-0.5 rounded-full z-20" style={uprightStyle}>
                 🐟 بركة السمك ({animalCounts.fish}/12)
               </div>
 
@@ -1546,6 +1601,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                 <div 
                   onClick={(e) => handleFeedPaddock("fish", e)}
                   className={`absolute bottom-3 right-3 z-30 cursor-pointer select-none transition-transform hover:scale-110 active:scale-95 ${isHungry("fish") ? 'animate-bounce' : ''}`}
+                  style={uprightStyle}
                 >
                   <SVGFeedingDish type="fish" hungry={isHungry("fish")} />
                   {isHungry("fish") && (
@@ -1561,6 +1617,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                   transition={{ repeat: Infinity, duration: 1.5 }}
                   onClick={(e) => handleCollectProduct("fish", e)}
                   className="absolute top-2 left-1/2 -translate-x-1/2 z-30 cursor-pointer"
+                  style={uprightStyle}
                 >
                   <div className="bg-white border-3 border-yellow-500 rounded-full px-3 py-1.5 text-sm font-black shadow-lg hover:bg-yellow-50 transition-all flex items-center gap-1">
                     <span>🐠</span>
@@ -1570,7 +1627,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
               )}
 
               {isAdult("fish") && animalCounts.fish > 0 && (
-                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow">⭐ بالغ</div>
+                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow" style={uprightStyle}>⭐ بالغ</div>
               )}
 
               {/* Water ripple decoration */}
@@ -1578,10 +1635,12 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                 <div className="w-32 h-8 border-2 border-white rounded-full" />
                 <div className="w-24 h-6 border-2 border-white rounded-full mx-auto mt-1" />
               </div>
-              <div className="relative w-full h-full">
+              <div className="relative w-full h-full" style={{ transformStyle: "preserve-3d" }}>
                 {animalLists.fish.map((a) => (
-                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
-                    {renderAnimalSVG("fish", a, isAdult("fish"))}
+                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px`, transformStyle: "preserve-3d" }}>
+                    <div style={uprightStyle} className="relative z-10">
+                      {renderAnimalSVG("fish", a, isAdult("fish"))}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -1590,9 +1649,9 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
             {/* ════════════ PADDOCK 8: COW (حظيرة الأبقار) ════════════ */}
             <div 
               onClick={() => { synth.playPop(); setSelectedPaddockToBuy("cow"); }}
-              className="absolute left-[460px] top-[900px] w-[400px] h-[280px] bg-gradient-to-br from-[#FEF9C3] to-[#F0FDF4] rounded-[40px] border-4 border-[#3F6212] shadow-[0_8px_0_0_#3F6212] p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
+              className="absolute left-[460px] top-[900px] w-[400px] h-[280px] bg-gradient-to-br from-[#FEF9C3] to-[#F0FDF4] rounded-[40px] border-4 border-[#3F6212] shadow-[0_8px_0_0_#3F6212] p-4 flex flex-col justify-between overflow-visible z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
             >
-              <div className="text-[#3F6212] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#3F6212] z-20">
+              <div className="text-[#3F6212] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#3F6212] z-20" style={uprightStyle}>
                 🐄 حظيرة الأبقار ({animalCounts.cow}/12)
               </div>
 
@@ -1601,6 +1660,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                 <div 
                   onClick={(e) => handleFeedPaddock("cow", e)}
                   className={`absolute bottom-3 right-3 z-30 cursor-pointer select-none transition-transform hover:scale-110 active:scale-95 ${isHungry("cow") ? 'animate-bounce' : ''}`}
+                  style={uprightStyle}
                 >
                   <SVGFeedingDish type="cow" hungry={isHungry("cow")} />
                   {isHungry("cow") && (
@@ -1616,6 +1676,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                   transition={{ repeat: Infinity, duration: 1.5 }}
                   onClick={(e) => handleCollectProduct("cow", e)}
                   className="absolute top-2 left-1/2 -translate-x-1/2 z-30 cursor-pointer"
+                  style={uprightStyle}
                 >
                   <div className="bg-white border-3 border-yellow-500 rounded-full px-3 py-1.5 text-sm font-black shadow-lg hover:bg-yellow-50 transition-all flex items-center gap-1">
                     <span>🥛</span>
@@ -1625,17 +1686,20 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
               )}
 
               {isAdult("cow") && animalCounts.cow > 0 && (
-                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow">⭐ بالغ</div>
+                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow" style={uprightStyle}>⭐ بالغ</div>
               )}
 
               {/* Fence decoration */}
               <div className="absolute bottom-0 left-0 right-0 h-6 opacity-20 flex items-end gap-3 px-4 pointer-events-none">
                 {Array.from({length: 12}).map((_,i) => <div key={i} className="w-2 h-5 bg-amber-800 rounded-t-sm" />)}
               </div>
-              <div className="relative w-full h-full">
+              <div className="relative w-full h-full" style={{ transformStyle: "preserve-3d" }}>
                 {animalLists.cow.map((a) => (
-                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
-                    {renderAnimalSVG("cow", a, isAdult("cow"))}
+                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px`, transformStyle: "preserve-3d" }}>
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-9 h-2.5 bg-black/15 rounded-full blur-[1px] z-0" />
+                    <div style={uprightStyle} className="relative z-10">
+                      {renderAnimalSVG("cow", a, isAdult("cow"))}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -1648,6 +1712,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                 triggerNotice("🏡 مرحباً بك في منزلي السعيد! أنا المزارع سعيد 👨‍🌾👋");
               }}
               className="absolute left-[50px] top-[1000px] w-[340px] h-[260px] z-10 cursor-pointer hover:scale-[1.03] active:scale-[0.98] transition-all"
+              style={uprightStyle}
             >
               <SVGFarmerHouse />
               <div className="absolute bottom-[-10px] left-1/2 -translate-x-1/2 bg-white/90 border-2 border-amber-300 px-3.5 py-1 rounded-full text-[10px] font-black text-amber-800 shadow-md whitespace-nowrap">
