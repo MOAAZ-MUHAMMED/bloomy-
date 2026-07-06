@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Volume2, VolumeX, Sparkles, Droplet, Clock } from "lucide-react";
+import { X, Volume2, VolumeX, Sparkles, Droplet, Clock, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 
 // ─── Web Audio API Synthesizer ────────────────────────────────────
@@ -215,7 +215,6 @@ export function SVGSheep({ className = "w-12 h-12", isEating = false }: { classN
   );
 }
 
-// ─── NEW: Cow SVG ─────────────────────────────────────────────────
 export function SVGCow({ className = "w-12 h-12", isEating = false }: { className?: string; isEating?: boolean }) {
   return (
     <motion.svg viewBox="0 0 100 100" className={className}
@@ -240,7 +239,6 @@ export function SVGCow({ className = "w-12 h-12", isEating = false }: { classNam
   );
 }
 
-// ─── NEW: Bee SVG ─────────────────────────────────────────────────
 export function SVGBee({ className = "w-12 h-12", isEating = false }: { className?: string; isEating?: boolean }) {
   return (
     <motion.svg viewBox="0 0 100 100" className={className}
@@ -264,7 +262,6 @@ export function SVGBee({ className = "w-12 h-12", isEating = false }: { classNam
   );
 }
 
-// ─── NEW: Fish SVG ────────────────────────────────────────────────
 export function SVGFish({ className = "w-12 h-12", isEating = false }: { className?: string; isEating?: boolean }) {
   return (
     <motion.svg viewBox="0 0 100 100" className={className}
@@ -283,7 +280,6 @@ export function SVGFish({ className = "w-12 h-12", isEating = false }: { classNa
   );
 }
 
-// ─── NEW: Bird SVG ────────────────────────────────────────────────
 export function SVGBird({ className = "w-12 h-12", isEating = false }: { className?: string; isEating?: boolean }) {
   return (
     <motion.svg viewBox="0 0 100 100" className={className}
@@ -305,7 +301,146 @@ export function SVGBird({ className = "w-12 h-12", isEating = false }: { classNa
   );
 }
 
-// ─── Plants & Decorations (existing) ──────────────────────────────
+// ─── NEW: Detailed Customized Feeding Dishes ──────────────────────
+export function SVGFeedingDish({ type, hungry }: { type: PaddockType; hungry: boolean }) {
+  switch (type) {
+    case "sheep":
+      return (
+        <svg viewBox="0 0 60 40" className="w-14 h-11 filter drop-shadow-md">
+          {/* Wooden trough */}
+          <rect x="5" y="15" width="50" height="20" fill="#8B5A2B" stroke="#4D2B82" strokeWidth="3" rx="3" />
+          <line x1="10" y1="35" x2="5" y2="39" stroke="#4D2B82" strokeWidth="3" strokeLinecap="round" />
+          <line x1="50" y1="35" x2="55" y2="39" stroke="#4D2B82" strokeWidth="3" strokeLinecap="round" />
+          {!hungry && (
+            // Overflowing yellow straw/hay
+            <path d="M 8 18 Q 15 5 25 14 Q 35 3 45 15 Q 52 10 52 18 Z" fill="#FCD34D" stroke="#D97706" strokeWidth="1.5" />
+          )}
+        </svg>
+      );
+    case "rabbit":
+      return (
+        <svg viewBox="0 0 60 40" className="w-13 h-10 filter drop-shadow-md">
+          {/* Basket crate */}
+          <rect x="8" y="15" width="44" height="22" fill="#DDB892" stroke="#4D2B82" strokeWidth="3" rx="4" />
+          <line x1="8" y1="26" x2="52" y2="26" stroke="#4D2B82" strokeWidth="2.5" />
+          {!hungry && (
+            <>
+              {/* Carrots sticking out */}
+              <path d="M 12 18 L 16 4 L 20 18" fill="#F97316" stroke="#4D2B82" strokeWidth="1.5" />
+              <path d="M 16 4 Q 14 -1 18 1" stroke="#22C55E" strokeWidth="1.5" fill="none" />
+              <path d="M 24 18 L 28 2 L 32 18" fill="#F97316" stroke="#4D2B82" strokeWidth="1.5" />
+              <path d="M 28 2 Q 26 -3 30 -1" stroke="#22C55E" strokeWidth="1.5" fill="none" />
+              <path d="M 36 18 L 40 6 L 44 18" fill="#F97316" stroke="#4D2B82" strokeWidth="1.5" />
+              <path d="M 40 6 Q 38 1 42 3" stroke="#22C55E" strokeWidth="1.5" fill="none" />
+            </>
+          )}
+        </svg>
+      );
+    case "duck":
+      return (
+        <svg viewBox="0 0 60 40" className="w-14 h-11 filter drop-shadow-md">
+          {/* Floating water lilypad tray */}
+          <ellipse cx="30" cy="25" rx="25" ry="12" fill="#10B981" stroke="#047857" strokeWidth="2.5" />
+          <path d="M 10 25 C 20 28, 40 28, 50 25" stroke="#047857" strokeWidth="1.5" fill="none" />
+          {!hungry && (
+            // Yellow fish pond grains
+            <g>
+              <circle cx="20" cy="20" r="3" fill="#FBBF24" />
+              <circle cx="25" cy="23" r="2.5" fill="#F59E0B" />
+              <circle cx="30" cy="18" r="3.5" fill="#FBBF24" />
+              <circle cx="35" cy="22" r="3" fill="#F59E0B" />
+              <circle cx="40" cy="19" r="2.5" fill="#FBBF24" />
+            </g>
+          )}
+        </svg>
+      );
+    case "pet":
+      return (
+        <svg viewBox="0 0 60 40" className="w-13 h-10 filter drop-shadow-md">
+          {/* Premium animal bowl */}
+          <ellipse cx="30" cy="30" rx="22" ry="8" fill="#E11D48" stroke="#4D2B82" strokeWidth="3" />
+          <path d="M 8 22 Q 30 12 52 22 L 52 30 Q 30 20 8 30 Z" fill="#FDA4AF" stroke="#4D2B82" strokeWidth="3" />
+          <rect x="23" y="21" width="14" height="4" fill="#FFFFFF" rx="1.5" />
+          <circle cx="23" cy="23" r="2.5" fill="#FFFFFF" />
+          <circle cx="37" cy="23" r="2.5" fill="#FFFFFF" />
+          {!hungry && (
+            // Kibble pile
+            <g>
+              <ellipse cx="30" cy="18" rx="14" ry="6" fill="#78350F" stroke="#4D2B82" strokeWidth="1.5" />
+              <circle cx="24" cy="17" r="2.5" fill="#92400E" />
+              <circle cx="35" cy="18" r="2.5" fill="#92400E" />
+              <circle cx="30" cy="16" r="3" fill="#78350F" />
+            </g>
+          )}
+        </svg>
+      );
+    case "cow":
+      return (
+        <svg viewBox="0 0 60 40" className="w-15 h-12 filter drop-shadow-md">
+          {/* Large ranch trough */}
+          <rect x="4" y="10" width="52" height="24" fill="#78350F" stroke="#4D2B82" strokeWidth="3.5" rx="4" />
+          <line x1="12" y1="10" x2="12" y2="34" stroke="#4D2B82" strokeWidth="2.5" />
+          <line x1="22" y1="10" x2="22" y2="34" stroke="#4D2B82" strokeWidth="2.5" />
+          <line x1="32" y1="10" x2="32" y2="34" stroke="#4D2B82" strokeWidth="2.5" />
+          <line x1="42" y1="10" x2="42" y2="34" stroke="#4D2B82" strokeWidth="2.5" />
+          {!hungry && (
+            // Rich green grass feed
+            <path d="M 6 12 Q 13 -7 18 12 Q 25 -10 32 12 Q 40 -7 48 12 Q 52 -5 54 12 Z" fill="#22C55E" stroke="#15803D" strokeWidth="2" />
+          )}
+        </svg>
+      );
+    case "bee":
+      return (
+        <svg viewBox="0 0 60 40" className="w-13 h-10 filter drop-shadow-md">
+          {/* Ceramic bowl filled with flowers for honey feeding */}
+          <ellipse cx="30" cy="30" rx="20" ry="8" fill="#F59E0B" stroke="#4D2B82" strokeWidth="3" />
+          <path d="M 10 22 Q 30 14 50 22 L 50 30 Q 30 22 10 30 Z" fill="#FEF3C7" stroke="#4D2B82" strokeWidth="3" />
+          {!hungry && (
+            // Golden sweet sugar nectar
+            <g>
+              <ellipse cx="30" cy="18" rx="13" ry="5" fill="#FCD34D" stroke="#D97706" strokeWidth="1" />
+              <circle cx="28" cy="18" r="4" fill="#EF4444" />
+              <circle cx="28" cy="18" r="1.5" fill="#FDE047" />
+              <circle cx="34" cy="17" r="3.5" fill="#A855F7" />
+              <circle cx="34" cy="17" r="1.2" fill="#FDE047" />
+            </g>
+          )}
+        </svg>
+      );
+    case "fish":
+      return (
+        <svg viewBox="0 0 60 40" className="w-13 h-10 filter drop-shadow-md">
+          {/* Professional water feeding ring */}
+          <ellipse cx="30" cy="20" rx="22" ry="11" fill="none" stroke="#F43F5E" strokeWidth="4.5" />
+          {!hungry && (
+            // Floating pellets inside
+            <g>
+              <circle cx="22" cy="19" r="2.5" fill="#DC2626" />
+              <circle cx="35" cy="18" r="2" fill="#854D0E" />
+              <circle cx="28" cy="22" r="2.5" fill="#DC2626" />
+              <circle cx="32" cy="21" r="2.2" fill="#854D0E" />
+              <circle cx="29" cy="17" r="2" fill="#DC2626" />
+            </g>
+          )}
+        </svg>
+      );
+    case "bird":
+      return (
+        <svg viewBox="0 0 60 40" className="w-13 h-10 filter drop-shadow-md">
+          {/* Hanging bird plate tray with chain */}
+          <line x1="30" y1="0" x2="14" y2="24" stroke="#4D2B82" strokeWidth="2.5" />
+          <line x1="30" y1="0" x2="46" y2="24" stroke="#4D2B82" strokeWidth="2.5" />
+          <rect x="10" y="22" width="40" height="10" fill="#4B5563" stroke="#4D2B82" strokeWidth="3" rx="2" />
+          {!hungry && (
+            // Grain feed seeds
+            <path d="M 12 24 Q 30 14 48 24 Z" fill="#E5E7EB" stroke="#9CA3AF" strokeWidth="1.5" />
+          )}
+        </svg>
+      );
+  }
+}
+
+// ─── Plants & Decorations ─────────────────────────────────────────
 
 export function SVGTopDownPlant({ type, stage }: { type: "apple" | "orange" | "flower" | "sunflower"; stage: number }) {
   const leafColor = "#22C55E";
@@ -466,6 +601,9 @@ interface MagicGardenProps {
 export default function MagicGarden({ onClose, globalStars, setGlobalStars }: MagicGardenProps) {
   const [introActive, setIntroActive] = useState(true);
 
+  // Dynamic zoom scale state
+  const [zoomScale, setZoomScale] = useState<number>(0.8);
+
   // Plots
   const [plots, setPlots] = useState<GardenPlot[]>([]);
 
@@ -528,6 +666,11 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
   // Initialize / Load state
   useEffect(() => {
     setTimeout(() => setIntroActive(false), 2000);
+
+    // Auto zoom based on mobile screen width
+    if (window.innerWidth < 800) {
+      setZoomScale(0.55); // Zoom out automatically on phone so they can view it all
+    }
 
     // Load plots
     const savedPlots = localStorage.getItem("bloomly_garden_plots_v2");
@@ -655,14 +798,10 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
     return (feedingState[type]?.fedCount || 0) >= 5;
   };
 
-  const getTimerString = (endTime: number | null) => {
-    if (!endTime) return "";
-    const diff = endTime - Date.now();
-    if (diff <= 0) return "جاهز! ★";
-    const minutes = Math.floor(diff / 60000);
-    const seconds = Math.floor((diff % 60000) / 1000);
-    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-  };
+  // Zoom control handlers
+  const handleZoomIn = () => setZoomScale(prev => Math.min(1.4, prev + 0.1));
+  const handleZoomOut = () => setZoomScale(prev => Math.max(0.4, prev - 0.1));
+  const handleZoomReset = () => setZoomScale(window.innerWidth < 800 ? 0.55 : 0.8);
 
   // ─── Handlers ─────────────────────────────────────────────────
 
@@ -790,63 +929,6 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
     }
   };
 
-  // Render feeding dish and product for a paddock
-  const renderDishAndProduct = (type: PaddockType) => {
-    const config = PADDOCK_DATA[type];
-    const hungry = isHungry(type);
-    const hasProd = pendingProducts[type];
-    const adult = isAdult(type);
-    const count = animalCounts[type];
-
-    return (
-      <>
-        {/* Feeding Dish */}
-        {count > 0 && (
-          <div
-            onClick={(e) => handleFeedPaddock(type, e)}
-            className={`absolute bottom-2 right-2 z-20 cursor-pointer select-none ${hungry ? 'animate-bounce' : ''}`}
-          >
-            <div className={`w-11 h-11 rounded-full border-3 flex items-center justify-center text-lg shadow-lg transition-all ${
-              hungry
-                ? 'bg-red-50 border-red-400 hover:bg-red-100'
-                : 'bg-amber-50 border-amber-400'
-            }`}>
-              {hungry ? '🍽️' : '🥘'}
-            </div>
-            {hungry && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[7px] font-black rounded-full w-4 h-4 flex items-center justify-center">!</span>
-            )}
-            {!hungry && (
-              <span className="absolute -top-1 -right-1 bg-green-500 text-white text-[7px] font-black rounded-full w-4 h-4 flex items-center justify-center">✓</span>
-            )}
-          </div>
-        )}
-
-        {/* Collectible Product */}
-        {hasProd && (
-          <motion.div
-            animate={{ y: [-5, 5, -5], scale: [1, 1.1, 1] }}
-            transition={{ repeat: Infinity, duration: 1.5 }}
-            onClick={(e) => handleCollectProduct(type, e)}
-            className="absolute top-2 left-1/2 -translate-x-1/2 z-30 cursor-pointer"
-          >
-            <div className="bg-white border-3 border-yellow-500 rounded-full px-3 py-1.5 text-sm font-black shadow-lg hover:bg-yellow-50 transition-all flex items-center gap-1">
-              <span>{config.productEmoji}</span>
-              <span className="text-yellow-700">+{adult ? config.productStars * 2 : config.productStars}⭐</span>
-            </div>
-          </motion.div>
-        )}
-
-        {/* Evolution indicator */}
-        {adult && count > 0 && (
-          <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[7px] font-black rounded-full px-1.5 py-0.5 shadow-md">
-            ⭐ بالغ
-          </div>
-        )}
-      </>
-    );
-  };
-
   // ─── JSX Render ───────────────────────────────────────────────
 
   return (
@@ -888,6 +970,22 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
         </button>
       </div>
 
+      {/* Floating Zoom Control Panel (Left Center Side) */}
+      <div className="absolute top-4 left-20 z-[9990] select-none pointer-events-auto flex items-center gap-1 bg-white/95 border-3 border-[#4D2B82] rounded-full p-1 shadow-lg backdrop-blur-xs">
+        <button onClick={handleZoomOut}
+          className="w-10 h-10 hover:bg-purple-100 text-[#4D2B82] font-black text-lg rounded-full flex items-center justify-center cursor-pointer transition-colors">
+          <ZoomOut className="w-5 h-5" />
+        </button>
+        <span onClick={handleZoomReset}
+          className="text-xs font-black text-[#4D2B82] px-2.5 cursor-pointer select-none hover:text-purple-600 transition-colors">
+          {Math.round(zoomScale * 100)}%
+        </span>
+        <button onClick={handleZoomIn}
+          className="w-10 h-10 hover:bg-purple-100 text-[#4D2B82] font-black text-lg rounded-full flex items-center justify-center cursor-pointer transition-colors">
+          <ZoomIn className="w-5 h-5" />
+        </button>
+      </div>
+
       {/* Weather Toggle Button (Top-Center) */}
       <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[9990] select-none pointer-events-auto">
         <button onClick={toggleTimeOfDay}
@@ -914,245 +1012,528 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
         )}
       </AnimatePresence>
 
-      {/* ─── Main Map ─────────────────────────────────────────── */}
+      {/* ─── Main Map (With Dynamic zoomScale transform) ─────────────────────────── */}
       <main className={`flex-grow w-full overflow-auto scrollbar-none relative border-t-2 ${timeOfDay === "night" ? "border-indigo-900" : "border-emerald-800"} transition-colors duration-1000`}>
-        <div className={`w-[1800px] h-[1300px] relative z-10 p-8 overflow-hidden select-none transition-all duration-1000 ${mapBg}`}>
+        {/* Scaled viewport wrapper to maintain scrollbar boundaries */}
+        <div style={{
+          width: `${1800 * zoomScale}px`,
+          height: `${1300 * zoomScale}px`,
+          overflow: "hidden",
+          position: "relative",
+          transition: "width 0.3s ease, height 0.3s ease"
+        }}>
+          <div 
+            className={`w-[1800px] h-[1300px] p-8 overflow-hidden select-none transition-all duration-1000 ${mapBg}`}
+            style={{
+              transform: `scale(${zoomScale})`,
+              transformOrigin: "top left",
+              position: "absolute",
+              top: 0,
+              left: 0
+            }}
+          >
 
-          {/* Dirt roads */}
-          <div className={`absolute top-[340px] left-[50px] w-[1700px] h-12 ${roadColor} border-y-3 border-dashed ${roadBorder} z-0 transition-colors duration-1000`} />
-          <div className={`absolute top-[80px] left-[420px] w-12 h-[1100px] ${roadColor} border-x-3 border-dashed ${roadBorder} z-0 transition-colors duration-1000`} />
-          <div className={`absolute top-[680px] left-[50px] w-[1700px] h-12 ${roadColor} border-y-3 border-dashed ${roadBorder} z-0 transition-colors duration-1000`} />
+            {/* Dirt roads */}
+            <div className={`absolute top-[340px] left-[50px] w-[1700px] h-12 ${roadColor} border-y-3 border-dashed ${roadBorder} z-0 transition-colors duration-1000`} />
+            <div className={`absolute top-[80px] left-[420px] w-12 h-[1100px] ${roadColor} border-x-3 border-dashed ${roadBorder} z-0 transition-colors duration-1000`} />
+            <div className={`absolute top-[680px] left-[50px] w-[1700px] h-12 ${roadColor} border-y-3 border-dashed ${roadBorder} z-0 transition-colors duration-1000`} />
 
-          {/* Sky decoration */}
-          {timeOfDay === "day" && (
-            <div className="absolute top-8 right-24 pointer-events-none opacity-40 z-0">
-              <SVGSun className="w-28 h-28" />
-            </div>
-          )}
-          {timeOfDay === "sunset" && (
-            <div className="absolute top-4 right-20 pointer-events-none z-0">
-              <div className="w-32 h-32 rounded-full bg-gradient-to-b from-[#FF6B35] to-[#FFD700] opacity-40 blur-xl" />
-              <SVGSun className="w-24 h-24 absolute top-4 left-4 opacity-60" />
-            </div>
-          )}
-          {timeOfDay === "night" && (
-            <div className="absolute top-6 right-20 pointer-events-none z-0">
-              <svg viewBox="0 0 100 100" className="w-24 h-24 opacity-80">
-                <path d="M 60 20 Q 30 20, 30 50 Q 30 80, 60 80 Q 40 70, 40 50 Q 40 30, 60 20 Z" fill="#FDE68A" stroke="#D97706" strokeWidth="2" />
-              </svg>
-              {/* Twinkling stars */}
-              {[{x:100,y:30},{x:200,y:60},{x:350,y:20},{x:500,y:50},{x:650,y:15},{x:800,y:45},{x:1000,y:25},{x:1200,y:55},{x:1400,y:30},{x:1550,y:50}].map((s,i) => (
-                <motion.div key={i} className="absolute text-yellow-200 text-xs" style={{ left: s.x, top: s.y }}
-                  animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
-                  transition={{ duration: 1.5 + i * 0.3, repeat: Infinity }}>
-                  ✦
-                </motion.div>
-              ))}
-            </div>
-          )}
+            {/* Sky decoration */}
+            {timeOfDay === "day" && (
+              <div className="absolute top-8 right-24 pointer-events-none opacity-40 z-0">
+                <SVGSun className="w-28 h-28" />
+              </div>
+            )}
+            {timeOfDay === "sunset" && (
+              <div className="absolute top-4 right-20 pointer-events-none z-0">
+                <div className="w-32 h-32 rounded-full bg-gradient-to-b from-[#FF6B35] to-[#FFD700] opacity-40 blur-xl" />
+                <SVGSun className="w-24 h-24 absolute top-4 left-4 opacity-60" />
+              </div>
+            )}
+            {timeOfDay === "night" && (
+              <div className="absolute top-6 right-20 pointer-events-none z-0">
+                <svg viewBox="0 0 100 100" className="w-24 h-24 opacity-80">
+                  <path d="M 60 20 Q 30 20, 30 50 Q 30 80, 60 80 Q 40 70, 40 50 Q 40 30, 60 20 Z" fill="#FDE68A" stroke="#D97706" strokeWidth="2" />
+                </svg>
+                {/* Twinkling stars */}
+                {[{x:100,y:30},{x:200,y:60},{x:350,y:20},{x:500,y:50},{x:650,y:15},{x:800,y:45},{x:1000,y:25},{x:1200,y:55},{x:1400,y:30},{x:1550,y:50}].map((s,i) => (
+                  <motion.div key={i} className="absolute text-yellow-200 text-xs" style={{ left: s.x, top: s.y }}
+                    animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
+                    transition={{ duration: 1.5 + i * 0.3, repeat: Infinity }}>
+                    ✦
+                  </motion.div>
+                ))}
+              </div>
+            )}
 
-          {/* ════════════ PADDOCK 1: DUCK POND (بحيرة البط) ════════════ */}
-          <div onClick={() => { synth.playPop(); setSelectedPaddockToBuy("duck"); }}
-            className="absolute left-[50px] top-[60px] w-[340px] h-[240px] bg-gradient-to-tr from-[#93C5FD] to-[#3B82F6] rounded-[60px] border-4 border-[#1E3A8A] shadow-lg flex flex-col justify-between p-4 overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all">
-            <div className="text-white font-black text-xs bg-blue-900/60 w-fit px-2.5 py-0.5 rounded-full">
-              🦆 بحيرة البط ({animalCounts.duck}/12)
-            </div>
-            <div className="relative w-full h-full">
-              {animalLists.duck.map((a) => (
-                <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
-                  {renderAnimalSVG("duck", a, isAdult("duck"))}
-                </div>
-              ))}
-            </div>
-            {renderDishAndProduct("duck")}
-          </div>
-
-          {/* ════════════ PADDOCK 2: BIRD CAGE (قفص العصافير) ════════════ */}
-          <div onClick={() => { synth.playPop(); setSelectedPaddockToBuy("bird"); }}
-            className="absolute left-[460px] top-[60px] w-[300px] h-[230px] bg-gradient-to-br from-[#D1FAE5] to-[#A7F3D0] rounded-[36px] border-4 border-[#065F46] shadow-md p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all">
-            <div className="text-[#065F46] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#065F46]">
-              🦜 قفص العصافير ({animalCounts.bird}/12)
-            </div>
-            <div className="absolute top-12 right-4 text-2xl opacity-30">🎵 🎶</div>
-            <div className="relative w-full h-full">
-              {animalLists.bird.map((a) => (
-                <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
-                  {renderAnimalSVG("bird", a, isAdult("bird"))}
-                </div>
-              ))}
-            </div>
-            {renderDishAndProduct("bird")}
-          </div>
-
-          {/* ════════════ PADDOCK 3: RABBIT (حظيرة الأرانب) ════════════ */}
-          <div onClick={() => { synth.playPop(); setSelectedPaddockToBuy("rabbit"); }}
-            className="absolute left-[810px] top-[60px] w-[280px] h-[230px] bg-[#C5E1A5] rounded-[32px] border-4 border-[#33691E] shadow-md p-3 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all">
-            <div className="text-[#33691E] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#33691E]">
-              🐰 حظيرة الأرانب ({animalCounts.rabbit}/12)
-            </div>
-            <div className="absolute top-12 right-6 text-2xl opacity-40">🥕 🥕</div>
-            <div className="relative w-full h-full">
-              {animalLists.rabbit.map((a) => (
-                <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
-                  {renderAnimalSVG("rabbit", a, isAdult("rabbit"))}
-                </div>
-              ))}
-            </div>
-            {renderDishAndProduct("rabbit")}
-          </div>
-
-          {/* ════════════ PADDOCK 4: BEEHIVE (خلية النحل) ════════════ */}
-          <div onClick={() => { synth.playPop(); setSelectedPaddockToBuy("bee"); }}
-            className="absolute left-[1140px] top-[60px] w-[280px] h-[230px] bg-gradient-to-br from-[#FEF3C7] to-[#FDE68A] rounded-[36px] border-4 border-[#92400E] shadow-md p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all">
-            <div className="text-[#92400E] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#92400E]">
-              🐝 خلية النحل ({animalCounts.bee}/12)
-            </div>
-            <div className="absolute top-10 left-4 text-2xl opacity-30">🍯 🌻</div>
-            {/* Honeycomb pattern */}
-            <div className="absolute bottom-4 left-4 opacity-20 text-3xl">⬡⬡⬡</div>
-            <div className="relative w-full h-full">
-              {animalLists.bee.map((a) => (
-                <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
-                  {renderAnimalSVG("bee", a, isAdult("bee"))}
-                </div>
-              ))}
-            </div>
-            {renderDishAndProduct("bee")}
-          </div>
-
-          {/* ════════════ PADDOCK 5: SHEEP (حظيرة الخراف) ════════════ */}
-          <div onClick={() => { synth.playPop(); setSelectedPaddockToBuy("sheep"); }}
-            className="absolute left-[50px] top-[400px] w-[320px] h-[250px] bg-[#E8F5E9] rounded-[40px] border-4 border-[#1B5E20] shadow-md p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all">
-            <div className="text-[#1B5E20] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#1B5E20]">
-              🐑 حظيرة الخراف ({animalCounts.sheep}/12)
-            </div>
-            <div className="relative w-full h-full">
-              {animalLists.sheep.map((a) => (
-                <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
-                  {renderAnimalSVG("sheep", a, isAdult("sheep"))}
-                </div>
-              ))}
-            </div>
-            {renderDishAndProduct("sheep")}
-          </div>
-
-          {/* ════════════ TREE PLOTS (حقول الأشجار) ════════════ */}
-          <div className="absolute left-[450px] top-[380px] w-[500px] h-[460px] bg-[#A1887F]/30 rounded-[40px] border-4 border-dashed border-[#8D6E63] p-6 grid grid-cols-5 gap-y-12 gap-x-6 justify-items-center items-center z-10 shadow-inner">
-            {plots.map((plot) => {
-              const isEmpty = plot.plantType === null;
-              const isWatered = plot.isWatered;
-              const hasEndTime = plot.growthEndTime !== null;
-              const isFullyGrown = hasEndTime && Date.now() >= (plot.growthEndTime || 0);
-              return (
-                <div key={plot.id} className="flex flex-col items-center gap-1.5 relative select-none w-18">
-                  {!isEmpty && (
-                    <div className="absolute top-[-26px] z-20 flex gap-0.5">
-                      {!isWatered && (
-                        <button onClick={() => handleWater(plot.id)}
-                          className="bg-blue-400 hover:bg-blue-500 text-white rounded-full p-1 border-2 border-blue-600 shadow-md animate-bounce cursor-pointer flex items-center justify-center"
-                          title="اسقِ النبتة 💧">
-                          <Droplet className="w-3.5 h-3.5 fill-white" />
-                        </button>
-                      )}
-                      {isWatered && !isFullyGrown && (
-                        <div className="bg-white border-2 border-emerald-600 rounded-full px-1.5 py-0.5 text-[8px] font-black text-emerald-700 flex items-center gap-0.5 shadow-sm">
-                          <Clock className="w-2.5 h-2.5 text-emerald-500" />
-                          <span>{getTimerString(plot.growthEndTime)}</span>
-                          <button onClick={(e) => handleFastForward(plot.id, e)}
-                            className="ml-1 bg-yellow-400 text-yellow-900 border border-yellow-600 rounded-full px-1 py-0 text-[6px] hover:bg-yellow-500 font-extrabold cursor-pointer">
-                            ⚡
-                          </button>
-                        </div>
-                      )}
-                      {isFullyGrown && (
-                        <button onClick={() => handleHarvest(plot.id)}
-                          className="bg-yellow-400 hover:bg-yellow-500 text-yellow-950 rounded-full p-1 border-2 border-yellow-600 shadow-lg animate-bounce-slow flex items-center justify-center cursor-pointer font-black text-xs"
-                          title="احصد النجوم! 🌾">
-                          ⭐
-                        </button>
-                      )}
-                    </div>
+            {/* ════════════ PADDOCK 1: DUCK POND (بحيرة البط) ════════════ */}
+            <div 
+              onClick={() => { synth.playPop(); setSelectedPaddockToBuy("duck"); }}
+              className="absolute left-[50px] top-[60px] w-[340px] h-[240px] bg-gradient-to-tr from-[#93C5FD] to-[#2563EB] rounded-[60px] border-4 border-[#1E3A8A] shadow-[0_8px_0_0_#1E3A8A] flex flex-col justify-between p-4 overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
+            >
+              <div className="text-white font-black text-xs bg-blue-900/60 w-fit px-2.5 py-0.5 rounded-full z-20">
+                🦆 بحيرة البط ({animalCounts.duck}/12)
+              </div>
+              
+              {/* Detailed custom food dish for duck pond */}
+              {animalCounts.duck > 0 && (
+                <div 
+                  onClick={(e) => handleFeedPaddock("duck", e)}
+                  className={`absolute bottom-3 right-3 z-30 cursor-pointer select-none transition-transform hover:scale-110 active:scale-95 ${isHungry("duck") ? 'animate-bounce' : ''}`}
+                >
+                  <SVGFeedingDish type="duck" hungry={isHungry("duck")} />
+                  {isHungry("duck") && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] font-black rounded-full w-4.5 h-4.5 flex items-center justify-center border-2 border-white shadow">!</span>
                   )}
-                  <div onClick={() => { synth.playPop(); if (isEmpty) { setActivePlotId(plot.id); setShowSeedShop(true); } }}
-                    className={`w-14 h-14 rounded-full flex flex-col justify-end items-center relative cursor-pointer ${
-                      isEmpty ? "bg-[#8D6E63] border-3 border-[#4E342E] hover:bg-[#795548] shadow-inner" : "bg-transparent"
-                    }`}>
-                    {isEmpty ? (
-                      <span className="text-white font-extrabold text-lg mb-1">+</span>
-                    ) : (
-                      <div className="mb-[-6px] relative z-10">
-                        <SVGTopDownPlant type={plot.plantType!} stage={isFullyGrown ? 3 : isWatered ? 2 : 1} />
+                </div>
+              )}
+
+              {/* Product pickup */}
+              {pendingProducts.duck && (
+                <motion.div
+                  animate={{ y: [-5, 5, -5], scale: [1, 1.1, 1] }}
+                  transition={{ repeat: Infinity, duration: 1.5 }}
+                  onClick={(e) => handleCollectProduct("duck", e)}
+                  className="absolute top-2 left-1/2 -translate-x-1/2 z-30 cursor-pointer"
+                >
+                  <div className="bg-white border-3 border-yellow-500 rounded-full px-3 py-1.5 text-sm font-black shadow-lg hover:bg-yellow-50 transition-all flex items-center gap-1">
+                    <span>🥚</span>
+                    <span className="text-yellow-700">+{isAdult("duck") ? 10 : 5}⭐</span>
+                  </div>
+                </motion.div>
+              )}
+
+              {isAdult("duck") && animalCounts.duck > 0 && (
+                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow">⭐ بالغ</div>
+              )}
+
+              <div className="relative w-full h-full">
+                {animalLists.duck.map((a) => (
+                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
+                    {renderAnimalSVG("duck", a, isAdult("duck"))}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ════════════ PADDOCK 2: BIRD CAGE (قفص العصافير) ════════════ */}
+            <div 
+              onClick={() => { synth.playPop(); setSelectedPaddockToBuy("bird"); }}
+              className="absolute left-[460px] top-[60px] w-[300px] h-[230px] bg-gradient-to-br from-[#E8F8F5] to-[#A3E4D7] rounded-[36px] border-4 border-[#0E6251] shadow-[0_8px_0_0_#0E6251] p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
+            >
+              <div className="text-[#0E6251] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#0E6251] z-20">
+                🦜 قفص العصافير ({animalCounts.bird}/12)
+              </div>
+              
+              {/* Detailed custom food dish for bird */}
+              {animalCounts.bird > 0 && (
+                <div 
+                  onClick={(e) => handleFeedPaddock("bird", e)}
+                  className={`absolute bottom-3 right-3 z-30 cursor-pointer select-none transition-transform hover:scale-110 active:scale-95 ${isHungry("bird") ? 'animate-bounce' : ''}`}
+                >
+                  <SVGFeedingDish type="bird" hungry={isHungry("bird")} />
+                  {isHungry("bird") && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] font-black rounded-full w-4.5 h-4.5 flex items-center justify-center border-2 border-white shadow">!</span>
+                  )}
+                </div>
+              )}
+
+              {/* Product pickup */}
+              {pendingProducts.bird && (
+                <motion.div
+                  animate={{ y: [-5, 5, -5], scale: [1, 1.1, 1] }}
+                  transition={{ repeat: Infinity, duration: 1.5 }}
+                  onClick={(e) => handleCollectProduct("bird", e)}
+                  className="absolute top-2 left-1/2 -translate-x-1/2 z-30 cursor-pointer"
+                >
+                  <div className="bg-white border-3 border-yellow-500 rounded-full px-3 py-1.5 text-sm font-black shadow-lg hover:bg-yellow-50 transition-all flex items-center gap-1">
+                    <span>🎵</span>
+                    <span className="text-yellow-700">+{isAdult("bird") ? 6 : 3}⭐</span>
+                  </div>
+                </motion.div>
+              )}
+
+              {isAdult("bird") && animalCounts.bird > 0 && (
+                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow">⭐ بالغ</div>
+              )}
+
+              <div className="relative w-full h-full">
+                {animalLists.bird.map((a) => (
+                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
+                    {renderAnimalSVG("bird", a, isAdult("bird"))}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ════════════ PADDOCK 3: RABBIT (حظيرة الأرانب) ════════════ */}
+            <div 
+              onClick={() => { synth.playPop(); setSelectedPaddockToBuy("rabbit"); }}
+              className="absolute left-[810px] top-[60px] w-[280px] h-[230px] bg-gradient-to-br from-[#E2F0D9] to-[#C5E1A5] rounded-[32px] border-4 border-[#33691E] shadow-[0_8px_0_0_#33691E] p-3 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
+            >
+              <div className="text-[#33691E] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#33691E] z-20">
+                🐰 حظيرة الأرانب ({animalCounts.rabbit}/12)
+              </div>
+
+              {/* Detailed custom food dish for rabbit */}
+              {animalCounts.rabbit > 0 && (
+                <div 
+                  onClick={(e) => handleFeedPaddock("rabbit", e)}
+                  className={`absolute bottom-3 right-3 z-30 cursor-pointer select-none transition-transform hover:scale-110 active:scale-95 ${isHungry("rabbit") ? 'animate-bounce' : ''}`}
+                >
+                  <SVGFeedingDish type="rabbit" hungry={isHungry("rabbit")} />
+                  {isHungry("rabbit") && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] font-black rounded-full w-4.5 h-4.5 flex items-center justify-center border-2 border-white shadow">!</span>
+                  )}
+                </div>
+              )}
+
+              {/* Product pickup */}
+              {pendingProducts.rabbit && (
+                <motion.div
+                  animate={{ y: [-5, 5, -5], scale: [1, 1.1, 1] }}
+                  transition={{ repeat: Infinity, duration: 1.5 }}
+                  onClick={(e) => handleCollectProduct("rabbit", e)}
+                  className="absolute top-2 left-1/2 -translate-x-1/2 z-30 cursor-pointer"
+                >
+                  <div className="bg-white border-3 border-yellow-500 rounded-full px-3 py-1.5 text-sm font-black shadow-lg hover:bg-yellow-50 transition-all flex items-center gap-1">
+                    <span>🥕</span>
+                    <span className="text-yellow-700">+{isAdult("rabbit") ? 8 : 4}⭐</span>
+                  </div>
+                </motion.div>
+              )}
+
+              {isAdult("rabbit") && animalCounts.rabbit > 0 && (
+                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow">⭐ بالغ</div>
+              )}
+
+              <div className="relative w-full h-full">
+                {animalLists.rabbit.map((a) => (
+                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
+                    {renderAnimalSVG("rabbit", a, isAdult("rabbit"))}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ════════════ PADDOCK 4: BEEHIVE (خلية النحل) ════════════ */}
+            <div 
+              onClick={() => { synth.playPop(); setSelectedPaddockToBuy("bee"); }}
+              className="absolute left-[1140px] top-[60px] w-[280px] h-[230px] bg-gradient-to-br from-[#FEF3C7] to-[#FCD34D] rounded-[36px] border-4 border-[#78350F] shadow-[0_8px_0_0_#78350F] p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
+            >
+              <div className="text-[#78350F] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#78350F] z-20">
+                🐝 خلية النحل ({animalCounts.bee}/12)
+              </div>
+
+              {/* Detailed custom food dish for bees */}
+              {animalCounts.bee > 0 && (
+                <div 
+                  onClick={(e) => handleFeedPaddock("bee", e)}
+                  className={`absolute bottom-3 right-3 z-30 cursor-pointer select-none transition-transform hover:scale-110 active:scale-95 ${isHungry("bee") ? 'animate-bounce' : ''}`}
+                >
+                  <SVGFeedingDish type="bee" hungry={isHungry("bee")} />
+                  {isHungry("bee") && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] font-black rounded-full w-4.5 h-4.5 flex items-center justify-center border-2 border-white shadow">!</span>
+                  )}
+                </div>
+              )}
+
+              {/* Product pickup */}
+              {pendingProducts.bee && (
+                <motion.div
+                  animate={{ y: [-5, 5, -5], scale: [1, 1.1, 1] }}
+                  transition={{ repeat: Infinity, duration: 1.5 }}
+                  onClick={(e) => handleCollectProduct("bee", e)}
+                  className="absolute top-2 left-1/2 -translate-x-1/2 z-30 cursor-pointer"
+                >
+                  <div className="bg-white border-3 border-yellow-500 rounded-full px-3 py-1.5 text-sm font-black shadow-lg hover:bg-yellow-50 transition-all flex items-center gap-1">
+                    <span>🍯</span>
+                    <span className="text-yellow-700">+{isAdult("bee") ? 16 : 8}⭐</span>
+                  </div>
+                </motion.div>
+              )}
+
+              {isAdult("bee") && animalCounts.bee > 0 && (
+                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow">⭐ بالغ</div>
+              )}
+
+              <div className="relative w-full h-full">
+                {animalLists.bee.map((a) => (
+                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
+                    {renderAnimalSVG("bee", a, isAdult("bee"))}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ════════════ PADDOCK 5: SHEEP (حظيرة الخراف) ════════════ */}
+            <div 
+              onClick={() => { synth.playPop(); setSelectedPaddockToBuy("sheep"); }}
+              className="absolute left-[50px] top-[400px] w-[320px] h-[250px] bg-[#E8F5E9] rounded-[40px] border-4 border-[#1B5E20] shadow-[0_8px_0_0_#1B5E20] p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
+            >
+              <div className="text-[#1B5E20] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#1B5E20] z-20">
+                🐑 حظيرة الخراف ({animalCounts.sheep}/12)
+              </div>
+
+              {/* Detailed custom food dish for sheep */}
+              {animalCounts.sheep > 0 && (
+                <div 
+                  onClick={(e) => handleFeedPaddock("sheep", e)}
+                  className={`absolute bottom-3 right-3 z-30 cursor-pointer select-none transition-transform hover:scale-110 active:scale-95 ${isHungry("sheep") ? 'animate-bounce' : ''}`}
+                >
+                  <SVGFeedingDish type="sheep" hungry={isHungry("sheep")} />
+                  {isHungry("sheep") && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] font-black rounded-full w-4.5 h-4.5 flex items-center justify-center border-2 border-white shadow">!</span>
+                  )}
+                </div>
+              )}
+
+              {/* Product pickup */}
+              {pendingProducts.sheep && (
+                <motion.div
+                  animate={{ y: [-5, 5, -5], scale: [1, 1.1, 1] }}
+                  transition={{ repeat: Infinity, duration: 1.5 }}
+                  onClick={(e) => handleCollectProduct("sheep", e)}
+                  className="absolute top-2 left-1/2 -translate-x-1/2 z-30 cursor-pointer"
+                >
+                  <div className="bg-white border-3 border-yellow-500 rounded-full px-3 py-1.5 text-sm font-black shadow-lg hover:bg-yellow-50 transition-all flex items-center gap-1">
+                    <span>🧶</span>
+                    <span className="text-yellow-700">+{isAdult("sheep") ? 10 : 5}⭐</span>
+                  </div>
+                </motion.div>
+              )}
+
+              {isAdult("sheep") && animalCounts.sheep > 0 && (
+                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow">⭐ بالغ</div>
+              )}
+
+              <div className="relative w-full h-full">
+                {animalLists.sheep.map((a) => (
+                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
+                    {renderAnimalSVG("sheep", a, isAdult("sheep"))}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ════════════ TREE PLOTS (حقول الأشجار) ════════════ */}
+            <div className="absolute left-[450px] top-[380px] w-[500px] h-[460px] bg-[#A1887F]/30 rounded-[40px] border-4 border-dashed border-[#8D6E63] p-6 grid grid-cols-5 gap-y-12 gap-x-6 justify-items-center items-center z-10 shadow-inner">
+              {plots.map((plot) => {
+                const isEmpty = plot.plantType === null;
+                const isWatered = plot.isWatered;
+                const hasEndTime = plot.growthEndTime !== null;
+                const isFullyGrown = hasEndTime && Date.now() >= (plot.growthEndTime || 0);
+                return (
+                  <div key={plot.id} className="flex flex-col items-center gap-1.5 relative select-none w-18">
+                    {!isEmpty && (
+                      <div className="absolute top-[-26px] z-20 flex gap-0.5">
+                        {!isWatered && (
+                          <button onClick={() => handleWater(plot.id)}
+                            className="bg-blue-400 hover:bg-blue-500 text-white rounded-full p-1 border-2 border-blue-600 shadow-md animate-bounce cursor-pointer flex items-center justify-center"
+                            title="اسقِ النبتة 💧">
+                            <Droplet className="w-3.5 h-3.5 fill-white" />
+                          </button>
+                        )}
+                        {isWatered && !isFullyGrown && (
+                          <div className="bg-white border-2 border-emerald-600 rounded-full px-1.5 py-0.5 text-[8px] font-black text-emerald-700 flex items-center gap-0.5 shadow-sm">
+                            <Clock className="w-2.5 h-2.5 text-emerald-500" />
+                            <span>{getTimerString(plot.growthEndTime)}</span>
+                            <button onClick={(e) => handleFastForward(plot.id, e)}
+                              className="ml-1 bg-yellow-400 text-yellow-900 border border-yellow-600 rounded-full px-1 py-0 text-[6px] hover:bg-yellow-500 font-extrabold cursor-pointer">
+                              ⚡
+                            </button>
+                          </div>
+                        )}
+                        {isFullyGrown && (
+                          <button onClick={() => handleHarvest(plot.id)}
+                            className="bg-yellow-400 hover:bg-yellow-500 text-yellow-950 rounded-full p-1 border-2 border-yellow-600 shadow-lg animate-bounce-slow flex items-center justify-center cursor-pointer font-black text-xs"
+                            title="احصد النجوم! 🌾">
+                            ⭐
+                          </button>
+                        )}
                       </div>
                     )}
-                    <div className="absolute bottom-0 w-12 h-3.5 bg-[#5D4037]/60 rounded-full z-0" />
+                    <div onClick={() => { synth.playPop(); if (isEmpty) { setActivePlotId(plot.id); setShowSeedShop(true); } }}
+                      className={`w-14 h-14 rounded-full flex flex-col justify-end items-center relative cursor-pointer ${
+                        isEmpty ? "bg-[#8D6E63] border-3 border-[#4E342E] hover:bg-[#795548] shadow-inner" : "bg-transparent"
+                      }`}>
+                      {isEmpty ? (
+                        <span className="text-white font-extrabold text-lg mb-1">+</span>
+                      ) : (
+                        <div className="mb-[-6px] relative z-10">
+                          <SVGTopDownPlant type={plot.plantType!} stage={isFullyGrown ? 3 : isWatered ? 2 : 1} />
+                        </div>
+                      )}
+                      <div className="absolute bottom-0 w-12 h-3.5 bg-[#5D4037]/60 rounded-full z-0" />
+                    </div>
+                    <span className="text-[8px] font-black text-[#5D4037] bg-white/60 px-1 py-0.2 rounded border border-amber-200">
+                      أرض {plot.id}
+                    </span>
                   </div>
-                  <span className="text-[8px] font-black text-[#5D4037] bg-white/60 px-1 py-0.2 rounded border border-amber-200">
-                    أرض {plot.id}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
 
-          {/* ════════════ PADDOCK 6: PET (حظيرة الأصدقاء) ════════════ */}
-          <div onClick={() => { synth.playPop(); setSelectedPaddockToBuy("pet"); }}
-            className="absolute left-[1020px] top-[400px] w-[360px] h-[260px] bg-[#FFE0B2] rounded-[40px] border-4 border-[#E65100] shadow-md p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all">
-            <div className="text-[#E65100] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#E65100]">
-              🐱🐶 حظيرة الأصدقاء ({animalCounts.pet}/12)
-            </div>
-            <div className="absolute top-14 left-6 text-2xl opacity-40">🦴 🧶</div>
-            <div className="relative w-full h-full">
-              {animalLists.pet.map((a) => (
-                <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
-                  {renderAnimalSVG("pet", a, isAdult("pet"))}
-                </div>
-              ))}
-            </div>
-            {renderDishAndProduct("pet")}
-          </div>
+            {/* ════════════ PADDOCK 6: PET (حظيرة الأصدقاء) ════════════ */}
+            <div 
+              onClick={() => { synth.playPop(); setSelectedPaddockToBuy("pet"); }}
+              className="absolute left-[1020px] top-[400px] w-[360px] h-[260px] bg-gradient-to-br from-[#FFF3E0] to-[#FFE0B2] rounded-[40px] border-4 border-[#E65100] shadow-[0_8px_0_0_#E65100] p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
+            >
+              <div className="text-[#E65100] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#E65100] z-20">
+                🐱🐶 حظيرة الأصدقاء ({animalCounts.pet}/12)
+              </div>
 
-          {/* ════════════ PADDOCK 7: FISH POND (بركة السمك) ════════════ */}
-          <div onClick={() => { synth.playPop(); setSelectedPaddockToBuy("fish"); }}
-            className="absolute left-[50px] top-[730px] w-[340px] h-[240px] bg-gradient-to-br from-[#67E8F9] to-[#06B6D4] rounded-[60px] border-4 border-[#164E63] shadow-lg p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all">
-            <div className="text-white font-black text-xs bg-cyan-900/60 w-fit px-2.5 py-0.5 rounded-full">
-              🐟 بركة السمك ({animalCounts.fish}/12)
-            </div>
-            {/* Water ripple decoration */}
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-20">
-              <div className="w-32 h-8 border-2 border-white rounded-full" />
-              <div className="w-24 h-6 border-2 border-white rounded-full mx-auto mt-1" />
-            </div>
-            <div className="relative w-full h-full">
-              {animalLists.fish.map((a) => (
-                <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
-                  {renderAnimalSVG("fish", a, isAdult("fish"))}
+              {/* Detailed custom food dish for pets */}
+              {animalCounts.pet > 0 && (
+                <div 
+                  onClick={(e) => handleFeedPaddock("pet", e)}
+                  className={`absolute bottom-3 right-3 z-30 cursor-pointer select-none transition-transform hover:scale-110 active:scale-95 ${isHungry("pet") ? 'animate-bounce' : ''}`}
+                >
+                  <SVGFeedingDish type="pet" hungry={isHungry("pet")} />
+                  {isHungry("pet") && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] font-black rounded-full w-4.5 h-4.5 flex items-center justify-center border-2 border-white shadow">!</span>
+                  )}
                 </div>
-              ))}
-            </div>
-            {renderDishAndProduct("fish")}
-          </div>
+              )}
 
-          {/* ════════════ PADDOCK 8: COW (حظيرة الأبقار) ════════════ */}
-          <div onClick={() => { synth.playPop(); setSelectedPaddockToBuy("cow"); }}
-            className="absolute left-[460px] top-[900px] w-[400px] h-[280px] bg-gradient-to-br from-[#FEF3C7] to-[#D1FAE5] rounded-[40px] border-4 border-[#3F6212] shadow-md p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all">
-            <div className="text-[#3F6212] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#3F6212]">
-              🐄 حظيرة الأبقار ({animalCounts.cow}/12)
+              {/* Product pickup */}
+              {pendingProducts.pet && (
+                <motion.div
+                  animate={{ y: [-5, 5, -5], scale: [1, 1.1, 1] }}
+                  transition={{ repeat: Infinity, duration: 1.5 }}
+                  onClick={(e) => handleCollectProduct("pet", e)}
+                  className="absolute top-2 left-1/2 -translate-x-1/2 z-30 cursor-pointer"
+                >
+                  <div className="bg-white border-3 border-yellow-500 rounded-full px-3 py-1.5 text-sm font-black shadow-lg hover:bg-yellow-50 transition-all flex items-center gap-1">
+                    <span>❤️</span>
+                    <span className="text-yellow-700">+{isAdult("pet") ? 8 : 4}⭐</span>
+                  </div>
+                </motion.div>
+              )}
+
+              {isAdult("pet") && animalCounts.pet > 0 && (
+                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow">⭐ بالغ</div>
+              )}
+
+              <div className="relative w-full h-full">
+                {animalLists.pet.map((a) => (
+                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
+                    {renderAnimalSVG("pet", a, isAdult("pet"))}
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="absolute top-12 right-6 text-2xl opacity-30">🥛 🧀</div>
-            {/* Fence decoration */}
-            <div className="absolute bottom-0 left-0 right-0 h-6 opacity-20 flex items-end gap-3 px-4">
-              {Array.from({length: 12}).map((_,i) => <div key={i} className="w-2 h-5 bg-amber-800 rounded-t-sm" />)}
-            </div>
-            <div className="relative w-full h-full">
-              {animalLists.cow.map((a) => (
-                <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
-                  {renderAnimalSVG("cow", a, isAdult("cow"))}
+
+            {/* ════════════ PADDOCK 7: FISH POND (بركة السمك) ════════════ */}
+            <div 
+              onClick={() => { synth.playPop(); setSelectedPaddockToBuy("fish"); }}
+              className="absolute left-[50px] top-[730px] w-[340px] h-[240px] bg-gradient-to-br from-[#22D3EE] to-[#0891B2] rounded-[60px] border-4 border-[#164E63] shadow-[0_8px_0_0_#164E63] p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
+            >
+              <div className="text-white font-black text-xs bg-cyan-900/60 w-fit px-2.5 py-0.5 rounded-full z-20">
+                🐟 بركة السمك ({animalCounts.fish}/12)
+              </div>
+
+              {/* Detailed custom food dish for fish */}
+              {animalCounts.fish > 0 && (
+                <div 
+                  onClick={(e) => handleFeedPaddock("fish", e)}
+                  className={`absolute bottom-3 right-3 z-30 cursor-pointer select-none transition-transform hover:scale-110 active:scale-95 ${isHungry("fish") ? 'animate-bounce' : ''}`}
+                >
+                  <SVGFeedingDish type="fish" hungry={isHungry("fish")} />
+                  {isHungry("fish") && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] font-black rounded-full w-4.5 h-4.5 flex items-center justify-center border-2 border-white shadow">!</span>
+                  )}
                 </div>
-              ))}
-            </div>
-            {renderDishAndProduct("cow")}
-          </div>
+              )}
 
+              {/* Product pickup */}
+              {pendingProducts.fish && (
+                <motion.div
+                  animate={{ y: [-5, 5, -5], scale: [1, 1.1, 1] }}
+                  transition={{ repeat: Infinity, duration: 1.5 }}
+                  onClick={(e) => handleCollectProduct("fish", e)}
+                  className="absolute top-2 left-1/2 -translate-x-1/2 z-30 cursor-pointer"
+                >
+                  <div className="bg-white border-3 border-yellow-500 rounded-full px-3 py-1.5 text-sm font-black shadow-lg hover:bg-yellow-50 transition-all flex items-center gap-1">
+                    <span>🐠</span>
+                    <span className="text-yellow-700">+{isAdult("fish") ? 10 : 5}⭐</span>
+                  </div>
+                </motion.div>
+              )}
+
+              {isAdult("fish") && animalCounts.fish > 0 && (
+                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow">⭐ بالغ</div>
+              )}
+
+              {/* Water ripple decoration */}
+              <div className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-20 pointer-events-none">
+                <div className="w-32 h-8 border-2 border-white rounded-full" />
+                <div className="w-24 h-6 border-2 border-white rounded-full mx-auto mt-1" />
+              </div>
+              <div className="relative w-full h-full">
+                {animalLists.fish.map((a) => (
+                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
+                    {renderAnimalSVG("fish", a, isAdult("fish"))}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ════════════ PADDOCK 8: COW (حظيرة الأبقار) ════════════ */}
+            <div 
+              onClick={() => { synth.playPop(); setSelectedPaddockToBuy("cow"); }}
+              className="absolute left-[460px] top-[900px] w-[400px] h-[280px] bg-gradient-to-br from-[#FEF9C3] to-[#F0FDF4] rounded-[40px] border-4 border-[#3F6212] shadow-[0_8px_0_0_#3F6212] p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
+            >
+              <div className="text-[#3F6212] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#3F6212] z-20">
+                🐄 حظيرة الأبقار ({animalCounts.cow}/12)
+              </div>
+
+              {/* Detailed custom food dish for cow */}
+              {animalCounts.cow > 0 && (
+                <div 
+                  onClick={(e) => handleFeedPaddock("cow", e)}
+                  className={`absolute bottom-3 right-3 z-30 cursor-pointer select-none transition-transform hover:scale-110 active:scale-95 ${isHungry("cow") ? 'animate-bounce' : ''}`}
+                >
+                  <SVGFeedingDish type="cow" hungry={isHungry("cow")} />
+                  {isHungry("cow") && (
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[9px] font-black rounded-full w-4.5 h-4.5 flex items-center justify-center border-2 border-white shadow">!</span>
+                  )}
+                </div>
+              )}
+
+              {/* Product pickup */}
+              {pendingProducts.cow && (
+                <motion.div
+                  animate={{ y: [-5, 5, -5], scale: [1, 1.1, 1] }}
+                  transition={{ repeat: Infinity, duration: 1.5 }}
+                  onClick={(e) => handleCollectProduct("cow", e)}
+                  className="absolute top-2 left-1/2 -translate-x-1/2 z-30 cursor-pointer"
+                >
+                  <div className="bg-white border-3 border-yellow-500 rounded-full px-3 py-1.5 text-sm font-black shadow-lg hover:bg-yellow-50 transition-all flex items-center gap-1">
+                    <span>🥛</span>
+                    <span className="text-yellow-700">+{isAdult("cow") ? 14 : 7}⭐</span>
+                  </div>
+                </motion.div>
+              )}
+
+              {isAdult("cow") && animalCounts.cow > 0 && (
+                <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[8px] font-black rounded-full px-2 py-0.5 shadow">⭐ بالغ</div>
+              )}
+
+              {/* Fence decoration */}
+              <div className="absolute bottom-0 left-0 right-0 h-6 opacity-20 flex items-end gap-3 px-4 pointer-events-none">
+                {Array.from({length: 12}).map((_,i) => <div key={i} className="w-2 h-5 bg-amber-800 rounded-t-sm" />)}
+              </div>
+              <div className="relative w-full h-full">
+                {animalLists.cow.map((a) => (
+                  <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
+                    {renderAnimalSVG("cow", a, isAdult("cow"))}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+          </div>
         </div>
       </main>
 
@@ -1223,7 +1604,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
               <div className="mb-4 p-3 rounded-2xl bg-slate-50 border-2 border-slate-200">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-bold text-gray-600">
-                    {isHungry(selectedPaddockToBuy) ? '🍽️ الطبق فارغ — جوعان!' : '🥘 الطبق ممتلئ — شبعان!'}
+                    {isHungry(selectedPaddockToBuy) ? '🍽️ طبق الأكل فارغ — الحيوانات جائعة!' : '🥘 طبق الأكل ممتلئ!'}
                   </span>
                   {isHungry(selectedPaddockToBuy) && animalCounts[selectedPaddockToBuy] > 0 && (
                     <button onClick={(e) => { handleFeedPaddock(selectedPaddockToBuy, e); }}
