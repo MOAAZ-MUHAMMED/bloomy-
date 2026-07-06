@@ -690,9 +690,8 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
 
   // 3D upright transform to cancel map rotation and make elements stand perpendicular to the ground
   const uprightStyle = {
-    transform: "rotateZ(45deg) rotateX(-58deg)",
-    transformOrigin: "bottom center",
-    transformStyle: "preserve-3d" as const,
+    transform: "none",
+    transformOrigin: "center center",
   };
 
   // Plots
@@ -1113,31 +1112,24 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
       </AnimatePresence>
 
       {/* ─── Main Map (3D Isometric Pop-up View) ─────────────────────────── */}
-      <main 
-        className={`flex-grow w-full overflow-auto scrollbar-none relative border-t-2 ${
-          timeOfDay === "night" ? "bg-gradient-to-b from-[#111827] via-[#311042] to-[#1E1B4B]" : "bg-gradient-to-b from-[#A0C4FF] via-[#E2F0D9] to-[#FDFFB6]"
-        } transition-colors duration-1000`}
-        style={{
-          perspective: "2500px",
-          transformStyle: "preserve-3d"
-        }}
-      >
-        {/* Scrollable container with padding to allow full rotation without clipping */}
-        <div className="flex items-center justify-center p-[200px] md:p-[300px] min-w-max min-h-max" style={{ transformStyle: "preserve-3d" }}>
-          
-          {/* Floating 3D Island */}
+      {/* ─── Main Map (With Dynamic zoomScale transform) ─────────────────────────── */}
+      <main className={`flex-grow w-full overflow-auto scrollbar-none relative border-t-2 ${timeOfDay === "night" ? "border-indigo-900" : "border-emerald-800"} transition-colors duration-1000`}>
+        {/* Scaled viewport wrapper to maintain scrollbar boundaries */}
+        <div style={{
+          width: `${1800 * zoomScale}px`,
+          height: `${1300 * zoomScale}px`,
+          overflow: "hidden",
+          position: "relative",
+          transition: "width 0.3s ease, height 0.3s ease"
+        }}>
           <div 
-            className={`w-[1800px] h-[1300px] p-8 select-none transition-all duration-1000 ${mapBg}`}
+            className={`w-[1800px] h-[1300px] p-8 overflow-hidden select-none transition-all duration-1000 ${mapBg}`}
             style={{
-              transform: `scale(${zoomScale}) rotateX(56deg) rotateZ(-45deg)`,
-              transformOrigin: "center center",
-              transformStyle: "preserve-3d",
-              borderRadius: "80px",
-              border: "12px solid #4D2B82",
-              boxShadow: timeOfDay === "night" 
-                ? "0 22px 0 0 #2A100B, 0 44px 0 0 #150604, 0 60px 120px rgba(0,0,0,0.8)" 
-                : "0 22px 0 0 #8B5A2B, 0 44px 0 0 #5C3A21, 0 60px 120px rgba(0,0,0,0.45)",
-              position: "relative"
+              transform: `scale(${zoomScale})`,
+              transformOrigin: "top left",
+              position: "absolute",
+              top: 0,
+              left: 0
             }}
           >
 
