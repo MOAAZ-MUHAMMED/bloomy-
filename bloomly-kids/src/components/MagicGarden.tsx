@@ -803,6 +803,15 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
   const handleZoomOut = () => setZoomScale(prev => Math.max(0.4, prev - 0.1));
   const handleZoomReset = () => setZoomScale(window.innerWidth < 800 ? 0.55 : 0.8);
 
+  const getTimerString = (endTime: number | null) => {
+    if (!endTime) return "";
+    const diff = endTime - Date.now();
+    if (diff <= 0) return "جاهز! ★";
+    const minutes = Math.floor(diff / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+  };
+
   // ─── Handlers ─────────────────────────────────────────────────
 
   const handlePlantSeed = (seedType: typeof seedsData[number]["type"]) => {
