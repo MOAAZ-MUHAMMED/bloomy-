@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Volume2, VolumeX, Sparkles, Droplet, Clock } from "lucide-react";
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 
-// Web Audio API Synthesizer for Garden Sounds
+// ─── Web Audio API Synthesizer ────────────────────────────────────
 class GardenSoundSynth {
   private ctx: AudioContext | null = null;
 
@@ -11,148 +11,123 @@ class GardenSoundSynth {
     if (!this.ctx) {
       // @ts-ignore
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (AudioCtx) {
-        this.ctx = new AudioCtx();
-      }
+      if (AudioCtx) this.ctx = new AudioCtx();
     }
-    if (this.ctx && this.ctx.state === "suspended") {
-      this.ctx.resume();
-    }
+    if (this.ctx && this.ctx.state === "suspended") this.ctx.resume();
   }
 
   playPop() {
     try {
-      this.initCtx();
-      if (!this.ctx) return;
-      const osc = this.ctx.createOscillator();
-      const gain = this.ctx.createGain();
-      osc.connect(gain);
-      gain.connect(this.ctx.destination);
-      osc.type = "sine";
+      this.initCtx(); if (!this.ctx) return;
+      const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain();
+      osc.connect(gain); gain.connect(this.ctx.destination); osc.type = "sine";
       const now = this.ctx.currentTime;
-      osc.frequency.setValueAtTime(450, now);
-      osc.frequency.exponentialRampToValueAtTime(1100, now + 0.08);
-      gain.gain.setValueAtTime(0.18, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
-      osc.start(now);
-      osc.stop(now + 0.08);
-    } catch (e) {
-      console.warn(e);
-    }
+      osc.frequency.setValueAtTime(450, now); osc.frequency.exponentialRampToValueAtTime(1100, now + 0.08);
+      gain.gain.setValueAtTime(0.18, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
+      osc.start(now); osc.stop(now + 0.08);
+    } catch (e) { console.warn(e); }
   }
 
   playWaterPour() {
     try {
-      this.initCtx();
-      if (!this.ctx) return;
+      this.initCtx(); if (!this.ctx) return;
       const now = this.ctx.currentTime;
       const bufferSize = this.ctx.sampleRate * 0.45;
       const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
       const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        data[i] = Math.random() * 2 - 1;
-      }
-      const noise = this.ctx.createBufferSource();
-      noise.buffer = buffer;
-      const filter = this.ctx.createBiquadFilter();
-      filter.type = "bandpass";
-      filter.frequency.setValueAtTime(1400, now);
-      filter.frequency.exponentialRampToValueAtTime(400, now + 0.45);
+      for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+      const noise = this.ctx.createBufferSource(); noise.buffer = buffer;
+      const filter = this.ctx.createBiquadFilter(); filter.type = "bandpass";
+      filter.frequency.setValueAtTime(1400, now); filter.frequency.exponentialRampToValueAtTime(400, now + 0.45);
       filter.Q.setValueAtTime(3.0, now);
-
       const gain = this.ctx.createGain();
-      gain.gain.setValueAtTime(0.18, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
-
-      noise.connect(filter);
-      filter.connect(gain);
-      gain.connect(this.ctx.destination);
-
-      const osc = this.ctx.createOscillator();
-      const oscGain = this.ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(987.77, now);
+      gain.gain.setValueAtTime(0.18, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.45);
+      noise.connect(filter); filter.connect(gain); gain.connect(this.ctx.destination);
+      const osc = this.ctx.createOscillator(); const oscGain = this.ctx.createGain();
+      osc.type = "sine"; osc.frequency.setValueAtTime(987.77, now);
       osc.frequency.exponentialRampToValueAtTime(1479.98, now + 0.25);
-      oscGain.gain.setValueAtTime(0.06, now);
-      oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
-      osc.connect(oscGain);
-      oscGain.connect(this.ctx.destination);
-
-      noise.start(now);
-      noise.stop(now + 0.45);
-      osc.start(now);
-      osc.stop(now + 0.3);
-    } catch (e) {
-      console.warn(e);
-    }
+      oscGain.gain.setValueAtTime(0.06, now); oscGain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+      osc.connect(oscGain); oscGain.connect(this.ctx.destination);
+      noise.start(now); noise.stop(now + 0.45); osc.start(now); osc.stop(now + 0.3);
+    } catch (e) { console.warn(e); }
   }
 
   playHarvest() {
     try {
-      this.initCtx();
-      if (!this.ctx) return;
+      this.initCtx(); if (!this.ctx) return;
       const now = this.ctx.currentTime;
-      const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98, 2093.00];
-      notes.forEach((freq, idx) => {
-        const osc = this.ctx!.createOscillator();
-        const gain = this.ctx!.createGain();
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+      [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98, 2093.00].forEach((freq, idx) => {
+        const osc = this.ctx!.createOscillator(); const gain = this.ctx!.createGain();
+        osc.type = "sine"; osc.frequency.setValueAtTime(freq, now + idx * 0.07);
         gain.gain.setValueAtTime(0.15, now + idx * 0.07);
         gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.4);
-        osc.connect(gain);
-        gain.connect(this.ctx!.destination);
-        osc.start(now + idx * 0.07);
-        osc.stop(now + idx * 0.07 + 0.4);
+        osc.connect(gain); gain.connect(this.ctx!.destination);
+        osc.start(now + idx * 0.07); osc.stop(now + idx * 0.07 + 0.4);
       });
-    } catch (e) {
-      console.warn(e);
-    }
+    } catch (e) { console.warn(e); }
   }
 
   playPetUnlock() {
     try {
-      this.initCtx();
-      if (!this.ctx) return;
+      this.initCtx(); if (!this.ctx) return;
       const now = this.ctx.currentTime;
-      const notes = [523.25, 587.33, 659.25, 698.46, 783.99, 880.00, 987.77, 1046.50];
-      notes.forEach((freq, idx) => {
-        const osc = this.ctx!.createOscillator();
-        const gain = this.ctx!.createGain();
-        osc.type = "triangle";
-        osc.frequency.setValueAtTime(freq, now + idx * 0.05);
+      [523.25, 587.33, 659.25, 698.46, 783.99, 880.00, 987.77, 1046.50].forEach((freq, idx) => {
+        const osc = this.ctx!.createOscillator(); const gain = this.ctx!.createGain();
+        osc.type = "triangle"; osc.frequency.setValueAtTime(freq, now + idx * 0.05);
         gain.gain.setValueAtTime(0.12, now + idx * 0.05);
         gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.05 + 0.3);
-        osc.connect(gain);
-        gain.connect(this.ctx!.destination);
-        osc.start(now + idx * 0.05);
-        osc.stop(now + idx * 0.05 + 0.3);
+        osc.connect(gain); gain.connect(this.ctx!.destination);
+        osc.start(now + idx * 0.05); osc.stop(now + idx * 0.05 + 0.3);
       });
-    } catch (e) {
-      console.warn(e);
-    }
+    } catch (e) { console.warn(e); }
+  }
+
+  playFeed() {
+    try {
+      this.initCtx(); if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      [380, 480, 380, 480, 560].forEach((freq, idx) => {
+        const osc = this.ctx!.createOscillator(); const gain = this.ctx!.createGain();
+        osc.type = "sine"; osc.frequency.setValueAtTime(freq, now + idx * 0.06);
+        gain.gain.setValueAtTime(0.12, now + idx * 0.06);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.06 + 0.15);
+        osc.connect(gain); gain.connect(this.ctx!.destination);
+        osc.start(now + idx * 0.06); osc.stop(now + idx * 0.06 + 0.15);
+      });
+    } catch (e) { console.warn(e); }
+  }
+
+  playCollect() {
+    try {
+      this.initCtx(); if (!this.ctx) return;
+      const now = this.ctx.currentTime;
+      [1046.50, 1318.51, 1567.98].forEach((freq, idx) => {
+        const osc = this.ctx!.createOscillator(); const gain = this.ctx!.createGain();
+        osc.type = "sine"; osc.frequency.setValueAtTime(freq, now + idx * 0.08);
+        gain.gain.setValueAtTime(0.18, now + idx * 0.08);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.08 + 0.25);
+        osc.connect(gain); gain.connect(this.ctx!.destination);
+        osc.start(now + idx * 0.08); osc.stop(now + idx * 0.08 + 0.25);
+      });
+    } catch (e) { console.warn(e); }
   }
 }
 
 const synth = new GardenSoundSynth();
 
-// --- Vector SVGs for Animals ---
+// ─── SVG Animal Components ────────────────────────────────────────
+
 export function SVGBunny({ className = "w-12 h-12", isEating = false }: { className?: string; isEating?: boolean }) {
   return (
-    <motion.svg 
-      viewBox="0 0 100 100" 
-      className={className}
-      animate={isEating ? { rotate: [0, 15, 0, 15, 0], y: [0, 4, 0, 4, 0] } : {}}
-      transition={{ duration: 1.5 }}
-    >
+    <motion.svg viewBox="0 0 100 100" className={className}
+      animate={isEating ? { rotate: [0, 15, 0, 15, 0], y: [0, 4, 0, 4, 0] } : {}} transition={{ duration: 1.5 }}>
       <ellipse cx="38" cy="20" rx="7" ry="18" fill="#FFFFFF" stroke="#4D2B82" strokeWidth="3" />
       <ellipse cx="38" cy="20" rx="3.5" ry="12" fill="#FFC0CB" />
       <ellipse cx="62" cy="20" rx="7" ry="18" fill="#FFFFFF" stroke="#4D2B82" strokeWidth="3" />
       <ellipse cx="62" cy="20" rx="3.5" ry="12" fill="#FFC0CB" />
       <circle cx="50" cy="72" r="24" fill="#FFFFFF" stroke="#4D2B82" strokeWidth="3" />
       <circle cx="50" cy="46" r="18" fill="#FFFFFF" stroke="#4D2B82" strokeWidth="3" />
-      <circle cx="43" cy="43" r="2.5" fill="#4D2B82" />
-      <circle cx="57" cy="43" r="2.5" fill="#4D2B82" />
+      <circle cx="43" cy="43" r="2.5" fill="#4D2B82" /><circle cx="57" cy="43" r="2.5" fill="#4D2B82" />
       <circle cx="36" cy="49" r="3" fill="#FF8A8A" opacity="0.6" />
       <circle cx="64" cy="49" r="3" fill="#FF8A8A" opacity="0.6" />
       <polygon points="50,48 47,45 53,45" fill="#FF659F" />
@@ -166,12 +141,8 @@ export function SVGBunny({ className = "w-12 h-12", isEating = false }: { classN
 
 export function SVGKitty({ className = "w-12 h-12", isEating = false }: { className?: string; isEating?: boolean }) {
   return (
-    <motion.svg 
-      viewBox="0 0 100 100" 
-      className={className}
-      animate={isEating ? { rotate: [0, -10, 0, -10, 0], y: [0, 3, 0, 3, 0] } : {}}
-      transition={{ duration: 1.5 }}
-    >
+    <motion.svg viewBox="0 0 100 100" className={className}
+      animate={isEating ? { rotate: [0, -10, 0, -10, 0], y: [0, 3, 0, 3, 0] } : {}} transition={{ duration: 1.5 }}>
       <path d="M 75 75 Q 85 60 78 45" stroke="#FBBF24" strokeWidth="6" fill="none" strokeLinecap="round" />
       <polygon points="32,32 30,12 48,22" fill="#FBBF24" stroke="#4D2B82" strokeWidth="3" />
       <polygon points="34,28 33,16 45,22" fill="#FCA5A5" />
@@ -193,12 +164,8 @@ export function SVGKitty({ className = "w-12 h-12", isEating = false }: { classN
 
 export function SVGDuck({ className = "w-12 h-12", isEating = false }: { className?: string; isEating?: boolean }) {
   return (
-    <motion.svg 
-      viewBox="0 0 100 100" 
-      className={className}
-      animate={isEating ? { rotate: [0, 20, 0, 20, 0], y: [0, 4, 0, 4, 0] } : {}}
-      transition={{ duration: 1.5 }}
-    >
+    <motion.svg viewBox="0 0 100 100" className={className}
+      animate={isEating ? { rotate: [0, 20, 0, 20, 0], y: [0, 4, 0, 4, 0] } : {}} transition={{ duration: 1.5 }}>
       <polygon points="20,55 8,45 22,40" fill="#FDE047" stroke="#4D2B82" strokeWidth="2.5" />
       <ellipse cx="48" cy="62" rx="26" ry="18" fill="#FDE047" stroke="#4D2B82" strokeWidth="3" />
       <ellipse cx="48" cy="62" rx="14" ry="8" fill="#FFF59D" stroke="#4D2B82" strokeWidth="2" />
@@ -214,20 +181,15 @@ export function SVGDuck({ className = "w-12 h-12", isEating = false }: { classNa
 
 export function SVGPuppy({ className = "w-12 h-12", isEating = false }: { className?: string; isEating?: boolean }) {
   return (
-    <motion.svg 
-      viewBox="0 0 100 100" 
-      className={className}
-      animate={isEating ? { rotate: [0, 15, 0, 15, 0], y: [0, 3, 0, 3, 0] } : {}}
-      transition={{ duration: 1.5 }}
-    >
+    <motion.svg viewBox="0 0 100 100" className={className}
+      animate={isEating ? { rotate: [0, 15, 0, 15, 0], y: [0, 3, 0, 3, 0] } : {}} transition={{ duration: 1.5 }}>
       <path d="M 76 72 Q 86 64 88 50" stroke="#8D6E63" strokeWidth="6" fill="none" strokeLinecap="round" />
       <ellipse cx="50" cy="72" rx="22" ry="18" fill="#BCAAA4" stroke="#4D2B82" strokeWidth="3" />
       <ellipse cx="30" cy="44" rx="6" ry="12" fill="#8D6E63" stroke="#4D2B82" strokeWidth="2.5" />
       <ellipse cx="70" cy="44" rx="6" ry="12" fill="#8D6E63" stroke="#4D2B82" strokeWidth="2.5" />
       <circle cx="50" cy="44" r="17" fill="#BCAAA4" stroke="#4D2B82" strokeWidth="3" />
       <ellipse cx="50" cy="48" rx="8" ry="6" fill="#FFFFFF" />
-      <circle cx="42" cy="40" r="2.5" fill="#4D2B82" />
-      <circle cx="58" cy="40" r="2.5" fill="#4D2B82" />
+      <circle cx="42" cy="40" r="2.5" fill="#4D2B82" /><circle cx="58" cy="40" r="2.5" fill="#4D2B82" />
       <ellipse cx="50" cy="46" rx="3" ry="2" fill="#000000" />
       <path d="M 48 51 Q 50 59 52 51 Z" fill="#FF5A92" stroke="#4D2B82" strokeWidth="1.5" />
       <circle cx="38" cy="90" r="6" fill="#8D6E63" stroke="#4D2B82" strokeWidth="2.5" />
@@ -238,38 +200,118 @@ export function SVGPuppy({ className = "w-12 h-12", isEating = false }: { classN
 
 export function SVGSheep({ className = "w-12 h-12", isEating = false }: { className?: string; isEating?: boolean }) {
   return (
-    <motion.svg 
-      viewBox="0 0 100 100" 
-      className={className}
-      animate={isEating ? { rotate: [0, 12, 0, 12, 0], y: [0, 5, 0, 5, 0] } : {}}
-      transition={{ duration: 1.5 }}
-    >
-      {/* Legs */}
+    <motion.svg viewBox="0 0 100 100" className={className}
+      animate={isEating ? { rotate: [0, 12, 0, 12, 0], y: [0, 5, 0, 5, 0] } : {}} transition={{ duration: 1.5 }}>
       <rect x="30" y="70" width="6" height="18" fill="#1F2937" rx="2" />
       <rect x="42" y="72" width="6" height="18" fill="#1F2937" rx="2" />
       <rect x="52" y="72" width="6" height="18" fill="#1F2937" rx="2" />
       <rect x="64" y="70" width="6" height="18" fill="#1F2937" rx="2" />
-      {/* Puffy Body */}
       <path d="M 28 50 C 22 45, 22 30, 32 30 C 28 18, 48 12, 54 22 C 58 12, 78 18, 74 30 C 84 30, 84 45, 78 50 C 84 62, 74 72, 64 70 C 58 78, 42 78, 36 70 C 22 72, 22 62, 28 50 Z" fill="#F3F4F6" stroke="#4D2B82" strokeWidth="3" strokeLinejoin="round" />
-      {/* Head */}
       <ellipse cx="76" cy="42" rx="10" ry="12" fill="#1F2937" />
-      {/* Eyes */}
-      <circle cx="73" cy="39" r="1.5" fill="#FFFFFF" />
-      <circle cx="79" cy="39" r="1.5" fill="#FFFFFF" />
-      {/* Ears */}
+      <circle cx="73" cy="39" r="1.5" fill="#FFFFFF" /><circle cx="79" cy="39" r="1.5" fill="#FFFFFF" />
       <ellipse cx="66" cy="38" rx="4" ry="2" fill="#1F2937" transform="rotate(-20 66 38)" />
       <ellipse cx="86" cy="38" rx="4" ry="2" fill="#1F2937" transform="rotate(20 86 38)" />
     </motion.svg>
   );
 }
 
-// --- Vector SVGs for Plants & Trees (Centered top-down versions) ---
+// ─── NEW: Cow SVG ─────────────────────────────────────────────────
+export function SVGCow({ className = "w-12 h-12", isEating = false }: { className?: string; isEating?: boolean }) {
+  return (
+    <motion.svg viewBox="0 0 100 100" className={className}
+      animate={isEating ? { rotate: [0, 10, 0, 10, 0], y: [0, 4, 0, 4, 0] } : {}} transition={{ duration: 1.5 }}>
+      <rect x="28" y="74" width="7" height="16" fill="#FFFFFF" stroke="#4D2B82" strokeWidth="2" rx="2" />
+      <rect x="42" y="76" width="7" height="16" fill="#FFFFFF" stroke="#4D2B82" strokeWidth="2" rx="2" />
+      <rect x="52" y="76" width="7" height="16" fill="#FFFFFF" stroke="#4D2B82" strokeWidth="2" rx="2" />
+      <rect x="65" y="74" width="7" height="16" fill="#FFFFFF" stroke="#4D2B82" strokeWidth="2" rx="2" />
+      <ellipse cx="50" cy="60" rx="28" ry="20" fill="#FFFFFF" stroke="#4D2B82" strokeWidth="3" />
+      <ellipse cx="38" cy="55" rx="10" ry="8" fill="#1F2937" opacity="0.8" />
+      <ellipse cx="64" cy="65" rx="8" ry="6" fill="#1F2937" opacity="0.8" />
+      <circle cx="50" cy="35" r="16" fill="#FFFFFF" stroke="#4D2B82" strokeWidth="3" />
+      <path d="M 36 22 Q 30 12 34 18" stroke="#D4A017" strokeWidth="4" fill="none" strokeLinecap="round" />
+      <path d="M 64 22 Q 70 12 66 18" stroke="#D4A017" strokeWidth="4" fill="none" strokeLinecap="round" />
+      <circle cx="43" cy="32" r="2.5" fill="#4D2B82" /><circle cx="57" cy="32" r="2.5" fill="#4D2B82" />
+      <ellipse cx="50" cy="40" rx="9" ry="6" fill="#FFC0CB" stroke="#4D2B82" strokeWidth="2" />
+      <circle cx="46" cy="39" r="1.5" fill="#4D2B82" /><circle cx="54" cy="39" r="1.5" fill="#4D2B82" />
+      <path d="M 47 43 Q 50 46 53 43" stroke="#4D2B82" strokeWidth="2" fill="none" strokeLinecap="round" />
+      <ellipse cx="50" cy="80" rx="7" ry="4" fill="#FFC0CB" />
+      <path d="M 78 55 Q 90 45 86 60" stroke="#1F2937" strokeWidth="3" fill="none" strokeLinecap="round" />
+    </motion.svg>
+  );
+}
+
+// ─── NEW: Bee SVG ─────────────────────────────────────────────────
+export function SVGBee({ className = "w-12 h-12", isEating = false }: { className?: string; isEating?: boolean }) {
+  return (
+    <motion.svg viewBox="0 0 100 100" className={className}
+      animate={isEating ? { y: [0, -8, 0, -8, 0], rotate: [0, 5, 0, -5, 0] } : { y: [0, -4, 0], rotate: [0, 3, 0, -3, 0] }}
+      transition={{ duration: isEating ? 1.5 : 2.5, repeat: Infinity }}>
+      <ellipse cx="35" cy="32" rx="12" ry="18" fill="#E0F7FF" stroke="#87CEEB" strokeWidth="1.5" opacity="0.6" />
+      <ellipse cx="65" cy="32" rx="12" ry="18" fill="#E0F7FF" stroke="#87CEEB" strokeWidth="1.5" opacity="0.6" />
+      <ellipse cx="50" cy="55" rx="18" ry="24" fill="#FBBF24" stroke="#4D2B82" strokeWidth="3" />
+      <rect x="32" y="46" width="36" height="4" fill="#1F2937" rx="2" />
+      <rect x="32" y="55" width="36" height="4" fill="#1F2937" rx="2" />
+      <rect x="32" y="64" width="36" height="4" fill="#1F2937" rx="2" />
+      <circle cx="50" cy="30" r="12" fill="#FBBF24" stroke="#4D2B82" strokeWidth="3" />
+      <line x1="44" y1="20" x2="38" y2="10" stroke="#4D2B82" strokeWidth="2" />
+      <circle cx="38" cy="10" r="3" fill="#4D2B82" />
+      <line x1="56" y1="20" x2="62" y2="10" stroke="#4D2B82" strokeWidth="2" />
+      <circle cx="62" cy="10" r="3" fill="#4D2B82" />
+      <circle cx="45" cy="28" r="2.5" fill="#4D2B82" /><circle cx="55" cy="28" r="2.5" fill="#4D2B82" />
+      <path d="M 46 34 Q 50 38 54 34" stroke="#4D2B82" strokeWidth="2" fill="none" strokeLinecap="round" />
+      <polygon points="50,79 46,74 54,74" fill="#4D2B82" />
+    </motion.svg>
+  );
+}
+
+// ─── NEW: Fish SVG ────────────────────────────────────────────────
+export function SVGFish({ className = "w-12 h-12", isEating = false }: { className?: string; isEating?: boolean }) {
+  return (
+    <motion.svg viewBox="0 0 100 100" className={className}
+      animate={isEating ? { x: [0, 10, 0, -10, 0] } : { x: [0, 5, 0, -5, 0] }}
+      transition={{ duration: isEating ? 1.2 : 3, repeat: Infinity }}>
+      <ellipse cx="48" cy="50" rx="28" ry="16" fill="#3B82F6" stroke="#4D2B82" strokeWidth="3" />
+      <polygon points="76,50 92,36 92,64" fill="#60A5FA" stroke="#4D2B82" strokeWidth="2" />
+      <polygon points="48,34 40,20 56,20" fill="#60A5FA" stroke="#4D2B82" strokeWidth="2" />
+      <circle cx="34" cy="46" r="5" fill="#FFFFFF" stroke="#4D2B82" strokeWidth="2" />
+      <circle cx="35" cy="45" r="2.5" fill="#4D2B82" />
+      <circle cx="22" cy="52" r="2.5" fill="#1E40AF" />
+      <path d="M 38 42 Q 44 38 50 42" stroke="#2563EB" strokeWidth="1.5" fill="none" />
+      <path d="M 50 42 Q 56 38 62 42" stroke="#2563EB" strokeWidth="1.5" fill="none" />
+      <circle cx="36" cy="54" r="3" fill="#FF8A8A" opacity="0.5" />
+    </motion.svg>
+  );
+}
+
+// ─── NEW: Bird SVG ────────────────────────────────────────────────
+export function SVGBird({ className = "w-12 h-12", isEating = false }: { className?: string; isEating?: boolean }) {
+  return (
+    <motion.svg viewBox="0 0 100 100" className={className}
+      animate={isEating ? { rotate: [0, -15, 0, -15, 0], y: [0, 3, 0, 3, 0] } : {}} transition={{ duration: 1.5 }}>
+      <polygon points="75,55 92,40 88,65" fill="#10B981" stroke="#4D2B82" strokeWidth="2" />
+      <polygon points="75,55 95,50 90,70" fill="#059669" stroke="#4D2B82" strokeWidth="2" />
+      <ellipse cx="50" cy="55" rx="22" ry="18" fill="#10B981" stroke="#4D2B82" strokeWidth="3" />
+      <ellipse cx="56" cy="50" rx="14" ry="10" fill="#059669" stroke="#4D2B82" strokeWidth="2" />
+      <circle cx="30" cy="40" r="14" fill="#10B981" stroke="#4D2B82" strokeWidth="3" />
+      <circle cx="25" cy="37" r="4" fill="#FFFFFF" stroke="#4D2B82" strokeWidth="1.5" />
+      <circle cx="24" cy="36" r="2" fill="#4D2B82" />
+      <polygon points="16,42 6,38 6,46" fill="#F97316" stroke="#4D2B82" strokeWidth="2" />
+      <ellipse cx="42" cy="62" rx="10" ry="7" fill="#FDE047" />
+      <line x1="42" y1="72" x2="38" y2="86" stroke="#F97316" strokeWidth="3" />
+      <line x1="52" y1="72" x2="56" y2="86" stroke="#F97316" strokeWidth="3" />
+      <polygon points="30,26 27,16 34,20" fill="#EF4444" stroke="#4D2B82" strokeWidth="1.5" />
+      <polygon points="34,26 32,14 38,19" fill="#EF4444" stroke="#4D2B82" strokeWidth="1.5" />
+    </motion.svg>
+  );
+}
+
+// ─── Plants & Decorations (existing) ──────────────────────────────
+
 export function SVGTopDownPlant({ type, stage }: { type: "apple" | "orange" | "flower" | "sunflower"; stage: number }) {
-  const isTree = type === "apple" || type === "orange";
   const leafColor = "#22C55E";
+  const isTree = type === "apple" || type === "orange";
 
   if (stage === 0) {
-    // Stage 0: Sprout in soil pile
     return (
       <svg viewBox="0 0 100 100" className="w-16 h-16 mx-auto">
         <circle cx="50" cy="50" r="30" fill="#5C4033" stroke="#4D2B82" strokeWidth="2.5" />
@@ -278,9 +320,7 @@ export function SVGTopDownPlant({ type, stage }: { type: "apple" | "orange" | "f
       </svg>
     );
   }
-
   if (stage === 1) {
-    // Stage 1: Budding/Leaves
     return (
       <svg viewBox="0 0 100 100" className="w-16 h-16 mx-auto">
         <circle cx="50" cy="50" r="32" fill="#5C4033" stroke="#4D2B82" strokeWidth="2.5" />
@@ -290,34 +330,25 @@ export function SVGTopDownPlant({ type, stage }: { type: "apple" | "orange" | "f
       </svg>
     );
   }
-
   if (stage === 2) {
-    // Stage 2: Medium grown plant / Potted or Trunk with small canopy
     return (
       <svg viewBox="0 0 100 100" className="w-18 h-18 mx-auto">
         <circle cx="50" cy="50" r="34" fill="#5C4033" stroke="#4D2B82" strokeWidth="2.5" />
         {isTree ? (
-          <>
-            <circle cx="50" cy="50" r="28" fill="#16A34A" stroke="#4D2B82" strokeWidth="3" />
-            <circle cx="45" cy="45" r="18" fill="#4ADE80" opacity="0.4" />
-          </>
+          <><circle cx="50" cy="50" r="28" fill="#16A34A" stroke="#4D2B82" strokeWidth="3" />
+          <circle cx="45" cy="45" r="18" fill="#4ADE80" opacity="0.4" /></>
         ) : (
-          <>
-            <path d="M 50 50 L 50 20" stroke="#15803D" strokeWidth="5" />
-            <circle cx="50" cy="20" r="12" fill="#FBBF24" stroke="#4D2B82" strokeWidth="2.5" />
-          </>
+          <><path d="M 50 50 L 50 20" stroke="#15803D" strokeWidth="5" />
+          <circle cx="50" cy="20" r="12" fill="#FBBF24" stroke="#4D2B82" strokeWidth="2.5" /></>
         )}
       </svg>
     );
   }
-
-  // Stage 3: Fully bloomed
   if (type === "apple") {
     return (
       <svg viewBox="0 0 100 100" className="w-22 h-22 mx-auto">
         <circle cx="50" cy="50" r="35" fill="#5C4033" stroke="#4D2B82" strokeWidth="2.5" />
         <circle cx="50" cy="50" r="38" fill="#16A34A" stroke="#4D2B82" strokeWidth="3.5" />
-        {/* Apples */}
         <circle cx="36" cy="36" r="6" fill="#EF4444" stroke="#4D2B82" strokeWidth="1.5" />
         <circle cx="64" cy="36" r="6" fill="#EF4444" stroke="#4D2B82" strokeWidth="1.5" />
         <circle cx="42" cy="62" r="6" fill="#EF4444" stroke="#4D2B82" strokeWidth="1.5" />
@@ -325,13 +356,11 @@ export function SVGTopDownPlant({ type, stage }: { type: "apple" | "orange" | "f
       </svg>
     );
   }
-
   if (type === "orange") {
     return (
       <svg viewBox="0 0 100 100" className="w-22 h-22 mx-auto">
         <circle cx="50" cy="50" r="35" fill="#5C4033" stroke="#4D2B82" strokeWidth="2.5" />
         <circle cx="50" cy="50" r="38" fill="#16A34A" stroke="#4D2B82" strokeWidth="3.5" />
-        {/* Oranges */}
         <circle cx="36" cy="36" r="6" fill="#F97316" stroke="#4D2B82" strokeWidth="1.5" />
         <circle cx="64" cy="36" r="6" fill="#F97316" stroke="#4D2B82" strokeWidth="1.5" />
         <circle cx="42" cy="62" r="6" fill="#F97316" stroke="#4D2B82" strokeWidth="1.5" />
@@ -339,7 +368,6 @@ export function SVGTopDownPlant({ type, stage }: { type: "apple" | "orange" | "f
       </svg>
     );
   }
-
   if (type === "flower") {
     return (
       <svg viewBox="0 0 100 100" className="w-20 h-20 mx-auto">
@@ -355,25 +383,13 @@ export function SVGTopDownPlant({ type, stage }: { type: "apple" | "orange" | "f
       </svg>
     );
   }
-
-  // Sunflower
   return (
     <svg viewBox="0 0 100 100" className="w-20 h-20 mx-auto">
       <circle cx="50" cy="50" r="35" fill="#5C4033" stroke="#4D2B82" strokeWidth="2.5" />
       <path d="M 50 50 L 50 25" stroke="#15803D" strokeWidth="6" />
       <g transform="translate(50, 25)">
         {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => (
-          <ellipse
-            key={deg}
-            cx="0"
-            cy="0"
-            rx="4"
-            ry="14"
-            fill="#FBBF24"
-            stroke="#4D2B82"
-            strokeWidth="1.5"
-            transform={`rotate(${deg})`}
-          />
+          <ellipse key={deg} cx="0" cy="0" rx="4" ry="14" fill="#FBBF24" stroke="#4D2B82" strokeWidth="1.5" transform={`rotate(${deg})`} />
         ))}
         <circle cx="0" cy="0" r="8" fill="#78350F" stroke="#4D2B82" strokeWidth="2" />
       </g>
@@ -384,27 +400,16 @@ export function SVGTopDownPlant({ type, stage }: { type: "apple" | "orange" | "f
 export function SVGSun({ className = "w-20 h-20" }: { className?: string }) {
   return (
     <svg viewBox="0 0 100 100" className={className}>
-      <defs>
-        <linearGradient id="sunGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#FFF275" />
-          <stop offset="100%" stopColor="#FF9F29" />
-        </linearGradient>
-      </defs>
+      <defs><linearGradient id="sunGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#FFF275" /><stop offset="100%" stopColor="#FF9F29" />
+      </linearGradient></defs>
       <g className="animate-[spin_45s_linear_infinite]" style={{ transformOrigin: "50px 50px" }}>
         {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => (
-          <polygon
-            key={deg}
-            points="50,12 43,30 57,30"
-            fill="#FFD700"
-            stroke="#4D2B82"
-            strokeWidth="2.5"
-            transform={`rotate(${deg} 50 50)`}
-          />
+          <polygon key={deg} points="50,12 43,30 57,30" fill="#FFD700" stroke="#4D2B82" strokeWidth="2.5" transform={`rotate(${deg} 50 50)`} />
         ))}
       </g>
       <circle cx="50" cy="50" r="24" fill="url(#sunGrad)" stroke="#4D2B82" strokeWidth="3.5" />
-      <circle cx="43" cy="46" r="2.5" fill="#4D2B82" />
-      <circle cx="57" cy="46" r="2.5" fill="#4D2B82" />
+      <circle cx="43" cy="46" r="2.5" fill="#4D2B82" /><circle cx="57" cy="46" r="2.5" fill="#4D2B82" />
       <circle cx="37" cy="51" r="2" fill="#FF8A8A" opacity="0.6" />
       <circle cx="63" cy="51" r="2" fill="#FF8A8A" opacity="0.6" />
       <path d="M 45 52 Q 50 58 55 52" stroke="#4D2B82" strokeWidth="3" fill="none" strokeLinecap="round" />
@@ -412,20 +417,42 @@ export function SVGSun({ className = "w-20 h-20" }: { className?: string }) {
   );
 }
 
-// Interfaces
+// ─── Configuration & Interfaces ───────────────────────────────────
+
+type PaddockType = "sheep" | "rabbit" | "duck" | "pet" | "cow" | "bee" | "fish" | "bird";
+
+const HUNGER_INTERVAL = 6 * 60 * 60 * 1000; // 6 hours in ms
+
+const PADDOCK_DATA: Record<PaddockType, {
+  name: string; emoji: string; buyCost: number; feedCost: number;
+  productEmoji: string; productName: string; productStars: number;
+}> = {
+  sheep:  { name: "حظيرة الخراف",   emoji: "🐑",   buyCost: 20, feedCost: 3, productEmoji: "🧶", productName: "صوف",   productStars: 5  },
+  rabbit: { name: "حظيرة الأرانب",  emoji: "🐰",   buyCost: 15, feedCost: 3, productEmoji: "🥕", productName: "جزر",   productStars: 4  },
+  duck:   { name: "بحيرة البط",     emoji: "🦆",   buyCost: 22, feedCost: 3, productEmoji: "🥚", productName: "بيض",   productStars: 5  },
+  pet:    { name: "حظيرة الأصدقاء", emoji: "🐱🐶", buyCost: 25, feedCost: 3, productEmoji: "❤️", productName: "حب",    productStars: 4  },
+  cow:    { name: "حظيرة الأبقار",  emoji: "🐄",   buyCost: 35, feedCost: 5, productEmoji: "🥛", productName: "حليب",  productStars: 7  },
+  bee:    { name: "خلية النحل",     emoji: "🐝",   buyCost: 30, feedCost: 4, productEmoji: "🍯", productName: "عسل",   productStars: 8  },
+  fish:   { name: "بركة السمك",     emoji: "🐟",   buyCost: 18, feedCost: 3, productEmoji: "🐠", productName: "سمك",   productStars: 5  },
+  bird:   { name: "قفص العصافير",   emoji: "🦜",   buyCost: 12, feedCost: 2, productEmoji: "🎵", productName: "أغاني", productStars: 3  },
+};
+
+const ALL_PADDOCK_TYPES: PaddockType[] = ["sheep", "rabbit", "duck", "pet", "cow", "bee", "fish", "bird"];
+
 interface GardenPlot {
   id: number;
   plantType: "apple" | "orange" | "flower" | "sunflower" | null;
   isWatered: boolean;
-  growthEndTime: number | null; // Timestamp in ms
+  growthEndTime: number | null;
 }
 
 interface AnimalState {
-  id: number;
-  x: number;
-  y: number;
-  isEating: boolean;
-  angle: number;
+  id: number; x: number; y: number; isEating: boolean; angle: number;
+}
+
+interface FeedingData {
+  lastFedTime: number;
+  fedCount: number;
 }
 
 interface MagicGardenProps {
@@ -434,49 +461,46 @@ interface MagicGardenProps {
   setGlobalStars: React.Dispatch<React.SetStateAction<number>>;
 }
 
+// ─── Component ────────────────────────────────────────────────────
+
 export default function MagicGarden({ onClose, globalStars, setGlobalStars }: MagicGardenProps) {
-  // Cloud Intro Animation state
   const [introActive, setIntroActive] = useState(true);
 
-  // 20 Plots State
+  // Plots
   const [plots, setPlots] = useState<GardenPlot[]>([]);
-  
-  // Animal Paddock Counts
-  const [sheepCount, setSheepCount] = useState(0);
-  const [rabbitCount, setRabbitCount] = useState(0);
-  const [duckCount, setDuckCount] = useState(0);
-  const [petCount, setPetCount] = useState(0); // combined cat/dog
 
-  // Animal instances for visual wandering
-  const [sheepList, setSheepList] = useState<AnimalState[]>([]);
-  const [rabbitList, setRabbitList] = useState<AnimalState[]>([]);
-  const [duckList, setDuckList] = useState<AnimalState[]>([]);
-  const [petList, setPetList] = useState<AnimalState[]>([]);
+  // Animal counts (all 8 types)
+  const [animalCounts, setAnimalCounts] = useState<Record<PaddockType, number>>({
+    sheep: 0, rabbit: 0, duck: 0, pet: 0, cow: 0, bee: 0, fish: 0, bird: 0,
+  });
 
-  // Modals & Notifications
+  // Animal visual lists
+  const [animalLists, setAnimalLists] = useState<Record<PaddockType, AnimalState[]>>({
+    sheep: [], rabbit: [], duck: [], pet: [], cow: [], bee: [], fish: [], bird: [],
+  });
+
+  // Feeding state
+  const [feedingState, setFeedingState] = useState<Record<PaddockType, FeedingData>>({
+    sheep: { lastFedTime: 0, fedCount: 0 }, rabbit: { lastFedTime: 0, fedCount: 0 },
+    duck: { lastFedTime: 0, fedCount: 0 }, pet: { lastFedTime: 0, fedCount: 0 },
+    cow: { lastFedTime: 0, fedCount: 0 }, bee: { lastFedTime: 0, fedCount: 0 },
+    fish: { lastFedTime: 0, fedCount: 0 }, bird: { lastFedTime: 0, fedCount: 0 },
+  });
+
+  // Products ready to collect
+  const [pendingProducts, setPendingProducts] = useState<Record<PaddockType, boolean>>({
+    sheep: false, rabbit: false, duck: false, pet: false,
+    cow: false, bee: false, fish: false, bird: false,
+  });
+
+  // Weather / Time of day
+  const [timeOfDay, setTimeOfDay] = useState<"day" | "sunset" | "night">("day");
+
+  // Modals & UI
   const [activePlotId, setActivePlotId] = useState<number | null>(null);
   const [showSeedShop, setShowSeedShop] = useState(false);
-  const [showAnimalShop, setShowAnimalShop] = useState(false);
-  const [selectedPaddockToBuy, setSelectedPaddockToBuy] = useState<"sheep" | "rabbit" | "duck" | "pet" | null>(null);
+  const [selectedPaddockToBuy, setSelectedPaddockToBuy] = useState<PaddockType | null>(null);
   const [noticeText, setNoticeText] = useState<string | null>(null);
-
-  // Lock screen orientation to landscape on mobile
-  useEffect(() => {
-    try {
-      if (ScreenOrientation) {
-        ScreenOrientation.lock({ orientation: 'landscape' }).catch(() => {});
-      }
-    } catch (e) {}
-    return () => {
-      try {
-        if (ScreenOrientation) {
-          ScreenOrientation.unlock().catch(() => {});
-        }
-      } catch (e) {}
-    };
-  }, []);
-  
-  // Time updates trigger
   const [timeTick, setTimeTick] = useState(0);
 
   // Seed metadata
@@ -487,47 +511,125 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
     { type: "sunflower", name: "عباد الشمس السعيد 🌻", cost: 12, payout: 30 },
   ] as const;
 
-  // Initialize/Load State
-  useEffect(() => {
-    // Cloud transition trigger
-    setTimeout(() => {
-      setIntroActive(false);
-    }, 2000);
+  // ─── Effects ──────────────────────────────────────────────────
 
-    // Load 20 Plots
+  // Lock screen orientation to landscape on mobile
+  useEffect(() => {
+    try {
+      if (ScreenOrientation) ScreenOrientation.lock({ orientation: 'landscape' }).catch(() => {});
+    } catch (e) {}
+    return () => {
+      try {
+        if (ScreenOrientation) ScreenOrientation.unlock().catch(() => {});
+      } catch (e) {}
+    };
+  }, []);
+
+  // Initialize / Load state
+  useEffect(() => {
+    setTimeout(() => setIntroActive(false), 2000);
+
+    // Load plots
     const savedPlots = localStorage.getItem("bloomly_garden_plots_v2");
     if (savedPlots) {
       setPlots(JSON.parse(savedPlots));
     } else {
       const defaultPlots: GardenPlot[] = Array.from({ length: 20 }).map((_, i) => ({
-        id: i + 1,
-        plantType: null,
-        isWatered: false,
-        growthEndTime: null,
+        id: i + 1, plantType: null, isWatered: false, growthEndTime: null,
       }));
       setPlots(defaultPlots);
       localStorage.setItem("bloomly_garden_plots_v2", JSON.stringify(defaultPlots));
     }
 
-    // Load Animal Counts
-    setSheepCount(Number(localStorage.getItem("bloomly_sheep_count") || "1"));
-    setRabbitCount(Number(localStorage.getItem("bloomly_rabbit_count") || "1"));
-    setDuckCount(Number(localStorage.getItem("bloomly_duck_count") || "1"));
-    setPetCount(Number(localStorage.getItem("bloomly_pet_count") || "1"));
+    // Load animal counts
+    const counts: Record<PaddockType, number> = {
+      sheep: Number(localStorage.getItem("bloomly_sheep_count") || "1"),
+      rabbit: Number(localStorage.getItem("bloomly_rabbit_count") || "1"),
+      duck: Number(localStorage.getItem("bloomly_duck_count") || "1"),
+      pet: Number(localStorage.getItem("bloomly_pet_count") || "1"),
+      cow: Number(localStorage.getItem("bloomly_cow_count") || "0"),
+      bee: Number(localStorage.getItem("bloomly_bee_count") || "0"),
+      fish: Number(localStorage.getItem("bloomly_fish_count") || "0"),
+      bird: Number(localStorage.getItem("bloomly_bird_count") || "0"),
+    };
+    setAnimalCounts(counts);
+
+    // Load feeding state
+    const savedFeeding = localStorage.getItem("bloomly_feeding_state");
+    if (savedFeeding) {
+      try { setFeedingState(JSON.parse(savedFeeding)); } catch (e) {}
+    }
+
+    // Load pending products
+    const savedProducts = localStorage.getItem("bloomly_pending_products");
+    if (savedProducts) {
+      try { setPendingProducts(JSON.parse(savedProducts)); } catch (e) {}
+    }
   }, []);
 
-  // Save state helpers
+  // Timer tick
+  useEffect(() => {
+    const timer = setInterval(() => setTimeTick(prev => prev + 1), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Animal wandering
+  useEffect(() => {
+    const makeAnimals = (count: number) =>
+      Array.from({ length: count }).map((_, i) => ({
+        id: i, x: 40 + Math.random() * 160, y: 40 + Math.random() * 140,
+        isEating: false, angle: Math.random() * 360,
+      }));
+
+    const newLists: Record<PaddockType, AnimalState[]> = {} as any;
+    ALL_PADDOCK_TYPES.forEach(type => {
+      newLists[type] = makeAnimals(animalCounts[type]);
+    });
+    setAnimalLists(newLists);
+  }, [animalCounts]);
+
+  useEffect(() => {
+    const wanderInterval = setInterval(() => {
+      const updateWander = (list: AnimalState[]) =>
+        list.map(ani => {
+          if (Math.random() < 0.3) return { ...ani, isEating: true };
+          return {
+            ...ani, isEating: false,
+            x: Math.max(20, Math.min(220, ani.x + (Math.random() * 60 - 30))),
+            y: Math.max(20, Math.min(180, ani.y + (Math.random() * 50 - 25))),
+            angle: Math.random() * 360,
+          };
+        });
+
+      setAnimalLists(prev => {
+        const next = { ...prev };
+        ALL_PADDOCK_TYPES.forEach(type => { next[type] = updateWander(prev[type]); });
+        return next;
+      });
+    }, 3500);
+    return () => clearInterval(wanderInterval);
+  }, []);
+
+  // ─── Helpers ──────────────────────────────────────────────────
+
   const savePlots = (newPlots: GardenPlot[]) => {
     setPlots(newPlots);
     localStorage.setItem("bloomly_garden_plots_v2", JSON.stringify(newPlots));
   };
 
-  const saveAnimalCount = (type: "sheep" | "rabbit" | "duck" | "pet", val: number) => {
+  const saveAnimalCount = (type: PaddockType, val: number) => {
     localStorage.setItem(`bloomly_${type}_count`, val.toString());
-    if (type === "sheep") setSheepCount(val);
-    if (type === "rabbit") setRabbitCount(val);
-    if (type === "duck") setDuckCount(val);
-    if (type === "pet") setPetCount(val);
+    setAnimalCounts(prev => ({ ...prev, [type]: val }));
+  };
+
+  const saveFeedingState = (newState: Record<PaddockType, FeedingData>) => {
+    setFeedingState(newState);
+    localStorage.setItem("bloomly_feeding_state", JSON.stringify(newState));
+  };
+
+  const savePendingProducts = (newProds: Record<PaddockType, boolean>) => {
+    setPendingProducts(newProds);
+    localStorage.setItem("bloomly_pending_products", JSON.stringify(newProds));
   };
 
   const updateStars = (diff: number) => {
@@ -543,196 +645,16 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
     setTimeout(() => setNoticeText(null), 2500);
   };
 
-  // --- Real-time Countdown Timer tick loop ---
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeTick(prev => prev + 1);
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // --- Animal Wandering Simulation Loop ---
-  useEffect(() => {
-    const makeAnimals = (count: number) => {
-      return Array.from({ length: count }).map((_, i) => ({
-        id: i,
-        x: 40 + Math.random() * 160, // random x in paddock box
-        y: 40 + Math.random() * 140, // random y in paddock box
-        isEating: false,
-        angle: Math.random() * 360,
-      }));
-    };
-
-    setSheepList(makeAnimals(sheepCount));
-    setRabbitList(makeAnimals(rabbitCount));
-    setDuckList(makeAnimals(duckCount));
-    setPetList(makeAnimals(petCount));
-  }, [sheepCount, rabbitCount, duckCount, petCount]);
-
-  useEffect(() => {
-    const wanderInterval = setInterval(() => {
-      const updateWander = (list: AnimalState[]) => {
-        return list.map(ani => {
-          // 30% chance to eat, 70% chance to walk
-          const eatChance = Math.random() < 0.3;
-          if (eatChance) {
-            return { ...ani, isEating: true };
-          }
-          return {
-            ...ani,
-            isEating: false,
-            x: Math.max(20, Math.min(220, ani.x + (Math.random() * 60 - 30))),
-            y: Math.max(20, Math.min(180, ani.y + (Math.random() * 50 - 25))),
-            angle: Math.random() * 360,
-          };
-        });
-      };
-
-      setSheepList(prev => updateWander(prev));
-      setRabbitList(prev => updateWander(prev));
-      setDuckList(prev => updateWander(prev));
-      setPetList(prev => updateWander(prev));
-    }, 3500);
-
-    return () => clearInterval(wanderInterval);
-  }, []);
-
-  // --- Actions ---
-  const handlePlantSeed = (seedType: typeof seedsData[number]["type"]) => {
-    const seed = seedsData.find(s => s.type === seedType);
-    if (!seed || activePlotId === null) return;
-
-    if (globalStars < seed.cost) {
-      synth.playPop();
-      triggerNotice("❌ ليس لديك نجوم كافية لشراء هذه البذرة!");
-      return;
-    }
-
-    updateStars(-seed.cost);
-    synth.playPop();
-
-    const newPlots = plots.map(p => {
-      if (p.id === activePlotId) {
-        return {
-          ...p,
-          plantType: seedType,
-          isWatered: false,
-          growthEndTime: null,
-        };
-      }
-      return p;
-    });
-
-    savePlots(newPlots);
-    setShowSeedShop(false);
-    setActivePlotId(null);
-    triggerNotice(`🌱 تم زراعة بذرة ${seed.name}! اسقها الآن لتبدأ النمو.`);
+  const isHungry = (type: PaddockType) => {
+    const fs = feedingState[type];
+    if (!fs || fs.lastFedTime === 0) return true;
+    return Date.now() - fs.lastFedTime > HUNGER_INTERVAL;
   };
 
-  const handleWater = (plotId: number) => {
-    const plot = plots.find(p => p.id === plotId);
-    if (!plot || plot.plantType === null || plot.isWatered) return;
-
-    if (globalStars < 2) {
-      synth.playPop();
-      triggerNotice("❌ تحتاج ٢ نجمة 💧 للري!");
-      return;
-    }
-
-    updateStars(-2);
-    synth.playWaterPour();
-
-    const endTime = Date.now() + 30 * 60 * 1000; // 30 minutes in future
-
-    const newPlots = plots.map(p => {
-      if (p.id === plotId) {
-        return {
-          ...p,
-          isWatered: true,
-          growthEndTime: endTime,
-        };
-      }
-      return p;
-    });
-
-    savePlots(newPlots);
-    triggerNotice("💧 تم الري بنجاح! ستبدأ النبتة بالنمو، وتكتمل بعد ٣٠ دقيقة.");
+  const isAdult = (type: PaddockType) => {
+    return (feedingState[type]?.fedCount || 0) >= 5;
   };
 
-  const handleHarvest = (plotId: number) => {
-    const plot = plots.find(p => p.id === plotId);
-    if (!plot || plot.plantType === null || !plot.isWatered || !plot.growthEndTime) return;
-
-    if (Date.now() < plot.growthEndTime) return; // not ready
-
-    const seed = seedsData.find(s => s.type === plot.plantType);
-    if (!seed) return;
-
-    updateStars(10); // Reward exactly 10 stars as requested
-    synth.playHarvest();
-    triggerNotice(`🎉 تهانينا! قمت بحصاد النجمة وحصلت على +10 نجوم! ⭐`);
-
-    const newPlots = plots.map(p => {
-      if (p.id === plotId) {
-        return {
-          id: p.id,
-          plantType: null,
-          isWatered: false,
-          growthEndTime: null,
-        };
-      }
-      return p;
-    });
-
-    savePlots(newPlots);
-  };
-
-  // CHEAT/DEVELOPER Fast-forward helper to instant grow
-  const handleFastForward = (plotId: number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    const plot = plots.find(p => p.id === plotId);
-    if (!plot || !plot.isWatered) return;
-
-    synth.playHarvest();
-    const newPlots = plots.map(p => {
-      if (p.id === plotId) {
-        return {
-          ...p,
-          growthEndTime: Date.now() - 1000, // force complete
-        };
-      }
-      return p;
-    });
-    savePlots(newPlots);
-    triggerNotice("⚡ تم تسريع النمو بنجاح للفحص السريع!");
-  };
-
-  const handleBuyAnimal = (type: "sheep" | "rabbit" | "duck" | "pet", cost: number, name: string) => {
-    let currentCount = 0;
-    if (type === "sheep") currentCount = sheepCount;
-    if (type === "rabbit") currentCount = rabbitCount;
-    if (type === "duck") currentCount = duckCount;
-    if (type === "pet") currentCount = petCount;
-
-    if (currentCount >= 12) {
-      synth.playPop();
-      triggerNotice(`❌ عذراً! حظيرة ${name} ممتلئة بالكامل (الحد الأقصى ١٢ حيوان).`);
-      return;
-    }
-
-    if (globalStars < cost) {
-      synth.playPop();
-      triggerNotice("❌ ليس لديك نجوم كافية لشراء هذا الحيوان!");
-      return;
-    }
-
-    updateStars(-cost);
-    synth.playPetUnlock();
-    saveAnimalCount(type, currentCount + 1);
-    triggerNotice(`🐣 تم شراء ${name} جديد وإضافته للحظيرة!`);
-  };
-
-  // Timer String helper
   const getTimerString = (endTime: number | null) => {
     if (!endTime) return "";
     const diff = endTime - Date.now();
@@ -742,291 +664,428 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
+  // ─── Handlers ─────────────────────────────────────────────────
+
+  const handlePlantSeed = (seedType: typeof seedsData[number]["type"]) => {
+    const seed = seedsData.find(s => s.type === seedType);
+    if (!seed || activePlotId === null) return;
+    if (globalStars < seed.cost) {
+      synth.playPop(); triggerNotice("❌ ليس لديك نجوم كافية لشراء هذه البذرة!"); return;
+    }
+    updateStars(-seed.cost); synth.playPop();
+    const newPlots = plots.map(p => p.id === activePlotId ? { ...p, plantType: seedType, isWatered: false, growthEndTime: null } : p);
+    savePlots(newPlots); setShowSeedShop(false); setActivePlotId(null);
+    triggerNotice(`🌱 تم زراعة بذرة ${seed.name}! اسقها الآن لتبدأ النمو.`);
+  };
+
+  const handleWater = (plotId: number) => {
+    const plot = plots.find(p => p.id === plotId);
+    if (!plot || plot.plantType === null || plot.isWatered) return;
+    if (globalStars < 2) { synth.playPop(); triggerNotice("❌ تحتاج ٢ نجمة 💧 للري!"); return; }
+    updateStars(-2); synth.playWaterPour();
+    const endTime = Date.now() + 30 * 60 * 1000;
+    const newPlots = plots.map(p => p.id === plotId ? { ...p, isWatered: true, growthEndTime: endTime } : p);
+    savePlots(newPlots); triggerNotice("💧 تم الري بنجاح! ستبدأ النبتة بالنمو، وتكتمل بعد ٣٠ دقيقة.");
+  };
+
+  const handleHarvest = (plotId: number) => {
+    const plot = plots.find(p => p.id === plotId);
+    if (!plot || plot.plantType === null || !plot.isWatered || !plot.growthEndTime) return;
+    if (Date.now() < plot.growthEndTime) return;
+    updateStars(10); synth.playHarvest();
+    triggerNotice(`🎉 تهانينا! قمت بحصاد النجمة وحصلت على +10 نجوم! ⭐`);
+    const newPlots = plots.map(p => p.id === plotId ? { id: p.id, plantType: null, isWatered: false, growthEndTime: null } : p);
+    savePlots(newPlots);
+  };
+
+  const handleFastForward = (plotId: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    const plot = plots.find(p => p.id === plotId);
+    if (!plot || !plot.isWatered) return;
+    synth.playHarvest();
+    const newPlots = plots.map(p => p.id === plotId ? { ...p, growthEndTime: Date.now() - 1000 } : p);
+    savePlots(newPlots); triggerNotice("⚡ تم تسريع النمو بنجاح للفحص السريع!");
+  };
+
+  const handleBuyAnimal = (type: PaddockType) => {
+    const config = PADDOCK_DATA[type];
+    const currentCount = animalCounts[type];
+    if (currentCount >= 12) {
+      synth.playPop(); triggerNotice(`❌ ${config.name} ممتلئة بالكامل (الحد الأقصى ١٢ حيوان).`); return;
+    }
+    if (globalStars < config.buyCost) {
+      synth.playPop(); triggerNotice("❌ ليس لديك نجوم كافية لشراء هذا الحيوان!"); return;
+    }
+    updateStars(-config.buyCost); synth.playPetUnlock();
+    saveAnimalCount(type, currentCount + 1);
+    triggerNotice(`🐣 تم شراء ${config.emoji} جديد وإضافته لـ${config.name}!`);
+  };
+
+  // Feeding system
+  const handleFeedPaddock = (type: PaddockType, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (animalCounts[type] === 0) {
+      synth.playPop(); triggerNotice("❌ لا يوجد حيوانات في هذه الحظيرة! اشترِ حيواناً أولاً."); return;
+    }
+    if (!isHungry(type)) {
+      synth.playPop(); triggerNotice("😊 الحيوانات شبعانة! الطبق لسه ممتلئ."); return;
+    }
+    const config = PADDOCK_DATA[type];
+    if (globalStars < config.feedCost) {
+      synth.playPop(); triggerNotice(`❌ تحتاج ${config.feedCost} نجوم لملء الطبق!`); return;
+    }
+    updateStars(-config.feedCost); synth.playFeed();
+    const newFeeding = { ...feedingState, [type]: { lastFedTime: Date.now(), fedCount: (feedingState[type]?.fedCount || 0) + 1 } };
+    saveFeedingState(newFeeding);
+    const newProds = { ...pendingProducts, [type]: true };
+    savePendingProducts(newProds);
+    const newFedCount = newFeeding[type].fedCount;
+    if (newFedCount === 5) {
+      triggerNotice(`🎉 حيوانات ${config.name} كبرت! أصبحت بالغة وتنتج ضعف النجوم! ⭐⭐`);
+    } else {
+      triggerNotice(`🍽️ تم ملء طبق ${config.name}! الحيوانات بتأكل... ${config.productEmoji}`);
+    }
+  };
+
+  // Collect products
+  const handleCollectProduct = (type: PaddockType, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!pendingProducts[type]) return;
+    const config = PADDOCK_DATA[type];
+    const stars = isAdult(type) ? config.productStars * 2 : config.productStars;
+    updateStars(stars); synth.playCollect();
+    const newProds = { ...pendingProducts, [type]: false };
+    savePendingProducts(newProds);
+    triggerNotice(`${config.productEmoji} تم جمع ${config.productName}! +${stars} نجوم ⭐${isAdult(type) ? " (ضعف - بالغ!)" : ""}`);
+  };
+
+  // Weather toggle
+  const toggleTimeOfDay = () => {
+    synth.playPop();
+    setTimeOfDay(prev => prev === "day" ? "sunset" : prev === "sunset" ? "night" : "day");
+  };
+
+  // Weather-based backgrounds
+  const outerBg = timeOfDay === "day" ? "bg-[#DCFCE7]" : timeOfDay === "sunset" ? "bg-[#FFE8CC]" : "bg-[#0f172a]";
+  const mapBg = timeOfDay === "day"
+    ? "bg-gradient-to-br from-[#A2E3A2] via-[#B2EBB2] to-[#AEE8AE]"
+    : timeOfDay === "sunset"
+    ? "bg-gradient-to-br from-[#FFD4A2] via-[#FFB088] to-[#C8E6C9]"
+    : "bg-gradient-to-br from-[#1a2a3a] via-[#2a3a4a] to-[#1a3a2a]";
+  const roadColor = timeOfDay === "night" ? "bg-[#8B7355]" : "bg-[#E1C699]";
+  const roadBorder = timeOfDay === "night" ? "border-[#6B5335]/40" : "border-[#8C6D47]/40";
+
+  // Render animal SVG by type
+  const renderAnimalSVG = (type: PaddockType, animal: AnimalState, adult: boolean) => {
+    const size = adult ? "w-11 h-11" : "w-7 h-7";
+    switch (type) {
+      case "sheep": return <SVGSheep className={size} isEating={animal.isEating} />;
+      case "rabbit": return <SVGBunny className={size} isEating={animal.isEating} />;
+      case "duck": return <SVGDuck className={size} isEating={animal.isEating} />;
+      case "pet": return animal.id % 2 === 0 ? <SVGKitty className={size} isEating={animal.isEating} /> : <SVGPuppy className={size} isEating={animal.isEating} />;
+      case "cow": return <SVGCow className={size} isEating={animal.isEating} />;
+      case "bee": return <SVGBee className={size} isEating={animal.isEating} />;
+      case "fish": return <SVGFish className={size} isEating={animal.isEating} />;
+      case "bird": return <SVGBird className={size} isEating={animal.isEating} />;
+    }
+  };
+
+  // Render feeding dish and product for a paddock
+  const renderDishAndProduct = (type: PaddockType) => {
+    const config = PADDOCK_DATA[type];
+    const hungry = isHungry(type);
+    const hasProd = pendingProducts[type];
+    const adult = isAdult(type);
+    const count = animalCounts[type];
+
+    return (
+      <>
+        {/* Feeding Dish */}
+        {count > 0 && (
+          <div
+            onClick={(e) => handleFeedPaddock(type, e)}
+            className={`absolute bottom-2 right-2 z-20 cursor-pointer select-none ${hungry ? 'animate-bounce' : ''}`}
+          >
+            <div className={`w-11 h-11 rounded-full border-3 flex items-center justify-center text-lg shadow-lg transition-all ${
+              hungry
+                ? 'bg-red-50 border-red-400 hover:bg-red-100'
+                : 'bg-amber-50 border-amber-400'
+            }`}>
+              {hungry ? '🍽️' : '🥘'}
+            </div>
+            {hungry && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[7px] font-black rounded-full w-4 h-4 flex items-center justify-center">!</span>
+            )}
+            {!hungry && (
+              <span className="absolute -top-1 -right-1 bg-green-500 text-white text-[7px] font-black rounded-full w-4 h-4 flex items-center justify-center">✓</span>
+            )}
+          </div>
+        )}
+
+        {/* Collectible Product */}
+        {hasProd && (
+          <motion.div
+            animate={{ y: [-5, 5, -5], scale: [1, 1.1, 1] }}
+            transition={{ repeat: Infinity, duration: 1.5 }}
+            onClick={(e) => handleCollectProduct(type, e)}
+            className="absolute top-2 left-1/2 -translate-x-1/2 z-30 cursor-pointer"
+          >
+            <div className="bg-white border-3 border-yellow-500 rounded-full px-3 py-1.5 text-sm font-black shadow-lg hover:bg-yellow-50 transition-all flex items-center gap-1">
+              <span>{config.productEmoji}</span>
+              <span className="text-yellow-700">+{adult ? config.productStars * 2 : config.productStars}⭐</span>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Evolution indicator */}
+        {adult && count > 0 && (
+          <div className="absolute top-2 right-2 z-20 bg-purple-500 text-white text-[7px] font-black rounded-full px-1.5 py-0.5 shadow-md">
+            ⭐ بالغ
+          </div>
+        )}
+      </>
+    );
+  };
+
+  // ─── JSX Render ───────────────────────────────────────────────
+
   return (
-    <div className="fixed inset-0 z-[9990] bg-[#DCFCE7] select-none font-sans flex flex-col justify-between overflow-hidden">
-      
-      {/* --- CLOUD INTRO PARTING ANIMATION --- */}
+    <div className={`fixed inset-0 z-[9990] select-none font-sans flex flex-col justify-between overflow-hidden transition-colors duration-1000 ${outerBg}`}>
+
+      {/* Cloud Intro */}
       <AnimatePresence>
         {introActive && (
-          <motion.div
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[10000] flex pointer-events-none select-none"
-          >
-            {/* Left Cloud Panel */}
-            <motion.div
-              initial={{ x: 0 }}
-              animate={{ x: "-100%" }}
-              transition={{ duration: 1.5, ease: "easeInOut" }}
-              className="w-1/2 h-full bg-[#E0F2FE] flex items-center justify-end relative shadow-2xl"
-            >
-              {/* Cloud Puff Vector Layer */}
+          <motion.div exit={{ opacity: 0 }} className="fixed inset-0 z-[10000] flex pointer-events-none select-none">
+            <motion.div initial={{ x: 0 }} animate={{ x: "-100%" }} transition={{ duration: 1.5, ease: "easeInOut" }}
+              className="w-1/2 h-full bg-[#E0F2FE] flex items-center justify-end relative shadow-2xl">
               <div className="absolute right-[-80px] w-48 h-full flex flex-col justify-around text-white/95 text-9xl">
-                <span>☁️</span>
-                <span>☁️</span>
-                <span>☁️</span>
+                <span>☁️</span><span>☁️</span><span>☁️</span>
               </div>
             </motion.div>
-
-            {/* Right Cloud Panel */}
-            <motion.div
-              initial={{ x: 0 }}
-              animate={{ x: "100%" }}
-              transition={{ duration: 1.5, ease: "easeInOut" }}
-              className="w-1/2 h-full bg-[#E0F2FE] flex items-center justify-start relative shadow-2xl"
-            >
+            <motion.div initial={{ x: 0 }} animate={{ x: "100%" }} transition={{ duration: 1.5, ease: "easeInOut" }}
+              className="w-1/2 h-full bg-[#E0F2FE] flex items-center justify-start relative shadow-2xl">
               <div className="absolute left-[-80px] w-48 h-full flex flex-col justify-around text-white/95 text-9xl">
-                <span>☁️</span>
-                <span>☁️</span>
-                <span>☁️</span>
+                <span>☁️</span><span>☁️</span><span>☁️</span>
               </div>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Floating Exit Button (Top-Left) and Stars Indicator (Top-Right) */}
+      {/* Floating Stars (Top-Right) */}
       <div className="absolute top-4 right-4 z-[9990] select-none pointer-events-auto">
         <div className="flex items-center gap-1.5 bg-[#FFFCE6] border-3 border-[#D97706] text-[#D97706] font-black text-sm px-4 py-2 rounded-full shadow-lg">
           <span className="text-lg text-yellow-400">★</span>
           <span>نجومك: {globalStars}</span>
         </div>
       </div>
-      
+
+      {/* Floating Exit (Top-Left) */}
       <div className="absolute top-4 left-4 z-[9990] select-none pointer-events-auto">
-        <button
-          onClick={() => {
-            synth.playPop();
-            onClose();
-          }}
-          className="w-12 h-12 bg-white hover:bg-red-50 text-red-500 rounded-full flex items-center justify-center cursor-pointer border-3 border-[#4D2B82] shadow-[0_4px_0_0_#4D2B82] active:translate-y-1 active:shadow-none transition-all"
-        >
+        <button onClick={() => { synth.playPop(); onClose(); }}
+          className="w-12 h-12 bg-white hover:bg-red-50 text-red-500 rounded-full flex items-center justify-center cursor-pointer border-3 border-[#4D2B82] shadow-[0_4px_0_0_#4D2B82] active:translate-y-1 active:shadow-none transition-all">
           <X className="w-6 h-6 stroke-[3px]" />
         </button>
       </div>
 
-      {/* 2. Notification Overlay Banner */}
+      {/* Weather Toggle Button (Top-Center) */}
+      <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[9990] select-none pointer-events-auto">
+        <button onClick={toggleTimeOfDay}
+          className={`w-14 h-14 rounded-full flex items-center justify-center cursor-pointer border-3 shadow-lg active:scale-95 transition-all text-2xl ${
+            timeOfDay === "day" ? "bg-[#FEF9C3] border-[#D97706] shadow-[0_4px_0_0_#D97706]"
+            : timeOfDay === "sunset" ? "bg-[#FFE4C4] border-[#C2410C] shadow-[0_4px_0_0_#C2410C]"
+            : "bg-[#1e293b] border-[#6366F1] shadow-[0_4px_0_0_#6366F1]"
+          }`}>
+          {timeOfDay === "day" ? "☀️" : timeOfDay === "sunset" ? "🌅" : "🌙"}
+        </button>
+      </div>
+
+      {/* Notification Banner */}
       <AnimatePresence>
         {noticeText && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+          <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
             className="absolute top-24 inset-x-0 mx-auto w-fit max-w-sm px-6 py-2.5 rounded-full border-3 bg-white text-center font-extrabold text-sm shadow-md z-[9999]"
             style={{
               borderColor: noticeText.startsWith("❌") ? "#EF4444" : noticeText.startsWith("🌱") ? "#2ECC71" : "#FF9F29",
               color: noticeText.startsWith("❌") ? "#EF4444" : "#4D2B82",
-            }}
-          >
+            }}>
             {noticeText}
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* 3. Infinite Scrollable Top-Down Map Field */}
-      <main className="flex-grow w-full overflow-auto scrollbar-none relative bg-[#C2F0C2] border-t-2 border-emerald-800">
-        
-        {/* Large 1500px x 1000px coordinate grid */}
-        <div className="w-[1500px] h-[1000px] relative z-10 bg-gradient-to-br from-[#A2E3A2] via-[#B2EBB2] to-[#AEE8AE] p-8 overflow-hidden select-none">
-          
-          {/* Paths and dirt roads decor */}
-          <div className="absolute top-[380px] left-[50px] w-[1400px] h-12 bg-[#E1C699] border-y-3 border-dashed border-[#8C6D47]/40 z-0" />
-          <div className="absolute top-[80px] left-[450px] w-12 h-[800px] bg-[#E1C699] border-x-3 border-dashed border-[#8C6D47]/40 z-0" />
+      {/* ─── Main Map ─────────────────────────────────────────── */}
+      <main className={`flex-grow w-full overflow-auto scrollbar-none relative border-t-2 ${timeOfDay === "night" ? "border-indigo-900" : "border-emerald-800"} transition-colors duration-1000`}>
+        <div className={`w-[1800px] h-[1300px] relative z-10 p-8 overflow-hidden select-none transition-all duration-1000 ${mapBg}`}>
 
-          {/* Glowing sun element decorative */}
-          <div className="absolute top-8 right-24 pointer-events-none opacity-40 z-0">
-            <SVGSun className="w-28 h-28" />
-          </div>
+          {/* Dirt roads */}
+          <div className={`absolute top-[340px] left-[50px] w-[1700px] h-12 ${roadColor} border-y-3 border-dashed ${roadBorder} z-0 transition-colors duration-1000`} />
+          <div className={`absolute top-[80px] left-[420px] w-12 h-[1100px] ${roadColor} border-x-3 border-dashed ${roadBorder} z-0 transition-colors duration-1000`} />
+          <div className={`absolute top-[680px] left-[50px] w-[1700px] h-12 ${roadColor} border-y-3 border-dashed ${roadBorder} z-0 transition-colors duration-1000`} />
 
-          {/* ==============================================
-              SECTION A: ANIMAL PADDOCKS (حظائر الحيوانات)
-              ============================================== */}
-
-          {/* 1. DUCK POND (بحيرة البط) */}
-          <div 
-            onClick={() => { synth.playPop(); setSelectedPaddockToBuy("duck"); }}
-            className="absolute left-[50px] top-[60px] w-[360px] h-[260px] bg-gradient-to-tr from-[#93C5FD] to-[#3B82F6] rounded-[60px] border-4 border-[#1E3A8A] shadow-lg flex flex-col justify-between p-4 overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
-          >
-            <div className="text-white font-black text-xs bg-blue-900/60 w-fit px-2.5 py-0.5 rounded-full">
-              🦆 بحيرة البط ({duckCount}/12)
+          {/* Sky decoration */}
+          {timeOfDay === "day" && (
+            <div className="absolute top-8 right-24 pointer-events-none opacity-40 z-0">
+              <SVGSun className="w-28 h-28" />
             </div>
-            
-            {/* Ducks swimming inside pond */}
+          )}
+          {timeOfDay === "sunset" && (
+            <div className="absolute top-4 right-20 pointer-events-none z-0">
+              <div className="w-32 h-32 rounded-full bg-gradient-to-b from-[#FF6B35] to-[#FFD700] opacity-40 blur-xl" />
+              <SVGSun className="w-24 h-24 absolute top-4 left-4 opacity-60" />
+            </div>
+          )}
+          {timeOfDay === "night" && (
+            <div className="absolute top-6 right-20 pointer-events-none z-0">
+              <svg viewBox="0 0 100 100" className="w-24 h-24 opacity-80">
+                <path d="M 60 20 Q 30 20, 30 50 Q 30 80, 60 80 Q 40 70, 40 50 Q 40 30, 60 20 Z" fill="#FDE68A" stroke="#D97706" strokeWidth="2" />
+              </svg>
+              {/* Twinkling stars */}
+              {[{x:100,y:30},{x:200,y:60},{x:350,y:20},{x:500,y:50},{x:650,y:15},{x:800,y:45},{x:1000,y:25},{x:1200,y:55},{x:1400,y:30},{x:1550,y:50}].map((s,i) => (
+                <motion.div key={i} className="absolute text-yellow-200 text-xs" style={{ left: s.x, top: s.y }}
+                  animate={{ opacity: [0.3, 1, 0.3], scale: [0.8, 1.2, 0.8] }}
+                  transition={{ duration: 1.5 + i * 0.3, repeat: Infinity }}>
+                  ✦
+                </motion.div>
+              ))}
+            </div>
+          )}
+
+          {/* ════════════ PADDOCK 1: DUCK POND (بحيرة البط) ════════════ */}
+          <div onClick={() => { synth.playPop(); setSelectedPaddockToBuy("duck"); }}
+            className="absolute left-[50px] top-[60px] w-[340px] h-[240px] bg-gradient-to-tr from-[#93C5FD] to-[#3B82F6] rounded-[60px] border-4 border-[#1E3A8A] shadow-lg flex flex-col justify-between p-4 overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all">
+            <div className="text-white font-black text-xs bg-blue-900/60 w-fit px-2.5 py-0.5 rounded-full">
+              🦆 بحيرة البط ({animalCounts.duck}/12)
+            </div>
             <div className="relative w-full h-full">
-              {duckList.map((duck) => (
-                <div
-                  key={duck.id}
-                  className="absolute transition-all duration-[3000ms] ease-in-out"
-                  style={{ left: `${duck.x}px`, top: `${duck.y}px` }}
-                >
-                  <SVGDuck className="w-10 h-10" isEating={duck.isEating} />
+              {animalLists.duck.map((a) => (
+                <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
+                  {renderAnimalSVG("duck", a, isAdult("duck"))}
                 </div>
               ))}
             </div>
+            {renderDishAndProduct("duck")}
           </div>
 
-          {/* 2. RABBIT PADDOCK (حظيرة الأرانب) */}
-          <div 
-            onClick={() => { synth.playPop(); setSelectedPaddockToBuy("rabbit"); }}
-            className="absolute left-[880px] top-[60px] w-[320px] h-[240px] bg-[#C5E1A5] rounded-[32px] border-4 border-[#33691E] shadow-md p-3 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
-          >
+          {/* ════════════ PADDOCK 2: BIRD CAGE (قفص العصافير) ════════════ */}
+          <div onClick={() => { synth.playPop(); setSelectedPaddockToBuy("bird"); }}
+            className="absolute left-[460px] top-[60px] w-[300px] h-[230px] bg-gradient-to-br from-[#D1FAE5] to-[#A7F3D0] rounded-[36px] border-4 border-[#065F46] shadow-md p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all">
+            <div className="text-[#065F46] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#065F46]">
+              🦜 قفص العصافير ({animalCounts.bird}/12)
+            </div>
+            <div className="absolute top-12 right-4 text-2xl opacity-30">🎵 🎶</div>
+            <div className="relative w-full h-full">
+              {animalLists.bird.map((a) => (
+                <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
+                  {renderAnimalSVG("bird", a, isAdult("bird"))}
+                </div>
+              ))}
+            </div>
+            {renderDishAndProduct("bird")}
+          </div>
+
+          {/* ════════════ PADDOCK 3: RABBIT (حظيرة الأرانب) ════════════ */}
+          <div onClick={() => { synth.playPop(); setSelectedPaddockToBuy("rabbit"); }}
+            className="absolute left-[810px] top-[60px] w-[280px] h-[230px] bg-[#C5E1A5] rounded-[32px] border-4 border-[#33691E] shadow-md p-3 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all">
             <div className="text-[#33691E] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#33691E]">
-              🐰 حظيرة الأرانب ({rabbitCount}/12)
+              🐰 حظيرة الأرانب ({animalCounts.rabbit}/12)
             </div>
             <div className="absolute top-12 right-6 text-2xl opacity-40">🥕 🥕</div>
-
             <div className="relative w-full h-full">
-              {rabbitList.map((rab) => (
-                <div
-                  key={rab.id}
-                  className="absolute transition-all duration-[3000ms] ease-in-out"
-                  style={{ left: `${rab.x}px`, top: `${rab.y}px` }}
-                >
-                  <SVGBunny className="w-10 h-10" isEating={rab.isEating} />
+              {animalLists.rabbit.map((a) => (
+                <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
+                  {renderAnimalSVG("rabbit", a, isAdult("rabbit"))}
                 </div>
               ))}
             </div>
+            {renderDishAndProduct("rabbit")}
           </div>
 
-          {/* 3. SHEEP PADDOCK (حظيرة الخراف) */}
-          <div 
-            onClick={() => { synth.playPop(); setSelectedPaddockToBuy("sheep"); }}
-            className="absolute left-[50px] top-[480px] w-[350px] h-[280px] bg-[#E8F5E9] rounded-[40px] border-4 border-[#1B5E20] shadow-md p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
-          >
+          {/* ════════════ PADDOCK 4: BEEHIVE (خلية النحل) ════════════ */}
+          <div onClick={() => { synth.playPop(); setSelectedPaddockToBuy("bee"); }}
+            className="absolute left-[1140px] top-[60px] w-[280px] h-[230px] bg-gradient-to-br from-[#FEF3C7] to-[#FDE68A] rounded-[36px] border-4 border-[#92400E] shadow-md p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all">
+            <div className="text-[#92400E] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#92400E]">
+              🐝 خلية النحل ({animalCounts.bee}/12)
+            </div>
+            <div className="absolute top-10 left-4 text-2xl opacity-30">🍯 🌻</div>
+            {/* Honeycomb pattern */}
+            <div className="absolute bottom-4 left-4 opacity-20 text-3xl">⬡⬡⬡</div>
+            <div className="relative w-full h-full">
+              {animalLists.bee.map((a) => (
+                <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
+                  {renderAnimalSVG("bee", a, isAdult("bee"))}
+                </div>
+              ))}
+            </div>
+            {renderDishAndProduct("bee")}
+          </div>
+
+          {/* ════════════ PADDOCK 5: SHEEP (حظيرة الخراف) ════════════ */}
+          <div onClick={() => { synth.playPop(); setSelectedPaddockToBuy("sheep"); }}
+            className="absolute left-[50px] top-[400px] w-[320px] h-[250px] bg-[#E8F5E9] rounded-[40px] border-4 border-[#1B5E20] shadow-md p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all">
             <div className="text-[#1B5E20] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#1B5E20]">
-              🐑 حظيرة الخراف ({sheepCount}/12)
+              🐑 حظيرة الخراف ({animalCounts.sheep}/12)
             </div>
-
             <div className="relative w-full h-full">
-              {sheepList.map((sheep) => (
-                <div
-                  key={sheep.id}
-                  className="absolute transition-all duration-[3000ms] ease-in-out"
-                  style={{ left: `${sheep.x}px`, top: `${sheep.y}px` }}
-                >
-                  <SVGSheep className="w-11 h-11" isEating={sheep.isEating} />
+              {animalLists.sheep.map((a) => (
+                <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
+                  {renderAnimalSVG("sheep", a, isAdult("sheep"))}
                 </div>
               ))}
             </div>
+            {renderDishAndProduct("sheep")}
           </div>
 
-          {/* 4. CAT & DOG PADDOCK (حظيرة القطط والكلاب) */}
-          <div 
-            onClick={() => { synth.playPop(); setSelectedPaddockToBuy("pet"); }}
-            className="absolute left-[1050px] top-[480px] w-[380px] h-[300px] bg-[#FFE0B2] rounded-[40px] border-4 border-[#E65100] shadow-md p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all"
-          >
-            <div className="text-[#E65100] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#E65100]">
-              🐱🐶 حظيرة الأصدقاء ({petCount}/12)
-            </div>
-            <div className="absolute top-14 left-6 text-2xl opacity-40">🦴 🧶</div>
-
-            <div className="relative w-full h-full">
-              {petList.map((pet) => (
-                <div
-                  key={pet.id}
-                  className="absolute transition-all duration-[3000ms] ease-in-out"
-                  style={{ left: `${pet.x}px`, top: `${pet.y}px` }}
-                >
-                  {pet.id % 2 === 0 ? (
-                    <SVGKitty className="w-11 h-11" isEating={pet.isEating} />
-                  ) : (
-                    <SVGPuppy className="w-11 h-11" isEating={pet.isEating} />
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ==============================================
-              SECTION B: 20 TREE PLOTS GRID (حقول الأشجار العشرون)
-              ============================================== */}
-          <div 
-            className="absolute left-[480px] top-[380px] w-[500px] h-[480px] bg-[#A1887F]/30 rounded-[40px] border-4 border-dashed border-[#8D6E63] p-6 grid grid-cols-5 gap-y-12 gap-x-6 justify-items-center items-center z-10 shadow-inner"
-          >
+          {/* ════════════ TREE PLOTS (حقول الأشجار) ════════════ */}
+          <div className="absolute left-[450px] top-[380px] w-[500px] h-[460px] bg-[#A1887F]/30 rounded-[40px] border-4 border-dashed border-[#8D6E63] p-6 grid grid-cols-5 gap-y-12 gap-x-6 justify-items-center items-center z-10 shadow-inner">
             {plots.map((plot) => {
               const isEmpty = plot.plantType === null;
               const isWatered = plot.isWatered;
               const hasEndTime = plot.growthEndTime !== null;
               const isFullyGrown = hasEndTime && Date.now() >= (plot.growthEndTime || 0);
-
               return (
-                <div 
-                  key={plot.id}
-                  className="flex flex-col items-center gap-1.5 relative select-none w-18"
-                >
-                  
-                  {/* Floating Action Button Cue overlay */}
+                <div key={plot.id} className="flex flex-col items-center gap-1.5 relative select-none w-18">
                   {!isEmpty && (
                     <div className="absolute top-[-26px] z-20 flex gap-0.5">
-                      
-                      {/* Water requirement droplet icon */}
                       {!isWatered && (
-                        <button
-                          onClick={() => handleWater(plot.id)}
+                        <button onClick={() => handleWater(plot.id)}
                           className="bg-blue-400 hover:bg-blue-500 text-white rounded-full p-1 border-2 border-blue-600 shadow-md animate-bounce cursor-pointer flex items-center justify-center"
-                          title="اسقِ النبتة 💧"
-                        >
+                          title="اسقِ النبتة 💧">
                           <Droplet className="w-3.5 h-3.5 fill-white" />
                         </button>
                       )}
-
-                      {/* Remaining Timer Countdown or Harvest Golden Star */}
                       {isWatered && !isFullyGrown && (
                         <div className="bg-white border-2 border-emerald-600 rounded-full px-1.5 py-0.5 text-[8px] font-black text-emerald-700 flex items-center gap-0.5 shadow-sm">
                           <Clock className="w-2.5 h-2.5 text-emerald-500" />
                           <span>{getTimerString(plot.growthEndTime)}</span>
-                          
-                          {/* Cheat Speedup button */}
-                          <button
-                            onClick={(e) => handleFastForward(plot.id, e)}
-                            className="ml-1 bg-yellow-400 text-yellow-900 border border-yellow-600 rounded-full px-1 py-0 text-[6px] hover:bg-yellow-500 font-extrabold cursor-pointer"
-                          >
+                          <button onClick={(e) => handleFastForward(plot.id, e)}
+                            className="ml-1 bg-yellow-400 text-yellow-900 border border-yellow-600 rounded-full px-1 py-0 text-[6px] hover:bg-yellow-500 font-extrabold cursor-pointer">
                             ⚡
                           </button>
                         </div>
                       )}
-
-                      {/* Ready to Harvest Star button */}
                       {isFullyGrown && (
-                        <button
-                          onClick={() => handleHarvest(plot.id)}
+                        <button onClick={() => handleHarvest(plot.id)}
                           className="bg-yellow-400 hover:bg-yellow-500 text-yellow-950 rounded-full p-1 border-2 border-yellow-600 shadow-lg animate-bounce-slow flex items-center justify-center cursor-pointer font-black text-xs"
-                          title="احصد النجوم! 🌾"
-                        >
+                          title="احصد النجوم! 🌾">
                           ⭐
                         </button>
                       )}
                     </div>
                   )}
-
-                  {/* Soil Pot/Plant Representation */}
-                  <div
-                    onClick={() => {
-                      synth.playPop();
-                      if (isEmpty) {
-                        setActivePlotId(plot.id);
-                        setShowSeedShop(true);
-                      }
-                    }}
+                  <div onClick={() => { synth.playPop(); if (isEmpty) { setActivePlotId(plot.id); setShowSeedShop(true); } }}
                     className={`w-14 h-14 rounded-full flex flex-col justify-end items-center relative cursor-pointer ${
-                      isEmpty 
-                        ? "bg-[#8D6E63] border-3 border-[#4E342E] hover:bg-[#795548] shadow-inner" 
-                        : "bg-transparent"
-                    }`}
-                  >
+                      isEmpty ? "bg-[#8D6E63] border-3 border-[#4E342E] hover:bg-[#795548] shadow-inner" : "bg-transparent"
+                    }`}>
                     {isEmpty ? (
                       <span className="text-white font-extrabold text-lg mb-1">+</span>
                     ) : (
                       <div className="mb-[-6px] relative z-10">
-                        <SVGTopDownPlant
-                          type={plot.plantType!}
-                          stage={isFullyGrown ? 3 : isWatered ? 2 : 1}
-                        />
+                        <SVGTopDownPlant type={plot.plantType!} stage={isFullyGrown ? 3 : isWatered ? 2 : 1} />
                       </div>
                     )}
-                    {/* Dirt base plate */}
                     <div className="absolute bottom-0 w-12 h-3.5 bg-[#5D4037]/60 rounded-full z-0" />
                   </div>
-
                   <span className="text-[8px] font-black text-[#5D4037] bg-white/60 px-1 py-0.2 rounded border border-amber-200">
                     أرض {plot.id}
                   </span>
@@ -1035,50 +1094,89 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
             })}
           </div>
 
+          {/* ════════════ PADDOCK 6: PET (حظيرة الأصدقاء) ════════════ */}
+          <div onClick={() => { synth.playPop(); setSelectedPaddockToBuy("pet"); }}
+            className="absolute left-[1020px] top-[400px] w-[360px] h-[260px] bg-[#FFE0B2] rounded-[40px] border-4 border-[#E65100] shadow-md p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all">
+            <div className="text-[#E65100] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#E65100]">
+              🐱🐶 حظيرة الأصدقاء ({animalCounts.pet}/12)
+            </div>
+            <div className="absolute top-14 left-6 text-2xl opacity-40">🦴 🧶</div>
+            <div className="relative w-full h-full">
+              {animalLists.pet.map((a) => (
+                <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
+                  {renderAnimalSVG("pet", a, isAdult("pet"))}
+                </div>
+              ))}
+            </div>
+            {renderDishAndProduct("pet")}
+          </div>
+
+          {/* ════════════ PADDOCK 7: FISH POND (بركة السمك) ════════════ */}
+          <div onClick={() => { synth.playPop(); setSelectedPaddockToBuy("fish"); }}
+            className="absolute left-[50px] top-[730px] w-[340px] h-[240px] bg-gradient-to-br from-[#67E8F9] to-[#06B6D4] rounded-[60px] border-4 border-[#164E63] shadow-lg p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all">
+            <div className="text-white font-black text-xs bg-cyan-900/60 w-fit px-2.5 py-0.5 rounded-full">
+              🐟 بركة السمك ({animalCounts.fish}/12)
+            </div>
+            {/* Water ripple decoration */}
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-20">
+              <div className="w-32 h-8 border-2 border-white rounded-full" />
+              <div className="w-24 h-6 border-2 border-white rounded-full mx-auto mt-1" />
+            </div>
+            <div className="relative w-full h-full">
+              {animalLists.fish.map((a) => (
+                <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
+                  {renderAnimalSVG("fish", a, isAdult("fish"))}
+                </div>
+              ))}
+            </div>
+            {renderDishAndProduct("fish")}
+          </div>
+
+          {/* ════════════ PADDOCK 8: COW (حظيرة الأبقار) ════════════ */}
+          <div onClick={() => { synth.playPop(); setSelectedPaddockToBuy("cow"); }}
+            className="absolute left-[460px] top-[900px] w-[400px] h-[280px] bg-gradient-to-br from-[#FEF3C7] to-[#D1FAE5] rounded-[40px] border-4 border-[#3F6212] shadow-md p-4 flex flex-col justify-between overflow-hidden z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all">
+            <div className="text-[#3F6212] font-black text-xs bg-white/70 w-fit px-2.5 py-0.5 rounded-full border border-[#3F6212]">
+              🐄 حظيرة الأبقار ({animalCounts.cow}/12)
+            </div>
+            <div className="absolute top-12 right-6 text-2xl opacity-30">🥛 🧀</div>
+            {/* Fence decoration */}
+            <div className="absolute bottom-0 left-0 right-0 h-6 opacity-20 flex items-end gap-3 px-4">
+              {Array.from({length: 12}).map((_,i) => <div key={i} className="w-2 h-5 bg-amber-800 rounded-t-sm" />)}
+            </div>
+            <div className="relative w-full h-full">
+              {animalLists.cow.map((a) => (
+                <div key={a.id} className="absolute transition-all duration-[3000ms] ease-in-out" style={{ left: `${a.x}px`, top: `${a.y}px` }}>
+                  {renderAnimalSVG("cow", a, isAdult("cow"))}
+                </div>
+              ))}
+            </div>
+            {renderDishAndProduct("cow")}
+          </div>
+
         </div>
       </main>
 
-      {/* 4. SEED SHOP MODAL */}
+      {/* ─── Seed Shop Modal ───────────────────────────────────── */}
       <AnimatePresence>
         {showSeedShop && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-[9999]">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white border-4 border-[#4D2B82] rounded-[32px] p-6 max-w-md w-full text-center shadow-[0_8px_0_0_#4D2B82] relative"
-            >
-              <button
-                onClick={() => {
-                  synth.playPop();
-                  setShowSeedShop(false);
-                  setActivePlotId(null);
-                }}
-                className="absolute top-4 right-4 text-gray-400 hover:text-red-500 cursor-pointer"
-              >
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white border-4 border-[#4D2B82] rounded-[32px] p-6 max-w-md w-full text-center shadow-[0_8px_0_0_#4D2B82] relative">
+              <button onClick={() => { synth.playPop(); setShowSeedShop(false); setActivePlotId(null); }}
+                className="absolute top-4 right-4 text-gray-400 hover:text-red-500 cursor-pointer">
                 <X className="w-6 h-6" />
               </button>
-
               <h2 className="text-2xl font-black text-[#4D2B82] mb-1">🌱 متجر البذور السحرية</h2>
               <p className="text-xs font-bold text-purple-400 mb-6">شراء البذرة يستهلك نجوماً، وتربح نجوماً مضاعفة عند الحصاد!</p>
-
               <div className="grid grid-cols-2 gap-4">
                 {seedsData.map((seed) => (
-                  <button
-                    key={seed.type}
-                    onClick={() => handlePlantSeed(seed.type)}
-                    className="card-bubbly p-4 bg-purple-50/40 hover:bg-purple-50 flex flex-col items-center gap-2 cursor-pointer border-3"
-                  >
+                  <button key={seed.type} onClick={() => handlePlantSeed(seed.type)}
+                    className="card-bubbly p-4 bg-purple-50/40 hover:bg-purple-50 flex flex-col items-center gap-2 cursor-pointer border-3">
                     <span className="text-5xl">{seed.type === "apple" ? "🍎" : seed.type === "orange" ? "🍊" : seed.type === "flower" ? "🌸" : "🌻"}</span>
                     <span className="text-sm font-extrabold text-[#4D2B82]">{seed.name}</span>
-                    
                     <div className="flex flex-col items-center gap-1 mt-2">
-                      <span className="text-xs font-black text-red-500 bg-red-50 px-2 py-0.5 rounded-full border border-red-200">
-                        الشراء: {seed.cost}⭐
-                      </span>
-                      <span className="text-xs font-black text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-200">
-                        الحصاد: 10⭐
-                      </span>
+                      <span className="text-xs font-black text-red-500 bg-red-50 px-2 py-0.5 rounded-full border border-red-200">الشراء: {seed.cost}⭐</span>
+                      <span className="text-xs font-black text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-200">الحصاد: 10⭐</span>
                     </div>
                   </button>
                 ))}
@@ -1088,184 +1186,71 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
         )}
       </AnimatePresence>
 
-      {/* 4.5. Paddock Animal Purchase Modal */}
+      {/* ─── Paddock Buy Modal (Universal) ─────────────────────── */}
       <AnimatePresence>
         {selectedPaddockToBuy && (
           <div className="fixed inset-0 z-[9995] flex items-center justify-center p-4 bg-black/55 select-none">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="w-full max-w-sm bg-white border-4 border-[#4D2B82] rounded-[32px] p-6 shadow-2xl relative text-center"
-            >
-              <button
-                onClick={() => {
-                  synth.playPop();
-                  setSelectedPaddockToBuy(null);
-                }}
-                className="absolute top-4 right-4 text-gray-400 hover:text-[#4D2B82] cursor-pointer"
-              >
+            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
+              className="w-full max-w-sm bg-white border-4 border-[#4D2B82] rounded-[32px] p-6 shadow-2xl relative text-center">
+              <button onClick={() => { synth.playPop(); setSelectedPaddockToBuy(null); }}
+                className="absolute top-4 right-4 text-gray-400 hover:text-[#4D2B82] cursor-pointer">
                 <X className="w-6 h-6" />
               </button>
-              
-              <div className="text-5xl mb-3 mt-4">
-                {selectedPaddockToBuy === "sheep" ? "🐑" :
-                 selectedPaddockToBuy === "rabbit" ? "🐰" :
-                 selectedPaddockToBuy === "duck" ? "🦆" : "🐱🐶"}
+              <div className="text-5xl mb-3 mt-4">{PADDOCK_DATA[selectedPaddockToBuy].emoji}</div>
+              <h3 className="text-xl font-black text-[#4D2B82] mb-1">{PADDOCK_DATA[selectedPaddockToBuy].name}</h3>
+              <p className="text-xs font-bold text-gray-500 mb-2">
+                العدد الحالي: {animalCounts[selectedPaddockToBuy]}/12
+              </p>
+
+              {/* Evolution progress */}
+              <div className="mb-4">
+                <div className="flex items-center justify-center gap-2 text-xs font-bold text-purple-500">
+                  <span>تطور:</span>
+                  <div className="flex gap-0.5">
+                    {[1,2,3,4,5].map(i => (
+                      <div key={i} className={`w-4 h-4 rounded-full border-2 ${
+                        (feedingState[selectedPaddockToBuy]?.fedCount || 0) >= i
+                          ? 'bg-purple-500 border-purple-600'
+                          : 'bg-gray-200 border-gray-300'
+                      }`} />
+                    ))}
+                  </div>
+                  <span>{isAdult(selectedPaddockToBuy) ? '⭐ بالغ!' : `${feedingState[selectedPaddockToBuy]?.fedCount || 0}/5`}</span>
+                </div>
               </div>
 
-              <h3 className="text-xl font-black text-[#4D2B82] mb-1">
-                {selectedPaddockToBuy === "sheep" ? "حظيرة الخراف 🐑" :
-                 selectedPaddockToBuy === "rabbit" ? "حظيرة الأرانب 🐰" :
-                 selectedPaddockToBuy === "duck" ? "بحيرة البط 🦆" : "حظيرة القطط والكلاب 🐱🐶"}
-              </h3>
-              
-              <p className="text-xs font-bold text-gray-500 mb-6">
-                {selectedPaddockToBuy === "sheep" ? `عدد الخراف الحالي: ${sheepCount}/12` :
-                 selectedPaddockToBuy === "rabbit" ? `عدد الأرانب الحالي: ${rabbitCount}/12` :
-                 selectedPaddockToBuy === "duck" ? `عدد البط الحالي: ${duckCount}/12` :
-                 `عدد الأصدقاء الحالي: ${petCount}/12`}
-              </p>
+              {/* Feeding status */}
+              <div className="mb-4 p-3 rounded-2xl bg-slate-50 border-2 border-slate-200">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-gray-600">
+                    {isHungry(selectedPaddockToBuy) ? '🍽️ الطبق فارغ — جوعان!' : '🥘 الطبق ممتلئ — شبعان!'}
+                  </span>
+                  {isHungry(selectedPaddockToBuy) && animalCounts[selectedPaddockToBuy] > 0 && (
+                    <button onClick={(e) => { handleFeedPaddock(selectedPaddockToBuy, e); }}
+                      className="bg-amber-400 hover:bg-amber-500 text-amber-900 border-2 border-amber-600 px-3 py-1 rounded-full font-black text-xs cursor-pointer">
+                      ملء ({PADDOCK_DATA[selectedPaddockToBuy].feedCost}⭐)
+                    </button>
+                  )}
+                </div>
+                {pendingProducts[selectedPaddockToBuy] && (
+                  <button onClick={(e) => handleCollectProduct(selectedPaddockToBuy, e)}
+                    className="mt-2 w-full bg-yellow-400 hover:bg-yellow-500 text-yellow-900 border-2 border-yellow-600 px-4 py-2 rounded-full font-black text-sm cursor-pointer animate-pulse">
+                    {PADDOCK_DATA[selectedPaddockToBuy].productEmoji} اجمع {PADDOCK_DATA[selectedPaddockToBuy].productName} (+{isAdult(selectedPaddockToBuy) ? PADDOCK_DATA[selectedPaddockToBuy].productStars * 2 : PADDOCK_DATA[selectedPaddockToBuy].productStars}⭐)
+                  </button>
+                )}
+              </div>
 
               <div className="flex gap-3 justify-center">
                 <button
-                  onClick={() => {
-                    synth.playPop();
-                    const cost = selectedPaddockToBuy === "sheep" ? 20 :
-                                 selectedPaddockToBuy === "rabbit" ? 15 :
-                                 selectedPaddockToBuy === "duck" ? 22 : 25;
-                    const name = selectedPaddockToBuy === "sheep" ? "الخراف" :
-                                 selectedPaddockToBuy === "rabbit" ? "الأرانب" :
-                                 selectedPaddockToBuy === "duck" ? "البط" : "الأصدقاء";
-                    handleBuyAnimal(selectedPaddockToBuy, cost, name);
-                    setSelectedPaddockToBuy(null);
-                  }}
-                  disabled={
-                    (selectedPaddockToBuy === "sheep" && sheepCount >= 12) ||
-                    (selectedPaddockToBuy === "rabbit" && rabbitCount >= 12) ||
-                    (selectedPaddockToBuy === "duck" && duckCount >= 12) ||
-                    (selectedPaddockToBuy === "pet" && petCount >= 12)
-                  }
-                  className="bg-yellow-400 hover:bg-yellow-500 disabled:bg-gray-200 disabled:text-gray-400 text-yellow-900 border-3 border-yellow-600 px-6 py-2.5 rounded-full font-black text-sm cursor-pointer shadow-[0_3px_0_0_#D97706] active:translate-y-0.5 active:shadow-none"
-                >
-                  شراء (
-                  {selectedPaddockToBuy === "sheep" ? 20 :
-                   selectedPaddockToBuy === "rabbit" ? 15 :
-                   selectedPaddockToBuy === "duck" ? 22 : 25}
-                  ⭐)
+                  onClick={() => { handleBuyAnimal(selectedPaddockToBuy); setSelectedPaddockToBuy(null); }}
+                  disabled={animalCounts[selectedPaddockToBuy] >= 12}
+                  className="bg-yellow-400 hover:bg-yellow-500 disabled:bg-gray-200 disabled:text-gray-400 text-yellow-900 border-3 border-yellow-600 px-6 py-2.5 rounded-full font-black text-sm cursor-pointer shadow-[0_3px_0_0_#D97706] active:translate-y-0.5 active:shadow-none">
+                  شراء ({PADDOCK_DATA[selectedPaddockToBuy].buyCost}⭐)
                 </button>
-                
-                <button
-                  onClick={() => {
-                    synth.playPop();
-                    setSelectedPaddockToBuy(null);
-                  }}
-                  className="bg-white hover:bg-gray-50 border-3 border-gray-300 px-6 py-2.5 rounded-full font-black text-sm text-gray-500 cursor-pointer shadow-[0_3px_0_0_#94A3B8] active:translate-y-0.5 active:shadow-none"
-                >
-                  إلغاء
+                <button onClick={() => { synth.playPop(); setSelectedPaddockToBuy(null); }}
+                  className="bg-white hover:bg-gray-50 border-3 border-gray-300 px-6 py-2.5 rounded-full font-black text-sm text-gray-500 cursor-pointer shadow-[0_3px_0_0_#94A3B8] active:translate-y-0.5 active:shadow-none">
+                  إغلاق
                 </button>
-              </div>
-
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* 5. ANIMAL SHOP MODAL */}
-      <AnimatePresence>
-        {showAnimalShop && (
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4 z-[9999]">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white border-4 border-[#4D2B82] rounded-[32px] p-6 max-w-md w-full text-center shadow-[0_8px_0_0_#4D2B82] relative"
-            >
-              <button
-                onClick={() => {
-                  synth.playPop();
-                  setShowAnimalShop(false);
-                }}
-                className="absolute top-4 right-4 text-gray-400 hover:text-red-500 cursor-pointer"
-              >
-                <X className="w-6 h-6" />
-              </button>
-
-              <h2 className="text-2xl font-black text-[#4D2B82] mb-1">🐾 متجر حظائر الحيوانات</h2>
-              <p className="text-xs font-bold text-purple-400 mb-6">افتح حيوانات جديدة لحظائرك باستخدام النجوم! (الحد الأقصى ١٢ حيوان بكل حظيرة)</p>
-
-              <div className="flex flex-col gap-3 max-h-[350px] overflow-y-auto pr-1">
-                {/* 1. Sheep */}
-                <div className="flex items-center justify-between p-3 border-2 border-purple-100 rounded-2xl bg-slate-50/50">
-                  <div className="flex items-center gap-2">
-                    <span className="text-4xl">🐑</span>
-                    <div className="text-right">
-                      <h4 className="font-extrabold text-sm text-[#4D2B82]">خروف الحظيرة</h4>
-                      <p className="text-[10px] text-gray-500">تم الشراء: {sheepCount}/12</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handleBuyAnimal("sheep", 20, "الخراف")}
-                    disabled={sheepCount >= 12}
-                    className="bg-yellow-400 hover:bg-yellow-500 disabled:bg-gray-150 disabled:text-gray-400 text-yellow-900 border-2 border-yellow-600 px-4 py-1.5 rounded-full font-black text-xs cursor-pointer"
-                  >
-                    {sheepCount >= 12 ? "ممتلئ" : "شراء (20⭐)"}
-                  </button>
-                </div>
-
-                {/* 2. Rabbit */}
-                <div className="flex items-center justify-between p-3 border-2 border-purple-100 rounded-2xl bg-slate-50/50">
-                  <div className="flex items-center gap-2">
-                    <span className="text-4xl">🐰</span>
-                    <div className="text-right">
-                      <h4 className="font-extrabold text-sm text-[#4D2B82]">أرنوب القفاز</h4>
-                      <p className="text-[10px] text-gray-500">تم الشراء: {rabbitCount}/12</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handleBuyAnimal("rabbit", 15, "الأرانب")}
-                    disabled={rabbitCount >= 12}
-                    className="bg-yellow-400 hover:bg-yellow-500 disabled:bg-gray-150 disabled:text-gray-400 text-yellow-900 border-2 border-yellow-600 px-4 py-1.5 rounded-full font-black text-xs cursor-pointer"
-                  >
-                    {rabbitCount >= 12 ? "ممتلئ" : "شراء (15⭐)"}
-                  </button>
-                </div>
-
-                {/* 3. Duck */}
-                <div className="flex items-center justify-between p-3 border-2 border-purple-100 rounded-2xl bg-slate-50/50">
-                  <div className="flex items-center gap-2">
-                    <span className="text-4xl">🦆</span>
-                    <div className="text-right">
-                      <h4 className="font-extrabold text-sm text-[#4D2B82]">بطوطة البحيرة</h4>
-                      <p className="text-[10px] text-gray-500">تم الشراء: {duckCount}/12</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handleBuyAnimal("duck", 22, "البط")}
-                    disabled={duckCount >= 12}
-                    className="bg-yellow-400 hover:bg-yellow-500 disabled:bg-gray-150 disabled:text-gray-400 text-yellow-900 border-2 border-yellow-600 px-4 py-1.5 rounded-full font-black text-xs cursor-pointer"
-                  >
-                    {duckCount >= 12 ? "ممتلئ" : "شراء (22⭐)"}
-                  </button>
-                </div>
-
-                {/* 4. Friends */}
-                <div className="flex items-center justify-between p-3 border-2 border-purple-100 rounded-2xl bg-slate-50/50">
-                  <div className="flex items-center gap-2">
-                    <span className="text-4xl">🐱🐶</span>
-                    <div className="text-right">
-                      <h4 className="font-extrabold text-sm text-[#4D2B82]">القط والكلب الأصدقاء</h4>
-                      <p className="text-[10px] text-gray-500">تم الشراء: {petCount}/12</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => handleBuyAnimal("pet", 25, "الأصدقاء")}
-                    disabled={petCount >= 12}
-                    className="bg-yellow-400 hover:bg-yellow-500 disabled:bg-gray-150 disabled:text-gray-400 text-yellow-900 border-2 border-yellow-600 px-4 py-1.5 rounded-full font-black text-xs cursor-pointer"
-                  >
-                    {petCount >= 12 ? "ممتلئ" : "شراء (25⭐)"}
-                  </button>
-                </div>
               </div>
             </motion.div>
           </div>
