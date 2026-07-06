@@ -10,7 +10,9 @@ import {
   Gamepad2, 
   Trophy, 
   Menu, 
-  X
+  X,
+  Volume2,
+  VolumeX
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -239,6 +241,49 @@ export default function App() {
   }, []);
 
   const [forcedGame, setForcedGame] = useState<string | null>(null);
+
+  // Global background music player
+  const [bgMusicPlaying, setBgMusicPlaying] = useState(false);
+  const bgAudioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    bgAudioRef.current = new Audio("/garden_of_joy.mp3");
+    bgAudioRef.current.loop = true;
+    bgAudioRef.current.volume = 0.22;
+
+    const wasPlaying = localStorage.getItem("bloomly_bg_music_playing") === "true";
+    if (wasPlaying) {
+      bgAudioRef.current.play().then(() => {
+        setBgMusicPlaying(true);
+      }).catch(() => {
+        localStorage.setItem("bloomly_bg_music_playing", "false");
+      });
+    }
+
+    return () => {
+      if (bgAudioRef.current) {
+        bgAudioRef.current.pause();
+        bgAudioRef.current = null;
+      }
+    };
+  }, []);
+
+  const toggleGlobalBgMusic = () => {
+    if (!bgAudioRef.current) return;
+    playBubbleSound();
+    if (bgMusicPlaying) {
+      bgAudioRef.current.pause();
+      setBgMusicPlaying(false);
+      localStorage.setItem("bloomly_bg_music_playing", "false");
+    } else {
+      bgAudioRef.current.play().then(() => {
+        setBgMusicPlaying(true);
+        localStorage.setItem("bloomly_bg_music_playing", "true");
+      }).catch(e => {
+        console.warn("Autoplay blocked:", e);
+      });
+    }
+  };
 
   // Keep active profile synced with global stars and backend database
   useEffect(() => {
@@ -951,6 +996,23 @@ export default function App() {
 
           {/* Start Free Button & Profile Tag */}
           <div className="flex items-center gap-2 sm:gap-4">
+            {/* Global Music Toggle Button */}
+            <button
+              onClick={toggleGlobalBgMusic}
+              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center cursor-pointer border-2 transition-all active:scale-95 shadow-md ${
+                bgMusicPlaying 
+                  ? 'bg-[#2ECC71] border-[#27AE60] text-white shadow-[0_2px_0_0_#27AE60]' 
+                  : 'bg-white border-[#4D2B82] text-gray-500 hover:bg-slate-50'
+              }`}
+              title="موسيقى الخلفية 🎵"
+            >
+              {bgMusicPlaying ? (
+                <Volume2 className="w-4 h-4 sm:w-5 sm:h-5 text-white stroke-[2.5px]" />
+              ) : (
+                <VolumeX className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 stroke-[2.5px]" />
+              )}
+            </button>
+
             {childProfile && (
               <div className="flex items-center gap-2">
                 <div 

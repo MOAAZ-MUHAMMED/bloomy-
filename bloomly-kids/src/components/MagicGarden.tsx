@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Volume2, VolumeX, Sparkles, Droplet, Clock, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
+import { X, Sparkles, Droplet, Clock, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 
 // ─── Web Audio API Synthesizer ────────────────────────────────────
@@ -552,6 +552,90 @@ export function SVGSun({ className = "w-20 h-20" }: { className?: string }) {
   );
 }
 
+export function SVGFarmerHouse({ className = "w-full h-full" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 200 160" className={className}>
+      <defs>
+        <linearGradient id="roofGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#C0392B" />
+          <stop offset="100%" stopColor="#7B241C" />
+        </linearGradient>
+        <linearGradient id="wallGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#F5CBA7" />
+          <stop offset="100%" stopColor="#EB984E" />
+        </linearGradient>
+        <linearGradient id="doorGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#935116" />
+          <stop offset="100%" stopColor="#5C3317" />
+        </linearGradient>
+      </defs>
+      {/* Stone Foundation */}
+      <rect x="25" y="115" width="150" height="20" fill="#7F8C8D" stroke="#2C3E50" strokeWidth="3" rx="3" />
+      {/* Wall */}
+      <rect x="30" y="55" width="140" height="60" fill="url(#wallGrad)" stroke="#4D2B82" strokeWidth="4" />
+      {/* Roof */}
+      <polygon points="15,55 100,10 185,55" fill="url(#roofGrad)" stroke="#4D2B82" strokeWidth="4" />
+      <polygon points="35,55 100,20 165,55" fill="#E74C3C" opacity="0.3" />
+      {/* Chimney */}
+      <rect x="135" y="18" width="18" height="25" fill="#7B241C" stroke="#4D2B82" strokeWidth="3" />
+      <rect x="131" y="14" width="26" height="5" fill="#C0392B" stroke="#4D2B82" strokeWidth="2" />
+      {/* Chimney Smoke Puffs */}
+      <motion.circle cx="144" cy="5" r="4" fill="#BDC3C7" opacity="0.6" animate={{ y: [-5, -25], scale: [1, 2], opacity: [0.6, 0] }} transition={{ repeat: Infinity, duration: 2, ease: "easeOut" }} />
+      <motion.circle cx="144" cy="5" r="5" fill="#ECF0F1" opacity="0.8" animate={{ y: [-5, -35], scale: [1, 2.5], opacity: [0.8, 0] }} transition={{ repeat: Infinity, duration: 2.5, delay: 0.8, ease: "easeOut" }} />
+      
+      {/* Door */}
+      <rect x="85" y="75" width="30" height="40" fill="url(#doorGrad)" stroke="#4D2B82" strokeWidth="3.5" rx="2" />
+      <circle cx="110" cy="95" r="3" fill="#F1C40F" stroke="#4D2B82" strokeWidth="1" />
+      {/* Windows */}
+      <rect x="45" y="70" width="22" height="22" fill="#FEDE43" stroke="#4D2B82" strokeWidth="3.5" rx="3" />
+      <line x1="56" y1="70" x2="56" y2="92" stroke="#4D2B82" strokeWidth="2.5" />
+      <line x1="45" y1="81" x2="67" y2="81" stroke="#4D2B82" strokeWidth="2.5" />
+      
+      <rect x="133" y="70" width="22" height="22" fill="#FEDE43" stroke="#4D2B82" strokeWidth="3.5" rx="3" />
+      <line x1="144" y1="70" x2="144" y2="92" stroke="#4D2B82" strokeWidth="2.5" />
+      <line x1="133" y1="81" x2="155" y2="81" stroke="#4D2B82" strokeWidth="2.5" />
+      
+      {/* Cute Attic Window */}
+      <circle cx="100" cy="38" r="10" fill="#FEDE43" stroke="#4D2B82" strokeWidth="3" />
+      <line x1="100" y1="28" x2="100" y2="48" stroke="#4D2B82" strokeWidth="2" />
+      <line x1="90" y1="38" x2="110" y2="38" stroke="#4D2B82" strokeWidth="2" />
+      
+      {/* Flower Bed / bushes in front */}
+      <circle cx="35" cy="115" r="8" fill="#2ECC71" />
+      <circle cx="45" cy="117" r="7" fill="#27AE60" />
+      <circle cx="32" cy="113" r="3" fill="#E74C3C" />
+      <circle cx="42" cy="114" r="3.5" fill="#E74C3C" />
+      <circle cx="160" cy="115" r="9" fill="#2ECC71" />
+      <circle cx="152" cy="116" r="7" fill="#27AE60" />
+      <circle cx="158" cy="112" r="3.5" fill="#F1C40F" />
+      <circle cx="150" cy="114" r="3" fill="#F1C40F" />
+    </svg>
+  );
+}
+
+export function SVGDecorTree({ className = "w-12 h-12" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 100 100" className={className}>
+      <path d="M 50 80 L 50 50" stroke="#78350F" strokeWidth="6" strokeLinecap="round" />
+      <circle cx="50" cy="40" r="22" fill="#22C55E" stroke="#15803D" strokeWidth="2" />
+      <circle cx="42" cy="32" r="14" fill="#4ADE80" opacity="0.6" />
+    </svg>
+  );
+}
+
+export function SVGDecorFlowers({ className = "w-8 h-8" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 50 50" className={className}>
+      <circle cx="25" cy="25" r="8" fill="#F43F5E" />
+      <circle cx="15" cy="25" r="7" fill="#F43F5E" />
+      <circle cx="35" cy="25" r="7" fill="#F43F5E" />
+      <circle cx="25" cy="15" r="7" fill="#F43F5E" />
+      <circle cx="25" cy="35" r="7" fill="#F43F5E" />
+      <circle cx="25" cy="25" r="5" fill="#FEF08A" />
+    </svg>
+  );
+}
+
 // ─── Configuration & Interfaces ───────────────────────────────────
 
 type PaddockType = "sheep" | "rabbit" | "duck" | "pet" | "cow" | "bee" | "fish" | "bird";
@@ -1075,6 +1159,21 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
               </div>
             )}
 
+            {/* 🌲 Path from Farmer's House to Road */}
+            <div className="absolute left-[190px] top-[720px] w-6 h-[290px] bg-amber-900/10 border-x-2 border-dashed border-amber-800/10 pointer-events-none" />
+            
+            {/* 🌲 Landscape Decors (Trees and Flowers) */}
+            <div className="absolute left-[370px] top-[120px] pointer-events-none opacity-80"><SVGDecorTree className="w-14 h-14" /></div>
+            <div className="absolute left-[780px] top-[130px] pointer-events-none opacity-80"><SVGDecorTree className="w-14 h-14" /></div>
+            <div className="absolute left-[1110px] top-[110px] pointer-events-none opacity-85"><SVGDecorFlowers className="w-10 h-10" /></div>
+            <div className="absolute left-[390px] top-[490px] pointer-events-none opacity-80"><SVGDecorTree className="w-16 h-16" /></div>
+            <div className="absolute left-[820px] top-[500px] pointer-events-none opacity-85"><SVGDecorFlowers className="w-10 h-10" /></div>
+            <div className="absolute left-[380px] top-[800px] pointer-events-none opacity-80"><SVGDecorTree className="w-14 h-14" /></div>
+            <div className="absolute left-[920px] top-[880px] pointer-events-none opacity-80"><SVGDecorTree className="w-16 h-16" /></div>
+            <div className="absolute left-[1420px] top-[390px] pointer-events-none opacity-80"><SVGDecorTree className="w-15 h-15" /></div>
+            <div className="absolute left-[1460px] top-[410px] pointer-events-none opacity-85"><SVGDecorFlowers className="w-10 h-10" /></div>
+            <div className="absolute left-[110px] top-[950px] pointer-events-none opacity-85"><SVGDecorFlowers className="w-9 h-9" /></div>
+
             {/* ════════════ PADDOCK 1: DUCK POND (بحيرة البط) ════════════ */}
             <div 
               onClick={() => { synth.playPop(); setSelectedPaddockToBuy("duck"); }}
@@ -1539,6 +1638,20 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars }: Ma
                     {renderAnimalSVG("cow", a, isAdult("cow"))}
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* 🏡 FARMER'S HOUSE (منزل المزارع) */}
+            <div 
+              onClick={() => {
+                synth.playPop();
+                triggerNotice("🏡 مرحباً بك في منزلي السعيد! أنا المزارع سعيد 👨‍🌾👋");
+              }}
+              className="absolute left-[50px] top-[1000px] w-[340px] h-[260px] z-10 cursor-pointer hover:scale-[1.03] active:scale-[0.98] transition-all"
+            >
+              <SVGFarmerHouse />
+              <div className="absolute bottom-[-10px] left-1/2 -translate-x-1/2 bg-white/90 border-2 border-amber-300 px-3.5 py-1 rounded-full text-[10px] font-black text-amber-800 shadow-md whitespace-nowrap">
+                🏡 منزل المزارع سعيد
               </div>
             </div>
 
