@@ -940,7 +940,7 @@ interface GameZoneProps {
 }
 
 export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, childLevel: propChildLevel = "level1", forcedGame, setForcedGame }: GameZoneProps = {}) {
-  const [activeGame, setActiveGame] = useState<"menu" | "math" | "spelling" | "memory" | "catcher" | "coloring" | "spellingEn" | "sorting" | "spaceCatcher" | "connectDots" | "maze" | "safari" | "chef" | "farm" | "train" | "arrowRacer" | "quran" | "stories">("menu");
+  const [activeGame, setActiveGame] = useState<"menu" | "math" | "spelling" | "memory" | "catcher" | "coloring" | "spellingEn" | "sorting" | "spaceCatcher" | "connectDots" | "maze" | "safari" | "chef" | "farm" | "train" | "arrowRacer" | "tapRacer" | "quran" | "stories">("menu");
   const gameZoneRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -2336,6 +2336,148 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
     }
   };
 
+  // ==========================================
+  // NEW GAME 15: FAST TAPPING RACER (لعبة الضغط السريع)
+  // ==========================================
+  type TapRacerTheme = "swim" | "cycle" | "run" | "fly";
+  interface Opponent {
+    id: number;
+    name: string;
+    emoji: string;
+    progress: number;
+    speed: number;
+    color: string;
+  }
+
+  const [tapRacerRound, setTapRacerRound] = useState(1);
+  const [tapRacerTheme, setTapRacerTheme] = useState<TapRacerTheme>("run");
+  const [playerProgress, setPlayerProgress] = useState(0);
+  const [opponents, setOpponents] = useState<Opponent[]>([]);
+  const [tapRacerState, setTapRacerState] = useState<"idle" | "countdown" | "racing" | "finished">("idle");
+  const [tapRacerCountdown, setTapRacerCountdown] = useState(3);
+  const [tapRacerFeedback, setTapRacerFeedback] = useState("");
+  const [winnerId, setWinnerId] = useState<number | null>(null);
+  const [tapRacerStars, setTapRacerStars] = useState(0);
+
+  const startTapRacerGame = () => {
+    setTapRacerRound(1);
+    setStarsEarnedThisSession(0);
+    setTapRacerStars(0);
+    initTapRacerRound(1);
+    setActiveGame("tapRacer");
+    sfx.speakArabic("أهلاً بك في سباق الضغط السريع! اضغط بأسرع ما يمكن لتفوز!", "welcome");
+  };
+
+  const initTapRacerRound = (roundNum: number) => {
+    setPlayerProgress(0);
+    setWinnerId(null);
+    setTapRacerState("idle");
+    setTapRacerCountdown(3);
+    setTapRacerFeedback("");
+
+    let theme: TapRacerTheme = "run";
+    if (roundNum === 1) theme = "run";
+    else if (roundNum === 2) theme = "cycle";
+    else {
+      theme = Math.random() > 0.5 ? "swim" : "fly";
+    }
+    setTapRacerTheme(theme);
+
+    const currentLevel = selectedLevelIndex || 1;
+    const difficultyMultiplier = 0.7 + (currentLevel / 100) * 1.5;
+
+    const opponentData = [
+      { id: 1, name: "الباندا بوبو 🐼", emoji: "🐼", progress: 0, speed: (1.2 + Math.random() * 0.5) * difficultyMultiplier, color: "#FF85A2" },
+      { id: 2, name: "الأرنب سمسم 🐰", emoji: "🐰", progress: 0, speed: (1.4 + Math.random() * 0.4) * difficultyMultiplier, color: "#85FFD3" },
+      { id: 3, name: "الثعلب فوفو 🦊", emoji: "🦊", progress: 0, speed: (1.3 + Math.random() * 0.5) * difficultyMultiplier, color: "#FFE885" }
+    ];
+    setOpponents(opponentData);
+    setTapRacerState("countdown");
+  };
+
+  useEffect(() => {
+    if (activeGame !== "tapRacer" || tapRacerState !== "countdown") return;
+
+    if (tapRacerCountdown <= 0) {
+      setTapRacerFeedback("انطلق! 🏁");
+      setTapRacerState("racing");
+      const clearFeedback = setTimeout(() => {
+        setTapRacerFeedback("");
+      }, 1000);
+      return () => clearTimeout(clearFeedback);
+    }
+
+    const timer = setTimeout(() => {
+      setTapRacerCountdown(prev => prev - 1);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [activeGame, tapRacerState, tapRacerCountdown]);
+
+  useEffect(() => {
+    if (activeGame !== "tapRacer" || tapRacerState !== "racing") return;
+
+    const interval = setInterval(() => {
+      setOpponents(prev => {
+        let winningOpponentId: number | null = null;
+        let opponentWon = false;
+
+        const next = prev.map(o => {
+          const nextProg = Math.min(o.progress + o.speed, 100);
+          if (nextProg >= 100 && winningOpponentId === null) {
+            opponentWon = true;
+            winningOpponentId = o.id;
+          }
+          return { ...o, progress: nextProg };
+        });
+
+        if (opponentWon && winnerId === null) {
+          clearInterval(interval);
+          setWinnerId(winningOpponentId);
+          setTapRacerState("finished");
+          
+          const ahead = next.filter(o => o.progress > playerProgress).length + 1;
+          let earned = 0;
+          if (ahead === 2) {
+            earned = 1;
+            sfx.speakArabic("رائع! المركز الثاني! 🥈", "correct");
+          } else {
+            sfx.speakArabic("حاول مجدداً في الجولة القادمة! 💪", "wrong");
+          }
+          setTapRacerStars(p => p + earned);
+          setStarsEarnedThisSession(p => p + earned);
+        }
+
+        return next;
+      });
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [activeGame, tapRacerState, playerProgress, winnerId]);
+
+  const handleTapRacerClick = () => {
+    if (tapRacerState !== "racing" || winnerId !== null) return;
+
+    sfx.playPop();
+    setPlayerProgress(prev => {
+      const next = Math.min(prev + 4, 100);
+      if (next >= 100 && winnerId === null) {
+        setWinnerId(0);
+        setTapRacerState("finished");
+        
+        let earned = 0;
+        if (tapRacerRound === 1) earned = 2;
+        else if (tapRacerRound === 2) earned = 2;
+        else earned = 1;
+
+        setTapRacerStars(p => p + earned);
+        setStarsEarnedThisSession(p => p + earned);
+        sfx.speakArabic("ممتاز! لقد فزت بالمركز الأول! 🏆", "correct");
+      }
+      return next;
+    });
+  };
+
   // Trigger star flying animation from a source coordinates to the header counter
   const triggerStarFlight = (sourceElementId?: string) => {
     const dest = document.getElementById("global-star-bubble")?.getBoundingClientRect();
@@ -2558,6 +2700,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       else if (activeGame === "farm") startFarmGame();
       else if (activeGame === "train") startTrainGame();
       else if (activeGame === "arrowRacer") startRacerGame();
+      else if (activeGame === "tapRacer") startTapRacerGame();
     } else {
       setActiveGame("menu");
     }
@@ -3789,6 +3932,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                               else if (activeGame === "spelling") startSpellingGame();
                               else if (activeGame === "memory") initMemoryGame();
                               else if (activeGame === "arrowRacer") startRacerGame();
+                              else if (activeGame === "tapRacer") startTapRacerGame();
                               else {
                                 // Generic start mapping for other games
                                 if (activeGame === "catcher") startCatcherGame();
@@ -4201,7 +4345,28 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                           </button>
                         </motion.div>
 
-            {/* Game 15 Card: Quran */}
+            {/* Game 15 Card: Tap Racer */}
+            <motion.div 
+              whileHover={{ scale: 1.05, y: -4 }}
+              transition={{ type: "spring", stiffness: 400, damping: 15 }}
+              className="card-bubbly p-6 flex flex-col items-center text-center bg-white cursor-default select-none"
+            >
+              <motion.span 
+                animate={{ rotate: [0, -10, 10, 0] }}
+                transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
+                className="text-5xl mb-4 select-none inline-block"
+              >⚡</motion.span>
+              <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2">سباق الضغط السريع</h3>
+              <p className="text-sm font-medium text-purple-400 mb-4">اضغط بأسرع ما يمكن لتفوز بسباق السباحة، الدراجات، الجري والبالونات!</p>
+              <button
+                onClick={() => requireProfile(() => startLoadingAndOpenMap("tapRacer"))}
+                className="w-full btn-bubbly-primary mt-auto text-sm py-2.5"
+              >
+                العب الآن 🚀
+              </button>
+            </motion.div>
+
+            {/* Game 16 Card: Quran */}
                         <motion.div 
                           whileHover={{ scale: 1.05, y: -4 }}
                           transition={{ type: "spring", stiffness: 400, damping: 15 }}
@@ -5911,6 +6076,196 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
         </div>
       )}
 
+      {/* --- FAST TAPPING RACER PLAY VIEW --- */}
+      {activeGame === "tapRacer" && !showLevelMap && (
+        <div className={`card-bubbly max-w-2xl mx-auto p-6 relative overflow-hidden border-4 border-[#4D2B82] ${
+          tapRacerTheme === "swim" ? "bg-gradient-to-b from-[#E0F2FE] to-[#7DD3FC]" :
+          tapRacerTheme === "cycle" ? "bg-gradient-to-b from-[#F1F5F9] to-[#CBD5E1]" :
+          tapRacerTheme === "run" ? "bg-gradient-to-b from-[#FEF3C7] to-[#FCD34D]" :
+          "bg-gradient-to-b from-[#ECFDF5] to-[#6EE7B7]"
+        }`}>
+          {/* Header */}
+          <div className="flex items-center justify-between border-b-2 border-purple-200 pb-4 mb-4 relative z-20">
+            <button
+              onClick={quitGame}
+              className="flex items-center gap-1 font-bold text-sm text-[#FF5A92] hover:underline"
+            >
+              <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
+              <span>خروج</span>
+            </button>
+            <div className="font-extrabold text-[#4D2B82] text-base flex items-center gap-2">
+              <span>الجولة {tapRacerRound} من ٣ 🏁</span>
+            </div>
+            <div className="text-sm font-bold text-[#D97706]">
+              ⭐ كسبت: {starsEarnedThisSession}
+            </div>
+          </div>
+
+          {/* Theme Banner */}
+          <div className="text-center mb-4">
+            <h3 className="text-2xl font-black text-[#4D2B82] flex items-center justify-center gap-2">
+              {tapRacerTheme === "swim" && "🏊 سباق السباحة في البحر"}
+              {tapRacerTheme === "cycle" && "🚴 سباق الدراجات الهوائية"}
+              {tapRacerTheme === "run" && "🏃 سباق الجري السريع"}
+              {tapRacerTheme === "fly" && "🎈 سباق التحليق بالبالونات"}
+            </h3>
+            <p className="text-xs font-bold text-[#4d2b82]/70 mt-1">
+              اضغط بأسرع ما يمكن لتصل لخط النهاية قبل الجميع!
+            </p>
+          </div>
+
+          {/* The Racetrack Wrapper */}
+          <div className="relative w-full bg-white/60 backdrop-blur-xs border-4 border-[#4D2B82] rounded-3xl p-4 shadow-inner overflow-hidden mb-6">
+            
+            {/* Tracks */}
+            <div className="flex flex-col gap-4 relative">
+              {/* Finish line line */}
+              <div className="absolute right-[12%] top-0 bottom-0 border-r-4 border-dashed border-[#4D2B82]/20 z-0" />
+              <div className="absolute right-[10%] top-1/2 -translate-y-1/2 text-2xl z-10 select-none">🏁</div>
+
+              {/* Lane 1: Opponents */}
+              {opponents.map((o) => (
+                <div key={o.id} className="relative h-12 flex items-center border-b border-purple-200/50 pb-2 last:border-0">
+                  <div className="w-16 text-right font-black text-[10px] text-purple-800 truncate pl-1">{o.name}</div>
+                  <div className="flex-grow h-6 bg-purple-100/50 rounded-full relative overflow-visible">
+                    <motion.div
+                      animate={{ left: `${o.progress * 0.8}%` }}
+                      transition={{ type: "spring", stiffness: 100, damping: 15 }}
+                      className="absolute top-1/2 -translate-y-1/2 text-3xl select-none"
+                    >
+                      {tapRacerTheme === "swim" ? "🏊" : tapRacerTheme === "cycle" ? "🚴" : tapRacerTheme === "run" ? "🏃" : "🎈"}{o.emoji}
+                    </motion.div>
+                  </div>
+                </div>
+              ))}
+
+              {/* Lane 4: Player */}
+              <div className="relative h-12 flex items-center">
+                <div className="w-16 text-right font-black text-xs text-[#FF5A92] pl-1">أنت 🦁</div>
+                <div className="flex-grow h-8 bg-purple-200/70 border-2 border-[#FF5A92]/40 rounded-full relative overflow-visible shadow-inner">
+                  <motion.div
+                    animate={{ left: `${playerProgress * 0.8}%` }}
+                    transition={{ type: "spring", stiffness: 150, damping: 15 }}
+                    className="absolute top-1/2 -translate-y-1/2 text-4xl select-none drop-shadow-md"
+                  >
+                    {tapRacerTheme === "swim" ? "🏊🦁" : tapRacerTheme === "cycle" ? "🚴🦁" : tapRacerTheme === "run" ? "🏃🦁" : "🎈🦁"}
+                  </motion.div>
+                </div>
+              </div>
+
+            </div>
+
+            {/* Countdown Overlay */}
+            {tapRacerState === "countdown" && (
+              <div className="absolute inset-0 bg-purple-900/40 backdrop-blur-xs flex flex-col items-center justify-center z-30">
+                <motion.div
+                  key={tapRacerCountdown}
+                  initial={{ scale: 0.3, opacity: 0 }}
+                  animate={{ scale: [0.5, 1.2, 1], opacity: 1 }}
+                  transition={{ duration: 0.8 }}
+                  className="text-7xl font-black text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.4)]"
+                >
+                  {tapRacerCountdown}
+                </motion.div>
+              </div>
+            )}
+
+            {/* Start signal overlay */}
+            {tapRacerFeedback && (
+              <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
+                <motion.div
+                  initial={{ scale: 0.5, opacity: 0 }}
+                  animate={{ scale: [0.5, 1.5, 1], opacity: 1 }}
+                  className="text-6xl font-black text-yellow-400 drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
+                >
+                  {tapRacerFeedback}
+                </motion.div>
+              </div>
+            )}
+
+            {/* Winner Overlay */}
+            {tapRacerState === "finished" && (
+              <div className="absolute inset-0 bg-white/95 backdrop-blur-xs flex flex-col items-center justify-center z-30 p-4 text-center">
+                <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
+                  {winnerId === 0 ? (
+                    <>
+                      <span className="text-6xl select-none block mb-2">🏆</span>
+                      <h4 className="text-xl font-black text-green-600 mb-1">المركز الأول! 🥇</h4>
+                      <p className="text-sm font-bold text-green-700">لقد فزت ببراعة يا بطل! (+{tapRacerRound === 3 ? 1 : 2}⭐)</p>
+                    </>
+                  ) : (
+                    <>
+                      <span className="text-6xl select-none block mb-2">
+                        {opponents.find(o => o.id === winnerId)?.progress && opponents.filter(o => o.progress > playerProgress).length === 1 ? "🥈" : "💪"}
+                      </span>
+                      <h4 className="text-xl font-black text-purple-600 mb-1">انتهى السباق!</h4>
+                      <p className="text-sm font-bold text-purple-700">
+                        {opponents.find(o => o.id === winnerId)?.name} وصل أولاً!
+                      </p>
+                      <p className="text-xs font-semibold text-purple-500 mt-1">
+                        لقد حققت المركز {opponents.filter(o => o.progress > playerProgress).length + 1}!
+                        {opponents.filter(o => o.progress > playerProgress).length === 1 ? " حصلت على (+1⭐)" : ""}
+                      </p>
+                    </>
+                  )}
+
+                  <div className="mt-4 flex gap-3 justify-center">
+                    {tapRacerRound < 3 ? (
+                      <button
+                        onClick={() => {
+                          sfx.playPop();
+                          setTapRacerRound(prev => prev + 1);
+                          initTapRacerRound(tapRacerRound + 1);
+                        }}
+                        className="btn-bubbly-primary px-6 py-2.5 text-sm"
+                      >
+                        الجولة التالية ➡️
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          sfx.playPop();
+                          addStars(tapRacerStars);
+                          triggerVictory();
+                        }}
+                        className="btn-bubbly-purple px-6 py-2.5 text-sm"
+                      >
+                        عرض النتيجة النهائية 🎉
+                      </button>
+                    )}
+                  </div>
+                </motion.div>
+              </div>
+            )}
+
+          </div>
+
+          {/* Large Click Button */}
+          <div className="flex flex-col items-center gap-2 mb-2 relative z-20">
+            <motion.button
+              disabled={tapRacerState !== "racing" || winnerId !== null}
+              onClick={handleTapRacerClick}
+              whileTap={{ scale: 0.95 }}
+              animate={tapRacerState === "racing" ? { scale: [1, 1.03, 1] } : {}}
+              transition={{ repeat: Infinity, duration: 1.2 }}
+              className={`w-full max-w-sm py-5 text-xl font-black rounded-3xl border-b-8 shadow-xl transition-all flex items-center justify-center gap-2 active:border-b-2 active:translate-y-1 ${
+                tapRacerState === "racing" 
+                  ? "bg-[#FF5A92] hover:bg-[#FF4081] text-white border-[#C2185B]"
+                  : "bg-gray-300 text-gray-500 border-gray-400 cursor-not-allowed"
+              }`}
+            >
+              <span>⚡</span>
+              <span>اضغط هنا بسرعة!</span>
+              <span>👆</span>
+            </motion.button>
+          </div>
+
+          <p className="text-[10px] font-bold text-[#4D2B82]/60 text-center mt-3">
+            💡 كل ضغطة تمنح شخصيتك دفعة قوية للأمام! تسابق واعبر خط النهاية لتفوز بالنجوم!
+          </p>
+        </div>
+      )}
+
       {/* --- HUNGRY ANIMALS FARM PLAY VIEW --- */}
       {activeGame === "farm" && !showLevelMap && activeAnimal && (
         <div className="card-bubbly bg-[#E8F5E9] max-w-2xl mx-auto p-6 relative overflow-hidden">
@@ -6405,6 +6760,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                       else if (activeGame === "farm") startFarmGame();
                       else if (activeGame === "train") startTrainGame();
                       else if (activeGame === "arrowRacer") startRacerGame();
+                      else if (activeGame === "tapRacer") startTapRacerGame();
                     }}
                     className="flex-1 btn-bubbly-secondary text-sm py-3"
                   >
