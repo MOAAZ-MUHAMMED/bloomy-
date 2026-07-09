@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import MascotCharacter from "./MascotCharacter";
 
 // --- Custom local Sound Synthesizer for the Intro ---
 class IntroSound {
@@ -551,64 +552,10 @@ export function IntroScreen({ onFinish }: IntroScreenProps) {
               className="absolute inset-0 flex flex-col items-center justify-center z-20 pointer-events-none"
               style={{ transform: "translateY(-5vh)" }}
             >
-              {/* Bouncing/Jumping Sprout */}
-              <motion.div
-                initial={{ scale: 0, y: 150, opacity: 0 }}
-                animate={{ 
-                  scale: sproutJumping ? [1, 0.85, 1.15, 0.9, 1] : 1,
-                  y: sproutJumping ? -75 : 0,
-                  rotate: sproutJumping ? [0, -12, 12, 0] : 0,
-                  opacity: 1
-                }}
-                transition={{
-                  y: { duration: 0.55, ease: "easeOut" },
-                  scale: { duration: 0.55 },
-                  rotate: { duration: 0.55 }
-                }}
-                className="w-32 h-32 relative flex flex-col items-center justify-center mb-6 cursor-pointer pointer-events-auto"
-              >
-                {/* Head Leaves */}
-                <div className="flex space-x-0.5 -mb-2 z-10">
-                  <motion.div 
-                    animate={{ rotate: sproutJumping ? [-15, 15] : [-5, 5] }}
-                    transition={{ repeat: Infinity, repeatType: "mirror", duration: 0.5 }}
-                    className="w-8 h-11 bg-[#81C784] rounded-tl-full rounded-br-full border-2.5 border-[#4D2B82] origin-bottom-right"
-                  />
-                  <motion.div 
-                    animate={{ rotate: sproutJumping ? [15, -15] : [5, -5] }}
-                    transition={{ repeat: Infinity, repeatType: "mirror", duration: 0.5 }}
-                    className="w-8 h-11 bg-[#81C784] rounded-tr-full rounded-bl-full border-2.5 border-[#4D2B82] origin-bottom-left"
-                  />
-                </div>
-                
-                {/* Sprout Body (w-24 h-24 matches interactive garden scale) */}
-                <div className="w-24 h-24 bg-[#2ECC71] rounded-full border-3.5 border-[#4D2B82] shadow-[inset_-5px_-5px_0_0_#27AE60] flex flex-col items-center justify-center relative">
-                  {/* Cute Eyes */}
-                  <div className="flex space-x-5 mt-2.5">
-                    <div className="w-5 h-5 bg-[#4D2B82] rounded-full flex items-start justify-start p-1 relative">
-                      <div className="w-1.5 h-1.5 bg-white rounded-full absolute top-1 left-1" />
-                    </div>
-                    <div className="w-5 h-5 bg-[#4D2B82] rounded-full flex items-start justify-start p-1 relative">
-                      <div className="w-1.5 h-1.5 bg-white rounded-full absolute top-1 left-1" />
-                    </div>
-                  </div>
-                  
-                  {/* Pink Cheeks */}
-                  <div className="flex justify-between w-[70px] -mt-1.5 px-1.5">
-                    <div className="w-3.5 h-2 bg-[#FF6B6B] rounded-full opacity-60" />
-                    <div className="w-3.5 h-2 bg-[#FF6B6B] rounded-full opacity-60" />
-                  </div>
-
-                  {/* Smiling Mouth (Open happy cartoon smile with a pink tongue) */}
-                  <div className="w-7 h-4 bg-[#4D2B82] rounded-b-full relative overflow-hidden mt-1.5 flex items-end justify-center">
-                    <div className="w-4 h-2.5 bg-[#FF6B6B] rounded-full translate-y-[1px]" />
-                  </div>
-                </div>
-
-                {/* Tiny Hands */}
-                <div className="absolute top-[55%] left-[2px] w-4 h-4 bg-[#2ECC71] rounded-full border-2.5 border-[#4D2B82] z-0" />
-                <div className="absolute top-[55%] right-[2px] w-4 h-4 bg-[#2ECC71] rounded-full border-2.5 border-[#4D2B82] z-0" />
-              </motion.div>
+              <MascotCharacter 
+                pose="welcome" 
+                className="w-44 h-44 mb-4 pointer-events-auto cursor-pointer"
+              />
 
               {/* Bloomly Logo Text Card */}
               <motion.div

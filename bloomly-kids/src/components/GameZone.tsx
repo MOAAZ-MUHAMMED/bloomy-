@@ -4,128 +4,21 @@ import { ArrowLeft } from "lucide-react";
 import { ScreenOrientation as CapScreenOrientation } from '@capacitor/screen-orientation';
 import QuranIsland from "./QuranIsland";
 import InteractiveStories from "./InteractiveStories";
+import MascotCharacter from "./MascotCharacter";
 
 export function SproutMascot({ className = "w-24 h-24", state = "idle" }: { className?: string; state?: "idle" | "happy" | "sad" | "talking" }) {
-  const bodyAnimation = state === "happy"
-    ? { 
-        y: [0, -25, 0], 
-        scale: [1, 1.15, 0.95, 1],
-        rotate: [0, 15, -15, 0] 
-      }
-    : state === "sad"
-    ? { 
-        y: [0, 2, 0],
-        scale: [1, 0.92, 1],
-        rotate: [0, -3, 3, 0]
-      }
-    : { 
-        y: [0, -6, 0],
-        scale: [1, 1.03, 1] 
-      };
+  const poseMap = {
+    idle: "thinking" as const,
+    talking: "talking" as const,
+    happy: "victory" as const,
+    sad: "talking" as const,
+  };
 
   return (
-    <motion.div
-      animate={bodyAnimation}
-      transition={state === "happy" 
-        ? { duration: 0.6, repeat: 2, ease: "easeInOut" } 
-        : { repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
-      className={`relative select-none flex items-center justify-center ${className}`}
-    >
-      <svg viewBox="0 0 100 100" className="w-full h-full filter drop-shadow-[0_4px_6px_rgba(0,0,0,0.15)]">
-        {/* Star Body with golden gradient */}
-        <path 
-          d="M 50 10 Q 52 22 62 28 Q 72 34 85 36 Q 74 46 72 56 Q 70 66 78 76 Q 66 72 56 70 Q 46 68 34 76 Q 32 66 30 56 Q 28 46 17 36 Q 30 34 40 28 Q 48 22 50 10 Z" 
-          fill="url(#starMascotGrad)" 
-          stroke="#4D2B82" 
-          strokeWidth="3.5" 
-          strokeLinejoin="round"
-        />
-
-        {/* Eyes (Blinking Animation) */}
-        <g style={{ transformOrigin: "50% 48%" }}>
-          {state === "sad" ? (
-            <>
-              {/* Sad/crying eyes */}
-              <path d="M 33 50 Q 38 46 43 51" fill="none" stroke="#2C3E50" strokeWidth="4" strokeLinecap="round" />
-              <path d="M 67 50 Q 62 46 57 51" fill="none" stroke="#2C3E50" strokeWidth="4" strokeLinecap="round" />
-            </>
-          ) : (
-            <>
-              {/* Left Eye */}
-              <motion.ellipse 
-                cx="38" 
-                cy="48" 
-                rx="6" 
-                ry="8" 
-                fill="#2C3E50"
-                animate={{ scaleY: [1, 1, 0.1, 1, 1] }}
-                transition={{ repeat: Infinity, duration: 4.5, times: [0, 0.94, 0.96, 0.98, 1] }}
-                style={{ transformOrigin: "38px 48px" }}
-              />
-              <circle cx="36" cy="45" r="2.2" fill="#FFF" />
-              <circle cx="39" cy="50" r="1" fill="#FFF" />
-
-              {/* Right Eye */}
-              <motion.ellipse 
-                cx="62" 
-                cy="48" 
-                rx="6" 
-                ry="8" 
-                fill="#2C3E50"
-                animate={{ scaleY: [1, 1, 0.1, 1, 1] }}
-                transition={{ repeat: Infinity, duration: 4.5, times: [0, 0.94, 0.96, 0.98, 1] }}
-                style={{ transformOrigin: "62px 48px" }}
-              />
-              <circle cx="60" cy="45" r="2.2" fill="#FFF" />
-              <circle cx="63" cy="50" r="1" fill="#FFF" />
-            </>
-          )}
-        </g>
-
-        {/* Blush Cheeks */}
-        <circle cx="28" cy="56" r="5" fill="#FF5A92" opacity="0.5" />
-        <circle cx="72" cy="56" r="5" fill="#FF5A92" opacity="0.5" />
-
-        {/* Interactive Mouth (Talking Animation) */}
-        {state === "talking" ? (
-          <motion.ellipse 
-            cx="50" 
-            cy="58" 
-            rx="4" 
-            ry="6" 
-            fill="#2C3E50"
-            animate={{ scaleY: [1, 0.4, 1.4, 0.5, 1.2, 0.4, 1] }}
-            transition={{ repeat: Infinity, duration: 0.6 }}
-            style={{ transformOrigin: "50px 58px" }}
-          />
-        ) : state === "sad" ? (
-          <path d="M 45 61 Q 50 56 55 61" fill="none" stroke="#2C3E50" strokeWidth="3.5" strokeLinecap="round" />
-        ) : (
-          <path d="M 43 56 Q 50 64 57 56" fill="none" stroke="#2C3E50" strokeWidth="3.5" strokeLinecap="round" />
-        )}
-
-        {/* Gradients */}
-        <defs>
-          <linearGradient id="starMascotGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" stopColor="#FFE57F" />
-            <stop offset="60%" stopColor="#FFC107" />
-            <stop offset="100%" stopColor="#FF8F00" />
-          </linearGradient>
-        </defs>
-      </svg>
-
-      {/* Sparkles overlay on happy state */}
-      {state === "happy" && (
-        <motion.div 
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: [1, 1.6, 0], opacity: [0, 1, 0] }}
-          transition={{ duration: 0.8, repeat: Infinity }}
-          className="absolute -top-3 text-2xl pointer-events-none select-none"
-        >
-          ✨
-        </motion.div>
-      )}
-    </motion.div>
+    <MascotCharacter 
+      pose={poseMap[state]} 
+      className={className} 
+    />
   );
 }
 
