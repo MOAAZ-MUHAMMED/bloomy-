@@ -60,6 +60,22 @@ export async function registerRoutes(
     }
   });
 
+  // POST update child farm data
+  app.post("/api/child-profiles/:id/farm", async (req, res) => {
+    try {
+      const id = req.params.id;
+      const { farmData } = req.body;
+      if (farmData === undefined) {
+        return res.status(400).json({ error: "Invalid farm data" });
+      }
+      await storage.updateChildFarmData(id, farmData);
+      res.json({ success: true });
+    } catch (e) {
+      console.error("Update farm data error:", e);
+      res.status(500).json({ error: "Failed to update farm data" });
+    }
+  });
+
   // DELETE child profile
   app.delete("/api/child-profiles/:id", async (req, res) => {
     try {

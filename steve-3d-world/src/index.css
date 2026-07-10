@@ -1,0 +1,97 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: "Outfit", sans-serif;
+  --font-pixel: "Press Start 2P", monospace;
+  --color-brand-cyan: #38bdf8;
+  --color-brand-purple: #a855f7;
+  --color-brand-gold: #f59e0b;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5);
+}
+
+/* Keyframes for Nether Portal shimmer */
+@keyframes portal-shimmer {
+  0% {
+    background-position: 0% 50%;
+    opacity: 0.8;
+  }
+  50% {
+    background-position: 100% 50%;
+    opacity: 0.95;
+  }
+  100% {
+    background-position: 0% 50%;
+    opacity: 0.8;
+  }
+}
+
+.portal-bg {
+  background: linear-gradient(135deg, #4c1d95, #701a75, #2e1065, #4c1d95);
+  background-size: 400% 400%;
+  animation: portal-shimmer 8s ease infinite;
+}
+
+/* Custom Minecraft HUD styled button */
+.mc-button {
+  image-rendering: pixelated;
+  border-style: solid;
+  border-width: 2px;
+  border-top-color: #c6c6c6;
+  border-left-color: #c6c6c6;
+  border-bottom-color: #555555;
+  border-right-color: #555555;
+  background-color: #8b8b8b;
+  text-shadow: 2px 2px 0px #3f3f3f;
+  transition: all 0.1s ease;
+}
+
+.mc-button:hover {
+  background-color: #7b7b7b;
+  border-top-color: #e0e0e0;
+  border-left-color: #e0e0e0;
+  border-bottom-color: #4a4a4a;
+  border-right-color: #4a4a4a;
+}
+
+.mc-button:active {
+  border-top-color: #555555;
+  border-left-color: #555555;
+  border-bottom-color: #c6c6c6;
+  border-right-color: #c6c6c6;
+  background-color: #5b5b5b;
+}
+
+/* Glassmorphism panel styling */
+.glass-panel {
+  background: rgba(15, 23, 42, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+/* Custom CRT screen overlay scanning lines */
+.crt-overlay::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  z-index: 10;
+  background-size: 100% 4px, 6px 100%;
+  pointer-events: none;
+}

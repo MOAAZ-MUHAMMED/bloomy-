@@ -18,6 +18,7 @@ export const childProfiles = pgTable("child_profiles", {
   level: text("level").notNull(),
   country: text("country").default("غير محدد").notNull(),
   stars: integer("stars").notNull().default(0),
+  farmData: text("farm_data"),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({

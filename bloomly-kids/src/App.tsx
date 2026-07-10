@@ -25,6 +25,7 @@ export default function App() {
   const [showMagicGarden, setShowMagicGarden] = useState(false);
   const [isLoadingGarden, setIsLoadingGarden] = useState(false);
   const [gardenLoadingProgress, setGardenLoadingProgress] = useState(0);
+  const [spectateProfile, setSpectateProfile] = useState<any>(null);
 
   // Stored child profile state
   const [childProfile, setChildProfile] = useState<{
@@ -71,7 +72,15 @@ export default function App() {
 
   // Dynamic backend API URL resolver
   const getApiUrl = (path: string) => {
-    return `${window.location.origin}${path}`;
+    const ip = localStorage.getItem("bloomly_server_ip") || "";
+    if (ip) {
+      return `http://${ip}:5000${path}`;
+    }
+    const origin = window.location.origin;
+    if (origin.includes(":5173")) {
+      return origin.replace(":5173", ":5000") + path;
+    }
+    return `${origin}${path}`;
   };
 
   // API Call: Fetch all profiles from backend database
@@ -844,8 +853,22 @@ export default function App() {
 
               {/* Table */}
               <div className="bg-white border-3 border-[#4D2B82] rounded-[24px] overflow-hidden shadow-[0_6px_0_0_#4D2B82]">
-                <div className="bg-[#4D2B82] px-6 py-4 flex items-center justify-between">
+                <div className="bg-[#4D2B82] px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
                   <span className="text-xs font-bold bg-white/20 text-white px-3 py-1 rounded-full">{allProfiles.length} بطل مسجّل</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] sm:text-xs font-bold text-white/80">عنوان IP الخادم:</span>
+                    <input 
+                      type="text"
+                      placeholder="192.168.1.15"
+                      defaultValue={localStorage.getItem("bloomly_server_ip") || ""}
+                      onChange={(e) => {
+                        localStorage.setItem("bloomly_server_ip", e.target.value.trim());
+                        fetchAllProfiles();
+                      }}
+                      onClick={(e) => e.stopPropagation()}
+                      className="border border-white/20 bg-white/10 text-white placeholder-white/40 rounded-lg px-2.5 py-0.5 text-xs outline-none focus:bg-white/20 text-center w-36 font-bold"
+                    />
+                  </div>
                   <h2 className="text-lg font-black text-white flex items-center gap-2">
                     <span>📋</span>
                     <span>جميع الأبطال المسجلين</span>
@@ -868,6 +891,7 @@ export default function App() {
                           <th className="px-5 py-3 text-xs font-extrabold text-purple-600">العمر</th>
                           <th className="px-5 py-3 text-xs font-extrabold text-purple-600">المستوى</th>
                           <th className="px-5 py-3 text-xs font-extrabold text-purple-600">النجوم ⭐</th>
+                          <th className="px-5 py-3 text-xs font-extrabold text-purple-600">رؤية المزرعة 👁️</th>
                           <th className="px-5 py-3 text-xs font-extrabold text-red-400">حذف 🗑️</th>
                         </tr>
                       </thead>
@@ -893,10 +917,21 @@ export default function App() {
                                 {p.level === 'level1' ? '🌱 أول' : p.level === 'level2' ? '⭐ ثاني' : p.level === 'level3' ? '🏆 ثالث' : '🚀 فائق'}
                               </span>
                             </td>
-                            <td className="px-5 py-4">
+                             <td className="px-5 py-4">
                               <span className="bg-yellow-100 text-yellow-700 px-2.5 py-1 rounded-full font-black text-xs border border-yellow-200">
                                 {p.id === childProfile?.id ? globalStars : (p.stars ?? 0)} ⭐
                               </span>
+                            </td>
+                            <td className="px-5 py-4">
+                              <button
+                                onClick={() => {
+                                  setSpectateProfile(p);
+                                  setShowMagicGarden(true);
+                                }}
+                                className="bg-emerald-50 hover:bg-emerald-100 text-emerald-600 border-2 border-emerald-200 px-3 py-1.5 rounded-xl font-black text-xs cursor-pointer flex items-center justify-center gap-1 mx-auto"
+                              >
+                                👁️ عرض المزرعة
+                              </button>
                             </td>
                             <td className="px-5 py-4">
                               {deleteConfirmId === p.id ? (
@@ -1846,9 +1881,12 @@ export default function App() {
         <MagicGarden 
           onClose={() => {
             setShowMagicGarden(false);
+            setSpectateProfile(null);
           }} 
-          globalStars={globalStars} 
-          setGlobalStars={setGlobalStars} 
+          globalStars={spectateProfile ? (spectateProfile.stars ?? 0) : globalStars} 
+          setGlobalStars={spectateProfile ? () => {} : setGlobalStars} 
+          spectateMode={!!spectateProfile}
+          spectateFarmData={spectateProfile?.farmData}
         />
       )}
 

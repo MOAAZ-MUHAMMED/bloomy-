@@ -2316,8 +2316,8 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
         let opponentWon = false;
 
         const next = prev.map(o => {
-          const nextProg = Math.min(o.progress + o.speed, 100);
-          if (nextProg >= 100 && winningOpponentId === null) {
+          const nextProg = Math.min(o.progress + o.speed, 200);
+          if (nextProg >= 200 && winningOpponentId === null) {
             opponentWon = true;
             winningOpponentId = o.id;
           }
@@ -2353,8 +2353,8 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
 
     sfx.playPop();
     setPlayerProgress(prev => {
-      const next = Math.min(prev + 4, 100);
-      if (next >= 100 && winnerId === null) {
+      const next = Math.min(prev + 4, 200);
+      if (next >= 200 && winnerId === null) {
         setWinnerId(0);
         setTapRacerState("finished");
         
@@ -2574,7 +2574,16 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       const nextLvl = selectedLevelIndex + 1;
       setSelectedLevelIndex(nextLvl);
       
-      const difficulty = nextLvl <= 25 ? "level1" : nextLvl <= 50 ? "level2" : nextLvl <= 75 ? "level3" : "level4";
+      const profile = JSON.parse(localStorage.getItem("childProfile") || "null");
+      const age = profile?.age || "5";
+      let difficulty = "level1";
+      if (age === "1" || age === "2" || age === "3" || age === "4") {
+        difficulty = "level1";
+      } else if (age === "5" || age === "6" || age === "7") {
+        difficulty = nextLvl <= 50 ? "level2" : "level3";
+      } else {
+        difficulty = nextLvl <= 50 ? "level3" : "level4";
+      }
       setActiveDifficulty(difficulty as any);
       setEffectiveLevel(difficulty as any);
       
@@ -3734,15 +3743,20 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                 const x = 100 + idx * 180;
                 const y = 160 + Math.sin(idx * 0.7) * 90; // smooth sine wave
                 
-                // Determine difficulty
-                const difficulty = lvlNum <= 25 ? "level1" : lvlNum <= 50 ? "level2" : lvlNum <= 75 ? "level3" : "level4";
+                // Determine difficulty based on child age
+                const profile = JSON.parse(localStorage.getItem("childProfile") || "null");
+                const age = profile?.age || "5";
+                let difficulty = "level1";
+                if (age === "1" || age === "2" || age === "3" || age === "4") {
+                  difficulty = "level1";
+                } else if (age === "5" || age === "6" || age === "7") {
+                  difficulty = lvlNum <= 50 ? "level2" : "level3";
+                } else {
+                  difficulty = lvlNum <= 50 ? "level3" : "level4";
+                }
                 
-                // Lock system: Level 1 is always unlocked. Any other is unlocked if the previous has >= 1 star.
-                const isLocked = lvlNum === 1 ? false : (() => {
-                  const prevStarKey = `bloomly_stars_${activeGame}_level_${lvlNum - 1}`;
-                  const prevStars = parseInt(localStorage.getItem(prevStarKey) || "0", 10);
-                  return prevStars === 0;
-                })();
+                // All 100 levels are open and unlocked!
+                const isLocked = false;
 
                 return { x, y, label: `المستوى ${lvlNum}`, difficulty, lvlNum, isLocked };
               });
@@ -6022,7 +6036,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                   <div className="w-16 text-right font-black text-[10px] text-purple-800 truncate pl-1">{o.name}</div>
                   <div className="flex-grow h-6 bg-purple-100/50 rounded-full relative overflow-visible">
                     <motion.div
-                      animate={{ left: `${o.progress * 0.8}%` }}
+                      animate={{ left: `${(o.progress / 200) * 80}%` }}
                       transition={{ type: "spring", stiffness: 100, damping: 15 }}
                       className="absolute top-1/2 -translate-y-1/2 text-3xl select-none"
                     >
@@ -6034,14 +6048,39 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
 
               {/* Lane 4: Player */}
               <div className="relative h-12 flex items-center">
-                <div className="w-16 text-right font-black text-xs text-[#FF5A92] pl-1">أنت 🦁</div>
-                <div className="flex-grow h-8 bg-purple-200/70 border-2 border-[#FF5A92]/40 rounded-full relative overflow-visible shadow-inner">
+                <div className="w-16 text-right font-black text-xs text-[#FF5A92] pl-1">أنت 🌟</div>
+                <div className="flex-grow h-10 bg-purple-200/70 border-2 border-[#FF5A92]/40 rounded-full relative overflow-visible shadow-inner">
                   <motion.div
-                    animate={{ left: `${playerProgress * 0.8}%` }}
+                    animate={{ left: `${(playerProgress / 200) * 80}%` }}
                     transition={{ type: "spring", stiffness: 150, damping: 15 }}
-                    className="absolute top-1/2 -translate-y-1/2 text-4xl select-none drop-shadow-md"
+                    className="absolute top-1/2 -translate-y-1/2 select-none z-20 flex items-center justify-center"
+                    style={{ transform: "translateY(-50%)" }}
                   >
-                    {tapRacerTheme === "swim" ? "🏊🦁" : tapRacerTheme === "cycle" ? "🚴🦁" : tapRacerTheme === "run" ? "🏃🦁" : "🎈🦁"}
+                    {tapRacerTheme === "swim" && (
+                      <div className="relative flex flex-col items-center">
+                        <div className="absolute inset-x-[-12px] bottom-[-2px] h-3 bg-blue-500/80 rounded-b-md z-10 animate-pulse border-t border-blue-400" />
+                        <MascotCharacter pose="talking" className="w-10 h-10 relative z-0 translate-y-1.5" />
+                        <span className="text-lg absolute top-[-10px] right-[-10px]">🏊</span>
+                      </div>
+                    )}
+                    {tapRacerTheme === "cycle" && (
+                      <div className="relative flex flex-col items-center">
+                        <MascotCharacter pose="thinking" className="w-10 h-10" />
+                        <span className="text-xl mt-[-10px]">🚴</span>
+                      </div>
+                    )}
+                    {tapRacerTheme === "run" && (
+                      <div className="relative flex flex-col items-center">
+                        <MascotCharacter pose="victory" className="w-10 h-10 animate-bounce" />
+                        <span className="text-sm absolute bottom-[-4px] right-[-6px]">🏃</span>
+                      </div>
+                    )}
+                    {tapRacerTheme === "fly" && (
+                      <div className="relative flex flex-col items-center">
+                        <span className="text-xl mb-[-4px] animate-pulse">🎈</span>
+                        <MascotCharacter pose="talking" className="w-10 h-10" />
+                      </div>
+                    )}
                   </motion.div>
                 </div>
               </div>

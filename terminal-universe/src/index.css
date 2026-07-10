@@ -1,0 +1,185 @@
+@import "tailwindcss";
+
+@theme {
+  --color-terminal-bg: var(--terminal-bg);
+  --color-terminal-text: var(--terminal-text);
+  --color-terminal-glow: var(--terminal-glow);
+  --color-terminal-dim: var(--terminal-dim);
+  --font-mono: 'JetBrains Mono', 'Share Tech Mono', monospace;
+  --font-sans: 'Outfit', sans-serif;
+  
+  --animate-scanline: scanline 8s linear infinite;
+  --animate-flicker: flicker 0.15s infinite;
+  --animate-pulse-slow: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  
+  @keyframes scanline {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(100%);
+    }
+  }
+  @keyframes flicker {
+    0% {
+      opacity: 0.985;
+    }
+    50% {
+      opacity: 0.995;
+    }
+    100% {
+      opacity: 0.985;
+    }
+  }
+}
+
+/* Theme variables */
+:root {
+  /* Matrix Green is the default */
+  --terminal-bg: #050a06;
+  --terminal-text: #22c55e;
+  --terminal-glow: rgba(34, 197, 94, 0.25);
+  --terminal-dim: #15803d;
+  background-color: var(--terminal-bg);
+  color: var(--terminal-text);
+  font-family: 'JetBrains Mono', 'Share Tech Mono', monospace;
+}
+
+[data-theme='amber'] {
+  --terminal-bg: #0c0602;
+  --terminal-text: #f97316;
+  --terminal-glow: rgba(249, 115, 22, 0.25);
+  --terminal-dim: #c2410c;
+}
+
+[data-theme='cyberpunk'] {
+  --terminal-bg: #05010a;
+  --terminal-text: #06b6d4;
+  --terminal-glow: rgba(6, 182, 212, 0.25);
+  --terminal-dim: #0e7490;
+}
+
+[data-theme='cobalt'] {
+  --terminal-bg: #020617;
+  --terminal-text: #3b82f6;
+  --terminal-glow: rgba(59, 130, 246, 0.25);
+  --terminal-dim: #1d4ed8;
+}
+
+[data-theme='classic'] {
+  --terminal-bg: #0f172a;
+  --terminal-text: #f8fafc;
+  --terminal-glow: rgba(248, 250, 252, 0.15);
+  --terminal-dim: #64748b;
+}
+
+/* CRT Screen Effects */
+.crt-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.crt-container::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+  z-index: 20;
+  background-size: 100% 4px, 6px 100%;
+  pointer-events: none;
+}
+
+.crt-container::after {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: radial-gradient(circle, transparent 65%, rgba(0, 0, 0, 0.45) 100%);
+  z-index: 21;
+  pointer-events: none;
+}
+
+/* Scanline animation overlay */
+.scanline {
+  width: 100%;
+  height: 100px;
+  background: linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0%,
+    var(--terminal-glow) 10%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  opacity: 0.1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 22;
+  pointer-events: none;
+}
+
+/* Glassmorphism desktop GUI styles */
+.glass-panel {
+  background: rgba(var(--terminal-bg), 0.65);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(var(--terminal-text), 0.2);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-window {
+  background: rgba(10, 10, 15, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 40px 0 rgba(0, 0, 0, 0.6);
+}
+
+/* Glow styles for text and icons */
+.glow-text {
+  text-shadow: 0 0 4px var(--terminal-glow), 0 0 10px var(--terminal-glow);
+}
+
+.glow-border {
+  box-shadow: 0 0 10px var(--terminal-glow), inset 0 0 5px var(--terminal-glow);
+  border-color: var(--terminal-text);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--terminal-dim);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--terminal-text);
+}
+
+/* Custom cursor blink */
+@keyframes blink {
+  0%, 49% {
+    opacity: 1;
+  }
+  50%, 100% {
+    opacity: 0;
+  }
+}
+
+.cursor-blink {
+  animation: blink 1s step-start infinite;
+}
+
+/* Selection */
+::selection {
+  background: var(--terminal-text);
+  color: var(--terminal-bg);
+}

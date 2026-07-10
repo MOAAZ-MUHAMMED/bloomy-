@@ -14,6 +14,7 @@ export interface IStorage {
   getChildProfiles(): Promise<ChildProfile[]>;
   createOrUpdateChildProfile(profile: any): Promise<ChildProfile>;
   updateChildStars(id: string, stars: number): Promise<void>;
+  updateChildFarmData(id: string, farmData: string): Promise<void>;
   deleteChildProfile(id: string): Promise<void>;
 }
 
@@ -83,7 +84,8 @@ export class FileStorage implements IStorage {
       phone: profile.phone,
       level: profile.level,
       country: profile.country || "غير محدد",
-      stars: profile.stars ?? existing?.stars ?? 0
+      stars: profile.stars ?? existing?.stars ?? 0,
+      farmData: profile.farmData ?? existing?.farmData ?? null
     };
     this.childProfiles.set(profile.id, updated);
     this.saveProfiles();
@@ -94,6 +96,15 @@ export class FileStorage implements IStorage {
     const existing = this.childProfiles.get(id);
     if (existing) {
       existing.stars = stars;
+      this.childProfiles.set(id, existing);
+      this.saveProfiles();
+    }
+  }
+
+  async updateChildFarmData(id: string, farmData: string): Promise<void> {
+    const existing = this.childProfiles.get(id);
+    if (existing) {
+      existing.farmData = farmData;
       this.childProfiles.set(id, existing);
       this.saveProfiles();
     }
@@ -144,7 +155,8 @@ export class DatabaseStorage implements IStorage {
           phone: profile.phone,
           level: profile.level,
           country: profile.country || existing.country,
-          stars: profile.stars ?? existing.stars
+          stars: profile.stars ?? existing.stars,
+          farmData: profile.farmData ?? existing.farmData
         })
         .where(eq(childProfiles.id, profile.id))
         .returning();
@@ -160,7 +172,8 @@ export class DatabaseStorage implements IStorage {
           phone: profile.phone,
           level: profile.level,
           country: profile.country || "غير محدد",
-          stars: profile.stars ?? 0
+          stars: profile.stars ?? 0,
+          farmData: profile.farmData ?? null
         })
         .returning();
       return inserted;
@@ -172,6 +185,14 @@ export class DatabaseStorage implements IStorage {
     await db
       .update(childProfiles)
       .set({ stars })
+      .where(eq(childProfiles.id, id));
+  }
+
+  async updateChildFarmData(id: string, farmData: string): Promise<void> {
+    if (!db) throw new Error("Database not connected");
+    await db
+      .update(childProfiles)
+      .set({ farmData })
       .where(eq(childProfiles.id, id));
   }
 
