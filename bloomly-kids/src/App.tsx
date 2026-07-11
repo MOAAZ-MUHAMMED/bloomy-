@@ -17,7 +17,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function App() {
-  const [showIntro, setShowIntro] = useState(true);
+  const [showIntro, setShowIntro] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showCharactersView, setShowCharactersView] = useState(false);
 

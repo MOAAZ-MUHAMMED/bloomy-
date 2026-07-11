@@ -940,20 +940,20 @@ const PADDOCK_LAYOUT: Record<PaddockType, {
   bg: string; border: string; textColor: string;
   borderRadius: string;
 }> = {
-  duck:    { left: 100,  top: 120,  width: 680, height: 480, bg: "from-[#93C5FD] to-[#2563EB]",  border: "border-[#1E3A8A] shadow-[0_8px_0_0_#1E3A8A]", textColor: "text-blue-900",    borderRadius: "rounded-[60px]" },
-  bird:    { left: 920,  top: 120,  width: 600, height: 460, bg: "from-[#E8F8F5] to-[#A3E4D7]",  border: "border-[#0E6251] shadow-[0_8px_0_0_#0E6251]", textColor: "text-teal-900",    borderRadius: "rounded-[36px]" },
-  rabbit:  { left: 1620, top: 120,  width: 560, height: 460, bg: "from-[#E2F0D9] to-[#C5E1A5]",  border: "border-[#33691E] shadow-[0_8px_0_0_#33691E]", textColor: "text-green-950",   borderRadius: "rounded-[32px]" },
-  bee:     { left: 2280, top: 120,  width: 560, height: 460, bg: "from-[#FEF3C7] to-[#FCD34D]",  border: "border-[#78350F] shadow-[0_8px_0_0_#78350F]", textColor: "text-amber-950",   borderRadius: "rounded-[36px]" },
-  sheep:   { left: 100,  top: 800,  width: 640, height: 500, bg: "from-[#E8F5E9] to-[#C8E6C9]",  border: "border-[#1B5E20] shadow-[0_8px_0_0_#1B5E20]", textColor: "text-green-900",   borderRadius: "rounded-[40px]" },
-  pet:     { left: 2040, top: 800,  width: 720, height: 520, bg: "from-[#FFF3E0] to-[#FFE0B2]",  border: "border-[#E65100] shadow-[0_8px_0_0_#E65100]", textColor: "text-orange-950",  borderRadius: "rounded-[40px]" },
-  fish:    { left: 100,  top: 1460, width: 680, height: 480, bg: "from-[#22D3EE] to-[#0891B2]",  border: "border-[#164E63] shadow-[0_8px_0_0_#164E63]", textColor: "text-cyan-950",    borderRadius: "rounded-[60px]" },
-  cow:     { left: 920,  top: 1800, width: 800, height: 560, bg: "from-[#FEF9C3] to-[#F0FDF4]",  border: "border-[#3F6212] shadow-[0_8px_0_0_#3F6212]", textColor: "text-lime-950",    borderRadius: "rounded-[40px]" },
-  monkey:  { left: 1820, top: 1460, width: 680, height: 480, bg: "from-[#FFEBCD] to-[#CD853F]",  border: "border-[#8B4513] shadow-[0_8px_0_0_#8B4513]", textColor: "text-amber-950",   borderRadius: "rounded-[40px]" },
-  chicken: { left: 2600, top: 1460, width: 640, height: 460, bg: "from-[#FFF5F5] to-[#FEB2B2]",  border: "border-[#9B2C2C] shadow-[0_8px_0_0_#9B2C2C]", textColor: "text-red-950",     borderRadius: "rounded-[36px]" },
-  horse:   { left: 1820, top: 2000, width: 800, height: 540, bg: "from-[#E6F4EA] to-[#A8DADC]",  border: "border-[#457B9D] shadow-[0_8px_0_0_#457B9D]", textColor: "text-sky-950",     borderRadius: "rounded-[40px]" },
-  goat:    { left: 2720, top: 2000, width: 680, height: 480, bg: "from-[#F3F4F6] to-[#D1D5DB]",  border: "border-[#374151] shadow-[0_8px_0_0_#374151]", textColor: "text-gray-900",    borderRadius: "rounded-[32px]" },
-  camel:   { left: 100,  top: 2000, width: 680, height: 500, bg: "from-[#FEF9C3] to-[#D97706]",  border: "border-[#78350F] shadow-[0_8px_0_0_#78350F]", textColor: "text-yellow-950",  borderRadius: "rounded-[40px]" },
-  donkey:  { left: 900,  top: 1460, width: 680, height: 480, bg: "from-[#ECEFF1] to-[#CFD8DC]",  border: "border-[#455A64] shadow-[0_8px_0_0_#455A64]", textColor: "text-blue-gray-900",borderRadius: "rounded-[36px]" },
+  duck:    { left: 120,  top: 120,  width: 660, height: 470, bg: "from-[#93C5FD] to-[#2563EB]",  border: "border-[#1E3A8A] shadow-[0_8px_0_0_#1E3A8A]", textColor: "text-blue-900",    borderRadius: "rounded-[60px]" },
+  bird:    { left: 1050, top: 120,  width: 720, height: 480, bg: "from-[#E8F8F5] to-[#A3E4D7]",  border: "border-[#0E6251] shadow-[0_8px_0_0_#0E6251]", textColor: "text-teal-900",    borderRadius: "rounded-[36px]" },
+  rabbit:  { left: 2300, top: 120,  width: 550, height: 460, bg: "from-[#E2F0D9] to-[#C5E1A5]",  border: "border-[#33691E] shadow-[0_8px_0_0_#33691E]", textColor: "text-green-950",   borderRadius: "rounded-[32px]" },
+  bee:     { left: 2930, top: 140,  width: 520, height: 440, bg: "from-[#FEF3C7] to-[#FCD34D]",  border: "border-[#78350F] shadow-[0_8px_0_0_#78350F]", textColor: "text-amber-950",   borderRadius: "rounded-[36px]" },
+  sheep:   { left: 100,  top: 680,  width: 640, height: 460, bg: "from-[#E8F5E9] to-[#C8E6C9]",  border: "border-[#1B5E20] shadow-[0_8px_0_0_#1B5E20]", textColor: "text-green-900",   borderRadius: "rounded-[40px]" },
+  pet:     { left: 2280, top: 660,  width: 580, height: 470, bg: "from-[#FFF3E0] to-[#FFE0B2]",  border: "border-[#E65100] shadow-[0_8px_0_0_#E65100]", textColor: "text-orange-950",  borderRadius: "rounded-[40px]" },
+  fish:    { left: 140,  top: 1230, width: 620, height: 480, bg: "from-[#22D3EE] to-[#0891B2]",  border: "border-[#164E63] shadow-[0_8px_0_0_#164E63]", textColor: "text-cyan-950",    borderRadius: "rounded-[60px]" },
+  cow:     { left: 1000, top: 1850, width: 780, height: 520, bg: "from-[#FEF9C3] to-[#F0FDF4]",  border: "border-[#3F6212] shadow-[0_8px_0_0_#3F6212]", textColor: "text-lime-950",    borderRadius: "rounded-[40px]" },
+  monkey:  { left: 2930, top: 680,  width: 540, height: 460, bg: "from-[#FFEBCD] to-[#CD853F]",  border: "border-[#8B4513] shadow-[0_8px_0_0_#8B4513]", textColor: "text-amber-950",   borderRadius: "rounded-[40px]" },
+  chicken: { left: 2320, top: 1220, width: 530, height: 450, bg: "from-[#FFF5F5] to-[#FEB2B2]",  border: "border-[#9B2C2C] shadow-[0_8px_0_0_#9B2C2C]", textColor: "text-red-950",     borderRadius: "rounded-[36px]" },
+  horse:   { left: 2930, top: 1240, width: 560, height: 470, bg: "from-[#E6F4EA] to-[#A8DADC]",  border: "border-[#457B9D] shadow-[0_8px_0_0_#457B9D]", textColor: "text-sky-950",     borderRadius: "rounded-[40px]" },
+  goat:    { left: 2290, top: 1780, width: 570, height: 480, bg: "from-[#F3F4F6] to-[#D1D5DB]",  border: "border-[#374151] shadow-[0_8px_0_0_#374151]", textColor: "text-gray-900",    borderRadius: "rounded-[32px]" },
+  camel:   { left: 120,  top: 1800, width: 650, height: 490, bg: "from-[#FEF9C3] to-[#D97706]",  border: "border-[#78350F] shadow-[0_8px_0_0_#78350F]", textColor: "text-yellow-950",  borderRadius: "rounded-[40px]" },
+  donkey:  { left: 2910, top: 1800, width: 530, height: 460, bg: "from-[#ECEFF1] to-[#CFD8DC]",  border: "border-[#455A64] shadow-[0_8px_0_0_#455A64]", textColor: "text-blue-gray-900",borderRadius: "rounded-[36px]" },
 };
 
 interface GardenPlot {
