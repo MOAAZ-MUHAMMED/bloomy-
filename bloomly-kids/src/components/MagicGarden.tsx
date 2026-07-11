@@ -984,7 +984,7 @@ interface MagicGardenProps {
   spectateFarmData?: string;
 }
 
-const uprightStyle = { transform: "rotateZ(-45deg) rotateX(-35deg) translateZ(0)", transformOrigin: "bottom center" };
+const uprightStyle = { transform: "none", transformOrigin: "bottom center" };
 
 export default function MagicGarden({ onClose, globalStars, setGlobalStars, spectateMode = false, spectateFarmData }: MagicGardenProps) {
   // ─── UI / System States ─────────────────────────────────────────
@@ -1447,7 +1447,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
           <div 
             className={`w-[3600px] h-[2600px] p-8 overflow-hidden select-none transition-all duration-1000 ${mapBg}`}
             style={{
-              transform: `scale(${zoomScale}) rotateX(35deg) rotateZ(-45deg)`,
+              transform: `scale(${zoomScale}) rotateX(0deg) rotateZ(0deg)`,
               transformOrigin: "top left",
               position: "absolute",
               top: 0,
