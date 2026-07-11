@@ -54,21 +54,24 @@ export default function MascotCharacter({ pose, className = "" }: MascotCharacte
       };
 
   return (
-    <div className={`relative overflow-visible flex items-center justify-center select-none ${className}`}>
+    <div className={`relative overflow-visible flex items-center justify-center select-none ${className}`} style={{ overflow: 'visible' }}>
       {/* 100% Vector SVG Mascot Boy */}
       <motion.svg
-        viewBox="0 0 160 220"
+        viewBox="-20 -20 200 260"
         className="w-full h-full filter drop-shadow-[0_6px_8px_rgba(0,0,0,0.15)]"
-        animate={{
+        animate={pose === "victory" ? {
+          y: [0, -15, 0],
+          scaleY: [1, 1.04, 1]
+        } : {
           y: [0, -3, 0],
           scaleY: [1, 1.02, 1]
         }}
         transition={{
           repeat: Infinity,
-          duration: 3,
+          duration: pose === "victory" ? 1.5 : 3,
           ease: "easeInOut"
         }}
-        style={{ transformOrigin: "bottom center" }}
+        style={{ transformOrigin: "bottom center", overflow: "visible" }}
       >
         {/* Left Leg */}
         <rect

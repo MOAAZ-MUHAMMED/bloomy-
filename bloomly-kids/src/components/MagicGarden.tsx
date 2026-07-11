@@ -923,22 +923,16 @@ export const PADDOCK_DATA: Record<PaddockType, PaddockConfig> = {
 
 const ALL_PADDOCK_TYPES: PaddockType[] = ["sheep", "rabbit", "duck", "pet", "cow", "bee", "fish", "bird", "monkey", "chicken", "horse", "goat", "camel", "donkey"];
 
-// Upgraded Bounds for Double Map (3600x2600 px)
-const PADDOCK_BOUNDS: Record<PaddockType, { minX: number; maxX: number; minY: number; maxY: number }> = {
-  duck:    { minX: 20, maxX: 640, minY: 20, maxY: 440 },
-  bird:    { minX: 20, maxX: 560, minY: 20, maxY: 420 },
-  rabbit:  { minX: 20, maxX: 520, minY: 20, maxY: 420 },
-  bee:     { minX: 20, maxX: 520, minY: 20, maxY: 420 },
-  sheep:   { minX: 20, maxX: 600, minY: 20, maxY: 460 },
-  pet:     { minX: 20, maxX: 680, minY: 20, maxY: 480 },
-  fish:    { minX: 20, maxX: 640, minY: 20, maxY: 440 },
-  cow:     { minX: 20, maxX: 760, minY: 20, maxY: 520 },
-  monkey:  { minX: 20, maxX: 640, minY: 20, maxY: 440 },
-  chicken: { minX: 20, maxX: 600, minY: 20, maxY: 420 },
-  horse:   { minX: 20, maxX: 760, minY: 20, maxY: 520 },
-  goat:    { minX: 20, maxX: 600, minY: 20, maxY: 440 },
-  camel:   { minX: 20, maxX: 760, minY: 20, maxY: 520 },
-  donkey:  { minX: 20, maxX: 640, minY: 20, maxY: 460 },
+// Animal movement bounds - RELATIVE to paddock internal area (with safety margins)
+// Animals are w-14 h-14 (~56px), so we subtract 80px from each edge for safety
+const getPaddockBounds = (type: PaddockType) => {
+  const layout = PADDOCK_LAYOUT[type];
+  return {
+    minX: 40,
+    maxX: layout.width - 120,
+    minY: 60,
+    maxY: layout.height - 120,
+  };
 };
 
 const PADDOCK_LAYOUT: Record<PaddockType, {
@@ -1101,7 +1095,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
   // Animal Wandering Loop (with constraints)
   useEffect(() => {
     const makeAnimals = (type: PaddockType, count: number) => {
-      const bounds = PADDOCK_BOUNDS[type] || { minX: 20, maxX: 200, minY: 20, maxY: 160 };
+      const bounds = getPaddockBounds(type);
       const rangeX = bounds.maxX - bounds.minX;
       const rangeY = bounds.maxY - bounds.minY;
       return Array.from({ length: count }).map((_, i) => ({
@@ -1123,7 +1117,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
   useEffect(() => {
     const wanderInterval = setInterval(() => {
       const updateWander = (type: PaddockType, list: AnimalState[]) => {
-        const bounds = PADDOCK_BOUNDS[type] || { minX: 20, maxX: 200, minY: 20, maxY: 160 };
+        const bounds = getPaddockBounds(type);
         return list.map(ani => {
           if (Math.random() < 0.3) return { ...ani, isEating: true };
           return {
@@ -1345,12 +1339,12 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
 
   const outerBg = timeOfDay === "day" ? "bg-[#DCFCE7]" : timeOfDay === "sunset" ? "bg-[#FFE8CC]" : "bg-[#0f172a]";
   const mapBg = timeOfDay === "day"
-    ? "bg-gradient-to-br from-[#A2E3A2] via-[#B2EBB2] to-[#AEE8AE]"
+    ? "bg-gradient-to-br from-[#6ABF69] via-[#7ECB7E] to-[#5DB85D]"
     : timeOfDay === "sunset"
-    ? "bg-gradient-to-br from-[#FFD4A2] via-[#FFB088] to-[#C8E6C9]"
-    : "bg-gradient-to-br from-[#1a2a3a] via-[#2a3a4a] to-[#1a3a2a]";
-  const roadColor = timeOfDay === "night" ? "bg-[#8B7355]" : "bg-[#E1C699]";
-  const roadBorder = timeOfDay === "night" ? "border-[#6B5335]/40" : "border-[#8C6D47]/40";
+    ? "bg-gradient-to-br from-[#E8B878] via-[#D4956A] to-[#8CB87A]"
+    : "bg-gradient-to-br from-[#1a2a3a] via-[#1e3040] to-[#1a3a2a]";
+  const roadColor = timeOfDay === "night" ? "bg-[#6B5335]" : "bg-[#C4A265]";
+  const roadBorder = timeOfDay === "night" ? "border-[#5A4025]/60" : "border-[#8C6D47]/60";
 
   const renderAnimalSVG = (type: PaddockType, animal: AnimalState, adult: boolean) => {
     const size = "w-14 h-14";
@@ -1453,19 +1447,34 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
           <div 
             className={`w-[3600px] h-[2600px] p-8 overflow-hidden select-none transition-all duration-1000 ${mapBg}`}
             style={{
-              transform: `scale(${zoomScale})`,
+              transform: `scale(${zoomScale}) rotateX(60deg) rotateZ(-45deg)`,
               transformOrigin: "top left",
               position: "absolute",
               top: 0,
-              left: 0
+              left: 0,
+              transformStyle: "preserve-3d"
             }}
           >
 
             {/* Roads */}
-            <div className={`absolute top-[680px] left-[100px] w-[3400px] h-12 ${roadColor} border-y-3 border-dashed ${roadBorder} z-0 transition-colors duration-1000`} />
-            <div className={`absolute top-[160px] left-[840px] w-12 h-[2200px] ${roadColor} border-x-3 border-dashed ${roadBorder} z-0 transition-colors duration-1000`} />
-            <div className={`absolute top-[1360px] left-[100px] w-[3400px] h-12 ${roadColor} border-y-3 border-dashed ${roadBorder} z-0 transition-colors duration-1000`} />
-            <div className={`absolute top-[2040px] left-[100px] w-[3400px] h-12 ${roadColor} border-y-3 border-dashed ${roadBorder} z-0 transition-colors duration-1000`} />
+            <div className={`absolute top-[680px] left-[100px] w-[3400px] h-12 ${roadColor} border-y-3 border-dashed ${roadBorder} z-0 transition-colors duration-1000 shadow-[inset_0_2px_10px_rgba(0,0,0,0.1)]`} />
+            <div className={`absolute top-[160px] left-[840px] w-12 h-[2200px] ${roadColor} border-x-3 border-dashed ${roadBorder} z-0 transition-colors duration-1000 shadow-[inset_0_2px_10px_rgba(0,0,0,0.1)]`} />
+            <div className={`absolute top-[1360px] left-[100px] w-[3400px] h-12 ${roadColor} border-y-3 border-dashed ${roadBorder} z-0 transition-colors duration-1000 shadow-[inset_0_2px_10px_rgba(0,0,0,0.1)]`} />
+            <div className={`absolute top-[2040px] left-[100px] w-[3400px] h-12 ${roadColor} border-y-3 border-dashed ${roadBorder} z-0 transition-colors duration-1000 shadow-[inset_0_2px_10px_rgba(0,0,0,0.1)]`} />
+
+            {/* Premium River */}
+            <div className="absolute top-0 left-[2000px] w-48 h-[2600px] bg-gradient-to-b from-blue-400 via-cyan-400 to-blue-500 opacity-80 z-0 border-x-4 border-blue-300 shadow-[0_0_20px_rgba(59,130,246,0.4)]" style={{ filter: "drop-shadow(0 0 10px rgba(0,0,0,0.1))" }}>
+              <div className="w-full h-full opacity-30 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+PHBhdGggZD0iTTAgMjAgQzEwIDEwIDMwIDEwIDQwIDIwIiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMiIvPjwvc3ZnPg==')] bg-repeat animate-[slide_10s_linear_infinite]" />
+            </div>
+            {/* River Bridge */}
+            <div className="absolute top-[660px] left-[1980px] w-[240px] h-[52px] bg-amber-800 border-4 border-amber-950 rounded-md z-0 shadow-xl" />
+            <div className="absolute top-[1340px] left-[1980px] w-[240px] h-[52px] bg-amber-800 border-4 border-amber-950 rounded-md z-0 shadow-xl" />
+            <div className="absolute top-[2020px] left-[1980px] w-[240px] h-[52px] bg-amber-800 border-4 border-amber-950 rounded-md z-0 shadow-xl" />
+
+            {/* Premium Perimeter Wooden Fence */}
+            <div className="absolute inset-8 border-[12px] border-amber-800/80 rounded-[80px] pointer-events-none z-10 shadow-[0_0_0_4px_rgba(69,26,3,0.5),inset_0_0_0_4px_rgba(69,26,3,0.5)]">
+               <div className="absolute inset-0 border-[8px] border-dashed border-amber-900/60 rounded-[68px]" />
+            </div>
 
             {/* Twinkling Stars (Night) */}
             {timeOfDay === "night" && (
@@ -1509,7 +1518,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
                     synth.playPop(); 
                     setSelectedPaddockToBuy(type); 
                   }}
-                  className={`absolute bg-gradient-to-br ${layout.bg} ${layout.borderRadius} border-4 ${layout.border} flex flex-col justify-between p-4 overflow-visible z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all`}
+                  className={`absolute bg-gradient-to-br ${layout.bg} ${layout.borderRadius} border-[10px] ${layout.border} flex flex-col justify-between p-4 overflow-visible z-10 cursor-pointer hover:brightness-105 active:scale-[0.98] transition-all shadow-xl`}
                   style={{
                     left: `${layout.left}px`,
                     top: `${layout.top}px`,
@@ -1521,9 +1530,9 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
                     {config.emoji} {config.name} ({count}/24)
                   </div>
                   
-                  {/* Fence border decoration if unlocked */}
+                  {/* Premium Wooden Fence border decoration if unlocked */}
                   {unlockedFences[type] && (
-                    <div className="absolute inset-0 border-[6px] border-amber-800/90 border-dashed rounded-[inherit] pointer-events-none z-20 shadow-[inset_0_0_8px_rgba(0,0,0,0.2)]" />
+                    <div className="absolute inset-[-14px] border-[12px] border-[#654321]/90 rounded-[inherit] pointer-events-none z-20 shadow-[0_4px_8px_rgba(0,0,0,0.3)] border-double" />
                   )}
 
                   {/* Food dish */}

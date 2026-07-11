@@ -850,6 +850,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
   
   // Game Level Map & Loading States
   const [showLevelMap, setShowLevelMap] = useState(false);
+  const [showDifficultySelect, setShowDifficultySelect] = useState(false);
   const [isLoadingGame, setIsLoadingGame] = useState(false);
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [loadingGameName, setLoadingGameName] = useState("");
@@ -859,10 +860,11 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
 
   const [effectiveLevel, setEffectiveLevel] = useState<"level1" | "level2" | "level3" | "level4">("level1");
   
-  // Find current active level (first level with 0 stars)
+  // Find current active level (first level with 0 stars) for the currently selected difficulty
   const getActiveLevelNumber = () => {
     for (let l = 1; l <= 100; l++) {
-      const starKey = `bloomly_stars_${activeGame}_level_${l}`;
+      const diff = activeDifficulty;
+      const starKey = `bloomly_stars_${activeGame}_${diff}_level_${l}`;
       const stars = parseInt(localStorage.getItem(starKey) || "0", 10);
       if (stars === 0) {
         return l;
@@ -983,7 +985,11 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
           clearInterval(interval);
           setIsLoadingGame(false);
           setActiveGame(gameName);
-          setShowLevelMap(gameName !== "quran" && gameName !== "stories");
+          if (gameName !== "quran" && gameName !== "stories") {
+            setShowDifficultySelect(true);
+          } else {
+            setShowLevelMap(false);
+          }
           return 100;
         }
         return prev + 5;
@@ -2438,9 +2444,9 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
     setShowVictoryModal(true);
     sfx.playVictory();
     
-    // Save level stars to map progress
+    // Save level stars to map progress (includes difficulty in key)
     if (selectedLevelIndex !== null) {
-      const starKey = `bloomly_stars_${activeGame}_level_${selectedLevelIndex}`;
+      const starKey = `bloomly_stars_${activeGame}_${activeDifficulty}_level_${selectedLevelIndex}`;
       const calculatedStars = starsEarnedThisSession >= 5 ? 3 : starsEarnedThisSession >= 3 ? 2 : 1;
       const currentSaved = parseInt(localStorage.getItem(starKey) || "0", 10);
       if (calculatedStars > currentSaved) {
@@ -3677,7 +3683,46 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       )}
 
       {/* 3. Themed Level Map Screen */}
-      {activeGame !== "menu" && showLevelMap && (() => {
+      {/* Difficulty Selection Screen */}
+      {activeGame !== "menu" && showDifficultySelect && (
+        <div className="relative w-full max-w-4xl mx-auto rounded-[32px] border-4 border-[#4D2B82] bg-gradient-to-br from-[#8E2DE2] to-[#4A00E0] p-8 shadow-2xl flex flex-col items-center z-10 select-none">
+          {/* Header */}
+          <div className="w-full flex justify-between items-center mb-8 border-b-2 border-white/20 pb-4">
+             <button onClick={() => { setShowDifficultySelect(false); setActiveGame("menu"); unlockOrientation(); }} className="btn-bubbly-secondary text-sm py-2 px-5 text-[#4D2B82] bg-white rounded-full flex items-center gap-1 cursor-pointer border-2 border-[#4D2B82] shadow-[0_4px_0_0_#4D2B82] active:translate-y-1 active:shadow-[0_0_0_0_#4D2B82] transition-all">
+                <span>🏠 العودة للقائمة</span>
+             </button>
+             <h2 className="text-2xl sm:text-3xl font-black text-yellow-300">اختر مستوى الصعوبة</h2>
+             <SproutMascot className="w-12 h-12 hidden sm:block" state="happy" />
+          </div>
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-2xl mx-auto">
+            {[
+              { id: "level1", title: "المستوى الأول", desc: "أسهل تحديات (1-4 سنوات)", color: "bg-emerald-400 border-emerald-600", shadow: "shadow-[0_6px_0_0_#059669]" },
+              { id: "level2", title: "المستوى الثاني", desc: "تحديات متوسطة (5-7 سنوات)", color: "bg-blue-400 border-blue-600", shadow: "shadow-[0_6px_0_0_#2563EB]" },
+              { id: "level3", title: "المستوى الثالث", desc: "تحديات متقدمة (8+ سنوات)", color: "bg-amber-400 border-amber-600", shadow: "shadow-[0_6px_0_0_#D97706]" },
+              { id: "level4", title: "المستوى الرابع", desc: "تحدي الأبطال الخبراء 👑", color: "bg-red-400 border-red-600", shadow: "shadow-[0_6px_0_0_#DC2626]" }
+            ].map((diff) => (
+              <button 
+                key={diff.id}
+                onClick={() => {
+                  setActiveDifficulty(diff.id as any);
+                  setEffectiveLevel(diff.id as any); // Sync effective level
+                  setShowDifficultySelect(false);
+                  setShowLevelMap(true);
+                }}
+                className={`relative overflow-hidden flex flex-col items-center justify-center p-6 rounded-2xl border-4 ${diff.color} ${diff.shadow} text-white cursor-pointer transition-all active:translate-y-1 active:shadow-[0_2px_0_0_rgba(0,0,0,0.3)] hover:brightness-110 group`}
+              >
+                <span className="text-2xl font-black mb-2">{diff.title}</span>
+                <span className="text-sm font-bold bg-black/20 px-3 py-1 rounded-full">{diff.desc}</span>
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* 100-Level Map Screen */}
+      {activeGame !== "menu" && showLevelMap && !showDifficultySelect && (() => {
         const theme = getMapTheme();
         return (
           <div className={`relative min-h-[500px] w-full max-w-4xl mx-auto rounded-[32px] border-4 border-[#4D2B82] ${theme.bgClass} p-8 overflow-hidden shadow-2xl flex flex-col items-center justify-between text-white font-extrabold select-none z-10`}>
@@ -3708,12 +3753,11 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
               <button 
                 onClick={() => {
                   setShowLevelMap(false);
-                  setActiveGame("menu");
-                  unlockOrientation();
+                  setShowDifficultySelect(true);
                 }}
                 className="btn-bubbly-secondary text-sm py-2 px-5 text-[#4D2B82] bg-white rounded-full flex items-center gap-1 cursor-pointer border-2 border-[#4D2B82] shadow-[0_4px_0_0_#4D2B82] active:translate-y-1 active:shadow-[0_0_0_0_#4D2B82] transition-all"
               >
-                <span>🏠 العودة للقائمة</span>
+                <span>🔙 رجوع</span>
               </button>
 
               <div className="text-center flex-1">
@@ -3743,20 +3787,15 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                 const x = 100 + idx * 180;
                 const y = 160 + Math.sin(idx * 0.7) * 90; // smooth sine wave
                 
-                // Determine difficulty based on child age
-                const profile = JSON.parse(localStorage.getItem("childProfile") || "null");
-                const age = profile?.age || "5";
-                let difficulty = "level1";
-                if (age === "1" || age === "2" || age === "3" || age === "4") {
-                  difficulty = "level1";
-                } else if (age === "5" || age === "6" || age === "7") {
-                  difficulty = lvlNum <= 50 ? "level2" : "level3";
-                } else {
-                  difficulty = lvlNum <= 50 ? "level3" : "level4";
-                }
+                // Difficulty is directly taken from the selected activeDifficulty
+                const difficulty = activeDifficulty;
                 
-                // All 100 levels are open and unlocked!
-                const isLocked = false;
+                // Progressive lock: Level 1 open, rest need previous level stars
+                const isLocked = lvlNum === 1 ? false : (() => {
+                  const prevStarKey = `bloomly_stars_${activeGame}_${difficulty}_level_${lvlNum - 1}`;
+                  const prevStars = parseInt(localStorage.getItem(prevStarKey) || "0", 10);
+                  return prevStars === 0;
+                })();
 
                 return { x, y, label: `المستوى ${lvlNum}`, difficulty, lvlNum, isLocked };
               });
@@ -3819,7 +3858,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
 
                       {/* Nodes mapping */}
                       {levels.map((node, idx) => {
-                        const starKey = `bloomly_stars_${activeGame}_level_${node.lvlNum}`;
+                        const starKey = `bloomly_stars_${activeGame}_${node.difficulty}_level_${node.lvlNum}`;
                         const stars = parseInt(localStorage.getItem(starKey) || "0", 10);
                         
                         return (
@@ -6667,6 +6706,20 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                     className="flex-1 btn-bubbly-primary text-sm py-3"
                   >
                     الدور التالي 🚀
+                  </button>
+                  <button
+                    onClick={() => {
+                      try {
+                        if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+                      } catch (e) {}
+                      setShowVictoryModal(false);
+                      setVictoryBalloons([]);
+                      setConfetti([]);
+                      setShowLevelMap(true);
+                    }}
+                    className="flex-1 bg-white hover:bg-slate-50 text-[#4D2B82] border-3 border-[#4D2B82] shadow-[0_4px_0_0_#2D1B69] px-4 py-3 rounded-full font-black text-sm cursor-pointer transition-all active:translate-y-[2px] active:shadow-[0_2px_0_0_#2D1B69]"
+                  >
+                    🗺️ خريطة المستويات
                   </button>
                   <button
                     onClick={() => {
