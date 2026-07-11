@@ -17,7 +17,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function App() {
-  const [showIntro, setShowIntro] = useState(false);
+  const [showIntro, setShowIntro] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showCharactersView, setShowCharactersView] = useState(false);
 
@@ -1142,91 +1142,26 @@ export default function App() {
         )}
       </header>
 
-      {/* 2. Hero Section */}
-      <section className="container mx-auto px-4 pt-12 md:pt-20 pb-12 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+      {/* 2. Farm Interactive Section (At the top now) */}
+      <section className="container mx-auto px-4 pt-12 md:pt-20 pb-8 relative z-10 flex flex-col items-center justify-center">
+        <div className="flex flex-col items-center justify-center gap-6 relative max-w-2xl w-full">
+          {/* Little background decor */}
+          <div className="absolute -top-6 -right-6 text-yellow-300 text-4xl animate-pulse">✨</div>
+          <div className="absolute -bottom-6 -left-6 text-purple-300 text-4xl animate-float">🌸</div>
           
-          {/* Left Text Info Column */}
-          <div className="lg:col-span-7 flex flex-col items-start text-right space-y-6">
-            
-            {/* Playful Tag */}
-            <div className="bg-[#FFECA1] border-2 border-[#D97706] text-[#B45309] font-extrabold text-sm px-4 py-1.5 rounded-full shadow-sm animate-bounce-slow flex items-center gap-1.5 self-start">
-              <span>🐞</span>
-              <span>للأطفال الأذكياء من عمر 4 إلى 12 سنة</span>
-            </div>
+          <InteractiveGarden />
 
-            {/* Main Bouncy Heading */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-[#4D2B82] leading-[1.2] tracking-tight">
-              مغامرات صغيرة.
-              <span className="block mt-2">
-                عقول{" "}
-                <span className="text-[#FF7A00] highlight-underline">
-                  تزهر بالعلم!
-                </span>{" "}
-                🌱
-              </span>
-            </h1>
-
-            {/* Description Paragraph */}
-            <p className="text-lg sm:text-xl text-[#6B4E9E] font-medium leading-relaxed max-w-xl">
-              بلومي يحوّل تعلّم القراءة والحساب والقرآن الكريم إلى مغامرات حديقة ممتعة يعشقها الأطفال - صُمم بواسطة معلمين وخبراء، خالٍ تماماً من الإعلانات، ولطيف على وقت الشاشة.
-            </p>
-
-            {/* CTA Action Buttons */}
-            <div className="flex flex-wrap gap-4 w-full sm:w-auto pt-2">
-              <button 
-                onClick={scrollToGames}
-                className="btn-bubbly-primary text-lg px-8 py-4 w-full sm:w-auto"
-              >
-                ابدأ رحلة اللعب مجاناً 🚀
-              </button>
-              <button 
-                onClick={scrollToGames}
-                className="btn-bubbly-secondary text-lg px-8 py-4 w-full sm:w-auto"
-              >
-                جرب ألعاب بلومي السحرية 👀
-              </button>
-            </div>
-
-            {/* Trust Badges */}
-            <div className="flex flex-wrap items-center gap-6 pt-6 text-sm font-bold text-[#6B4E9E]">
-              <div className="flex items-center gap-1.5">
-                <span className="text-yellow-400 text-lg">★</span>
-                <span>4.9 في متاجر التطبيقات</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span>👥</span>
-                <span>محبوب من 240,000+ عائلة</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <span>🚫</span>
-                <span>بيئة آمنة بدون إعلانات</span>
-              </div>
-            </div>
-
-          </div>
-
-          {/* Right Interactive Garden Column */}
-          <div className="lg:col-span-5 flex flex-col items-center justify-center gap-6 relative">
-            {/* Little background decor */}
-            <div className="absolute -top-6 -right-6 text-yellow-300 text-3xl animate-pulse">✨</div>
-            <div className="absolute -bottom-6 -left-6 text-purple-300 text-3xl animate-float">🌸</div>
-            
-            <InteractiveGarden />
-
-            {/* Entry button to Large Garden */}
-            <button
-              onClick={() => {
-                playBubbleSound();
-                startLoadingGarden();
-              }}
-              className="btn-bubbly-primary text-base px-8 py-3.5 flex items-center gap-2 animate-bounce-slow"
-            >
-              <span>🚪🌿</span>
-              <span>دخول الحديقة السحرية الكبيرة</span>
-            </button>
-          </div>
-
+          {/* Entry button to Large Garden */}
+          <button
+            onClick={() => {
+              playBubbleSound();
+              startLoadingGarden();
+            }}
+            className="btn-bubbly-primary text-xl px-12 py-5 flex items-center justify-center gap-3 animate-bounce-slow w-full sm:w-auto mt-4 shadow-[0_0_30px_rgba(255,122,0,0.4)] hover:shadow-[0_0_50px_rgba(255,122,0,0.6)]"
+          >
+            <span className="text-3xl">🚪🌿</span>
+            <span>دخول الحديقة السحرية الكبيرة</span>
+          </button>
         </div>
       </section>
 
@@ -1239,6 +1174,52 @@ export default function App() {
         forcedGame={forcedGame}
         setForcedGame={setForcedGame}
       />
+
+      {/* 4. Hero Text Section (Moved below Games) */}
+      <section className="container mx-auto px-4 py-16 relative z-10">
+        <div className="flex flex-col items-center text-center space-y-8 max-w-4xl mx-auto bg-white/60 p-8 sm:p-12 rounded-[36px] border-4 border-purple-200 shadow-xl backdrop-blur-sm">
+          
+          {/* Playful Tag */}
+          <div className="bg-[#FFECA1] border-2 border-[#D97706] text-[#B45309] font-extrabold text-sm px-4 py-1.5 rounded-full shadow-sm flex items-center justify-center gap-1.5 mx-auto animate-bounce-slow">
+            <span>🐞</span>
+            <span>للأطفال الأذكياء من عمر 4 إلى 12 سنة</span>
+          </div>
+
+          {/* Main Bouncy Heading */}
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-[#4D2B82] leading-[1.2] tracking-tight">
+            مغامرات صغيرة.
+            <span className="block mt-4">
+              عقول{" "}
+              <span className="text-[#FF7A00] highlight-underline relative inline-block">
+                تزهر بالعلم!
+                <span className="absolute -top-4 -right-8 text-yellow-400 text-2xl animate-pulse">✨</span>
+              </span>{" "}
+              🌱
+            </span>
+          </h1>
+
+          {/* Description Paragraph */}
+          <p className="text-lg sm:text-xl text-[#6B4E9E] font-medium leading-relaxed max-w-2xl mx-auto">
+            بلومي يحوّل تعلّم القراءة والحساب والقرآن الكريم إلى مغامرات حديقة ممتعة يعشقها الأطفال - صُمم بواسطة معلمين وخبراء، خالٍ تماماً من الإعلانات، ولطيف على وقت الشاشة.
+          </p>
+
+          {/* Trust Badges */}
+          <div className="flex flex-wrap items-center justify-center gap-6 pt-4 text-sm sm:text-base font-bold text-[#6B4E9E]">
+            <div className="flex items-center gap-2 bg-purple-50 px-4 py-2 rounded-xl shadow-sm border border-purple-100">
+              <span className="text-yellow-400 text-xl">★</span>
+              <span>4.9 في متاجر التطبيقات</span>
+            </div>
+            <div className="flex items-center gap-2 bg-purple-50 px-4 py-2 rounded-xl shadow-sm border border-purple-100">
+              <span className="text-xl">👥</span>
+              <span>محبوب من 240,000+ عائلة</span>
+            </div>
+            <div className="flex items-center gap-2 bg-purple-50 px-4 py-2 rounded-xl shadow-sm border border-purple-100">
+              <span className="text-xl">🚫</span>
+              <span>بيئة آمنة بدون إعلانات</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* 4. What We Teach (Curriculums Grid replaced with Magical Adventure Map) */}
       <section id="what-we-teach" className="container mx-auto px-4 py-16 relative z-10">

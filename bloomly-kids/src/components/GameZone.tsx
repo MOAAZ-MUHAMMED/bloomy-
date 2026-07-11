@@ -3967,7 +3967,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
             <motion.div 
               whileHover={{ scale: 1.05, y: -6, rotateZ: 1 }}
               transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-white to-purple-50/80 rounded-[32px] border-[6px] border-white shadow-[0_12px_24px_rgba(77,43,130,0.1),0_8px_0_0_#d8b4fe,inset_0_4px_12px_rgba(255,255,255,1)] cursor-default select-none group"
+              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-[#ffffff] to-[#f5f3ff] rounded-[32px] border-[5px] border-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.5),0_8px_0_0_#F59E0B,inset_0_4px_15px_rgba(255,255,255,1)] cursor-pointer select-none group overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_40px_rgba(255,215,0,0.8),0_10px_0_0_#D97706] ring-4 ring-transparent hover:ring-[#FFD700] ring-offset-4"
             >
               <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
               <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
@@ -4066,7 +4066,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
             <motion.div 
               whileHover={{ scale: 1.05, y: -6, rotateZ: 1 }}
               transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-white to-purple-50/80 rounded-[32px] border-[6px] border-white shadow-[0_12px_24px_rgba(77,43,130,0.1),0_8px_0_0_#d8b4fe,inset_0_4px_12px_rgba(255,255,255,1)] cursor-default select-none group"
+              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-[#ffffff] to-[#f5f3ff] rounded-[32px] border-[5px] border-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.5),0_8px_0_0_#F59E0B,inset_0_4px_15px_rgba(255,255,255,1)] cursor-pointer select-none group overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_40px_rgba(255,215,0,0.8),0_10px_0_0_#D97706] ring-4 ring-transparent hover:ring-[#FFD700] ring-offset-4"
             >
               <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
               <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
@@ -4172,7 +4172,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
             <motion.div 
               whileHover={{ scale: 1.05, y: -6, rotateZ: 1 }}
               transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-white to-purple-50/80 rounded-[32px] border-[6px] border-white shadow-[0_12px_24px_rgba(77,43,130,0.1),0_8px_0_0_#d8b4fe,inset_0_4px_12px_rgba(255,255,255,1)] cursor-default select-none group"
+              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-[#ffffff] to-[#f5f3ff] rounded-[32px] border-[5px] border-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.5),0_8px_0_0_#F59E0B,inset_0_4px_15px_rgba(255,255,255,1)] cursor-pointer select-none group overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_40px_rgba(255,215,0,0.8),0_10px_0_0_#D97706] ring-4 ring-transparent hover:ring-[#FFD700] ring-offset-4"
             >
               <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
               <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
@@ -4268,7 +4268,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
             <motion.div 
               whileHover={{ scale: 1.05, y: -6, rotateZ: 1 }}
               transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-white to-purple-50/80 rounded-[32px] border-[6px] border-white shadow-[0_12px_24px_rgba(77,43,130,0.1),0_8px_0_0_#d8b4fe,inset_0_4px_12px_rgba(255,255,255,1)] cursor-default select-none group"
+              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-[#ffffff] to-[#f5f3ff] rounded-[32px] border-[5px] border-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.5),0_8px_0_0_#F59E0B,inset_0_4px_15px_rgba(255,255,255,1)] cursor-pointer select-none group overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_40px_rgba(255,215,0,0.8),0_10px_0_0_#D97706] ring-4 ring-transparent hover:ring-[#FFD700] ring-offset-4"
             >
               <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
               <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
@@ -4364,7 +4364,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
             <motion.div 
               whileHover={{ scale: 1.05, y: -6, rotateZ: 1 }}
               transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-white to-purple-50/80 rounded-[32px] border-[6px] border-white shadow-[0_12px_24px_rgba(77,43,130,0.1),0_8px_0_0_#d8b4fe,inset_0_4px_12px_rgba(255,255,255,1)] cursor-default select-none group"
+              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-[#ffffff] to-[#f5f3ff] rounded-[32px] border-[5px] border-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.5),0_8px_0_0_#F59E0B,inset_0_4px_15px_rgba(255,255,255,1)] cursor-pointer select-none group overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_40px_rgba(255,215,0,0.8),0_10px_0_0_#D97706] ring-4 ring-transparent hover:ring-[#FFD700] ring-offset-4"
             >
               <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
               <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
