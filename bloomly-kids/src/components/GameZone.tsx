@@ -5,7 +5,8 @@ import { ScreenOrientation as CapScreenOrientation } from '@capacitor/screen-ori
 import QuranIsland from "./QuranIsland";
 import InteractiveStories from "./InteractiveStories";
 import MascotCharacter from "./MascotCharacter";
-import LearningPathMap, { islandsData } from "./LearningPathMap";
+import { GameCarousel } from "./GameCarousel";
+import { islandsData } from "./LearningPathMap";
 
 export function SproutMascot({ className = "w-24 h-24", state = "idle" }: { className?: string; state?: "idle" | "happy" | "sad" | "talking" }) {
   const poseMap = {
@@ -3943,9 +3944,8 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
 
       {/* --- MENU VIEW --- */}
       {activeGame === "menu" && (
-        <LearningPathMap 
+        <GameCarousel 
           onSelectGame={(gameId) => requireProfile(() => startLoadingAndOpenMap(gameId as any))}
-          maxIslandUnlocked={maxIslandUnlocked}
         />
       )}
 
