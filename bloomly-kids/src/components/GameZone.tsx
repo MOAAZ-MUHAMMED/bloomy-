@@ -900,35 +900,11 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
   const childLevel = showLevelMap ? activeDifficulty : effectiveLevel;
 
   const lockOrientationLandscape = async () => {
-    try {
-      await CapScreenOrientation.lock({ orientation: 'landscape' });
-    } catch (e) {
-      console.warn("Capacitor Screen Orientation lock failed, attempting web standard:", e);
-      try {
-        const anyOrientation = screen.orientation as any;
-        if (anyOrientation && anyOrientation.lock) {
-          await anyOrientation.lock('landscape');
-        }
-      } catch (err) {
-        console.warn("Web Screen Orientation lock failed:", err);
-      }
-    }
+    // Disabled orientation lock to allow the device to rotate naturally
   };
 
   const unlockOrientation = async () => {
-    try {
-      await CapScreenOrientation.unlock();
-    } catch (e) {
-      console.warn("Capacitor Screen Orientation unlock failed, attempting web standard:", e);
-      try {
-        const anyOrientation = screen.orientation as any;
-        if (anyOrientation && anyOrientation.unlock) {
-          anyOrientation.unlock();
-        }
-      } catch (err) {
-        console.warn("Web Screen Orientation unlock failed:", err);
-      }
-    }
+    // Disabled orientation lock to allow the device to rotate naturally
   };
 
   useEffect(() => {

@@ -995,6 +995,31 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
   const [introActive, setIntroActive] = useState(true);
   const [timeTick, setTimeTick] = useState(0);
 
+  // Pinch-to-zoom state
+  const [initialPinchDist, setInitialPinchDist] = useState<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 2) {
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      setInitialPinchDist(dist);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (e.touches.length === 2 && initialPinchDist) {
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      const scaleChange = (dist - initialPinchDist) * 0.005;
+      setZoomScale(s => Math.min(1.2, Math.max(0.1, s + scaleChange)));
+      setInitialPinchDist(dist);
+    }
+  };
+
   // ─── Garden Plots state (20 plots) ──────────────────────────────
   const [plots, setPlots] = useState<GardenPlot[]>(() => {
     const arr: GardenPlot[] = [];
@@ -1035,11 +1060,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
     return fences;
   });
 
-  // Force Landscape Orientation on mobile
   useEffect(() => {
-    try {
-      ScreenOrientation.lock({ orientation: 'landscape' }).catch(() => {});
-    } catch (e) {}
     const tOut = setTimeout(() => setIntroActive(false), 1600);
     return () => clearTimeout(tOut);
   }, []);
@@ -1424,7 +1445,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
           <div className="bg-slate-100 rounded-full p-1 border-2 border-slate-200 flex items-center gap-1.5">
             <button onClick={() => setZoomScale(s => Math.min(1.2, s + 0.05))} className="p-1.5 text-slate-600 hover:text-[#4D2B82] cursor-pointer"><ZoomIn className="w-4 h-4" /></button>
             <span className="text-[10px] font-black text-slate-500">{Math.round(zoomScale * 100)}%</span>
-            <button onClick={() => setZoomScale(s => Math.max(0.5, s - 0.05))} className="p-1.5 text-slate-600 hover:text-[#4D2B82] cursor-pointer"><ZoomOut className="w-4 h-4" /></button>
+            <button onClick={() => setZoomScale(s => Math.max(0.1, s - 0.05))} className="p-1.5 text-slate-600 hover:text-[#4D2B82] cursor-pointer"><ZoomOut className="w-4 h-4" /></button>
             <button onClick={() => setZoomScale(0.85)} className="p-1.5 text-slate-400 hover:text-slate-600 cursor-pointer"><Maximize2 className="w-3.5 h-3.5" /></button>
           </div>
 
@@ -1436,7 +1457,12 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
       </header>
 
       {/* ─── Main Map Viewport ────────────────────────────────────── */}
-      <main className={`flex-grow w-full overflow-auto scrollbar-none relative border-t-2 ${timeOfDay === "night" ? "border-indigo-900" : "border-emerald-800"} transition-colors duration-1000`}>
+      <main 
+        className={`flex-grow w-full overflow-auto scrollbar-none relative border-t-2 ${timeOfDay === "night" ? "border-indigo-900" : "border-emerald-800"} transition-colors duration-1000`}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={() => setInitialPinchDist(null)}
+      >
         <div style={{
           width: `${3600 * zoomScale}px`,
           height: `${2600 * zoomScale}px`,
