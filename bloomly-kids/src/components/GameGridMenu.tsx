@@ -3,13 +3,22 @@ import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
 import { islandsData } from './LearningPathMap';
 import { SproutMascot } from './GameZone';
-import { sfx } from '../utils/audio';
 
 interface GameGridMenuProps {
   onSelectGame: (gameId: string) => void;
 }
 
 export const GameGridMenu: React.FC<GameGridMenuProps> = ({ onSelectGame }) => {
+  const speakArabic = (text: string) => {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "ar-SA";
+    utterance.rate = 0.9;
+    utterance.pitch = 1.1;
+    window.speechSynthesis.speak(utterance);
+  };
+
   return (
     <div className="flex flex-col gap-8 w-full max-w-6xl mx-auto px-4 py-8">
       
@@ -41,7 +50,7 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({ onSelectGame }) => {
         </div>
 
         <button 
-          onClick={() => sfx.speakArabic("أهلاً بك يا بطل المزرعة! اختر لعبة من البطاقات السحرية بالأسفل لكي نلعب ونجمع النجوم معاً!")}
+          onClick={() => speakArabic("أهلاً بك يا بطل المزرعة! اختر لعبة من البطاقات السحرية بالأسفل لكي نلعب ونجمع النجوم معاً!")}
           className="hidden sm:flex absolute left-8 top-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-gradient-to-b from-yellow-300 to-amber-500 border-4 border-white flex items-center justify-center text-2xl shadow-[0_4px_15px_rgba(0,0,0,0.2)] hover:scale-110 active:scale-95 transition-all cursor-pointer z-10"
           title="استمع لصوت برعم 🔊"
         >

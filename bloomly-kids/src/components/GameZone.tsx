@@ -6,6 +6,7 @@ import QuranIsland from "./QuranIsland";
 import InteractiveStories from "./InteractiveStories";
 import MascotCharacter from "./MascotCharacter";
 import { GameGridMenu } from "./GameGridMenu";
+import { islandsData } from "./LearningPathMap";
 
 export function SproutMascot({ className = "w-24 h-24", state = "idle" }: { className?: string; state?: "idle" | "happy" | "sad" | "talking" }) {
   const poseMap = {
