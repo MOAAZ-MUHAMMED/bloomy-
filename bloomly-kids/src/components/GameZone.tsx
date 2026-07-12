@@ -4,6 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { ScreenOrientation as CapScreenOrientation } from '@capacitor/screen-orientation';
 import QuranIsland from "./QuranIsland";
 import InteractiveStories from "./InteractiveStories";
+import DailyHabitsGame from "./DailyHabitsGame";
 import MascotCharacter from "./MascotCharacter";
 import { GameGridMenu } from "./GameGridMenu";
 import { islandsData } from "./LearningPathMap";
@@ -976,8 +977,14 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
           clearInterval(interval);
           setIsLoadingGame(false);
           setActiveGame(gameName);
+          // Directly show Level Map without difficulty selection
           if (gameName !== "quran" && gameName !== "stories") {
-            setShowDifficultySelect(true);
+            // Apply profile's level
+            if (propChildLevel) {
+              setActiveDifficulty(propChildLevel as any);
+              setEffectiveLevel(propChildLevel as any);
+            }
+            setShowLevelMap(true);
           } else {
             setShowLevelMap(false);
           }
@@ -3692,45 +3699,6 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       </div>
       )}
 
-      {/* 3. Themed Level Map Screen */}
-      {/* Difficulty Selection Screen */}
-      {activeGame !== "menu" && showDifficultySelect && (
-        <div className="relative w-full max-w-4xl mx-auto rounded-[32px] border-4 border-[#4D2B82] bg-gradient-to-br from-[#8E2DE2] to-[#4A00E0] p-8 shadow-2xl flex flex-col items-center z-10 select-none">
-          {/* Header */}
-          <div className="w-full flex justify-between items-center mb-8 border-b-2 border-white/20 pb-4">
-             <button onClick={() => { setShowDifficultySelect(false); setActiveGame("menu"); unlockOrientation(); }} className="btn-bubbly-secondary text-sm py-2 px-5 text-[#4D2B82] bg-white rounded-full flex items-center gap-1 cursor-pointer border-2 border-[#4D2B82] shadow-[0_4px_0_0_#4D2B82] active:translate-y-1 active:shadow-[0_0_0_0_#4D2B82] transition-all">
-                <span>🏠 العودة للقائمة</span>
-             </button>
-             <h2 className="text-2xl sm:text-3xl font-black text-yellow-300">اختر مستوى الصعوبة</h2>
-             <SproutMascot className="w-12 h-12 hidden sm:block" state="happy" />
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-2xl mx-auto">
-            {[
-              { id: "level1", title: "المستوى الأول", desc: "أسهل تحديات (1-4 سنوات)", color: "bg-emerald-400 border-emerald-600", shadow: "shadow-[0_6px_0_0_#059669]" },
-              { id: "level2", title: "المستوى الثاني", desc: "تحديات متوسطة (5-7 سنوات)", color: "bg-blue-400 border-blue-600", shadow: "shadow-[0_6px_0_0_#2563EB]" },
-              { id: "level3", title: "المستوى الثالث", desc: "تحديات متقدمة (8+ سنوات)", color: "bg-amber-400 border-amber-600", shadow: "shadow-[0_6px_0_0_#D97706]" },
-              { id: "level4", title: "المستوى الرابع", desc: "تحدي الأبطال الخبراء 👑", color: "bg-red-400 border-red-600", shadow: "shadow-[0_6px_0_0_#DC2626]" }
-            ].map((diff) => (
-              <button 
-                key={diff.id}
-                onClick={() => {
-                  setActiveDifficulty(diff.id as any);
-                  setEffectiveLevel(diff.id as any); // Sync effective level
-                  setShowDifficultySelect(false);
-                  setShowLevelMap(true);
-                }}
-                className={`relative overflow-hidden flex flex-col items-center justify-center p-6 rounded-2xl border-4 ${diff.color} ${diff.shadow} text-white cursor-pointer transition-all active:translate-y-1 active:shadow-[0_2px_0_0_rgba(0,0,0,0.3)] hover:brightness-110 group`}
-              >
-                <span className="text-2xl font-black mb-2">{diff.title}</span>
-                <span className="text-sm font-bold bg-black/20 px-3 py-1 rounded-full">{diff.desc}</span>
-                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
-
       {/* 100-Level Map Screen */}
       {activeGame !== "menu" && showLevelMap && !showDifficultySelect && (() => {
         const theme = getMapTheme();
@@ -3763,7 +3731,8 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
               <button 
                 onClick={() => {
                   setShowLevelMap(false);
-                  setShowDifficultySelect(true);
+                  setActiveGame("menu");
+                  unlockOrientation();
                 }}
                 className="btn-bubbly-secondary text-sm py-2 px-5 text-[#4D2B82] bg-white rounded-full flex items-center gap-1 cursor-pointer border-2 border-[#4D2B82] shadow-[0_4px_0_0_#4D2B82] active:translate-y-1 active:shadow-[0_0_0_0_#4D2B82] transition-all"
               >
@@ -6094,6 +6063,14 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
             💡 اضغط على الأشكال الموجودة بالأسفل لتثبيتها في الأماكن الفارغة بالقطار.
           </p>
         </div>
+      )}
+
+      {activeGame === "dailyHabits" && (
+        <DailyHabitsGame
+          onClose={() => setActiveGame("menu")}
+          globalStars={globalStars}
+          setGlobalStars={setGlobalStars}
+        />
       )}
 
       {activeGame === "quran" && (

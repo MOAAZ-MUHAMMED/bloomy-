@@ -222,6 +222,19 @@ export const islandsData = [
     badge: "قصص وقيم",
     x: 20,
     y: 85
+  },
+  {
+    id: "dailyHabits",
+    title: "عاداتي اليومية 🌟",
+    character: "🌱 برعم (الطفل النظيف)",
+    characterEmoji: "🌱",
+    emoji: "🧼",
+    gameName: "عادات برعم اليومية",
+    quest: "أهلاً يا بطل! أنا برعم. ساعدني في مهامي اليومية مثل غسل الأسنان، وترتيب غرفتي لنكون دائماً أطفالاً نظيفين ومرتبين!",
+    superpower: "النظافة الشخصية والترتيب يجعلك بطلاً خارقاً محبوباً! ✨",
+    badge: "عادات وقيم",
+    x: 90,
+    y: 15
   }
 ];
 
@@ -235,6 +248,13 @@ export const renderGameLogo = (id: string, isActive: boolean) => {
           <span className="absolute bottom-1 right-1 bg-green-500 text-white font-extrabold text-[8px] sm:text-[9px] px-1 rounded-full border border-white">
             +
           </span>
+        </div>
+      );
+    case "dailyHabits":
+      return (
+        <div className="relative w-full h-full flex items-center justify-center bg-gradient-to-br from-cyan-100 to-blue-100 rounded-full border-2 border-cyan-400">
+          <span className="text-3xl sm:text-4xl filter drop-shadow-[0_2px_2px_rgba(0,0,0,0.15)] animate-bounce">🧼</span>
+          <span className="absolute -top-1 -right-1 text-sm">✨</span>
         </div>
       );
     case "spelling":

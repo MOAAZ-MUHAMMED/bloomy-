@@ -525,7 +525,7 @@ function SVGOwlKnowledgeStory(pageIdx: number, isAnimating: boolean) {
 }
 
 // --- Stories Database ---
-const stories: Story[] = [
+const baseStories: Story[] = [
   {
     id: 1,
     title: "الأرنب الصغير والجزرة الذهبية",
@@ -730,6 +730,44 @@ const stories: Story[] = [
     ]
   }
 ];
+
+// Helper to generate a generic story
+function generateGenericStory(id: number): Story {
+  return {
+    id,
+    title: `مغامرات برعم - الجزء ${id}`,
+    desc: "قصة جديدة وممتعة بانتظارك، اقرأها لتكتشف المزيد من أسرار الغابة السحرية!",
+    emoji: "🌟🌱",
+    moral: "الاستكشاف والتعلم يفتح لنا آفاقاً جديدة كل يوم!",
+    pages: [
+      {
+        id: 1,
+        text: `في يوم جميل من أيام الربيع المشرقة، استيقظ برعم وأصدقاؤه لبدء مغامرة جديدة رقم ${id} في الغابة.`,
+        illustration: (isAnim) => SVGArnoobForest(isAnim)
+      },
+      {
+        id: 2,
+        text: "واجه الأصدقاء تحدياً صغيراً في طريقهم، لكنهم تذكروا أهمية التعاون والعمل الجماعي لحل المشكلات.",
+        illustration: (isAnim) => SVGSproutWorking(isAnim)
+      },
+      {
+        id: 3,
+        text: "بفضل التفكير الذكي والتعاون المستمر، استطاعوا التغلب على التحدي ووجدوا صندوقاً مليئاً بالمعرفة والحكمة.",
+        illustration: (isAnim) => SVGOwlKnowledgeStory(3, isAnim)
+      },
+      {
+        id: 4,
+        text: "انتهت المغامرة بسلام وعاد الجميع سعداء ومسرورين، وقد تعلموا درساً مفيداً جديداً سيظل محفوراً في ذاكرتهم.",
+        illustration: (isAnim) => SVGSproutBlooming(isAnim)
+      }
+    ]
+  };
+}
+
+const stories: Story[] = [...baseStories];
+for (let i = baseStories.length + 1; i <= 40; i++) {
+  stories.push(generateGenericStory(i));
+}
 
 interface InteractiveStoriesProps {
   onClose: () => void;
@@ -954,25 +992,41 @@ export default function InteractiveStories({ onClose, globalStars, setGlobalStar
               <h2 className="text-2xl sm:text-3xl font-black text-[#4D2B82] mb-1">📖 مكتبة القصص التفاعلية</h2>
               <p className="text-xs font-extrabold text-purple-400 mb-8">اختر قصة جميلة لتنطلق في رحلة القراءة والتعلم السحرية!</p>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {stories.map((story) => (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {stories.map((story, index) => {
+                  // Calculate unlocked stories based on global stars. Each 10 stars unlocks a new story
+                  const unlockedCount = Math.min(40, 1 + Math.floor(globalStars / 10));
+                  const isLocked = index >= unlockedCount;
+                  
+                  return (
                   <button
                     key={story.id}
+                    disabled={isLocked}
                     onClick={() => {
-                      setActiveStory(story);
-                      setCurrentPageIdx(0);
+                      if (!isLocked) {
+                        setActiveStory(story);
+                        setCurrentPageIdx(0);
+                      }
                     }}
-                    className="card-bubbly p-6 bg-white hover:bg-yellow-50/30 flex flex-col items-center gap-3 border-3 cursor-pointer text-center relative group"
+                    className={`card-bubbly p-6 flex flex-col items-center gap-3 border-3 text-center relative group transition-all duration-300 ${isLocked ? 'bg-gray-100 border-gray-300 opacity-80 cursor-not-allowed grayscale' : 'bg-white hover:bg-yellow-50/30 cursor-pointer'}`}
                   >
-                    <span className="text-6xl group-hover:scale-110 transition-transform duration-300">{story.emoji}</span>
-                    <h3 className="text-lg font-black text-[#4D2B82]">{story.title}</h3>
-                    <p className="text-xs font-bold text-purple-400">{story.desc}</p>
+                    {isLocked && (
+                      <div className="absolute top-2 left-2 w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center text-white shadow-md z-10">
+                        🔒
+                      </div>
+                    )}
+                    <span className={`text-6xl ${!isLocked ? 'group-hover:scale-110 transition-transform duration-300' : ''}`}>{story.emoji}</span>
+                    <h3 className={`text-lg font-black ${isLocked ? 'text-gray-500' : 'text-[#4D2B82]'}`}>{story.title}</h3>
+                    <p className={`text-xs font-bold ${isLocked ? 'text-gray-400' : 'text-purple-400'}`}>{isLocked ? `اجمع ${((index + 1) * 10) - 10} نجمة لفتح هذه القصة السحرية` : story.desc}</p>
                     
-                    <span className="text-[10px] font-black text-amber-600 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full mt-2">
-                      💡 القيمة: {story.moral.split(" ")[0] || "التربية"}
-                    </span>
+                    {!isLocked && (
+                      <span className="text-[10px] font-black text-amber-600 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full mt-2">
+                        💡 القيمة: {story.moral.split(" ")[0] || "التربية"}
+                      </span>
+                    )}
                   </button>
-                ))}
+                  );
+                })}
               </div>
             </motion.div>
 

@@ -59,7 +59,7 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({ onSelectGame }) => {
       </motion.div>
 
       {/* Grid of Games */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
         {islandsData.map((game, index) => {
           // Determine a premium gradient based on index
           const gradients = [
@@ -79,8 +79,8 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({ onSelectGame }) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
-              whileHover={{ y: -8, scale: 1.02 }}
-              className={`relative flex flex-col items-center text-center p-6 sm:p-8 bg-gradient-to-br ${bgFrom} ${bgTo} rounded-[40px] border-4 ${borderColor} shadow-[0_15px_30px_rgba(0,0,0,0.1),inset_0_4px_15px_rgba(255,255,255,0.7)] cursor-pointer overflow-hidden group`}
+              whileHover={{ y: -6, scale: 1.03 }}
+              className={`relative flex flex-col items-center text-center p-5 sm:p-6 bg-gradient-to-br ${bgFrom} ${bgTo} rounded-[32px] border-[3px] ${borderColor} shadow-[0_10px_25px_rgba(0,0,0,0.1),inset_0_4px_10px_rgba(255,255,255,0.6)] cursor-pointer overflow-hidden group`}
               onClick={() => onSelectGame(game.id)}
             >
               {/* Glossy Overlay */}
@@ -88,37 +88,37 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({ onSelectGame }) => {
 
               {/* Emoji Icon Container */}
               <motion.div 
-                animate={{ y: [0, -8, 0] }}
+                animate={{ y: [0, -6, 0] }}
                 transition={{ repeat: Infinity, duration: 2.5 + index * 0.2, ease: "easeInOut" }}
-                className="relative z-10 w-24 h-24 sm:w-28 sm:h-28 bg-white/80 backdrop-blur-sm rounded-[28px] border-4 border-white shadow-xl flex items-center justify-center text-6xl sm:text-7xl mb-6 group-hover:rotate-6 transition-transform"
+                className="relative z-10 w-20 h-20 sm:w-24 sm:h-24 bg-white/90 backdrop-blur-sm rounded-3xl border-4 border-white/80 shadow-[0_8px_20px_rgba(0,0,0,0.15)] flex items-center justify-center text-5xl sm:text-6xl mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform"
               >
                 {game.emoji}
                 {/* Character small badge */}
-                <div className="absolute -bottom-3 -right-3 w-10 h-10 bg-white rounded-full border-2 border-gray-200 flex items-center justify-center text-2xl shadow-sm">
+                <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-full border-2 border-gray-100 flex items-center justify-center text-xl shadow-md">
                   {game.characterEmoji}
                 </div>
               </motion.div>
 
               {/* Text Content */}
               <div className="relative z-10 flex flex-col flex-1 w-full items-center">
-                <span className="bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-sm font-extrabold text-gray-700 shadow-sm mb-4 border border-white/50">
+                <span className="bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-xs font-black text-gray-600 shadow-sm mb-3 border border-white/50">
                   {game.badge}
                 </span>
                 
-                <h3 className={`text-2xl sm:text-3xl font-black ${textColor} mb-3 drop-shadow-sm tracking-wide leading-tight`}>
+                <h3 className={`text-xl sm:text-2xl font-black ${textColor} mb-2 drop-shadow-sm tracking-wide leading-tight`}>
                   {game.gameName}
                 </h3>
                 
-                <p className="text-gray-700 font-bold text-sm sm:text-base leading-relaxed mb-8 opacity-90 px-2 line-clamp-2">
+                <p className="text-gray-700 font-bold text-xs sm:text-sm leading-relaxed mb-6 opacity-90 px-1 line-clamp-2">
                   {game.quest}
                 </p>
 
                 {/* Play Button */}
                 <button
-                  className={`mt-auto w-full py-4 rounded-2xl bg-white/90 backdrop-blur-md border-b-[6px] border-black/10 text-xl font-black ${textColor} shadow-lg active:border-b-0 active:translate-y-[6px] transition-all flex items-center justify-center gap-2 hover:bg-white`}
+                  className={`mt-auto w-full py-3 sm:py-3.5 rounded-[1.25rem] bg-white/90 backdrop-blur-md border-b-[5px] border-black/10 text-lg sm:text-xl font-black ${textColor} shadow-md hover:bg-white active:border-b-0 active:translate-y-[5px] transition-all flex items-center justify-center gap-2`}
                 >
-                  <Play className="w-6 h-6 fill-current" />
-                  ابدأ اللعب!
+                  <Play className="w-5 h-5 fill-current" />
+                  {game.id === 'quran' ? 'احفظ الآن!' : 'ابدأ اللعب!'}
                 </button>
               </div>
             </motion.div>
