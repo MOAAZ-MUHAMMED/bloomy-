@@ -1,4 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+const fs = require('fs');
+
+const code = `import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle, ArrowRight } from "lucide-react";
 import confetti from "canvas-confetti";
@@ -315,7 +317,7 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
                 <button
                   key={habit.id}
                   onClick={() => startHabit(habit.id as HabitType)}
-                  className={`card-bubbly p-4 bg-white flex flex-col items-center justify-center gap-2 border-4 rounded-3xl cursor-pointer transition-all hover:scale-105 ${completedHabits.includes(habit.id as HabitType) ? 'border-emerald-400 bg-emerald-50' : 'border-[#4D2B82] hover:bg-purple-50'}`}
+                  className={\`card-bubbly p-4 bg-white flex flex-col items-center justify-center gap-2 border-4 rounded-3xl cursor-pointer transition-all hover:scale-105 \${completedHabits.includes(habit.id as HabitType) ? 'border-emerald-400 bg-emerald-50' : 'border-[#4D2B82] hover:bg-purple-50'}\`}
                 >
                   <div className="text-5xl mb-1 relative">
                     {habit.id === "HAIR" ? "💇" : habit.icon}
@@ -343,8 +345,8 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
               {activeHabit === "BED" && "اضغط لترتيب غطاء السرير والوسائد!"}
               {activeHabit === "BOOK" && "اقلب الصفحات لإنهاء القصة المفيدة!"}
               {activeHabit === "SLEEP" && "أطفئ النور لنوم هادئ ومريح!"}
-              {activeHabit === "WUDU" && `خطوات الوضوء: ${wuduSteps[wuduStep]}`}
-              {activeHabit === "PRAY" && `الصلاة: الركعة ${prayStep + 1} من 4`}
+              {activeHabit === "WUDU" && \`خطوات الوضوء: \${wuduSteps[wuduStep]}\`}
+              {activeHabit === "PRAY" && \`الصلاة: الركعة \${prayStep + 1} من 4\`}
             </div>
 
             {/* Game Content Area */}
@@ -415,7 +417,7 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
                           handleDropToy(toy.id);
                         }
                       }}
-                      initial={{ left: `${toy.x}%`, top: `${toy.y}%` }}
+                      initial={{ left: \`\${toy.x}%\`, top: \`\${toy.y}%\` }}
                       className="absolute text-5xl cursor-grab active:cursor-grabbing z-30"
                     >
                       {toy.type}
@@ -434,8 +436,8 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
                       onClick={() => handlePopBubble(b)}
                       className="absolute w-12 h-12 rounded-full bg-blue-200/60 border border-blue-300 shadow-inner flex items-center justify-center cursor-pointer backdrop-blur-sm"
                       style={{
-                        top: `${20 + Math.random() * 60}%`,
-                        left: `${20 + Math.random() * 60}%`
+                        top: \`\${20 + Math.random() * 60}%\`,
+                        left: \`\${20 + Math.random() * 60}%\`
                       }}
                       animate={{ y: [-5, 5, -5], x: [-2, 2, -2] }}
                       transition={{ repeat: Infinity, duration: 2 + Math.random() }}
@@ -474,7 +476,7 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
                   <div className="w-32 h-48 border-4 border-blue-300 rounded-b-2xl bg-white relative overflow-hidden shadow-inner">
                     <motion.div 
                       className="absolute bottom-0 left-0 right-0 bg-blue-400"
-                      animate={{ height: `${waterLevel}%` }}
+                      animate={{ height: \`\${waterLevel}%\` }}
                       transition={{ duration: 0.5 }}
                     />
                   </div>
@@ -524,7 +526,7 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
                         if (info.point.x > window.innerWidth / 2) handleDropLaundry(item.id);
                       }}
                       className="absolute text-6xl cursor-grab z-20"
-                      style={{ top: `${item.y}%`, left: `${item.x}%` }}
+                      style={{ top: \`\${item.y}%\`, left: \`\${item.x}%\` }}
                     >
                       {item.emoji}
                     </motion.div>
@@ -560,7 +562,7 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
 
               {/* --- 11. SLEEP --- */}
               {activeHabit === "SLEEP" && (
-                <div className={`w-full h-full relative transition-colors duration-1000 flex items-center justify-center ${lightsOn ? 'bg-yellow-50' : 'bg-[#0F172A]'}`}>
+                <div className={\`w-full h-full relative transition-colors duration-1000 flex items-center justify-center \${lightsOn ? 'bg-yellow-50' : 'bg-[#0F172A]'}\`}>
                   {lightsOn ? (
                     <div className="flex flex-col items-center">
                       <div className="text-[100px]">👦</div>
@@ -608,3 +610,7 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
     </div>
   );
 }
+`;
+
+fs.writeFileSync('src/components/DailyHabitsGame.tsx', code);
+console.log('Done writing DailyHabitsGame.tsx');

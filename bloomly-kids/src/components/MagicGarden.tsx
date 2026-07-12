@@ -1128,11 +1128,20 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
       }));
     };
 
-    const newLists: Record<PaddockType, AnimalState[]> = {} as any;
-    ALL_PADDOCK_TYPES.forEach(type => {
-      newLists[type] = makeAnimals(type, animalCounts[type]);
+    setAnimalLists(prev => {
+      const newLists = { ...prev };
+      ALL_PADDOCK_TYPES.forEach(type => {
+        const targetCount = animalCounts[type] || 0;
+        const currentList = prev[type] || [];
+        if (currentList.length < targetCount) {
+          const added = makeAnimals(type, targetCount - currentList.length);
+          newLists[type] = [...currentList, ...added];
+        } else if (currentList.length > targetCount) {
+          newLists[type] = currentList.slice(0, targetCount);
+        }
+      });
+      return newLists;
     });
-    setAnimalLists(newLists);
   }, [animalCounts]);
 
   useEffect(() => {
@@ -1188,15 +1197,15 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
   };
 
   const handleBuyFence = (type: PaddockType) => {
-    if (globalStars < 15) {
-      synth.playPop(); triggerNotice("❌ تحتاج ١٥ نجمة لبناء سور حماية!"); return;
+    if (globalStars < 100) {
+      synth.playPop(); triggerNotice('لا تملك ١٠٠ نجمة لشراء السور!'); return;
     }
     const nextFences = { ...unlockedFences, [type]: true };
     setUnlockedFences(nextFences);
     localStorage.setItem("bloomly_unlocked_fences", JSON.stringify(nextFences));
-    updateStars(-15);
+    updateStars(-100);
     synth.playPetUnlock();
-    triggerNotice("🚧 تم بناء سور الحماية بنجاح! -15⭐");
+    triggerNotice('تم بناء السور الخشبي الجميل! -100⭐');
     syncFarmDataToBackend(plots, animalCounts, feedingState, pendingProducts, nextFences);
     setSelectedPaddockToBuy(null);
   };
@@ -1255,7 +1264,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
     const data = feedingState[type];
     if (!data || !data.lastFedTime) return true;
     const elapsed = Date.now() - data.lastFedTime;
-    return elapsed >= 16000;
+    return elapsed >= 14400000;
   };
 
   const isAdult = (type: PaddockType) => {
@@ -1820,7 +1829,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
                         onClick={() => handleBuyFence(selectedPaddockToBuy)}
                         className="bg-amber-600 hover:bg-amber-700 text-white border-3 border-amber-800 px-6 py-2 rounded-full font-black text-xs cursor-pointer shadow-[0_3px_0_0_#78350F] active:translate-y-0.5 active:shadow-none"
                       >
-                        🚧 شراء سور حماية (15⭐)
+                        🚧 شراء سور حماية (100⭐)
                       </button>
                     )}
                   </div>
