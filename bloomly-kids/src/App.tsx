@@ -37,6 +37,8 @@ export default function App() {
     level: "level1" | "level2" | "level3" | "level4" | null;
     stars?: number;
     maxIslandUnlocked?: number;
+    lastLoginDate?: string;
+    playtimeMinutes?: number;
   } | null>(() => {
     try {
       const saved = localStorage.getItem("childProfile");
@@ -49,6 +51,7 @@ export default function App() {
 
   const [showRegister, setShowRegister] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [showDailyReward, setShowDailyReward] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showAdminDashboard, setShowAdminDashboard] = useState(false);
   // بيانات الأدمين - غيّرها زي ما تحب
@@ -320,6 +323,41 @@ export default function App() {
     }
   }, [globalStars, childProfile]);
 
+  // Playtime Tracking & Daily Reward Logic
+  useEffect(() => {
+    if (!childProfile) return;
+
+    // Daily Reward
+    const today = new Date().toISOString().split('T')[0];
+    if (childProfile.lastLoginDate !== today) {
+      setShowDailyReward(true);
+      const newStars = (childProfile.stars || 0) + 10;
+      setGlobalStars(newStars);
+      
+      const updatedProfile = { 
+        ...childProfile, 
+        lastLoginDate: today,
+        stars: newStars
+      };
+      setChildProfile(updatedProfile);
+      localStorage.setItem("childProfile", JSON.stringify(updatedProfile));
+      localStorage.setItem("bloomly_stars", String(newStars));
+    }
+
+    // Playtime Tracker
+    const playtimeInterval = setInterval(() => {
+      setChildProfile(prev => {
+        if (!prev) return prev;
+        const currentMins = prev.playtimeMinutes || 0;
+        const updated = { ...prev, playtimeMinutes: currentMins + 1 };
+        localStorage.setItem("childProfile", JSON.stringify(updated));
+        return updated;
+      });
+    }, 60000); // every 1 minute
+
+    return () => clearInterval(playtimeInterval);
+  }, [childProfile?.id]); // Only run when a child logs in
+
   // Scroll helper
   const scrollToGames = () => {
     setMobileMenuOpen(false);
@@ -496,6 +534,30 @@ export default function App() {
               setShowRegister(false);
             }}
           />
+        )}
+      </AnimatePresence>
+
+      {/* ===== DAILY REWARD MODAL ===== */}
+      <AnimatePresence>
+        {showDailyReward && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              exit={{ opacity: 0, scale: 0.5, rotate: 10 }}
+              className="bg-white rounded-[32px] border-4 border-[#FFD700] p-8 text-center max-w-sm w-full shadow-[0_12px_0_0_#DAA520]"
+            >
+              <div className="text-6xl mb-4 animate-bounce">🎁</div>
+              <h2 className="text-3xl font-black text-[#4D2B82] mb-2">مكافأة يومية!</h2>
+              <p className="text-lg font-bold text-gray-600 mb-6">لقد حصلت على 10 نجوم لدخولك اليوم 🌟</p>
+              <button 
+                onClick={() => setShowDailyReward(false)}
+                className="w-full py-4 bg-[#FFD700] text-[#4D2B82] rounded-2xl font-black text-xl hover:scale-105 transition-transform border-b-4 border-[#DAA520]"
+              >
+                رائع! 🎉
+              </button>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
 
@@ -1131,7 +1193,19 @@ export default function App() {
                       {childProfile.level === "level1" ? "المستوى الأول" : childProfile.level === "level2" ? "المستوى الثاني" : childProfile.level === "level3" ? "المستوى الثالث" : "المستوى الفائق"}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center pt-0.5">
+                  <div className="flex justify-between items-center border-b border-purple-50 pb-2">
+                    <span className="text-[11px] font-bold text-purple-400">وقت اللعب الإجمالي</span>
+                    <span className="font-extrabold text-xs sm:text-sm text-[#4D2B82]">
+                      {childProfile.playtimeMinutes || 0} دقيقة
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center border-b border-purple-50 pb-2">
+                    <span className="text-[11px] font-bold text-purple-400">التوصيات الذكية</span>
+                    <span className="font-extrabold text-[10px] sm:text-xs text-[#2ECC71]">
+                      مستواه ممتاز، استمر في دعمه! 🌟
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center pt-1">
                     <span className="text-[11px] font-bold text-purple-400">مجموع النجوم</span>
                     <span className="bg-yellow-100 text-yellow-700 px-2.5 py-0.5 rounded-full font-black text-xs sm:text-sm border border-yellow-200 flex items-center gap-1">
                       <span>⭐</span>

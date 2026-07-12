@@ -215,6 +215,15 @@ export default function MascotCharacter({ pose, className = "" }: MascotCharacte
             strokeWidth="4"
           />
 
+          {/* Crown */}
+          <path
+            d="M 55 35 L 60 5 L 80 20 L 100 5 L 105 35 Z"
+            fill="#FFD700"
+            stroke="#DAA520"
+            strokeWidth="3.5"
+            strokeLinejoin="round"
+          />
+
           {/* Eyes (Change based on pose) */}
           {pose === "victory" ? (
             <>
