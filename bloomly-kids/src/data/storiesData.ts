@@ -1,4 +1,4 @@
-import { Story } from './InteractiveStories';
+import { Story } from '../components/InteractiveStories';
 
 export const storiesDatabase = [
   {
