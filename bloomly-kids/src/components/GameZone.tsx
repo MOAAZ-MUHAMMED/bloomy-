@@ -3944,7 +3944,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       {/* --- MENU VIEW --- */}
       {activeGame === "menu" && (
         <LearningPathMap 
-          onSelectGame={(gameId) => requireProfile(() => startLoadingAndOpenMap(gameId))}
+          onSelectGame={(gameId) => requireProfile(() => startLoadingAndOpenMap(gameId as any))}
           maxIslandUnlocked={maxIslandUnlocked}
         />
       )}

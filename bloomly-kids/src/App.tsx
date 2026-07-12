@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { islandsData } from "./components/LearningPathMap";
 import { InteractiveGarden } from "./components/InteractiveGarden";
 import { GameZone } from "./components/GameZone";
 import { IntroScreen } from "./components/IntroScreen";
@@ -1379,7 +1380,7 @@ export default function App() {
 
           {/* Characters Cards Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl w-full relative z-10 mb-12">
-            {islands.map((char, index) => (
+            {islandsData.map((char, index) => (
               <div 
                 key={index} 
                 className="card-bubbly bg-white p-6 flex flex-col items-center text-center relative overflow-hidden group hover:border-[#FF7A00] transition-colors"
