@@ -249,7 +249,8 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
                   <AnimatePresence>
                     {progress < 100 && (
                       <motion.div 
-                        className="absolute inset-0 bg-[url('data:image/svg+xml;utf8,<svg width=\"20\" height=\"20\" xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"10\" cy=\"10\" r=\"2\" fill=\"%238B4513\"/></svg>')] opacity-50 z-20 pointer-events-none"
+                        className="absolute inset-0 opacity-50 z-20 pointer-events-none"
+                        style={{ backgroundImage: `url('data:image/svg+xml;utf8,<svg width="20" height="20" xmlns="http://www.w3.org/2000/svg"><circle cx="10" cy="10" r="2" fill="%238B4513"/></svg>')` }}
                         animate={{ opacity: (100 - progress) / 100 * 0.5 }}
                       />
                     )}
