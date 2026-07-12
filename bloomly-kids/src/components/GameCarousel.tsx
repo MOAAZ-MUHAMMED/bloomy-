@@ -107,7 +107,7 @@ export const GameCarousel: React.FC<GameCarouselProps> = ({ onSelectGame }) => {
                   )}
 
                   {/* Icon Area */}
-                  <div className={`w-24 h-24 rounded-2xl flex items-center justify-center text-6xl mb-4 shadow-inner ${game.colorClass.split(' ')[0]}`}>
+                  <div className={`w-24 h-24 rounded-2xl flex items-center justify-center text-6xl mb-4 shadow-inner bg-purple-50`}>
                     {game.characterEmoji}
                   </div>
 
