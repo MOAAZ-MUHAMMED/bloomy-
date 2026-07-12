@@ -5,6 +5,7 @@ import { ScreenOrientation as CapScreenOrientation } from '@capacitor/screen-ori
 import QuranIsland from "./QuranIsland";
 import InteractiveStories from "./InteractiveStories";
 import MascotCharacter from "./MascotCharacter";
+import LearningPathMap, { islandsData } from "./LearningPathMap";
 
 export function SproutMascot({ className = "w-24 h-24", state = "idle" }: { className?: string; state?: "idle" | "happy" | "sad" | "talking" }) {
   const poseMap = {
@@ -857,6 +858,19 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
   const [selectedLevelIndex, setSelectedLevelIndex] = useState<number | null>(null);
   const [showPortraitPrompt, setShowPortraitPrompt] = useState(false);
   const [activeDifficulty, setActiveDifficulty] = useState<"level1" | "level2" | "level3" | "level4">("level1");
+
+  const [maxIslandUnlocked, setMaxIslandUnlocked] = useState(() => {
+    const profileStr = localStorage.getItem("childProfile");
+    if (profileStr) {
+      try {
+        const profile = JSON.parse(profileStr);
+        return profile.maxIslandUnlocked || 0;
+      } catch (e) {
+        return 0;
+      }
+    }
+    return 0;
+  });
 
   const [effectiveLevel, setEffectiveLevel] = useState<"level1" | "level2" | "level3" | "level4">("level1");
   
@@ -2429,6 +2443,25 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
         localStorage.setItem(starKey, String(calculatedStars));
       }
     }
+
+    // Unlock next island in LearningPathMap
+    const profileStr = localStorage.getItem("childProfile");
+    if (profileStr) {
+      try {
+        const profile = JSON.parse(profileStr);
+        const currentMax = profile.maxIslandUnlocked || 0;
+        const currentGameIndex = islandsData.findIndex(i => i.id === activeGame);
+        
+        if (currentGameIndex !== -1 && currentGameIndex >= currentMax) {
+          const nextMax = currentGameIndex + 1;
+          profile.maxIslandUnlocked = nextMax;
+          localStorage.setItem("childProfile", JSON.stringify(profile));
+          setMaxIslandUnlocked(nextMax);
+        }
+      } catch (e) {
+        console.error("Error updating unlocked island:", e);
+      }
+    }
     
     // Play custom narrator voice audio files as requested by user
     try {
@@ -3910,481 +3943,10 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
 
       {/* --- MENU VIEW --- */}
       {activeGame === "menu" && (
-        <div className="flex flex-col gap-6 w-full">
-          {/* Sprout Mascot Welcome Card */}
-          <motion.div 
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="card-bubbly bg-gradient-to-r from-emerald-50/70 to-green-50/70 border-3 border-emerald-400 p-5 flex items-center justify-between gap-4 select-none"
-          >
-            <div className="flex items-center gap-3">
-              <SproutMascot className="w-16 h-16" state="idle" />
-              <div className="text-right flex-1">
-                <span className="text-xs font-black text-emerald-700 bg-emerald-100 px-2.5 py-0.5 rounded-full border border-emerald-200">
-                  صديقك برعم يرحب بك! 👋
-                </span>
-                <p className="text-sm font-extrabold text-[#4D2B82] mt-2">
-                  "أهلاً بك يا بطل! اختر لعبة لكي نلعب ونجمع النجوم السحرية معاً!"
-                </p>
-              </div>
-            </div>
-            <button 
-              onClick={() => sfx.speakArabic("أهلاً بك يا بطل! اختر لعبة لكي نلعب ونجمع النجوم السحرية معاً!")}
-              className="w-10 h-10 rounded-full bg-yellow-400 border-2 border-purple-900 flex items-center justify-center text-lg shadow-sm hover:scale-105 active:scale-95 transition-transform cursor-pointer"
-              title="استمع لصوت برعم 🔊"
-            >
-              🔊
-            </button>
-          </motion.div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-
-            {/* Game 1 Card */}
-            <motion.div 
-              whileHover={{ scale: 1.05, y: -6, rotateZ: 1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-[#ffffff] to-[#f5f3ff] rounded-[32px] border-[5px] border-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.5),0_8px_0_0_#F59E0B,inset_0_4px_15px_rgba(255,255,255,1)] cursor-pointer select-none group overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_40px_rgba(255,215,0,0.8),0_10px_0_0_#D97706] ring-4 ring-transparent hover:ring-[#FFD700] ring-offset-4"
-            >
-              <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
-              <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
-                <motion.span 
-                  animate={{ y: [0, -6, 0] }}
-                  transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                  className="text-6xl mb-4 select-none drop-shadow-lg"
-                >🍎</motion.span>
-                <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2 drop-shadow-sm">حديقة الحساب السريع</h3>
-                <p className="text-sm font-bold text-purple-500 mb-6">مسائل حسابية وعد مبسطة للأطفال الأذكياء.</p>
-                <button
-                  onClick={() => requireProfile(() => startLoadingAndOpenMap("math"))}
-                  className="relative w-full mt-auto py-3.5 rounded-2xl bg-gradient-to-b from-purple-500 to-purple-700 text-white font-black text-lg border-b-[6px] border-purple-900 shadow-[0_4px_15px_rgba(77,43,130,0.4),inset_0_4px_10px_rgba(255,255,255,0.4)] active:border-b-0 active:translate-y-[6px] transition-all flex items-center justify-center gap-2 group-hover:brightness-110"
-                >
-                  <span className="relative z-10 drop-shadow-md">العب الآن 🚀</span>
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Game 2 Card */}
-            <motion.div 
-              whileHover={{ scale: 1.05, y: -6, rotateZ: -1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-white to-pink-50/80 rounded-[32px] border-[6px] border-white shadow-[0_12px_24px_rgba(77,43,130,0.1),0_8px_0_0_#fbcfe8,inset_0_4px_12px_rgba(255,255,255,1)] cursor-default select-none group"
-            >
-              <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
-              <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
-                <motion.div 
-                  animate={{ rotate: [0, -5, 5, 0] }}
-                  transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-                  className="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-400 to-red-400 text-white font-extrabold text-2xl flex items-center justify-center shadow-[0_6px_0_0_#9f1239,0_4px_15px_rgba(225,29,72,0.4)] border-[3px] border-pink-900 mb-4 select-none drop-shadow-lg"
-                  style={{ animationDelay: "0.5s" }}
-                >
-                  أ ب ت
-                </motion.div>
-                <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2 drop-shadow-sm">مغامرة الحروف والكلمات</h3>
-                <p className="text-sm font-bold text-purple-500 mb-6">تعرف على الحرف الأول للحيوانات والأشكال.</p>
-                <button
-                  onClick={() => requireProfile(() => startLoadingAndOpenMap("spelling"))}
-                  className="relative w-full mt-auto py-3.5 rounded-2xl bg-gradient-to-b from-pink-400 to-pink-600 text-white font-black text-lg border-b-[6px] border-pink-800 shadow-[0_4px_15px_rgba(219,39,119,0.4),inset_0_4px_10px_rgba(255,255,255,0.4)] active:border-b-0 active:translate-y-[6px] transition-all flex items-center justify-center gap-2 group-hover:brightness-110"
-                >
-                  <span className="relative z-10 drop-shadow-md">العب الآن 🚀</span>
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Game 3 Card */}
-            <motion.div 
-              whileHover={{ scale: 1.05, y: -6, rotateZ: 1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-white to-blue-50/80 rounded-[32px] border-[6px] border-white shadow-[0_12px_24px_rgba(77,43,130,0.1),0_8px_0_0_#bfdbfe,inset_0_4px_12px_rgba(255,255,255,1)] cursor-default select-none group"
-            >
-              <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
-              <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
-                <motion.span 
-                  animate={{ rotateY: [0, 180, 360] }}
-                  transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                  className="text-6xl mb-4 select-none drop-shadow-lg"
-                >🃏</motion.span>
-                <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2 drop-shadow-sm">كروت الذاكرة السحرية</h3>
-                <p className="text-sm font-bold text-purple-500 mb-6">طابق كروت الحيوانات المتشابهة لتفوز.</p>
-                <button
-                  onClick={() => requireProfile(() => startLoadingAndOpenMap("memory"))}
-                  className="relative w-full mt-auto py-3.5 rounded-2xl bg-gradient-to-b from-blue-400 to-blue-600 text-white font-black text-lg border-b-[6px] border-blue-800 shadow-[0_4px_15px_rgba(37,99,235,0.4),inset_0_4px_10px_rgba(255,255,255,0.4)] active:border-b-0 active:translate-y-[6px] transition-all flex items-center justify-center gap-2 group-hover:brightness-110"
-                >
-                  <span className="relative z-10 drop-shadow-md">العب الآن 🚀</span>
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Game 4 Card */}
-            <motion.div 
-              whileHover={{ scale: 1.05, y: -6, rotateZ: -1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-white to-emerald-50/80 rounded-[32px] border-[6px] border-white shadow-[0_12px_24px_rgba(77,43,130,0.1),0_8px_0_0_#a7f3d0,inset_0_4px_12px_rgba(255,255,255,1)] cursor-default select-none group"
-            >
-              <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
-              <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
-                <motion.span 
-                  animate={{ y: [0, -8, 0] }}
-                  transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}
-                  className="text-6xl mb-4 select-none drop-shadow-lg"
-                >🎈</motion.span>
-                <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2 drop-shadow-sm">صائد النجوم والبالونات</h3>
-                <p className="text-sm font-bold text-purple-500 mb-6">اختبر سرعتك وصِد البالونات والنجوم الطائرة.</p>
-                <button
-                  onClick={() => requireProfile(() => startLoadingAndOpenMap("catcher"))}
-                  className="relative w-full mt-auto py-3.5 rounded-2xl bg-gradient-to-b from-emerald-400 to-emerald-600 text-white font-black text-lg border-b-[6px] border-emerald-800 shadow-[0_4px_15px_rgba(5,150,105,0.4),inset_0_4px_10px_rgba(255,255,255,0.4)] active:border-b-0 active:translate-y-[6px] transition-all flex items-center justify-center gap-2 group-hover:brightness-110"
-                >
-                  <span className="relative z-10 drop-shadow-md">العب الآن 🚀</span>
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Game 5 Card */}
-            <motion.div 
-              whileHover={{ scale: 1.05, y: -6, rotateZ: 1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-[#ffffff] to-[#f5f3ff] rounded-[32px] border-[5px] border-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.5),0_8px_0_0_#F59E0B,inset_0_4px_15px_rgba(255,255,255,1)] cursor-pointer select-none group overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_40px_rgba(255,215,0,0.8),0_10px_0_0_#D97706] ring-4 ring-transparent hover:ring-[#FFD700] ring-offset-4"
-            >
-              <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
-              <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
-                <motion.span 
-                  animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
-                  className="text-6xl mb-4 select-none drop-shadow-lg"
-                >🎨</motion.span>
-                <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2 drop-shadow-sm">ورشة الفنان للتلوين</h3>
-                <p className="text-sm font-bold text-purple-500 mb-6">لوّن الأشكال الكرتونية الجميلة أو ارسم بحرية.</p>
-                <button
-                  onClick={() => requireProfile(() => startLoadingAndOpenMap("coloring"))}
-                  className="relative w-full mt-auto py-3.5 rounded-2xl bg-gradient-to-b from-purple-500 to-purple-700 text-white font-black text-lg border-b-[6px] border-purple-900 shadow-[0_4px_15px_rgba(77,43,130,0.4),inset_0_4px_10px_rgba(255,255,255,0.4)] active:border-b-0 active:translate-y-[6px] transition-all flex items-center justify-center gap-2 group-hover:brightness-110"
-                >
-                  <span className="relative z-10 drop-shadow-md">العب الآن 🚀</span>
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Game 6 Card */}
-            <motion.div 
-              whileHover={{ scale: 1.05, y: -6, rotateZ: -1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-white to-pink-50/80 rounded-[32px] border-[6px] border-white shadow-[0_12px_24px_rgba(77,43,130,0.1),0_8px_0_0_#fbcfe8,inset_0_4px_12px_rgba(255,255,255,1)] cursor-default select-none group"
-            >
-              <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
-              <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
-                <motion.div 
-                  animate={{ scale: [1, 1.1, 1] }}
-                  transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
-                  className="w-16 h-16 rounded-2xl bg-gradient-to-br from-pink-400 to-red-400 text-white font-extrabold text-2xl flex items-center justify-center shadow-[0_6px_0_0_#9f1239,0_4px_15px_rgba(225,29,72,0.4)] border-[3px] border-pink-900 mb-4 select-none font-sans drop-shadow-lg" 
-                  style={{ animationDelay: "2.5s" }}
-                >
-                  abc
-                </motion.div>
-                <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2 drop-shadow-sm">مغامرة الحروف (EN)</h3>
-                <p className="text-sm font-bold text-purple-500 mb-6">تعرّف على الحرف الأول للكلمات بالإنجليزية.</p>
-                <button
-                  onClick={() => requireProfile(() => startLoadingAndOpenMap("spellingEn"))}
-                  className="relative w-full mt-auto py-3.5 rounded-2xl bg-gradient-to-b from-pink-400 to-pink-600 text-white font-black text-lg border-b-[6px] border-pink-800 shadow-[0_4px_15px_rgba(219,39,119,0.4),inset_0_4px_10px_rgba(255,255,255,0.4)] active:border-b-0 active:translate-y-[6px] transition-all flex items-center justify-center gap-2 group-hover:brightness-110"
-                >
-                  <span className="relative z-10 drop-shadow-md">العب الآن 🚀</span>
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Game 7 Card */}
-            <motion.div 
-              whileHover={{ scale: 1.05, y: -6, rotateZ: 1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-white to-blue-50/80 rounded-[32px] border-[6px] border-white shadow-[0_12px_24px_rgba(77,43,130,0.1),0_8px_0_0_#bfdbfe,inset_0_4px_12px_rgba(255,255,255,1)] cursor-default select-none group"
-            >
-              <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
-              <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
-                <motion.div 
-                  animate={{ y: [0, -4, 0] }}
-                  transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
-                  className="relative w-16 h-18 flex items-center justify-center mb-4 select-none drop-shadow-lg"
-                >
-                  <span className="text-6xl z-10">🤖</span>
-                  <span className="absolute text-xl top-[-10px] right-[-10px] animate-bounce">🦁</span>
-                  <span className="absolute text-xl top-[-10px] left-[-10px] animate-bounce" style={{ animationDelay: "0.4s" }}>أ</span>
-                  <span className="absolute text-xl bottom-[-6px] left-[50%] -translate-x-1/2 animate-bounce" style={{ animationDelay: "0.8s" }}>7</span>
-                </motion.div>
-                <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2 drop-shadow-sm">تصنيف بلومي السحري</h3>
-                <p className="text-sm font-bold text-purple-500 mb-6">صنّف الكائنات السحرية داخل السلال المناسبة.</p>
-                <button
-                  onClick={() => requireProfile(() => startLoadingAndOpenMap("sorting"))}
-                  className="relative w-full mt-auto py-3.5 rounded-2xl bg-gradient-to-b from-blue-400 to-blue-600 text-white font-black text-lg border-b-[6px] border-blue-800 shadow-[0_4px_15px_rgba(37,99,235,0.4),inset_0_4px_10px_rgba(255,255,255,0.4)] active:border-b-0 active:translate-y-[6px] transition-all flex items-center justify-center gap-2 group-hover:brightness-110"
-                >
-                  <span className="relative z-10 drop-shadow-md">العب الآن 🚀</span>
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Game 8 Card */}
-            <motion.div 
-              whileHover={{ scale: 1.05, y: -6, rotateZ: -1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-white to-emerald-50/80 rounded-[32px] border-[6px] border-white shadow-[0_12px_24px_rgba(77,43,130,0.1),0_8px_0_0_#a7f3d0,inset_0_4px_12px_rgba(255,255,255,1)] cursor-default select-none group"
-            >
-              <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
-              <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
-                <motion.div 
-                  animate={{ y: [0, -6, 0] }}
-                  transition={{ repeat: Infinity, duration: 1.9, ease: "easeInOut" }}
-                  className="relative w-14 h-18 flex flex-col items-center mb-4 select-none z-10 drop-shadow-lg"
-                >
-                  <div className="text-6xl animate-bounce" style={{ animationDuration: '3s' }}>☄️</div>
-                </motion.div>
-                <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2 drop-shadow-sm">صائد الحروف الفضائي</h3>
-                <p className="text-sm font-bold text-purple-500 mb-6">انطلق في الفضاء وصِد النيازك التي تحمل الحروف!</p>
-                <button
-                  onClick={() => requireProfile(() => startLoadingAndOpenMap("spaceCatcher"))}
-                  className="relative w-full mt-auto py-3.5 rounded-2xl bg-gradient-to-b from-emerald-400 to-emerald-600 text-white font-black text-lg border-b-[6px] border-emerald-800 shadow-[0_4px_15px_rgba(5,150,105,0.4),inset_0_4px_10px_rgba(255,255,255,0.4)] active:border-b-0 active:translate-y-[6px] transition-all flex items-center justify-center gap-2 group-hover:brightness-110"
-                >
-                  <span className="relative z-10 drop-shadow-md">العب الآن 🚀</span>
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Game 9 Card */}
-            <motion.div 
-              whileHover={{ scale: 1.05, y: -6, rotateZ: 1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-[#ffffff] to-[#f5f3ff] rounded-[32px] border-[5px] border-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.5),0_8px_0_0_#F59E0B,inset_0_4px_15px_rgba(255,255,255,1)] cursor-pointer select-none group overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_40px_rgba(255,215,0,0.8),0_10px_0_0_#D97706] ring-4 ring-transparent hover:ring-[#FFD700] ring-offset-4"
-            >
-              <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
-              <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
-                <motion.span 
-                  animate={{ x: [0, 3, -3, 0], y: [0, -3, 3, 0] }}
-                  transition={{ repeat: Infinity, duration: 2.8, ease: "easeInOut" }}
-                  className="text-6xl mb-4 select-none drop-shadow-lg"
-                >✏️</motion.span>
-                <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2 drop-shadow-sm">توصيل الأرقام السحرية</h3>
-                <p className="text-sm font-bold text-purple-500 mb-6">وصّل النقاط بالترتيب الرقمي لتكشف الشكل السري.</p>
-                <button
-                  onClick={() => requireProfile(() => startLoadingAndOpenMap("connectDots"))}
-                  className="relative w-full mt-auto py-3.5 rounded-2xl bg-gradient-to-b from-purple-500 to-purple-700 text-white font-black text-lg border-b-[6px] border-purple-900 shadow-[0_4px_15px_rgba(77,43,130,0.4),inset_0_4px_10px_rgba(255,255,255,0.4)] active:border-b-0 active:translate-y-[6px] transition-all flex items-center justify-center gap-2 group-hover:brightness-110"
-                >
-                  <span className="relative z-10 drop-shadow-md">العب الآن 🚀</span>
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Game 10 Card */}
-            <motion.div 
-              whileHover={{ scale: 1.05, y: -6, rotateZ: -1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-white to-pink-50/80 rounded-[32px] border-[6px] border-white shadow-[0_12px_24px_rgba(77,43,130,0.1),0_8px_0_0_#fbcfe8,inset_0_4px_12px_rgba(255,255,255,1)] cursor-default select-none group"
-            >
-              <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
-              <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
-                <motion.span 
-                  animate={{ rotate: 360 }}
-                  transition={{ repeat: Infinity, duration: 8, ease: "linear" }}
-                  className="text-6xl mb-4 select-none drop-shadow-lg"
-                >🌀</motion.span>
-                <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2 drop-shadow-sm">متاهة بلومي السحرية</h3>
-                <p className="text-sm font-bold text-purple-500 mb-6">وجّه البطل في المتاهة وجمّع النجوم الطائرة لتصل للهدف.</p>
-                <button
-                  onClick={() => requireProfile(() => startLoadingAndOpenMap("maze"))}
-                  className="relative w-full mt-auto py-3.5 rounded-2xl bg-gradient-to-b from-pink-400 to-pink-600 text-white font-black text-lg border-b-[6px] border-pink-800 shadow-[0_4px_15px_rgba(219,39,119,0.4),inset_0_4px_10px_rgba(255,255,255,0.4)] active:border-b-0 active:translate-y-[6px] transition-all flex items-center justify-center gap-2 group-hover:brightness-110"
-                >
-                  <span className="relative z-10 drop-shadow-md">العب الآن 🚀</span>
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Game 11 Card */}
-            <motion.div 
-              whileHover={{ scale: 1.05, y: -6, rotateZ: 1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-white to-blue-50/80 rounded-[32px] border-[6px] border-white shadow-[0_12px_24px_rgba(77,43,130,0.1),0_8px_0_0_#bfdbfe,inset_0_4px_12px_rgba(255,255,255,1)] cursor-default select-none group"
-            >
-              <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
-              <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
-                <motion.span 
-                  animate={{ scale: [1, 1.15, 1] }}
-                  transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-                  className="text-6xl mb-4 select-none drop-shadow-lg"
-                >🎵</motion.span>
-                <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2 drop-shadow-sm">سفاري الأصوات السحرية</h3>
-                <p className="text-sm font-bold text-purple-500 mb-6">استمع للأصوات الطبيعية والحيوانات لتكشف سرها.</p>
-                <button
-                  onClick={() => requireProfile(() => startLoadingAndOpenMap("safari"))}
-                  className="relative w-full mt-auto py-3.5 rounded-2xl bg-gradient-to-b from-blue-400 to-blue-600 text-white font-black text-lg border-b-[6px] border-blue-800 shadow-[0_4px_15px_rgba(37,99,235,0.4),inset_0_4px_10px_rgba(255,255,255,0.4)] active:border-b-0 active:translate-y-[6px] transition-all flex items-center justify-center gap-2 group-hover:brightness-110"
-                >
-                  <span className="relative z-10 drop-shadow-md">العب الآن 🚀</span>
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Game 12 Card */}
-            <motion.div 
-              whileHover={{ scale: 1.05, y: -6, rotateZ: -1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-white to-emerald-50/80 rounded-[32px] border-[6px] border-white shadow-[0_12px_24px_rgba(77,43,130,0.1),0_8px_0_0_#a7f3d0,inset_0_4px_12px_rgba(255,255,255,1)] cursor-default select-none group"
-            >
-              <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
-              <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
-                <motion.span 
-                  animate={{ rotate: [0, -10, 10, 0] }}
-                  transition={{ repeat: Infinity, duration: 2.2, ease: "easeInOut" }}
-                  className="text-6xl mb-4 select-none drop-shadow-lg"
-                >🧁</motion.span>
-                <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2 drop-shadow-sm">مطبخ الحلوى السحري</h3>
-                <p className="text-sm font-bold text-purple-500 mb-6">اخلط المكونات بالترتيب لتصنع أشهى الحلوى السحرية.</p>
-                <button
-                  onClick={() => requireProfile(() => startLoadingAndOpenMap("chef"))}
-                  className="relative w-full mt-auto py-3.5 rounded-2xl bg-gradient-to-b from-emerald-400 to-emerald-600 text-white font-black text-lg border-b-[6px] border-emerald-800 shadow-[0_4px_15px_rgba(5,150,105,0.4),inset_0_4px_10px_rgba(255,255,255,0.4)] active:border-b-0 active:translate-y-[6px] transition-all flex items-center justify-center gap-2 group-hover:brightness-110"
-                >
-                  <span className="relative z-10 drop-shadow-md">العب الآن 🚀</span>
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Game 13 Card */}
-            <motion.div 
-              whileHover={{ scale: 1.05, y: -6, rotateZ: 1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-[#ffffff] to-[#f5f3ff] rounded-[32px] border-[5px] border-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.5),0_8px_0_0_#F59E0B,inset_0_4px_15px_rgba(255,255,255,1)] cursor-pointer select-none group overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_40px_rgba(255,215,0,0.8),0_10px_0_0_#D97706] ring-4 ring-transparent hover:ring-[#FFD700] ring-offset-4"
-            >
-              <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
-              <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
-                <motion.span 
-                  animate={{ rotate: [0, -10, 10, 0] }}
-                  transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                  className="text-6xl mb-4 select-none inline-block drop-shadow-lg"
-                >🏍️</motion.span>
-                <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2 drop-shadow-sm">سباق الاتجاهات الخارق</h3>
-                <p className="text-sm font-bold text-purple-500 mb-6">وجّه الموتوسيكل بالأسهم الصحيحة ليتفادى العقبات ويفوز!</p>
-                <button
-                  onClick={() => requireProfile(() => startLoadingAndOpenMap("arrowRacer"))}
-                  className="relative w-full mt-auto py-3.5 rounded-2xl bg-gradient-to-b from-purple-500 to-purple-700 text-white font-black text-lg border-b-[6px] border-purple-900 shadow-[0_4px_15px_rgba(77,43,130,0.4),inset_0_4px_10px_rgba(255,255,255,0.4)] active:border-b-0 active:translate-y-[6px] transition-all flex items-center justify-center gap-2 group-hover:brightness-110"
-                >
-                  <span className="relative z-10 drop-shadow-md">العب الآن 🚀</span>
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Game 14 Card */}
-            <motion.div 
-              whileHover={{ scale: 1.05, y: -6, rotateZ: -1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-white to-pink-50/80 rounded-[32px] border-[6px] border-white shadow-[0_12px_24px_rgba(77,43,130,0.1),0_8px_0_0_#fbcfe8,inset_0_4px_12px_rgba(255,255,255,1)] cursor-default select-none group"
-            >
-              <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
-              <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
-                <motion.span 
-                  animate={{ rotate: [0, -10, 10, 0] }}
-                  transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                  className="text-6xl mb-4 select-none inline-block drop-shadow-lg"
-                >🐼</motion.span>
-                <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2 drop-shadow-sm">مزرعة الحيوانات الجائعة</h3>
-                <p className="text-sm font-bold text-purple-500 mb-6">أطعم الحيوانات طعامها المفضل لتكسب النجوم.</p>
-                <button
-                  onClick={() => requireProfile(() => startLoadingAndOpenMap("farm"))}
-                  className="relative w-full mt-auto py-3.5 rounded-2xl bg-gradient-to-b from-pink-400 to-pink-600 text-white font-black text-lg border-b-[6px] border-pink-800 shadow-[0_4px_15px_rgba(219,39,119,0.4),inset_0_4px_10px_rgba(255,255,255,0.4)] active:border-b-0 active:translate-y-[6px] transition-all flex items-center justify-center gap-2 group-hover:brightness-110"
-                >
-                  <span className="relative z-10 drop-shadow-md">العب الآن 🚀</span>
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Game 15 Card */}
-            <motion.div 
-              whileHover={{ scale: 1.05, y: -6, rotateZ: 1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-white to-blue-50/80 rounded-[32px] border-[6px] border-white shadow-[0_12px_24px_rgba(77,43,130,0.1),0_8px_0_0_#bfdbfe,inset_0_4px_12px_rgba(255,255,255,1)] cursor-default select-none group"
-            >
-              <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
-              <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
-                <motion.span 
-                  animate={{ x: [0, -5, 5, 0] }}
-                  transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
-                  className="text-6xl mb-4 select-none inline-block drop-shadow-lg"
-                >🚂</motion.span>
-                <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2 drop-shadow-sm">قطار الأشكال السحري</h3>
-                <p className="text-sm font-bold text-purple-500 mb-6">ركّب الأشكال الناقصة في القطار ليتحرك بسرعة!</p>
-                <button
-                  onClick={() => requireProfile(() => startLoadingAndOpenMap("train"))}
-                  className="relative w-full mt-auto py-3.5 rounded-2xl bg-gradient-to-b from-blue-400 to-blue-600 text-white font-black text-lg border-b-[6px] border-blue-800 shadow-[0_4px_15px_rgba(37,99,235,0.4),inset_0_4px_10px_rgba(255,255,255,0.4)] active:border-b-0 active:translate-y-[6px] transition-all flex items-center justify-center gap-2 group-hover:brightness-110"
-                >
-                  <span className="relative z-10 drop-shadow-md">العب الآن 🚀</span>
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Game 16 Card: Tap Racer */}
-            <motion.div 
-              whileHover={{ scale: 1.05, y: -6, rotateZ: -1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-white to-emerald-50/80 rounded-[32px] border-[6px] border-white shadow-[0_12px_24px_rgba(77,43,130,0.1),0_8px_0_0_#a7f3d0,inset_0_4px_12px_rgba(255,255,255,1)] cursor-default select-none group"
-            >
-              <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
-              <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
-                <motion.span 
-                  animate={{ rotate: [0, -10, 10, 0] }}
-                  transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                  className="text-6xl mb-4 select-none inline-block drop-shadow-lg"
-                >⚡</motion.span>
-                <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2 drop-shadow-sm">سباق الضغط السريع</h3>
-                <p className="text-sm font-bold text-purple-500 mb-6">اضغط بأسرع ما يمكن لتفوز بسباق السباحة، الدراجات، الجري والبالونات!</p>
-                <button
-                  onClick={() => requireProfile(() => startLoadingAndOpenMap("tapRacer"))}
-                  className="relative w-full mt-auto py-3.5 rounded-2xl bg-gradient-to-b from-emerald-400 to-emerald-600 text-white font-black text-lg border-b-[6px] border-emerald-800 shadow-[0_4px_15px_rgba(5,150,105,0.4),inset_0_4px_10px_rgba(255,255,255,0.4)] active:border-b-0 active:translate-y-[6px] transition-all flex items-center justify-center gap-2 group-hover:brightness-110"
-                >
-                  <span className="relative z-10 drop-shadow-md">العب الآن 🚀</span>
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Game 17 Card: Quran */}
-            <motion.div 
-              whileHover={{ scale: 1.05, y: -6, rotateZ: 1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-[#ffffff] to-[#f5f3ff] rounded-[32px] border-[5px] border-[#FFD700] shadow-[0_0_20px_rgba(255,215,0,0.5),0_8px_0_0_#F59E0B,inset_0_4px_15px_rgba(255,255,255,1)] cursor-pointer select-none group overflow-hidden transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_0_40px_rgba(255,215,0,0.8),0_10px_0_0_#D97706] ring-4 ring-transparent hover:ring-[#FFD700] ring-offset-4"
-            >
-              <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
-              <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
-                <motion.span 
-                  animate={{ rotate: [0, -10, 10, 0] }}
-                  transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                  className="text-6xl mb-4 select-none inline-block drop-shadow-lg"
-                >🕋</motion.span>
-                <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2 drop-shadow-sm">جزيرة القرآن الكريم</h3>
-                <p className="text-sm font-bold text-purple-500 mb-6">حفظ قصار السور بالتكرار التفاعلي مع تلاوة بصوتك!</p>
-                <button
-                  onClick={() => requireProfile(() => startLoadingAndOpenMap("quran"))}
-                  className="relative w-full mt-auto py-3.5 rounded-2xl bg-gradient-to-b from-purple-500 to-purple-700 text-white font-black text-lg border-b-[6px] border-purple-900 shadow-[0_4px_15px_rgba(77,43,130,0.4),inset_0_4px_10px_rgba(255,255,255,0.4)] active:border-b-0 active:translate-y-[6px] transition-all flex items-center justify-center gap-2 group-hover:brightness-110"
-                >
-                  <span className="relative z-10 drop-shadow-md">العب الآن 🚀</span>
-                </button>
-              </div>
-            </motion.div>
-
-            {/* Game 18 Card: Stories */}
-            <motion.div 
-              whileHover={{ scale: 1.05, y: -6, rotateZ: -1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 15 }}
-              className="relative p-6 flex flex-col items-center text-center bg-gradient-to-b from-white to-pink-50/80 rounded-[32px] border-[6px] border-white shadow-[0_12px_24px_rgba(77,43,130,0.1),0_8px_0_0_#fbcfe8,inset_0_4px_12px_rgba(255,255,255,1)] cursor-default select-none group"
-            >
-              <div className="absolute inset-x-0 top-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent rounded-t-[26px] pointer-events-none" />
-              <div className="relative z-10 w-full flex flex-col items-center flex-1 h-full">
-                <motion.span 
-                  animate={{ rotate: [0, -10, 10, 0] }}
-                  transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                  className="text-6xl mb-4 select-none inline-block drop-shadow-lg"
-                >📚</motion.span>
-                <h3 className="text-xl font-extrabold text-[#4D2B82] mb-2 drop-shadow-sm">قصص بلومي التفاعلية</h3>
-                <p className="text-sm font-bold text-purple-500 mb-6">قصص مصورة هادفة مع خاصية تتبع الكلمات مسموعة!</p>
-                <button
-                  onClick={() => requireProfile(() => startLoadingAndOpenMap("stories"))}
-                  className="relative w-full mt-auto py-3.5 rounded-2xl bg-gradient-to-b from-pink-400 to-pink-600 text-white font-black text-lg border-b-[6px] border-pink-800 shadow-[0_4px_15px_rgba(219,39,119,0.4),inset_0_4px_10px_rgba(255,255,255,0.4)] active:border-b-0 active:translate-y-[6px] transition-all flex items-center justify-center gap-2 group-hover:brightness-110"
-                >
-                  <span className="relative z-10 drop-shadow-md">العب الآن 🚀</span>
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        </div>
+        <LearningPathMap 
+          onSelectGame={(gameId) => requireProfile(() => startLoadingAndOpenMap(gameId))}
+          maxIslandUnlocked={maxIslandUnlocked}
+        />
       )}
 
       {/* --- MATH GAME PLAY VIEW --- */}
