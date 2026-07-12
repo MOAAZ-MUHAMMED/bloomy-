@@ -842,7 +842,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
   useEffect(() => {
     if (forcedGame && setForcedGame) {
       setActiveGame(forcedGame as any);
-      setShowLevelMap(forcedGame !== "quran" && forcedGame !== "stories");
+      setShowLevelMap(false);
       setForcedGame(null);
       if (gameZoneRef.current) {
         gameZoneRef.current.scrollIntoView({ behavior: "smooth" });
@@ -979,12 +979,11 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
           setActiveGame(gameName);
           // Directly show Level Map without difficulty selection
           if (gameName !== "quran" && gameName !== "stories") {
-            // Apply profile's level
             if (propChildLevel) {
               setActiveDifficulty(propChildLevel as any);
               setEffectiveLevel(propChildLevel as any);
             }
-            setShowLevelMap(true);
+            setShowLevelMap(false);
           } else {
             setShowLevelMap(false);
           }
@@ -2576,7 +2575,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
   }, [showVictoryModal]);
 
   const quitGame = () => {
-    setShowLevelMap(true);
+    setShowLevelMap(false); setActiveGame("menu");
     setStarsEarnedThisSession(0);
     setRacerActive(false);
     if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
@@ -6284,11 +6283,11 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                       setShowVictoryModal(false);
                       setVictoryBalloons([]);
                       setConfetti([]);
-                      setShowLevelMap(true);
+                      setShowLevelMap(false); setActiveGame("menu");
                     }}
                     className="flex-1 bg-white hover:bg-slate-50 text-[#4D2B82] border-3 border-[#4D2B82] shadow-[0_4px_0_0_#2D1B69] px-4 py-3 rounded-full font-black text-sm cursor-pointer transition-all active:translate-y-[2px] active:shadow-[0_2px_0_0_#2D1B69]"
                   >
-                    🗺️ خريطة المستويات
+                    🏠 العودة للقائمة
                   </button>
                   <button
                     onClick={() => {
