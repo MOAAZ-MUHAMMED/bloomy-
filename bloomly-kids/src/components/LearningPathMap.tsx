@@ -414,8 +414,8 @@ export default function LearningPathMap({
       {islandsData.map((island, index) => {
         const isActive = selectedIslandIndex === index;
         const isCard = index === 1 || index === 5;
-        const isLocked = index > maxIslandUnlocked;
-        const isNextToUnlock = index === maxIslandUnlocked;
+        const isLocked = false;
+        const isNextToUnlock = false;
 
         return (
           <div
