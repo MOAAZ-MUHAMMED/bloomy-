@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle, ArrowRight } from "lucide-react";
 import confetti from "canvas-confetti";
@@ -10,7 +10,7 @@ interface DailyHabitsGameProps {
   setGlobalStars?: React.Dispatch<React.SetStateAction<number>>;
 }
 
-type HabitType = "TEETH" | "ROOM" | "WASH" | "BREAKFAST" | "WATER" | "HAIR" | "BED" | "SLEEP";
+type HabitType = "TEETH" | "ROOM" | "WASH" | "BREAKFAST" | "HAIR" | "BED";
 type RoomItemType = "TOY" | "CLOTHES" | "TRASH";
 
 export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }: DailyHabitsGameProps) {
@@ -88,9 +88,9 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
     { id: 4, type: "CLOTHES" as RoomItemType, emoji: "👕" },
     { id: 5, type: "CLOTHES" as RoomItemType, emoji: "🧦" },
     { id: 6, type: "CLOTHES" as RoomItemType, emoji: "👖" },
-    { id: 7, type: "TRASH" as RoomItemType, emoji: "🍌" }, // قشرة موز
-    { id: 8, type: "TRASH" as RoomItemType, emoji: "🧻" }, // ورق تواليت
-    { id: 9, type: "TRASH" as RoomItemType, emoji: "🗑️" }  // كيس قمامة
+    { id: 7, type: "TRASH" as RoomItemType, emoji: "🍌" },
+    { id: 8, type: "TRASH" as RoomItemType, emoji: "🧻" },
+    { id: 9, type: "TRASH" as RoomItemType, emoji: "🗑️" }
   ].sort(() => Math.random() - 0.5);
 
   const initialBreakfastItems = [
@@ -108,10 +108,8 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
   const [teethDirt, setTeethDirt] = useState<number[]>(Array(10).fill(100));
   const [breakfastItems, setBreakfastItems] = useState(initialBreakfastItems);
   const [isMouthOpen, setIsMouthOpen] = useState(false);
-  const [waterLevel, setWaterLevel] = useState(100);
   const [hairMessy, setHairMessy] = useState(100);
   const [placedBedItems, setPlacedBedItems] = useState<string[]>([]);
-  const [sleepPhase, setSleepPhase] = useState(0); // 0: awake, 1: dark, 2: blanket
 
   const startHabit = (h: HabitType) => {
     setActiveHabit(h);
@@ -120,11 +118,9 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
       setWashPhase("FACE"); setFaceSpots([1, 2, 3, 4]); setHandBubbles([1, 2, 3, 4, 5, 6, 7, 8]);
     }
     if (h === "TEETH") setTeethDirt(Array(10).fill(100));
-    if (h === "WATER") setWaterLevel(100);
     if (h === "BREAKFAST") { setBreakfastItems(initialBreakfastItems); setIsMouthOpen(false); }
     if (h === "HAIR") setHairMessy(100);
     if (h === "BED") setPlacedBedItems([]);
-    if (h === "SLEEP") setSleepPhase(0);
   };
 
   // --- 1. TEETH ---
@@ -139,9 +135,9 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
 
   // --- 2. ROOM ---
   const handleDropRoomItem = (e: any, info: any, item: any) => {
-    // Hide the element temporarily to find what is underneath
-    const el = document.elementFromPoint(info.point.x, info.point.y);
-    const boxId = el?.closest('[data-box]')?.getAttribute('data-box');
+    const els = document.elementsFromPoint(info.point.x, info.point.y);
+    const boxEl = els.find(el => el.hasAttribute('data-box') || el.closest('[data-box]'));
+    const boxId = boxEl?.getAttribute('data-box') || boxEl?.closest('[data-box]')?.getAttribute('data-box');
     
     if (boxId) {
       if (boxId === item.type) {
@@ -168,17 +164,17 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
 
   // --- 4. BREAKFAST ---
   const handleBreakfastDrag = (e: any, info: any) => {
-    const el = document.elementFromPoint(info.point.x, info.point.y);
-    if (el?.closest('[data-mouth]')) {
-      setIsMouthOpen(true);
-    } else {
-      setIsMouthOpen(false);
-    }
+    const els = document.elementsFromPoint(info.point.x, info.point.y);
+    const mouthEl = els.find(el => el.hasAttribute('data-mouth') || el.closest('[data-mouth]'));
+    setIsMouthOpen(!!mouthEl);
   };
+  
   const handleBreakfastDrop = (e: any, info: any, item: any) => {
     setIsMouthOpen(false);
-    const el = document.elementFromPoint(info.point.x, info.point.y);
-    if (el?.closest('[data-mouth]')) {
+    const els = document.elementsFromPoint(info.point.x, info.point.y);
+    const mouthEl = els.find(el => el.hasAttribute('data-mouth') || el.closest('[data-mouth]'));
+    
+    if (mouthEl) {
       if (item.isHealthy) {
         const newItems = breakfastItems.filter(i => i.id !== item.id);
         setBreakfastItems(newItems);
@@ -189,19 +185,7 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
     }
   };
 
-  // --- 5. WATER ---
-  const handleWaterDrag = (e: any, info: any) => {
-    const el = document.elementFromPoint(info.point.x, info.point.y);
-    if (el?.closest('[data-mouth]')) {
-      setWaterLevel(prev => {
-        const next = Math.max(0, prev - 2);
-        if (next === 0 && prev > 0) completeHabit("WATER");
-        return next;
-      });
-    }
-  };
-
-  // --- 6. HAIR ---
+  // --- 5. HAIR ---
   const handleComb = () => {
     if (hairMessy > 0) {
       setHairMessy(prev => Math.max(0, prev - 2));
@@ -209,22 +193,17 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
     }
   };
 
-  // --- 7. BED ---
+  // --- 6. BED ---
   const handleBedDrop = (e: any, info: any, item: string) => {
-    const el = document.elementFromPoint(info.point.x, info.point.y);
-    const zoneId = el?.closest('[data-zone]')?.getAttribute('data-zone');
+    const els = document.elementsFromPoint(info.point.x, info.point.y);
+    const zoneEl = els.find(el => el.hasAttribute('data-zone') || el.closest('[data-zone]'));
+    const zoneId = zoneEl?.getAttribute('data-zone') || zoneEl?.closest('[data-zone]')?.getAttribute('data-zone');
+    
     if (zoneId === item) {
       const newItems = [...placedBedItems, item];
       setPlacedBedItems(newItems);
       if (newItems.length === 3) completeHabit("BED");
     }
-  };
-
-  // --- 8. SLEEP ---
-  const handleTurnOffLight = () => setSleepPhase(1);
-  const handlePullBlanket = () => {
-    setSleepPhase(2);
-    completeHabit("SLEEP");
   };
 
   return (
@@ -259,24 +238,22 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
         {!activeHabit ? (
           <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-5xl text-center pb-20 mt-16">
             <h2 className="text-3xl font-black text-[#4D2B82] mb-2">🌟 عاداتي اليومية مع برعم 🌟</h2>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 gap-4 mt-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-3 gap-6 mt-12 max-w-4xl mx-auto">
               {[
                 { id: "TEETH", title: "غسل الأسنان", icon: "🦷" },
                 { id: "ROOM", title: "الغرفة النظيفة", icon: "🧸" },
                 { id: "WASH", title: "النظافة الشخصية", icon: "🧼" },
                 { id: "BREAKFAST", title: "إفطار صحي", icon: "🍳" },
-                { id: "WATER", title: "شرب الماء", icon: "💧" },
                 { id: "HAIR", title: "تمشيط الشعر", icon: "🪮" },
                 { id: "BED", title: "ترتيب السرير", icon: "🛏️" },
-                { id: "SLEEP", title: "النوم مبكراً", icon: "😴" },
               ].map(habit => (
                 <button key={habit.id} onClick={() => startHabit(habit.id as HabitType)}
-                  className={`card-bubbly p-4 bg-white flex flex-col items-center justify-center gap-2 border-4 rounded-3xl cursor-pointer transition-all hover:scale-105 ${completedHabits.includes(habit.id as HabitType) ? 'border-emerald-400 bg-emerald-50' : 'border-[#4D2B82] hover:bg-purple-50'}`}>
-                  <div className="text-5xl mb-1 relative">
+                  className={`card-bubbly p-6 bg-white flex flex-col items-center justify-center gap-3 border-4 rounded-3xl cursor-pointer transition-all hover:scale-105 ${completedHabits.includes(habit.id as HabitType) ? 'border-emerald-400 bg-emerald-50' : 'border-[#4D2B82] hover:bg-purple-50'}`}>
+                  <div className="text-6xl mb-1 relative">
                     {habit.icon}
-                    {completedHabits.includes(habit.id as HabitType) && <CheckCircle className="absolute -top-1 -right-2 w-6 h-6 text-emerald-500 fill-white bg-white rounded-full shadow-md" />}
+                    {completedHabits.includes(habit.id as HabitType) && <CheckCircle className="absolute -top-1 -right-2 w-8 h-8 text-emerald-500 fill-white bg-white rounded-full shadow-md" />}
                   </div>
-                  <h3 className="text-sm font-black text-[#4D2B82]">{habit.title}</h3>
+                  <h3 className="text-xl font-black text-[#4D2B82]">{habit.title}</h3>
                 </button>
               ))}
             </div>
@@ -288,10 +265,8 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
               {activeHabit === "ROOM" && "اسحب كل عنصر للصندوق الصحيح!"}
               {activeHabit === "WASH" && (washPhase === "FACE" ? "أمسك الصابونة 🧼 وامسح البقع من وجه برعم!" : "فرقع الفقاعات لغسل اليدين!")}
               {activeHabit === "BREAKFAST" && "اسحب الطعام الصحي 🍎 لفم برعم واحذر من غير الصحي!"}
-              {activeHabit === "WATER" && "اسحب كوب الماء لفم برعم لكي يشرب!"}
               {activeHabit === "HAIR" && "أمسك المشط 🪮 وسرح شعر برعم ببطء لترتيبه!"}
               {activeHabit === "BED" && "اسحب المخدات والغطاء إلى أماكنها المحددة في السرير!"}
-              {activeHabit === "SLEEP" && "أطفئ النور واسحب الغطاء على برعم!"}
             </div>
 
             <div className="flex-grow relative bg-[#F8FAFC] flex items-center justify-center p-4">
@@ -386,15 +361,15 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
 
               {/* --- BREAKFAST --- */}
               {activeHabit === "BREAKFAST" && (
-                <div className="relative w-full h-full flex flex-col">
+                <div className="relative w-full h-full flex flex-col justify-between">
                   {/* Face in middle */}
-                  <div className="flex-grow flex items-center justify-center z-10 pointer-events-none mb-20">
+                  <div className="flex-grow flex items-center justify-center z-10 pointer-events-none">
                     <div data-mouth="true" className="text-[160px] pointer-events-auto flex items-center justify-center w-64 h-64 transition-transform duration-200">
                       {isMouthOpen ? "😮" : "👦"}
                     </div>
                   </div>
-                  {/* Tray at bottom */}
-                  <div className="h-36 bg-amber-50 rounded-t-3xl border-t-8 border-amber-200 flex justify-center items-center gap-6 z-20">
+                  {/* Tray at bottom - Add pb-6 so it's not cut off by the rounded container corners */}
+                  <div className="bg-amber-50 rounded-t-3xl border-t-8 border-amber-200 flex justify-center items-center gap-6 z-20 py-6 px-4 shrink-0">
                     {breakfastItems.map(food => (
                       <motion.div key={food.id} drag dragMomentum={false}
                         onDrag={(e, info) => handleBreakfastDrag(e, info)}
@@ -406,26 +381,6 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
                     ))}
                     {breakfastItems.length === 0 && <span className="text-2xl font-bold text-amber-500">شبعت! الحمد لله.</span>}
                   </div>
-                </div>
-              )}
-
-              {/* --- WATER --- */}
-              {activeHabit === "WATER" && (
-                <div className="w-full h-full flex items-center justify-center gap-12 relative">
-                  <div data-mouth="true" className="text-[160px] select-none z-10">
-                    {waterLevel === 0 ? "😋" : "👦"}
-                  </div>
-                  <motion.div drag dragMomentum={false} onDrag={(e, info) => handleWaterDrag(e, info)}
-                    className="w-32 h-48 border-4 border-blue-400 rounded-b-2xl bg-white/50 backdrop-blur-sm relative overflow-hidden shadow-2xl cursor-grab active:cursor-grabbing z-30 ml-20"
-                  >
-                    <motion.div className="absolute bottom-0 left-0 right-0 bg-blue-400/80"
-                      style={{ height: `${waterLevel}%` }}
-                    />
-                    {waterLevel < 100 && waterLevel > 0 && (
-                      <motion.div animate={{ y: [-5, 5, -5] }} transition={{ repeat: Infinity, duration: 0.5 }} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-3xl">💦</motion.div>
-                    )}
-                  </motion.div>
-                  {waterLevel > 0 && <div className="absolute top-20 right-20 text-blue-500 font-bold text-2xl animate-pulse pointer-events-none">اسحب الكوب لفم برعم!</div>}
                 </div>
               )}
 
@@ -476,32 +431,6 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
                     {placedBedItems.includes('pillow2') && <div className="absolute top-4 left-6 w-32 h-16 bg-white rounded-xl shadow-md border-2 border-gray-200 flex items-center justify-center text-3xl pointer-events-none">☁️</div>}
                     {placedBedItems.includes('blanket') && <div className="absolute bottom-0 inset-x-0 h-3/4 bg-blue-400 rounded-t-xl border-4 border-blue-500 shadow-inner flex items-center justify-center text-5xl pointer-events-none">🌌</div>}
                   </div>
-                </div>
-              )}
-
-              {/* --- SLEEP --- */}
-              {activeHabit === "SLEEP" && (
-                <div className={`w-full h-full relative transition-colors duration-1000 flex items-center justify-center ${sleepPhase === 0 ? 'bg-yellow-50' : 'bg-[#0F172A]'}`}>
-                  {sleepPhase === 0 ? (
-                    <div className="flex flex-col items-center">
-                      <div className="text-[120px]">👦</div>
-                      <button onClick={handleTurnOffLight} className="mt-8 px-8 py-4 bg-blue-500 text-white font-bold rounded-full text-2xl shadow-lg hover:scale-105 border-4 border-blue-600">أطفئ النور</button>
-                    </div>
-                  ) : sleepPhase === 1 ? (
-                    <div className="w-full h-full flex flex-col items-center justify-center relative">
-                       <div className="text-[120px] mb-8">👦</div>
-                       <motion.div drag="y" dragConstraints={{ top: -100, bottom: 0 }} dragElastic={0} onDragEnd={(e,info) => { if(info.point.y < window.innerHeight/2) handlePullBlanket() }}
-                         className="absolute bottom-10 w-64 h-32 bg-blue-600 rounded-t-3xl shadow-[0_-10px_20px_rgba(0,0,0,0.5)] flex items-center justify-center text-white font-bold text-xl cursor-grab border-t-4 border-blue-400"
-                       >اسحب الغطاء للأعلى!</motion.div>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center relative">
-                      <div className="text-[120px] mb-4 opacity-50">😴</div>
-                      <div className="absolute bottom-0 w-64 h-24 bg-blue-600 rounded-t-full shadow-inner border-t-4 border-blue-400"></div>
-                      <motion.div animate={{ y: [-10, -50], opacity: [1, 0], x: [0, 20] }} transition={{ repeat: Infinity, duration: 2.5 }} className="absolute -top-10 right-0 text-5xl text-blue-200 font-black">Z</motion.div>
-                      <motion.div animate={{ y: [-10, -50], opacity: [1, 0], x: [0, -10] }} transition={{ repeat: Infinity, duration: 2, delay: 0.5 }} className="absolute -top-5 left-0 text-3xl text-blue-300 font-black">z</motion.div>
-                    </div>
-                  )}
                 </div>
               )}
 
