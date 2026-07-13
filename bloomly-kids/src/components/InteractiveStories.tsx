@@ -1294,7 +1294,7 @@ export default function InteractiveStories({ onClose, globalStars, setGlobalStar
       </AnimatePresence>
 
       {/* 3. Main Workspace Area */}
-      <main className="flex-grow w-full flex items-center justify-center p-6 relative z-10 overflow-y-auto overflow-x-hidden min-h-0">
+      <main className="flex-grow w-full flex flex-col items-center p-6 pt-24 relative z-10 overflow-y-auto overflow-x-hidden min-h-0">
         
         <AnimatePresence mode="wait">
           {!activeStory ? (
