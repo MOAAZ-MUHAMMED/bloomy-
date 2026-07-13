@@ -466,3 +466,4 @@
     flex-direction: column !important;
   }
 }
+@keyframes shimmer { 100% { left: 200%%; } } 
