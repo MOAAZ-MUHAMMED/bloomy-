@@ -123,6 +123,25 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
     if (h === "BED") setPlacedBedItems([]);
   };
 
+  // --- Helper to check drop zone with scroll offset ---
+  const checkDropZone = (info: any, selector: string): Element | null => {
+    let foundTarget: Element | null = null;
+    const targets = document.querySelectorAll(selector);
+    targets.forEach((target) => {
+      const rect = target.getBoundingClientRect();
+      const left = rect.left + window.scrollX;
+      const right = rect.right + window.scrollX;
+      const top = rect.top + window.scrollY;
+      const bottom = rect.bottom + window.scrollY;
+      
+      if (info.point.x >= left && info.point.x <= right &&
+          info.point.y >= top && info.point.y <= bottom) {
+        foundTarget = target;
+      }
+    });
+    return foundTarget;
+  };
+
   // --- 1. TEETH ---
   const handleBrushTooth = (index: number) => {
     if (teethDirt[index] > 0) {
@@ -135,15 +154,8 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
 
   // --- 2. ROOM ---
   const handleDropRoomItem = (e: any, info: any, item: any) => {
-    let boxId = null;
-    const boxes = document.querySelectorAll('[data-box]');
-    boxes.forEach(box => {
-      const rect = box.getBoundingClientRect();
-      if (info.point.x >= rect.left && info.point.x <= rect.right &&
-          info.point.y >= rect.top && info.point.y <= rect.bottom) {
-        boxId = box.getAttribute('data-box');
-      }
-    });
+    const target = checkDropZone(info, '[data-box]');
+    let boxId = target ? target.getAttribute('data-box') : null;
     
     if (boxId) {
       if (boxId === item.type) {
@@ -170,31 +182,15 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
 
   // --- 4. BREAKFAST ---
   const handleBreakfastDrag = (e: any, info: any) => {
-    let mouthFound = false;
-    const mouths = document.querySelectorAll('[data-mouth]');
-    mouths.forEach(mouth => {
-      const rect = mouth.getBoundingClientRect();
-      if (info.point.x >= rect.left && info.point.x <= rect.right &&
-          info.point.y >= rect.top && info.point.y <= rect.bottom) {
-        mouthFound = true;
-      }
-    });
-    setIsMouthOpen(mouthFound);
+    const target = checkDropZone(info, '[data-mouth]');
+    setIsMouthOpen(!!target);
   };
   
   const handleBreakfastDrop = (e: any, info: any, item: any) => {
     setIsMouthOpen(false);
-    let mouthFound = false;
-    const mouths = document.querySelectorAll('[data-mouth]');
-    mouths.forEach(mouth => {
-      const rect = mouth.getBoundingClientRect();
-      if (info.point.x >= rect.left && info.point.x <= rect.right &&
-          info.point.y >= rect.top && info.point.y <= rect.bottom) {
-        mouthFound = true;
-      }
-    });
+    const target = checkDropZone(info, '[data-mouth]');
     
-    if (mouthFound) {
+    if (target) {
       if (item.isHealthy) {
         const newItems = breakfastItems.filter(i => i.id !== item.id);
         setBreakfastItems(newItems);
@@ -208,27 +204,24 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
   // --- 5. HAIR ---
   const handleComb = () => {
     if (hairMessy > 0) {
-      setHairMessy(prev => Math.max(0, prev - 2));
-      if (hairMessy - 2 <= 0) completeHabit("HAIR");
+      setHairMessy(prev => {
+        const next = Math.max(0, prev - 2);
+        if (next === 0) completeHabit("HAIR");
+        return next;
+      });
     }
   };
 
   // --- 6. BED ---
-  const handleBedDrop = (e: any, info: any, item: string) => {
-    let zoneId = null;
-    const zones = document.querySelectorAll('[data-zone]');
-    zones.forEach(zone => {
-      const rect = zone.getBoundingClientRect();
-      if (info.point.x >= rect.left && info.point.x <= rect.right &&
-          info.point.y >= rect.top && info.point.y <= rect.bottom) {
-        zoneId = zone.getAttribute('data-zone');
+  const handleBedDrop = (e: any, info: any, itemType: string) => {
+    const target = checkDropZone(info, '[data-zone]');
+    if (target) {
+      const zoneId = target.getAttribute('data-zone');
+      if (zoneId === itemType) {
+        const newPlaced = [...placedBedItems, itemType];
+        setPlacedBedItems(newPlaced);
+        if (newPlaced.length === 3) completeHabit("BED");
       }
-    });
-    
-    if (zoneId === item) {
-      const newItems = [...placedBedItems, item];
-      setPlacedBedItems(newItems);
-      if (newItems.length === 3) completeHabit("BED");
     }
   };
 
