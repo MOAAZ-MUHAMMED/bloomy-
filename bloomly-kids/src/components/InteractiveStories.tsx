@@ -9,7 +9,7 @@ interface StoryPage {
   illustration: (isAnimating: boolean) => React.ReactNode;
 }
 
-interface Story {
+export interface Story {
   id: number;
   title: string;
   desc: string;
