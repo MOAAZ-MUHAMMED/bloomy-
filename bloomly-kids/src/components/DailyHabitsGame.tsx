@@ -135,9 +135,15 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
 
   // --- 2. ROOM ---
   const handleDropRoomItem = (e: any, info: any, item: any) => {
-    const els = document.elementsFromPoint(info.point.x, info.point.y);
-    const boxEl = els.find(el => el.hasAttribute('data-box') || el.closest('[data-box]'));
-    const boxId = boxEl?.getAttribute('data-box') || boxEl?.closest('[data-box]')?.getAttribute('data-box');
+    let boxId = null;
+    const boxes = document.querySelectorAll('[data-box]');
+    boxes.forEach(box => {
+      const rect = box.getBoundingClientRect();
+      if (info.point.x >= rect.left && info.point.x <= rect.right &&
+          info.point.y >= rect.top && info.point.y <= rect.bottom) {
+        boxId = box.getAttribute('data-box');
+      }
+    });
     
     if (boxId) {
       if (boxId === item.type) {
@@ -164,17 +170,31 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
 
   // --- 4. BREAKFAST ---
   const handleBreakfastDrag = (e: any, info: any) => {
-    const els = document.elementsFromPoint(info.point.x, info.point.y);
-    const mouthEl = els.find(el => el.hasAttribute('data-mouth') || el.closest('[data-mouth]'));
-    setIsMouthOpen(!!mouthEl);
+    let mouthFound = false;
+    const mouths = document.querySelectorAll('[data-mouth]');
+    mouths.forEach(mouth => {
+      const rect = mouth.getBoundingClientRect();
+      if (info.point.x >= rect.left && info.point.x <= rect.right &&
+          info.point.y >= rect.top && info.point.y <= rect.bottom) {
+        mouthFound = true;
+      }
+    });
+    setIsMouthOpen(mouthFound);
   };
   
   const handleBreakfastDrop = (e: any, info: any, item: any) => {
     setIsMouthOpen(false);
-    const els = document.elementsFromPoint(info.point.x, info.point.y);
-    const mouthEl = els.find(el => el.hasAttribute('data-mouth') || el.closest('[data-mouth]'));
+    let mouthFound = false;
+    const mouths = document.querySelectorAll('[data-mouth]');
+    mouths.forEach(mouth => {
+      const rect = mouth.getBoundingClientRect();
+      if (info.point.x >= rect.left && info.point.x <= rect.right &&
+          info.point.y >= rect.top && info.point.y <= rect.bottom) {
+        mouthFound = true;
+      }
+    });
     
-    if (mouthEl) {
+    if (mouthFound) {
       if (item.isHealthy) {
         const newItems = breakfastItems.filter(i => i.id !== item.id);
         setBreakfastItems(newItems);
@@ -195,9 +215,15 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
 
   // --- 6. BED ---
   const handleBedDrop = (e: any, info: any, item: string) => {
-    const els = document.elementsFromPoint(info.point.x, info.point.y);
-    const zoneEl = els.find(el => el.hasAttribute('data-zone') || el.closest('[data-zone]'));
-    const zoneId = zoneEl?.getAttribute('data-zone') || zoneEl?.closest('[data-zone]')?.getAttribute('data-zone');
+    let zoneId = null;
+    const zones = document.querySelectorAll('[data-zone]');
+    zones.forEach(zone => {
+      const rect = zone.getBoundingClientRect();
+      if (info.point.x >= rect.left && info.point.x <= rect.right &&
+          info.point.y >= rect.top && info.point.y <= rect.bottom) {
+        zoneId = zone.getAttribute('data-zone');
+      }
+    });
     
     if (zoneId === item) {
       const newItems = [...placedBedItems, item];
