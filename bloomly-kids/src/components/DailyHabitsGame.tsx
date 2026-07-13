@@ -273,7 +273,7 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
   };
 
   return (
-    <div id="daily-habits-container" className="fixed inset-0 z-[9990] bg-gradient-to-b from-[#E0F2FE] via-[#F0FDFA] to-[#FAF7FD] select-none font-sans flex flex-col justify-between overflow-hidden">
+    <div id="daily-habits-container" className="fixed inset-0 z-[9990] bg-transparent select-none font-sans flex flex-col justify-between overflow-hidden">
       <div className="absolute top-4 right-4 z-[9990] select-none pointer-events-auto">
         <div className="flex items-center gap-1.5 bg-[#FFFCE6] border-3 border-[#D97706] text-[#D97706] font-black text-sm px-4 py-2 rounded-full shadow-lg">
           <span className="text-lg text-yellow-400">★</span><span>نجومك: {globalStars}</span>

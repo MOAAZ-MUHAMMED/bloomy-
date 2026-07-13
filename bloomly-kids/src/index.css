@@ -21,7 +21,7 @@
 @layer base {
   body {
     font-family: var(--font-sans);
-    background-color: var(--color-brand-bg);
+    background-color: transparent;
     color: var(--color-brand-purple);
     overflow-x: hidden;
   }
