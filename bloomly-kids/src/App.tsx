@@ -6,6 +6,7 @@ import { IntroScreen } from "./components/IntroScreen";
 import { RegisterScreen } from "./components/RegisterScreen";
 import { BoyAvatar, GirlAvatar } from "./components/Avatars";
 import MagicGarden from "./components/MagicGarden";
+import { MagicalForestBackground } from "./components/MagicalForestBackground";
 import { 
   Sparkles, 
   Gamepad2, 
@@ -440,7 +441,8 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen relative font-sans overflow-x-hidden pb-16 bg-[#FAF7FD]">
+    <div className="min-h-screen relative font-sans overflow-x-hidden pb-16 bg-transparent">
+      <MagicalForestBackground />
       <AnimatePresence>
         {showIntro && (
           <IntroScreen onFinish={() => {

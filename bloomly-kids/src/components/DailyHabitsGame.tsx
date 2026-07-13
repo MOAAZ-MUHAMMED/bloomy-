@@ -10,7 +10,7 @@ interface DailyHabitsGameProps {
   setGlobalStars?: React.Dispatch<React.SetStateAction<number>>;
 }
 
-type HabitType = "TEETH" | "ROOM" | "WASH" | "BREAKFAST" | "HAIR" | "BED";
+type HabitType = "TEETH" | "ROOM" | "WASH" | "BREAKFAST" | "HAIR" | "BED" | "FRUITS" | "PLANTS";
 type RoomItemType = "TOY" | "CLOTHES" | "TRASH";
 
 export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }: DailyHabitsGameProps) {
@@ -111,6 +111,21 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
   const [hairMessy, setHairMessy] = useState(100);
   const [placedBedItems, setPlacedBedItems] = useState<string[]>([]);
 
+  // FRUITS State
+  const initialFruits = [
+    { id: 1, emoji: "🍎" },
+    { id: 2, emoji: "🍌" },
+    { id: 3, emoji: "🍇" },
+    { id: 4, emoji: "🍓" }
+  ].sort(() => Math.random() - 0.5);
+  const [fruitsToWash, setFruitsToWash] = useState(initialFruits);
+  const [washedFruits, setWashedFruits] = useState<number[]>([]);
+  const [isWashing, setIsWashing] = useState(false);
+
+  // PLANTS State
+  const [plantWaterLevel, setPlantWaterLevel] = useState(0);
+
+
   const startHabit = (h: HabitType) => {
     setActiveHabit(h);
     if (h === "ROOM") setRoomItems(initialRoomItems);
@@ -121,6 +136,8 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
     if (h === "BREAKFAST") { setBreakfastItems(initialBreakfastItems); setIsMouthOpen(false); }
     if (h === "HAIR") setHairMessy(100);
     if (h === "BED") setPlacedBedItems([]);
+    if (h === "FRUITS") { setFruitsToWash(initialFruits); setWashedFruits([]); }
+    if (h === "PLANTS") setPlantWaterLevel(0);
   };
 
   // --- Helper to check drop zone with scroll offset ---
@@ -225,6 +242,36 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
     }
   };
 
+  // --- 7. FRUITS ---
+  const handleFruitDrag = (e: any, info: any) => {
+    const target = checkDropZone(info, '[data-sink]');
+    setIsWashing(!!target);
+  };
+  
+  const handleFruitDrop = (e: any, info: any, fruit: any) => {
+    setIsWashing(false);
+    const target = checkDropZone(info, '[data-sink]');
+    if (target) {
+      // Wash the fruit and move it to washed list
+      const newToWash = fruitsToWash.filter((f: any) => f.id !== fruit.id);
+      setFruitsToWash(newToWash);
+      setWashedFruits((prev: any) => [...prev, fruit.id]);
+      if (newToWash.length === 0) completeHabit("FRUITS");
+    }
+  };
+
+  // --- 8. PLANTS ---
+  const handleWateringCanDrag = (e: any, info: any) => {
+    const target = checkDropZone(info, '[data-plant]');
+    if (target) {
+      setPlantWaterLevel((prev: any) => {
+        const next = Math.min(100, prev + 2);
+        if (next === 100 && prev < 100) completeHabit("PLANTS");
+        return next;
+      });
+    }
+  };
+
   return (
     <div id="daily-habits-container" className="fixed inset-0 z-[9990] bg-gradient-to-b from-[#E0F2FE] via-[#F0FDFA] to-[#FAF7FD] select-none font-sans flex flex-col justify-between overflow-hidden">
       <div className="absolute top-4 right-4 z-[9990] select-none pointer-events-auto">
@@ -265,7 +312,9 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
                 { id: "BREAKFAST", title: "إفطار صحي", icon: "🍳" },
                 { id: "HAIR", title: "تمشيط الشعر", icon: "🪮" },
                 { id: "BED", title: "ترتيب السرير", icon: "🛏️" },
-              ].map(habit => (
+                { id: "FRUITS", title: "غسل الفواكه", icon: "🍎" },
+                { id: "PLANTS", title: "سقي النباتات", icon: "🌱" },
+              ].map((habit) => (
                 <button key={habit.id} onClick={() => startHabit(habit.id as HabitType)}
                   className={`card-bubbly p-6 bg-white flex flex-col items-center justify-center gap-3 border-4 rounded-3xl cursor-pointer transition-all hover:scale-105 ${completedHabits.includes(habit.id as HabitType) ? 'border-emerald-400 bg-emerald-50' : 'border-[#4D2B82] hover:bg-purple-50'}`}>
                   <div className="text-6xl mb-1 relative">
@@ -285,7 +334,9 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
               {activeHabit === "WASH" && (washPhase === "FACE" ? "أمسك الصابونة 🧼 وامسح البقع من وجه برعم!" : "فرقع الفقاعات لغسل اليدين!")}
               {activeHabit === "BREAKFAST" && "اسحب الطعام الصحي 🍎 لفم برعم واحذر من غير الصحي!"}
               {activeHabit === "HAIR" && "أمسك المشط 🪮 وسرح شعر برعم ببطء لترتيبه!"}
-              {activeHabit === "BED" && "اسحب المخدات والغطاء إلى أماكنها المحددة في السرير!"}
+                            {activeHabit === "BED" && "اسحب المخدات والغطاء إلى أماكنها المحددة في السرير!"}
+              {activeHabit === "FRUITS" && "اسحب كل فاكهة لحوض الماء لغسلها جيداً قبل الأكل!"}
+              {activeHabit === "PLANTS" && "امسك إبريق الماء واستمر بوضعه فوق النبتة حتى تنمو وتزدهر!"}
             </div>
 
             <div className="flex-grow relative bg-[#F8FAFC] flex items-center justify-center p-4">
@@ -452,6 +503,92 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
                   </div>
                 </div>
               )}
+              {/* --- FRUITS --- */}
+              {activeHabit === "FRUITS" && (
+                <div className="w-full h-full flex flex-col justify-between items-center relative py-6">
+                  {/* Sink / Water source */}
+                  <div className="relative mt-8">
+                    <div className="w-16 h-20 bg-gray-300 rounded-t-xl border-x-4 border-t-4 border-gray-400 mx-auto" />
+                    <div className="w-24 h-6 bg-gray-400 rounded-full border-4 border-gray-500 mb-2 relative z-20" />
+                    {/* Flowing Water */}
+                    <motion.div data-sink="true"
+                      className="w-12 h-40 bg-blue-400/60 mx-auto rounded-b-full shadow-[0_0_15px_rgba(59,130,246,0.5)] border-x-2 border-blue-200/50"
+                      animate={{ y: [0, 5, 0], opacity: [0.6, 0.8, 0.6] }}
+                      transition={{ duration: 0.5, repeat: Infinity }}
+                    />
+                    {/* Splash effect when washing */}
+                    {isWashing && (
+                      <motion.div className="absolute bottom-[-10px] left-1/2 -translate-x-1/2 flex gap-1 z-30">
+                        <motion.div animate={{ y: [0, -15, 0], x: [-5, -15, -5], opacity: [1, 0] }} transition={{ repeat: Infinity, duration: 0.6 }} className="w-3 h-3 bg-blue-300 rounded-full" />
+                        <motion.div animate={{ y: [0, -20, 0], x: [0, 0, 0], opacity: [1, 0] }} transition={{ repeat: Infinity, duration: 0.5, delay: 0.1 }} className="w-4 h-4 bg-blue-200 rounded-full" />
+                        <motion.div animate={{ y: [0, -15, 0], x: [5, 15, 5], opacity: [1, 0] }} transition={{ repeat: Infinity, duration: 0.6, delay: 0.2 }} className="w-3 h-3 bg-blue-300 rounded-full" />
+                      </motion.div>
+                    )}
+                  </div>
+
+                  {/* Dirty Fruits Tray */}
+                  <div className="absolute bottom-6 left-6 bg-orange-50 border-4 border-orange-200 rounded-3xl p-4 flex flex-col gap-4 w-28 items-center z-30">
+                    <span className="text-sm font-bold text-orange-800">للتنظيف</span>
+                    {fruitsToWash.map((fruit: any) => (
+                      <motion.div key={fruit.id} drag dragMomentum={false}
+                        onDrag={(e, info) => handleFruitDrag(e, info)}
+                        onDragEnd={(e, info) => handleFruitDrop(e, info, fruit)}
+                        className="text-5xl cursor-grab active:cursor-grabbing hover:scale-110 relative"
+                      >
+                        {fruit.emoji}
+                        <div className="absolute inset-0 bg-[#8B4513]/40 rounded-full mix-blend-multiply pointer-events-none" />
+                        <div className="absolute inset-0 border-2 border-dotted border-[#654321]/50 rounded-full pointer-events-none" />
+                      </motion.div>
+                    ))}
+                  </div>
+
+                  {/* Clean Fruits Plate */}
+                  <div className="absolute bottom-6 right-6 w-48 h-48 bg-white border-8 border-blue-100 rounded-full shadow-lg flex flex-wrap justify-center items-center content-center p-4 gap-2 z-10">
+                    {washedFruits.length === 0 && <span className="text-gray-400 font-bold text-center text-sm w-full">الطبق النظيف</span>}
+                    {washedFruits.map((id: number) => {
+                      const fruit = initialFruits.find(f => f.id === id);
+                      return <motion.span initial={{scale:0}} animate={{scale:1}} key={id} className="text-5xl drop-shadow-md">{fruit?.emoji}</motion.span>;
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* --- PLANTS --- */}
+              {activeHabit === "PLANTS" && (
+                <div className="w-full h-full flex items-center justify-center relative">
+                  {/* Watering Can */}
+                  <motion.div drag dragMomentum={false}
+                    onDrag={(e, info) => handleWateringCanDrag(e, info)}
+                    className="absolute top-10 right-20 text-7xl cursor-grab active:cursor-grabbing z-40 hover:scale-110 drop-shadow-xl"
+                  >
+                    🫖
+                  </motion.div>
+
+                  {/* Plant & Pot */}
+                  <div data-plant="true" className="relative mt-32 z-10 flex flex-col items-center">
+                    {/* The Plant */}
+                    <motion.div 
+                      className="text-[120px] origin-bottom transition-all duration-300 drop-shadow-lg"
+                      animate={{ 
+                        rotate: plantWaterLevel < 100 ? (Math.sin(Date.now() / 500) * 5) - 15 : 0, 
+                        scale: 0.8 + (plantWaterLevel / 500) 
+                      }}
+                    >
+                      {plantWaterLevel < 100 ? "🥀" : "🌻"}
+                    </motion.div>
+                    {/* The Pot */}
+                    <div className="text-[100px] -mt-10 z-20">🪴</div>
+                    
+                    {/* Progress Bar */}
+                    {plantWaterLevel < 100 && (
+                      <div className="absolute -bottom-8 w-32 h-4 bg-gray-200 rounded-full border-2 border-gray-300 overflow-hidden">
+                        <div className="h-full bg-blue-500 transition-all duration-200" style={{ width: `${plantWaterLevel}%` }} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
 
             </div>
           </div>
