@@ -983,7 +983,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
               setActiveDifficulty(propChildLevel as any);
               setEffectiveLevel(propChildLevel as any);
             }
-            setShowLevelMap(false);
+            setShowLevelMap(true);
           } else {
             setShowLevelMap(false);
           }
