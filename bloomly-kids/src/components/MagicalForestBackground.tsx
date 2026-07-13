@@ -58,10 +58,39 @@ export const MagicalForestBackground: React.FC = () => {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden bg-gradient-to-br from-[#E0F2FE] via-[#FEF08A] to-[#FCE7F3]">
+      {/* Sunbeams */}
+      <div className="absolute top-0 right-0 w-[150%] h-[150%] origin-top-right animate-spin-slow opacity-30" style={{
+        background: 'conic-gradient(from 0deg at 100% 0%, transparent 0deg, rgba(253, 224, 71, 0.4) 15deg, transparent 30deg, rgba(253, 224, 71, 0.4) 45deg, transparent 60deg, rgba(253, 224, 71, 0.4) 75deg, transparent 90deg)',
+      }} />
+
+      {/* Rainbow */}
+      <div className="absolute -left-[10%] top-[10%] w-[40%] h-[60%] rounded-full opacity-40 blur-sm" style={{
+        boxShadow: 'inset 0 0 0 15px rgba(239, 68, 68, 0.5), inset 0 0 0 30px rgba(249, 115, 22, 0.5), inset 0 0 0 45px rgba(253, 224, 71, 0.5), inset 0 0 0 60px rgba(74, 222, 128, 0.5), inset 0 0 0 75px rgba(56, 189, 248, 0.5), inset 0 0 0 90px rgba(168, 85, 247, 0.5)'
+      }} />
+
       {/* Background Soft Glows for Cheerful Sky */}
       <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-blue-300/30 blur-[120px]" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-pink-300/30 blur-[120px]" />
       <div className="absolute top-[30%] left-[40%] w-[50%] h-[50%] rounded-full bg-yellow-200/40 blur-[100px]" />
+
+      {/* Hot Air Balloons */}
+      <motion.div
+        className="absolute top-[20%]"
+        initial={{ x: '-20vw' }}
+        animate={{ x: '120vw', y: [0, -20, 0] }}
+        transition={{ x: { duration: 60, repeat: Infinity, ease: "linear" }, y: { duration: 4, repeat: Infinity, ease: "easeInOut" } }}
+      >
+        <span className="text-6xl filter drop-shadow-md">🎈</span>
+      </motion.div>
+      <motion.div
+        className="absolute top-[40%]"
+        initial={{ x: '120vw' }}
+        animate={{ x: '-20vw', y: [0, 30, 0] }}
+        transition={{ x: { duration: 80, repeat: Infinity, ease: "linear", delay: 10 }, y: { duration: 5, repeat: Infinity, ease: "easeInOut" } }}
+        style={{ transform: 'scaleX(-1)' }}
+      >
+        <span className="text-8xl filter drop-shadow-md">🎈</span>
+      </motion.div>
 
       {/* Floating Stars and Magic Shapes */}
       {floatingStars.map(star => (
