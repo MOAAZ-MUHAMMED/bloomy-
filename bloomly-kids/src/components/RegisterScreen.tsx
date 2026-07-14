@@ -398,7 +398,7 @@ export function RegisterScreen({ onFinish, existingPhones = [] }: RegisterScreen
                 className="flex flex-col items-center w-full"
               >
                 <h2 className="text-3xl sm:text-4xl font-extrabold text-[#4D2B82] text-center mb-6">
-                  اختر مستوى اللعب 🗺️
+                  هل تجيد القراءة والجمع أم ما زلت في البداية؟ 🗺️
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 w-full max-w-lg">
                   {/* Level 1 */}
@@ -415,10 +415,10 @@ export function RegisterScreen({ onFinish, existingPhones = [] }: RegisterScreen
                   >
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-base sm:text-lg font-black text-[#4D2B82]">المستوى الأول ⭐</span>
+                        <span className="text-base sm:text-lg font-black text-[#4D2B82]">🌱 أنا في البداية (سهل جداً)</span>
                         {profile.level === "level1" && <span className="text-xs bg-[#2ECC71] text-white px-2 py-0.5 rounded-full font-bold">مختار</span>}
                       </div>
-                      <p className="text-[11px] font-bold text-purple-400 mb-1">من عمر 1 إلى 4 سنوات</p>
+                      <p className="text-[11px] font-bold text-purple-400 mb-1">أتعلم الحروف والأرقام</p>
                       <p className="text-[10px] text-gray-500 font-medium leading-relaxed">ألعاب الألوان، التعرف على الحروف الأولى والبالونات والأصوات البسيطة.</p>
                     </div>
                   </div>
@@ -437,10 +437,10 @@ export function RegisterScreen({ onFinish, existingPhones = [] }: RegisterScreen
                   >
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-base sm:text-lg font-black text-[#4D2B82]">المستوى الثاني 🌟</span>
+                        <span className="text-base sm:text-lg font-black text-[#4D2B82]">⭐ أجيد القراءة والجمع (متوسط)</span>
                         {profile.level === "level2" && <span className="text-xs bg-[#2ECC71] text-white px-2 py-0.5 rounded-full font-bold">مختار</span>}
                       </div>
-                      <p className="text-[11px] font-bold text-purple-400 mb-1">من عمر 5 إلى 7 سنوات</p>
+                      <p className="text-[11px] font-bold text-purple-400 mb-1">أقرأ الكلمات وأجمع الأرقام</p>
                       <p className="text-[10px] text-gray-500 font-medium leading-relaxed">مغامرات الحروف والتهجئة، الرياضيات السهلة وتنشيط كروت الذاكرة.</p>
                     </div>
                   </div>
@@ -459,10 +459,10 @@ export function RegisterScreen({ onFinish, existingPhones = [] }: RegisterScreen
                   >
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-base sm:text-lg font-black text-[#4D2B82]">المستوى الثالث 🚀</span>
+                        <span className="text-base sm:text-lg font-black text-[#4D2B82]">🏆 أريد تحديات أصعب (صعب)</span>
                         {profile.level === "level3" && <span className="text-xs bg-[#2ECC71] text-white px-2 py-0.5 rounded-full font-bold">مختار</span>}
                       </div>
-                      <p className="text-[11px] font-bold text-purple-400 mb-1">من عمر 8 إلى 10 سنوات</p>
+                      <p className="text-[11px] font-bold text-purple-400 mb-1">أحب التفكير والألغاز</p>
                       <p className="text-[10px] text-gray-500 font-medium leading-relaxed">تهجئة متقدمة، عمليات حسابية سريعة، تحديات التوصيل والمتاهة الذكية.</p>
                     </div>
                   </div>
@@ -481,7 +481,7 @@ export function RegisterScreen({ onFinish, existingPhones = [] }: RegisterScreen
                   >
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-base sm:text-lg font-black text-[#E01E5A]">المستوى الفائق 🏆</span>
+                        <span className="text-base sm:text-lg font-black text-[#E01E5A]">🚀 فائق (صعب جداً)</span>
                         {profile.level === "level4" && <span className="text-xs bg-[#2ECC71] text-white px-2 py-0.5 rounded-full font-bold">مختار</span>}
                       </div>
                       <p className="text-[11px] font-bold text-pink-400 mb-1">تحدي العباقرة الخارقين</p>

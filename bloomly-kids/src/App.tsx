@@ -795,7 +795,7 @@ export default function App() {
 
       {/* 1. Capsule Header */}
       <header className="container mx-auto px-4 pt-6 relative z-50">
-        <div className="bg-white/90 backdrop-blur-md border-3 border-[#4D2B82] rounded-full px-6 py-3 flex items-center justify-between shadow-[0_5px_0_0_#4D2B82]">
+        <div className="bg-white border-4 border-[#4D2B82] rounded-full px-6 py-4 flex items-center justify-between shadow-[0_8px_0_0_#4D2B82]">
           
           {/* Logo */}
           <div className="flex items-center gap-2 cursor-pointer select-none">

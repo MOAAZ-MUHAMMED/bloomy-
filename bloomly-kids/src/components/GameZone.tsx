@@ -858,6 +858,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [loadingGameName, setLoadingGameName] = useState("");
   const [selectedLevelIndex, setSelectedLevelIndex] = useState<number | null>(null);
+  const [pendingLevelStart, setPendingLevelStart] = useState<{lvlNum: number, difficulty: string, node: any} | null>(null);
   const [showPortraitPrompt, setShowPortraitPrompt] = useState(false);
   const [activeDifficulty, setActiveDifficulty] = useState<"level1" | "level2" | "level3" | "level4">("level1");
 
@@ -2575,7 +2576,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
   }, [showVictoryModal]);
 
   const quitGame = () => {
-    setShowLevelMap(false); setActiveGame("menu");
+    setShowLevelMap(true);
     setStarsEarnedThisSession(0);
     setRacerActive(false);
     if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
@@ -3847,30 +3848,11 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                             whileHover={node.isLocked ? {} : { scale: 1.15 }}
                             whileTap={node.isLocked ? {} : { scale: 0.95 }}
                             onClick={() => {
-                              setActiveDifficulty(node.difficulty as any);
-                              setSelectedLevelIndex(node.lvlNum);
-                              setShowLevelMap(false);
-                              
-                              // Trigger specific game startup
-                              if (activeGame === "math") startMathGame();
-                              else if (activeGame === "spelling") startSpellingGame();
-                              else if (activeGame === "memory") initMemoryGame();
-                              else if (activeGame === "arrowRacer") startRacerGame();
-                              else if (activeGame === "tapRacer") startTapRacerGame();
-                              else {
-                                // Generic start mapping for other games
-                                if (activeGame === "catcher") startCatcherGame();
-                                else if (activeGame === "coloring") startColoringGame();
-                                else if (activeGame === "spellingEn") startSpellingEnGame();
-                                else if (activeGame === "sorting") startSortingGame();
-                                else if (activeGame === "spaceCatcher") startSpaceCatcherGame();
-                                else if (activeGame === "connectDots") startConnectDotsGame();
-                                else if (activeGame === "maze") startMazeGame();
-                                else if (activeGame === "safari") startSafariGame();
-                                else if (activeGame === "chef") startChefGame();
-                                else if (activeGame === "farm") startFarmGame();
-                                else if (activeGame === "train") startTrainGame();
-                              }
+                              setPendingLevelStart({
+                                lvlNum: node.lvlNum,
+                                difficulty: node.difficulty as any,
+                                node
+                              });
                             }}
                             className={`absolute w-20 h-20 sm:w-22 sm:h-22 rounded-full border-4 ${theme.nodeBg} shadow-[0_8px_0_0_#4D2B82] flex flex-col items-center justify-center cursor-pointer transition-all active:translate-y-1 active:shadow-[0_4px_0_0_#4D2B82] ${node.isLocked ? "opacity-50 cursor-not-allowed filter grayscale" : ""}`}
                             style={{ left: node.x, top: node.y, transform: "translate(-50%, -50%)" }}
@@ -3901,6 +3883,66 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                 </div>
               );
             })()}
+
+            {/* Pending Start Modal */}
+            <AnimatePresence>
+              {pendingLevelStart && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  className="absolute inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+                >
+                  <div className="bg-white rounded-[32px] p-8 max-w-sm w-full border-4 border-[#4D2B82] shadow-2xl flex flex-col items-center text-center">
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#4D2B82] to-[#7E4CDB] flex items-center justify-center text-4xl mb-4 border-4 border-[#FFFCE6] shadow-lg">
+                      🚀
+                    </div>
+                    <h3 className="text-2xl font-black text-[#4D2B82] mb-2">مستعد للعب؟</h3>
+                    <p className="text-[#6B4E9E] font-bold mb-6">المرحلة رقم {pendingLevelStart.lvlNum}</p>
+                    <div className="flex gap-4 w-full" dir="rtl">
+                      <button
+                        onClick={() => {
+                          const p = pendingLevelStart;
+                          setPendingLevelStart(null);
+                          setActiveDifficulty(p.difficulty as any);
+                          setSelectedLevelIndex(p.lvlNum);
+                          setShowLevelMap(false);
+                          
+                          // Trigger specific game startup
+                          if (activeGame === "math") startMathGame();
+                          else if (activeGame === "spelling") startSpellingGame();
+                          else if (activeGame === "memory") initMemoryGame();
+                          else if (activeGame === "arrowRacer") startRacerGame();
+                          else if (activeGame === "tapRacer") startTapRacerGame();
+                          else {
+                            if (activeGame === "catcher") startCatcherGame();
+                            else if (activeGame === "coloring") startColoringGame();
+                            else if (activeGame === "spellingEn") startSpellingEnGame();
+                            else if (activeGame === "sorting") startSortingGame();
+                            else if (activeGame === "spaceCatcher") startSpaceCatcherGame();
+                            else if (activeGame === "connectDots") startConnectDotsGame();
+                            else if (activeGame === "maze") startMazeGame();
+                            else if (activeGame === "safari") startSafariGame();
+                            else if (activeGame === "chef") startChefGame();
+                            else if (activeGame === "farm") startFarmGame();
+                            else if (activeGame === "train") startTrainGame();
+                          }
+                        }}
+                        className="flex-1 bg-[#2ECC71] text-white py-3 rounded-full font-black text-lg border-b-4 border-[#27AE60] active:border-b-0 active:translate-y-[4px] transition-all hover:bg-[#27AE60]"
+                      >
+                        ابدأ اللعب!
+                      </button>
+                      <button
+                        onClick={() => setPendingLevelStart(null)}
+                        className="flex-1 bg-white text-[#E01E5A] border-2 border-[#E01E5A] py-3 rounded-full font-black text-lg active:translate-y-[2px] transition-all hover:bg-red-50"
+                      >
+                        إلغاء
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Footer tips */}
             <div className="w-full text-center text-xs text-white/85 bg-black/15 py-2 px-6 rounded-full border border-white/10 relative z-10">
@@ -6291,11 +6333,11 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
                       setShowVictoryModal(false);
                       setVictoryBalloons([]);
                       setConfetti([]);
-                      setShowLevelMap(false); setActiveGame("menu");
+                      setShowLevelMap(true);
                     }}
                     className="flex-1 bg-white hover:bg-slate-50 text-[#4D2B82] border-3 border-[#4D2B82] shadow-[0_4px_0_0_#2D1B69] px-4 py-3 rounded-full font-black text-sm cursor-pointer transition-all active:translate-y-[2px] active:shadow-[0_2px_0_0_#2D1B69]"
                   >
-                    🏠 العودة للقائمة
+                    🏠 العودة للخريطة
                   </button>
                   <button
                     onClick={() => {
@@ -6336,20 +6378,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
         )}
       </AnimatePresence>
 
-      {/* Floating Music Box Toggle Button */}
-      {activeGame !== "menu" && (
-        <button
-          onClick={() => {
-            const nextVal = !isMusicMuted;
-            setIsMusicMuted(nextVal);
-            localStorage.setItem("isMusicMuted", nextVal.toString());
-          }}
-          className="fixed bottom-6 left-6 z-50 w-14 h-14 rounded-full bg-yellow-400 border-4 border-[#4D2B82] flex items-center justify-center text-3xl shadow-xl hover:scale-110 active:scale-95 transition-transform cursor-pointer"
-          title={isMusicMuted ? "تشغيل الموسيقى 🎵" : "كتم الموسيقى 🔇"}
-        >
-          {isMusicMuted ? "🔇" : "🎵"}
-        </button>
-      )}
+      {/* Floating Music Box Toggle Button removed per user request */}
 
     </section>
   );

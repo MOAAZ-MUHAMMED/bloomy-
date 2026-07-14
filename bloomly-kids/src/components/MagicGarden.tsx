@@ -1015,7 +1015,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
         e.touches[0].clientY - e.touches[1].clientY
       );
       const scaleChange = (dist - initialPinchDist) * 0.005;
-      setZoomScale(s => Math.min(1.2, Math.max(0.1, s + scaleChange)));
+      setZoomScale(s => Math.min(1.2, Math.max(0.6, s + scaleChange)));
       setInitialPinchDist(dist);
     }
   };
@@ -1454,13 +1454,13 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
           <div className="bg-slate-100 rounded-full p-1 border-2 border-slate-200 flex items-center gap-1.5">
             <button onClick={() => setZoomScale(s => Math.min(1.2, s + 0.05))} className="p-1.5 text-slate-600 hover:text-[#4D2B82] cursor-pointer"><ZoomIn className="w-4 h-4" /></button>
             <span className="text-[10px] font-black text-slate-500">{Math.round(zoomScale * 100)}%</span>
-            <button onClick={() => setZoomScale(s => Math.max(0.1, s - 0.05))} className="p-1.5 text-slate-600 hover:text-[#4D2B82] cursor-pointer"><ZoomOut className="w-4 h-4" /></button>
+            <button onClick={() => setZoomScale(s => Math.max(0.6, s - 0.05))} className="p-1.5 text-slate-600 hover:text-[#4D2B82] cursor-pointer"><ZoomOut className="w-4 h-4" /></button>
             <button onClick={() => setZoomScale(0.85)} className="p-1.5 text-slate-400 hover:text-slate-600 cursor-pointer"><Maximize2 className="w-3.5 h-3.5" /></button>
           </div>
 
-          <div className="bg-yellow-100 border-3 border-yellow-500 rounded-full px-5 py-2 flex items-center gap-1.5 shadow-sm">
-            <span className="text-xl">⭐</span>
-            <span className="text-yellow-800 font-extrabold text-base">{globalStars}</span>
+          <div className="bg-[#FFFCE6] border-4 border-[#D97706] rounded-full px-8 py-3 flex items-center gap-3 shadow-xl transform hover:scale-105 transition-transform">
+            <span className="text-3xl drop-shadow-md animate-pulse">⭐</span>
+            <span className="text-[#D97706] font-black text-3xl">{globalStars}</span>
           </div>
         </div>
       </header>

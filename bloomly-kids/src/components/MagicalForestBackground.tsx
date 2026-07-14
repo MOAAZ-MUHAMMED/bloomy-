@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Bubble {
@@ -13,34 +13,35 @@ export const MagicalForestBackground: React.FC = () => {
   const [floatingStars, setFloatingStars] = useState<{ id: number, x: number, delay: number, duration: number, size: number }[]>([]);
 
   useEffect(() => {
-    // Generate initial floating stars/shapes
-    const initialStars = Array.from({ length: 20 }).map((_, i) => ({
+    // Reduce floating stars from 20 to 8 for performance
+    const initialStars = Array.from({ length: 8 }).map((_, i) => ({
       id: i,
       x: Math.random() * 100, // percentage
       delay: Math.random() * 10,
       duration: 15 + Math.random() * 15,
-      size: 15 + Math.random() * 25
+      size: 15 + Math.random() * 20
     }));
     setFloatingStars(initialStars);
 
-    // Global pointer move listener for interactive colorful bubbles
+    let lastMoveTime = 0;
     const handlePointerMove = (e: PointerEvent) => {
-      // Limit spawn rate
-      if (Math.random() > 0.4) return;
+      // Throttle pointer move to max 1 bubble per 150ms
+      const now = Date.now();
+      if (now - lastMoveTime < 150) return;
+      lastMoveTime = now;
       
       const newBubble: Bubble = {
-        id: Date.now() + Math.random(),
+        id: now + Math.random(),
         x: e.clientX,
         y: e.clientY,
         color: ['#FDE047', '#F472B6', '#60A5FA', '#34D399'][Math.floor(Math.random() * 4)]
       };
 
-      setBubbles(prev => [...prev.slice(-15), newBubble]);
+      setBubbles(prev => [...prev.slice(-6), newBubble]); // keep only last 7 bubbles
 
-      // Remove bubble after 2 seconds
       setTimeout(() => {
         setBubbles(prev => prev.filter(f => f.id !== newBubble.id));
-      }, 2000);
+      }, 1500);
     };
 
     window.addEventListener('pointermove', handlePointerMove);
@@ -58,20 +59,15 @@ export const MagicalForestBackground: React.FC = () => {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden bg-gradient-to-br from-[#E0F2FE] via-[#FEF08A] to-[#FCE7F3]">
-      {/* Sunbeams */}
-      <div className="absolute top-0 right-0 w-[150%] h-[150%] origin-top-right animate-spin-slow opacity-30" style={{
-        background: 'conic-gradient(from 0deg at 100% 0%, transparent 0deg, rgba(253, 224, 71, 0.4) 15deg, transparent 30deg, rgba(253, 224, 71, 0.4) 45deg, transparent 60deg, rgba(253, 224, 71, 0.4) 75deg, transparent 90deg)',
+      {/* Sunbeams - simplified */}
+      <div className="absolute top-0 right-0 w-[150%] h-[150%] origin-top-right animate-spin-slow opacity-20" style={{
+        background: 'conic-gradient(from 0deg at 100% 0%, transparent 0deg, rgba(253, 224, 71, 0.3) 15deg, transparent 30deg, rgba(253, 224, 71, 0.3) 45deg, transparent 60deg, rgba(253, 224, 71, 0.3) 75deg, transparent 90deg)',
       }} />
 
-      {/* Rainbow */}
-      <div className="absolute -left-[10%] top-[10%] w-[40%] h-[60%] rounded-full opacity-40 blur-sm" style={{
-        boxShadow: 'inset 0 0 0 15px rgba(239, 68, 68, 0.5), inset 0 0 0 30px rgba(249, 115, 22, 0.5), inset 0 0 0 45px rgba(253, 224, 71, 0.5), inset 0 0 0 60px rgba(74, 222, 128, 0.5), inset 0 0 0 75px rgba(56, 189, 248, 0.5), inset 0 0 0 90px rgba(168, 85, 247, 0.5)'
-      }} />
-
-      {/* Background Soft Glows for Cheerful Sky */}
-      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-blue-300/30 blur-[120px]" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-pink-300/30 blur-[120px]" />
-      <div className="absolute top-[30%] left-[40%] w-[50%] h-[50%] rounded-full bg-yellow-200/40 blur-[100px]" />
+      {/* Background Soft Glows - reduced blur to blur-3xl (64px) for better performance */}
+      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-blue-300/30 blur-3xl" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-pink-300/30 blur-3xl" />
+      <div className="absolute top-[30%] left-[40%] w-[50%] h-[50%] rounded-full bg-yellow-200/40 blur-3xl" />
 
       {/* Hot Air Balloons */}
       <motion.div
@@ -80,7 +76,7 @@ export const MagicalForestBackground: React.FC = () => {
         animate={{ x: '120vw', y: [0, -20, 0] }}
         transition={{ x: { duration: 60, repeat: Infinity, ease: "linear" }, y: { duration: 4, repeat: Infinity, ease: "easeInOut" } }}
       >
-        <span className="text-6xl filter drop-shadow-md">🎈</span>
+        <span className="text-6xl drop-shadow-sm">🎈</span>
       </motion.div>
       <motion.div
         className="absolute top-[40%]"
@@ -89,10 +85,10 @@ export const MagicalForestBackground: React.FC = () => {
         transition={{ x: { duration: 80, repeat: Infinity, ease: "linear", delay: 10 }, y: { duration: 5, repeat: Infinity, ease: "easeInOut" } }}
         style={{ transform: 'scaleX(-1)' }}
       >
-        <span className="text-8xl filter drop-shadow-md">🎈</span>
+        <span className="text-7xl drop-shadow-sm">🎈</span>
       </motion.div>
 
-      {/* Floating Stars and Magic Shapes */}
+      {/* Floating Stars and Magic Shapes - reduced drop shadows */}
       {floatingStars.map(star => (
         <motion.div
           key={star.id}
@@ -110,20 +106,20 @@ export const MagicalForestBackground: React.FC = () => {
             rotate: { duration: star.duration * 0.8, repeat: Infinity, ease: 'linear' },
             opacity: { duration: star.duration, repeat: Infinity, ease: 'linear', delay: star.delay }
           }}
-          style={{ width: star.size, height: star.size, filter: 'drop-shadow(0 0 4px rgba(253, 224, 71, 0.6))' }}
+          style={{ width: star.size, height: star.size }}
         >
           {star.id % 2 === 0 ? (
             <svg viewBox="0 0 24 24" fill="#FBBF24" xmlns="http://www.w3.org/2000/svg">
               <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
             </svg>
           ) : (
-            <div className="w-full h-full rounded-full bg-white/60 shadow-[0_0_10px_#fff]" />
+            <div className="w-full h-full rounded-full bg-white/60 shadow-sm" />
           )}
         </motion.div>
       ))}
 
-      {/* Floating ambient bubbles */}
-      {Array.from({ length: 30 }).map((_, i) => (
+      {/* Floating ambient bubbles - reduced from 30 to 12 */}
+      {Array.from({ length: 12 }).map((_, i) => (
         <motion.div
           key={`ambient-${i}`}
           className="absolute rounded-full border border-white/50 backdrop-blur-sm"
@@ -131,7 +127,6 @@ export const MagicalForestBackground: React.FC = () => {
             width: Math.random() * 15 + 10,
             height: Math.random() * 15 + 10,
             background: 'linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.1) 100%)',
-            boxShadow: `0 0 8px 1px rgba(255, 255, 255, 0.4)`,
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
           }}
@@ -150,28 +145,26 @@ export const MagicalForestBackground: React.FC = () => {
         />
       ))}
 
-      {/* Interactive magical dust / bubbles on pointer move */}
+      {/* Interactive magical dust / bubbles on pointer move - simplified */}
       <AnimatePresence>
         {bubbles.map(b => (
           <motion.div
             key={b.id}
-            initial={{ opacity: 1, scale: 0, x: b.x, y: b.y }}
+            initial={{ opacity: 0.8, scale: 0, x: b.x, y: b.y }}
             animate={{ 
               opacity: 0, 
-              scale: 2, 
-              y: b.y - 150, 
-              x: b.x + (Math.random() * 120 - 60) 
+              scale: 1.5, 
+              y: b.y - 100, 
+              x: b.x + (Math.random() * 60 - 30) 
             }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 1.5, ease: "easeOut" }}
+            transition={{ duration: 1.2, ease: "easeOut" }}
             className="fixed rounded-full"
             style={{
-              width: 12,
-              height: 12,
+              width: 10,
+              height: 10,
               backgroundColor: b.color,
-              boxShadow: `0 0 15px 5px ${b.color}80`,
-              zIndex: 0,
-              filter: 'blur(1px)'
+              zIndex: 0
             }}
           />
         ))}
