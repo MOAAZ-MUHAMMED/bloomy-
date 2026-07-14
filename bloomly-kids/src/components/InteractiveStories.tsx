@@ -1240,7 +1240,7 @@ export default function InteractiveStories({ onClose, globalStars, setGlobalStar
       return (
         <span
           key={idx}
-          className={`inline-block mx-1 px-1 rounded-md transition-colors text-2xl font-black ${
+          className={`inline-block mx-1.5 px-1.5 py-1 rounded-md transition-colors text-3xl sm:text-4xl leading-[1.8] font-black ${
             isHighlighted 
               ? "bg-yellow-300 text-purple-900 scale-105 shadow-sm" 
               : "text-[#4D2B82]"
@@ -1356,7 +1356,7 @@ export default function InteractiveStories({ onClose, globalStars, setGlobalStar
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="story-reader-card max-w-2xl w-full bg-white border-4 border-[#4D2B82] rounded-[36px] shadow-[0_12px_0_0_#4D2B82] p-6 sm:p-8 flex flex-col justify-between overflow-hidden relative min-h-[500px]"
+              className="story-reader-card max-w-5xl w-full bg-white border-4 border-[#4D2B82] rounded-[36px] shadow-[0_12px_0_0_#4D2B82] p-6 sm:p-10 flex flex-col justify-between overflow-hidden relative min-h-[600px]"
             >
               
               {/* Reader Header */}
@@ -1401,7 +1401,7 @@ export default function InteractiveStories({ onClose, globalStars, setGlobalStar
                 
                 {/* Left Column: Illustration */}
                 <div className="story-left-col flex items-center justify-center p-2 w-full md:w-1/2">
-                  <div className="story-illustration-container w-full max-w-[320px] rounded-2xl overflow-hidden border-2 border-purple-100 p-2 bg-slate-50 flex items-center justify-center shadow-inner">
+                  <div className="story-illustration-container w-full max-w-[450px] rounded-3xl overflow-hidden border-2 border-purple-100 p-4 bg-slate-50 flex items-center justify-center shadow-inner">
                     {activeStory.pages[currentPageIdx].illustration(isPlaying)}
                   </div>
                 </div>

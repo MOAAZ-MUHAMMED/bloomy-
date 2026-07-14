@@ -284,13 +284,13 @@ class SoundEffects {
 
       let url = "";
       if (soundId === "cat") {
-        url = "https://commons.wikimedia.org/wiki/Special:FilePath/Cat_meow.ogg";
+        url = "https://actions.google.com/sounds/v1/animals/cat_meow_2.ogg";
       } else if (soundId === "dog") {
-        url = "https://commons.wikimedia.org/wiki/Special:FilePath/Golden_Retriever_bark.ogg";
+        url = "https://actions.google.com/sounds/v1/animals/dog_barking.ogg";
       } else if (soundId === "bell") {
         url = "https://commons.wikimedia.org/wiki/Special:FilePath/Table_bell.ogg";
       } else if (soundId === "monkey") {
-        url = "https://commons.wikimedia.org/wiki/Special:FilePath/Howler_Monkey_screams.ogg";
+        url = "https://actions.google.com/sounds/v1/animals/monkey_chatter.ogg";
       } else if (soundId === "duck") {
         url = "https://commons.wikimedia.org/wiki/Special:FilePath/Quacking.ogg";
       }
@@ -5634,7 +5634,7 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
 
       {/* --- FAST TAPPING RACER PLAY VIEW --- */}
       {activeGame === "tapRacer" && !showLevelMap && (
-        <div className={`card-bubbly max-w-2xl mx-auto p-6 relative overflow-hidden border-4 border-[#4D2B82] ${
+        <div className={`card-bubbly max-w-5xl mx-auto p-8 relative overflow-hidden border-8 border-[#4D2B82] shadow-2xl ${
           tapRacerTheme === "swim" ? "bg-gradient-to-b from-[#E0F2FE] to-[#7DD3FC]" :
           tapRacerTheme === "cycle" ? "bg-gradient-to-b from-[#F1F5F9] to-[#CBD5E1]" :
           tapRacerTheme === "run" ? "bg-gradient-to-b from-[#FEF3C7] to-[#FCD34D]" :
@@ -5671,23 +5671,25 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
           </div>
 
           {/* The Racetrack Wrapper */}
-          <div className="relative w-full bg-white/60 backdrop-blur-xs border-4 border-[#4D2B82] rounded-3xl p-4 shadow-inner overflow-hidden mb-6">
+          <div className="relative w-full bg-[#1A1A2E] bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-opacity-90 backdrop-blur-sm border-4 border-yellow-400 rounded-3xl p-8 shadow-[inset_0_0_50px_rgba(0,0,0,0.8)] overflow-hidden mb-6">
+            {/* Global glowing effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-900/50 via-transparent to-red-900/50 mix-blend-overlay" />
             
             {/* Tracks */}
             <div className="flex flex-col gap-4 relative">
               {/* Finish line line */}
-              <div className="absolute right-[12%] top-0 bottom-0 border-r-4 border-dashed border-[#4D2B82]/20 z-0" />
-              <div className="absolute right-[10%] top-1/2 -translate-y-1/2 text-2xl z-10 select-none">🏁</div>
+              <div className="absolute right-[12%] top-0 bottom-0 border-r-8 border-dashed border-yellow-400 z-0 animate-pulse" />
+              <div className="absolute right-[8%] top-1/2 -translate-y-1/2 text-6xl z-10 select-none drop-shadow-2xl">🏁</div>
 
               {/* Lane 1: Opponents */}
               {opponents.map((o) => (
-                <div key={o.id} className="relative h-12 flex items-center border-b border-purple-200/50 pb-2 last:border-0">
-                  <div className="w-16 text-right font-black text-[10px] text-purple-800 truncate pl-1">{o.name}</div>
-                  <div className="flex-grow h-6 bg-purple-100/50 rounded-full relative overflow-visible">
+                <div key={o.id} className="relative h-16 flex items-center border-b-2 border-slate-600 pb-2 last:border-0 z-10">
+                  <div className="w-20 text-right font-black text-xs text-white truncate pl-2 drop-shadow-md">{o.name}</div>
+                  <div className="flex-grow h-8 bg-slate-800/80 rounded-full relative overflow-visible shadow-inner">
                     <motion.div
                       animate={{ left: `${(o.progress / 200) * 80}%` }}
                       transition={{ type: "spring", stiffness: 100, damping: 15 }}
-                      className="absolute top-1/2 -translate-y-1/2 text-3xl select-none"
+                      className="absolute top-1/2 -translate-y-1/2 text-5xl select-none drop-shadow-lg"
                     >
                       {tapRacerTheme === "swim" ? "🏊" : tapRacerTheme === "cycle" ? "🚴" : tapRacerTheme === "run" ? "🏃" : "🎈"}{o.emoji}
                     </motion.div>
@@ -5696,13 +5698,13 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
               ))}
 
               {/* Lane 4: Player */}
-              <div className="relative h-12 flex items-center">
-                <div className="w-16 text-right font-black text-xs text-[#FF5A92] pl-1">أنت 🌟</div>
-                <div className="flex-grow h-10 bg-purple-200/70 border-2 border-[#FF5A92]/40 rounded-full relative overflow-visible shadow-inner">
+              <div className="relative h-20 flex items-center mt-2 z-10">
+                <div className="w-20 text-right font-black text-lg text-yellow-300 pl-2 drop-shadow-[0_0_8px_rgba(253,224,71,0.8)]">أنت 🌟</div>
+                <div className="flex-grow h-12 bg-indigo-900/80 border-4 border-yellow-400 rounded-full relative overflow-visible shadow-[0_0_15px_rgba(250,204,21,0.5)]">
                   <motion.div
                     animate={{ left: `${(playerProgress / 200) * 80}%` }}
                     transition={{ type: "spring", stiffness: 150, damping: 15 }}
-                    className="absolute top-1/2 -translate-y-1/2 select-none z-20 flex items-center justify-center"
+                    className="absolute top-1/2 -translate-y-1/2 select-none z-20 flex items-center justify-center scale-150"
                     style={{ transform: "translateY(-50%)" }}
                   >
                     {tapRacerTheme === "swim" && (

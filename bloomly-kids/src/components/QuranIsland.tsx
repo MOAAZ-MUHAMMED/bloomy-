@@ -174,8 +174,9 @@ export default function QuranIsland({ onClose, globalStars, setGlobalStars }: Qu
         // Repeat same verse again
         playVerse(verseIdx, rep + 1);
       } else {
-        // Go to next verse
-        playVerse(verseIdx + 1, 1);
+        // Auto trigger recording when verse finishes
+        startRecording();
+        triggerNotice("🎙️ حان دورك! ردد الآية الآن...");
       }
     };
 
@@ -244,6 +245,13 @@ export default function QuranIsland({ onClose, globalStars, setGlobalStars }: Qu
       try {
         mediaRecorderRef.current.stream.getTracks().forEach(track => track.stop());
       } catch (err) {}
+      
+      // Auto advance to next verse if we were in the middle of learning
+      if (isPlaying && activeVerseIndex !== null) {
+        setTimeout(() => {
+          playVerse(activeVerseIndex + 1, 1);
+        }, 1000);
+      }
     }
   };
 
@@ -324,7 +332,7 @@ export default function QuranIsland({ onClose, globalStars, setGlobalStars }: Qu
       </AnimatePresence>
 
       {/* 3. Main Workspace Split Panel */}
-      <main className="quran-main-panel flex-grow w-full flex flex-col md:flex-row p-6 gap-6 relative z-10 overflow-hidden">
+      <main className="quran-main-panel flex-grow w-full flex flex-col md:flex-row p-6 gap-6 pt-20 relative z-10 overflow-hidden">
         
         {/* Side Panel: Surah List Carousel */}
         <div className="quran-surah-sidebar w-full md:w-[280px] bg-white/70 backdrop-blur-sm border-3 border-[#4D2B82] rounded-[24px] p-4 flex flex-row md:flex-col gap-3 overflow-x-auto md:overflow-y-auto shadow-sm select-none">
