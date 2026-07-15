@@ -30,7 +30,7 @@ export default function SpaceGame({ onQuit, onWin }: SpaceGameProps) {
   const [explosions, setExplosions] = useState<{id: number, x: number, y: number}[]>([]);
   
   const containerRef = useRef<HTMLDivElement>(null);
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number>(0);
   const lastShotTime = useRef<number>(Date.now());
   const lastEnemyTime = useRef<number>(Date.now());
 

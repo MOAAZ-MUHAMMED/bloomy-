@@ -24,7 +24,7 @@ export default function SubwayGame({ onQuit, onWin }: SubwayGameProps) {
   const [isJumping, setIsJumping] = useState(false);
   const [objects, setObjects] = useState<GameObject[]>([]);
   
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number>(0);
   const lastSpawnTime = useRef<number>(Date.now());
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);

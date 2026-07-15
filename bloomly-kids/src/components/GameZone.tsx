@@ -6781,7 +6781,7 @@ const startSpaceGame = () => {
         <NinjaGame 
           onQuit={quitGame}
           onWin={(stars) => {
-            awardStarsAndFinishLevel(stars);
+            addStars(stars);
             quitGame();
           }}
         />
@@ -6792,7 +6792,7 @@ const startSpaceGame = () => {
         <SpaceGame 
           onQuit={quitGame}
           onWin={(stars) => {
-            awardStarsAndFinishLevel(stars);
+            addStars(stars);
             quitGame();
           }}
         />
@@ -6803,7 +6803,7 @@ const startSpaceGame = () => {
         <SubwayGame 
           onQuit={quitGame}
           onWin={(stars) => {
-            awardStarsAndFinishLevel(stars);
+            addStars(stars);
             quitGame();
           }}
         />

@@ -30,7 +30,7 @@ export default function NinjaGame({ onQuit, onWin }: NinjaGameProps) {
   const [objects, setObjects] = useState<GameObject[]>([]);
   const [slicePoints, setSlicePoints] = useState<{ x: number; y: number }[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
-  const requestRef = useRef<number>();
+  const requestRef = useRef<number>(0);
   const lastSpawnTime = useRef<number>(Date.now());
   const isSlicing = useRef(false);
 
