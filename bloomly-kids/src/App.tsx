@@ -17,6 +17,7 @@ import {
   VolumeX
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ScreenOrientation } from "@capacitor/screen-orientation";
 
 export default function App() {
   const [showIntro, setShowIntro] = useState(true);

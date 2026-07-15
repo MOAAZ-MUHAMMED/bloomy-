@@ -202,9 +202,7 @@ export function IntroScreen({ onFinish }: IntroScreenProps) {
     const playSmokeOff = setTimeout(() => setShowPlaySplatter(false), 900);
 
     // 1.5 Make "العب" camera viewport shift at 1200ms (as dot leaves it)
-    const playWordExitTimer = setTimeout(() => {
-      setPlayCardState("exit");
-    }, 1800); // Extended duration so user can read it
+    const playWordExitTimer = setTimeout(() => { setPlayCardState("exit"); }, 2000); // Extended duration so user can read it
 
     // 2. Reveal "تعلم" word & paint splatter at 1600ms (when dot hits it)
     const learnWordTimer = setTimeout(() => {
@@ -329,7 +327,7 @@ export function IntroScreen({ onFinish }: IntroScreenProps) {
       <motion.div
         animate={{
           scale: [2.2, 2.2, 2.2, 1.4, 1.4, 1.0],
-          x: ["0vw", "-22vw", "-22vw", "22vw", "22vw", "0vw"],
+          x: ["0vw", "-15vw", "-15vw", "15vw", "15vw", "0vw"],
           y: ["-25vh", "-5vh", "-5vh", "15vh", "15vh", "5vh"]
         }}
         transition={{
@@ -454,7 +452,7 @@ export function IntroScreen({ onFinish }: IntroScreenProps) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
               className="absolute z-10 w-16 h-12 flex items-center justify-center pointer-events-none"
-              style={{ left: "calc(50% + 22vw)", top: "calc(50% + 5vh)", transform: "translate(-50%, -50%)" }}
+              style={{ left: "calc(50% + 15vw)", top: "calc(50% + 5vh)", transform: "translate(-50%, -50%)" }}
             >
               <div className="w-5 h-5 bg-[#2ECC71]/70 rounded-full" />
               <div className="w-7 h-7 bg-[#2ECC71]/60 rounded-full -ml-3" />
@@ -471,7 +469,7 @@ export function IntroScreen({ onFinish }: IntroScreenProps) {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
               className="absolute z-10 w-16 h-12 flex items-center justify-center pointer-events-none"
-              style={{ left: "calc(50% - 22vw)", top: "calc(50% - 15vh)", transform: "translate(-50%, -50%)" }}
+              style={{ left: "calc(50% - 15vw)", top: "calc(50% - 15vh)", transform: "translate(-50%, -50%)" }}
             >
               <div className="w-5 h-5 bg-[#2ECC71]/70 rounded-full" />
               <div className="w-7 h-7 bg-[#2ECC71]/60 rounded-full -ml-3" />
@@ -485,7 +483,7 @@ export function IntroScreen({ onFinish }: IntroScreenProps) {
         <motion.div
           style={{
             position: "absolute",
-            left: "calc(50% + 22vw)",
+            left: "calc(50% + 15vw)",
             top: "calc(50% + 5vh)",
             transform: "translate(-50%, -50%)",
             zIndex: 10
@@ -517,7 +515,7 @@ export function IntroScreen({ onFinish }: IntroScreenProps) {
         <motion.div
           style={{
             position: "absolute",
-            left: "calc(50% - 22vw)",
+            left: "calc(50% - 15vw)",
             top: "calc(50% - 15vh)",
             transform: "translate(-50%, -50%)",
             zIndex: 10
