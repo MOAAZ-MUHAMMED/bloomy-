@@ -1,14 +1,23 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Play } from 'lucide-react';
+import { Play, ArrowRight } from 'lucide-react';
 import { islandsData } from './LearningPathMap';
 import { SproutMascot } from './GameZone';
+import { categoriesData } from './CategoriesData';
 
 interface GameGridMenuProps {
+  onSelectCategory?: (categoryId: string) => void;
   onSelectGame: (gameId: string) => void;
+  activeCategory?: string | null;
+  onBackToCategories?: () => void;
 }
 
-export const GameGridMenu: React.FC<GameGridMenuProps> = ({ onSelectGame }) => {
+export const GameGridMenu: React.FC<GameGridMenuProps> = ({ 
+  onSelectCategory, 
+  onSelectGame, 
+  activeCategory, 
+  onBackToCategories 
+}) => {
   const speakArabic = (text: string) => {
     if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
@@ -19,45 +28,135 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({ onSelectGame }) => {
     window.speechSynthesis.speak(utterance);
   };
 
-  return (
-    <div className="flex flex-col gap-8 w-full max-w-7xl mx-auto px-4 py-8 relative z-10">
-      
-      {/* Premium Welcome Banner */}
-      <motion.div 
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="relative bg-white/40 backdrop-blur-xl rounded-[40px] p-8 flex items-center justify-between gap-6 shadow-[0_8px_32px_rgba(255,255,255,0.4)] border border-white/60 overflow-hidden"
-      >
-        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 z-10 w-full">
-          <div className="bg-white/50 p-3 rounded-full backdrop-blur-md border border-white shadow-xl">
-            <SproutMascot className="w-24 h-24" state="happy" />
-          </div>
-          <div className="text-center sm:text-right flex-1">
-            <span className="inline-block text-sm font-black text-purple-600 bg-white/80 backdrop-blur-sm px-6 py-1.5 rounded-full border border-purple-100 mb-3 shadow-sm">
-              أهلاً بك في عالم السحر والألعاب! ✨
-            </span>
-            <h2 className="text-3xl sm:text-4xl font-black text-[#4D2B82] mb-3 drop-shadow-sm">
-              اختر مغامرتك يا بطل! 🚀
+  // View 1: Main Category Selection (Lamsa-style Layout)
+  if (!activeCategory) {
+    return (
+      <div className="flex flex-col w-full max-w-7xl mx-auto px-4 py-8 relative z-10 select-none">
+        {/* Header / Intro banner */}
+        <div className="flex justify-between items-center mb-8">
+          <div className="flex flex-col items-start gap-2 bg-white/60 p-4 rounded-3xl backdrop-blur-md border border-white/50 shadow-lg">
+            <h2 className="text-3xl font-black text-[#4D2B82] drop-shadow-sm flex items-center gap-3">
+              <SproutMascot className="w-12 h-12" state="talking" />
+              مرحباً يا بطل! اختر مسارك ✨
             </h2>
-            <p className="text-purple-700 font-bold text-lg max-w-2xl bg-white/30 rounded-2xl p-3 inline-block">
-              اضغط على أي بطاقة بالأسفل لتبدأ اللعب، التعلم، وجمع النجوم!
-            </p>
+            <p className="text-purple-700 font-bold px-2">اضغط على أي صندوق لتكتشف الألعاب السحرية بداخله!</p>
           </div>
         </div>
 
-        <button 
-          onClick={() => speakArabic("أهلاً بك في عالم السحر والألعاب! اضغط على أي بطاقة بالأسفل لتبدأ اللعب، التعلم، وجمع النجوم!")}
-          className="hidden sm:flex absolute left-8 top-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-yellow-400 hover:bg-yellow-300 border-4 border-white flex items-center justify-center text-3xl shadow-[0_8px_20px_rgba(0,0,0,0.15)] hover:scale-110 active:scale-95 transition-all cursor-pointer z-10"
-          title="استمع لصوت برعم 🔊"
+        {/* Lamsa-style Horizontal Scrolling Boxes */}
+        <div 
+          className="flex gap-4 sm:gap-6 overflow-x-auto pb-8 pt-4 px-2 snap-x snap-mandatory hide-scrollbar" 
+          dir="rtl"
+          style={{ scrollBehavior: 'smooth' }}
         >
-          🔊
-        </button>
+          {categoriesData.map((cat, index) => (
+            <motion.div
+              key={cat.id}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: index * 0.1, type: 'spring' }}
+              whileHover={{ y: -8, scale: 1.02 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                speakArabic(cat.title);
+                if (onSelectCategory) onSelectCategory(cat.id);
+              }}
+              className="snap-center shrink-0 flex flex-col items-center cursor-pointer group"
+              style={{ width: '220px' }}
+            >
+              {/* Main Box containing icon/image */}
+              <div className="w-full h-[280px] bg-white rounded-[32px] border-[5px] shadow-[0_8px_15px_rgba(0,0,0,0.1)] flex flex-col items-center justify-center p-4 relative overflow-hidden transition-all duration-300" style={{ borderColor: cat.borderColor.replace('border-', '') }}>
+                
+                {/* Background decorative gradient blob */}
+                <div className={`absolute inset-0 opacity-20 bg-gradient-to-br ${cat.bgGradient}`} />
+                <div className="absolute top-0 right-0 w-32 h-32 bg-white/40 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+
+                {/* English title at the top of the box */}
+                <div className="absolute top-4 w-full text-center">
+                  <span className={`font-black text-[11px] uppercase tracking-widest opacity-80 ${cat.textColor}`}>
+                    {cat.englishTitle}
+                  </span>
+                </div>
+
+                {/* Main Icon/Emoji */}
+                <motion.div 
+                  className="text-7xl sm:text-8xl filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.15)] z-10"
+                  animate={{ y: [0, -10, 0], rotate: [0, 5, -5, 0] }}
+                  transition={{ repeat: Infinity, duration: 3 + index * 0.5, ease: "easeInOut" }}
+                >
+                  {cat.icon}
+                </motion.div>
+
+                {/* Decorative particles */}
+                <div className="absolute bottom-4 left-4 text-xl opacity-50 animate-pulse">✨</div>
+                <div className="absolute top-1/2 right-4 text-sm opacity-50 animate-bounce">⭐</div>
+              </div>
+
+              {/* Box Title (Arabic) below the box */}
+              <div className="mt-4 bg-white/80 backdrop-blur-sm border-2 border-white px-6 py-2 rounded-full shadow-sm">
+                <h3 className={`text-lg font-black ${cat.textColor}`}>
+                  {cat.title}
+                </h3>
+              </div>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Global Styles for horizontal scrollbar hiding */}
+        <style dangerouslySetInnerHTML={{__html: `
+          .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+          }
+          .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+        `}} />
+      </div>
+    );
+  }
+
+  // View 2: Games inside the selected Category (The old grid view but filtered)
+  const currentCategory = categoriesData.find(c => c.id === activeCategory);
+  const categoryGames = islandsData.filter(game => currentCategory?.games.includes(game.id));
+
+  return (
+    <div className="flex flex-col gap-8 w-full max-w-7xl mx-auto px-4 py-8 relative z-10">
+      
+      {/* Category Header */}
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="relative bg-white/60 backdrop-blur-xl rounded-[40px] p-6 sm:p-8 flex items-center justify-between gap-4 sm:gap-6 shadow-lg border-4"
+        style={{ borderColor: currentCategory?.borderColor.replace('border-', '') || '#4D2B82' }}
+      >
+        <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 z-10 w-full">
+          {/* Back Button */}
+          <button 
+            onClick={onBackToCategories}
+            className="w-12 h-12 rounded-full bg-white hover:bg-gray-50 border-3 border-gray-200 flex items-center justify-center text-gray-500 shadow-sm active:scale-95 transition-all self-start sm:self-center shrink-0"
+          >
+            <ArrowRight className="w-6 h-6" />
+          </button>
+          
+          <div className="text-center sm:text-right flex-1">
+            <span className={`inline-block text-sm font-black bg-white/80 px-4 py-1 rounded-full mb-2 ${currentCategory?.textColor}`}>
+              {currentCategory?.englishTitle}
+            </span>
+            <h2 className={`text-3xl sm:text-4xl font-black mb-2 ${currentCategory?.textColor}`}>
+              {currentCategory?.icon} {currentCategory?.title}
+            </h2>
+            <p className="text-gray-600 font-bold text-sm sm:text-lg max-w-2xl bg-white/50 rounded-xl p-2 inline-block">
+              اختر لعبة من هذه المجموعة للبدء في المغامرة!
+            </p>
+          </div>
+        </div>
       </motion.div>
 
-      {/* Premium Grid of Games */}
+      {/* Grid of Games for this category */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8">
-        {islandsData.map((game, index) => {
-          // Premium pastel gradients
+        {categoryGames.map((game, index) => {
+          // Keep the existing pastel gradients logic for game cards
           const gradients = [
             "from-[#ff9a9e]/80 to-[#fecfef]/80 border-pink-300 text-pink-700", 
             "from-[#a1c4fd]/80 to-[#c2e9fb]/80 border-blue-300 text-blue-700", 
@@ -91,7 +190,6 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({ onSelectGame }) => {
                 className="relative z-10 w-24 h-24 bg-white/90 backdrop-blur-md rounded-full border-4 border-white shadow-[0_10px_25px_rgba(0,0,0,0.1)] flex items-center justify-center text-6xl mb-5 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300"
               >
                 {game.emoji}
-                {/* Character small badge */}
                 <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-white rounded-full border-4 border-white flex items-center justify-center text-2xl shadow-lg">
                   {game.characterEmoji}
                 </div>

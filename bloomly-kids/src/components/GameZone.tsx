@@ -837,6 +837,7 @@ interface GameZoneProps {
 
 export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, childLevel: propChildLevel = "level1", forcedGame, setForcedGame }: GameZoneProps = {}) {
   const [activeGame, setActiveGame] = useState<"menu" | "math" | "spelling" | "memory" | "catcher" | "coloring" | "spellingEn" | "sorting" | "spaceCatcher" | "connectDots" | "maze" | "safari" | "chef" | "farm" | "train" | "arrowRacer" | "tapRacer" | "quran" | "stories" | "dailyHabits" | "ninja" | "space" | "ninja" | "space">("menu");
+  const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const gameZoneRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -957,6 +958,36 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
       }, 100);
     }
   }, [activeGame]);
+
+  const startLoadingAndOpenCategory = (categoryId: string) => {
+    setIsLoadingGame(true);
+    setLoadingProgress(0);
+    
+    // Animate progress to 100% over 1.5 seconds
+    const interval = setInterval(() => {
+      setLoadingProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          return 100;
+        }
+        return prev + 15;
+      });
+    }, 150);
+
+    // After loading completes, close loading screen and show category
+    setTimeout(() => {
+      setIsLoadingGame(false);
+      setActiveCategory(categoryId);
+      // Ensure landscape orientation is locked
+      try {
+        if ((window as any).Capacitor && (window as any).Capacitor.Plugins && (window as any).Capacitor.Plugins.ScreenOrientation) {
+          (window as any).Capacitor.Plugins.ScreenOrientation.lock({ orientation: 'landscape' });
+        }
+      } catch (e) {
+        console.log("Orientation lock failed:", e);
+      }
+    }, 1800);
+  };
 
   const startLoadingAndOpenMap = (gameName: typeof activeGame) => {
     setLoadingGameName(gameName);
@@ -2921,6 +2952,8 @@ const startSpaceGame = () => {
       else if (activeGame === "safari") startSafariGame();
       else if (activeGame === "chef") startChefGame();
       else if (activeGame === "farm") startFarmGame();
+                            else if (activeGame === "ninja") startNinjaGame();
+                            else if (activeGame === "space") startSpaceGame();
       else if (activeGame === "train") startTrainGame();
       else if (activeGame === "arrowRacer") startRunnerGame();
       else if (activeGame === "tapRacer") startTapRacerGame();
@@ -4223,6 +4256,8 @@ const startSpaceGame = () => {
                             else if (activeGame === "safari") startSafariGame();
                             else if (activeGame === "chef") startChefGame();
                             else if (activeGame === "farm") startFarmGame();
+                            else if (activeGame === "ninja") startNinjaGame();
+                            else if (activeGame === "space") startSpaceGame();
                             else if (activeGame === "train") startTrainGame();
                           }
                         }}
@@ -4254,14 +4289,11 @@ const startSpaceGame = () => {
       {activeGame === "menu" && (
         <>
           <GameGridMenu 
+            onSelectCategory={(categoryId) => requireProfile(() => startLoadingAndOpenCategory(categoryId))}
             onSelectGame={(gameId) => requireProfile(() => startLoadingAndOpenMap(gameId as any))}
+            activeCategory={activeCategory}
+            onBackToCategories={() => setActiveCategory(null)}
           />
-          <div className="mt-8">
-            <LearningPathMap 
-              onSelectGame={(gameId) => requireProfile(() => startLoadingAndOpenMap(gameId as any))}
-              maxIslandUnlocked={maxIslandUnlocked}
-            />
-          </div>
         </>
       )}
 
@@ -6718,6 +6750,8 @@ const startSpaceGame = () => {
                       else if (activeGame === "safari") startSafariGame();
                       else if (activeGame === "chef") startChefGame();
                       else if (activeGame === "farm") startFarmGame();
+                            else if (activeGame === "ninja") startNinjaGame();
+                            else if (activeGame === "space") startSpaceGame();
                       else if (activeGame === "train") startTrainGame();
                       else if (activeGame === "arrowRacer") startRunnerGame();
                       else if (activeGame === "tapRacer") startTapRacerGame();
