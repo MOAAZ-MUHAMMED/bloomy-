@@ -1053,8 +1053,8 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
   const [runnerScore, setRunnerScore] = useState(0);
   const [runnerActive, setRunnerActive] = useState(false);
   const [runnerGameOver, setRunnerGameOver] = useState(false);
-  const requestRef = useRef<number>();
-  const lastTimeRef = useRef<number>();
+  const requestRef = useRef<number | undefined>(undefined);
+  const lastTimeRef = useRef<number | undefined>(undefined);
   
   const runnerObstacleTypes = ["🚧", "🪨", "🪵", "🧱", "💧", "📦"];
 
@@ -1080,8 +1080,8 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
   const [ninjaLives, setNinjaLives] = useState(3);
   const [ninjaSlash, setNinjaSlash] = useState<{x: number, y: number}[]>([]);
 
-  const ninjaRequestRef = useRef<number>();
-  const ninjaLastTimeRef = useRef<number>();
+  const ninjaRequestRef = useRef<number | undefined>(undefined);
+  const ninjaLastTimeRef = useRef<number | undefined>(undefined);
   const ninjaSpawnTimerRef = useRef<number>(0);
   
   const fruitEmojis = ["🍎", "🍉", "🥥", "🥝", "🍍", "🥭"];
@@ -1099,8 +1099,8 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
   const [spaceActive, setSpaceActive] = useState(false);
   const [spaceGameOver, setSpaceGameOver] = useState(false);
 
-  const spaceRequestRef = useRef<number>();
-  const spaceLastTimeRef = useRef<number>();
+  const spaceRequestRef = useRef<number | undefined>(undefined);
+  const spaceLastTimeRef = useRef<number | undefined>(undefined);
   const spaceFireTimerRef = useRef<number>(0);
   const spaceSpawnTimerRef = useRef<number>(0);
   
@@ -2107,7 +2107,7 @@ const startNinjaGame = () => {
   };
 
   const createParticles = (x: number, y: number, color: string) => {
-    const newParticles = [];
+    const newParticles: any[] = [];
     for (let i = 0; i < 8; i++) {
       newParticles.push({
         id: Math.random(),
@@ -2296,7 +2296,7 @@ const startSpaceGame = () => {
   };
 
   const createSpaceParticles = (x: number, y: number, color: string) => {
-    const newParticles = [];
+    const newParticles: any[] = [];
     for (let i = 0; i < 10; i++) {
       newParticles.push({
         id: Math.random(),
@@ -2876,7 +2876,7 @@ const startSpaceGame = () => {
   const quitGame = () => {
     setShowLevelMap(true);
     setStarsEarnedThisSession(0);
-    setRacerActive(false);
+    setRunnerActive(false);
     if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
     if (gameLoopIntervalRef.current) clearInterval(gameLoopIntervalRef.current);
     if (countdownIntervalRef.current) clearInterval(countdownIntervalRef.current);
@@ -2922,7 +2922,7 @@ const startSpaceGame = () => {
       else if (activeGame === "chef") startChefGame();
       else if (activeGame === "farm") startFarmGame();
       else if (activeGame === "train") startTrainGame();
-      else if (activeGame === "arrowRacer") startRacerGame();
+      else if (activeGame === "arrowRacer") startRunnerGame();
       else if (activeGame === "tapRacer") startTapRacerGame();
     } else {
       setActiveGame("menu");
@@ -4210,7 +4210,7 @@ const startSpaceGame = () => {
                           if (activeGame === "math") startMathGame();
                           else if (activeGame === "spelling") startSpellingGame();
                           else if (activeGame === "memory") initMemoryGame();
-                          else if (activeGame === "arrowRacer") startRacerGame();
+                          else if (activeGame === "arrowRacer") startRunnerGame();
                           else if (activeGame === "tapRacer") startTapRacerGame();
                           else {
                             if (activeGame === "catcher") startCatcherGame();
@@ -6719,7 +6719,7 @@ const startSpaceGame = () => {
                       else if (activeGame === "chef") startChefGame();
                       else if (activeGame === "farm") startFarmGame();
                       else if (activeGame === "train") startTrainGame();
-                      else if (activeGame === "arrowRacer") startRacerGame();
+                      else if (activeGame === "arrowRacer") startRunnerGame();
                       else if (activeGame === "tapRacer") startTapRacerGame();
                     }}
                     className="flex-1 btn-bubbly-secondary text-sm py-3"
