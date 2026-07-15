@@ -10,7 +10,7 @@ gameZone = gameZone.replace(
 
 // 2. Replace Turbo Arrow Racer State with ALL NEW STATES (Runner + Ninja + Space)
 const statesMarkerStart = "// NEW GAME: TURBO ARROW RACER (سباق الاتجاهات الخارق)";
-const statesMarkerEnd = "// NEW GAME: TAP RACER (سباق الحروف السرعة)";
+const statesMarkerEnd = "// NEW GAME 1: MAGIC SORTING BASKET (تصنيف بلومي السحري)";
 
 const runnerLogicText = fs.readFileSync('scratch/RunnerLogic.tsx', 'utf-8');
 const ninjaLogicText = fs.readFileSync('scratch/FruitNinjaLogic.tsx', 'utf-8');
@@ -50,7 +50,7 @@ if (stateStartIndex !== -1 && stateEndIndex !== -1) {
 
 // 3. Replace Turbo Arrow Racer Logic
 const logicMarkerStart = "// NEW GAME: TURBO ARROW RACER (سباق الاتجاهات الخارق) LOGIC";
-const logicMarkerEnd = "// NEW GAME: TAP RACER (سباق الحروف السرعة) LOGIC";
+const logicMarkerEnd = "// NEW GAME 14: MAGICAL SHAPES TRAIN (قطار الأشكال السحري)";
 
 const logicStartIndex = gameZone.indexOf(logicMarkerStart);
 const logicEndIndex = gameZone.indexOf(logicMarkerEnd);
@@ -60,7 +60,7 @@ if (logicStartIndex !== -1 && logicEndIndex !== -1) {
 
 // 4. Replace Turbo Arrow Racer UI
 const uiMarkerStart = "{/* --- TURBO ARROW RACER PLAY VIEW --- */}";
-const uiMarkerEnd = "{/* --- TAP RACER PLAY VIEW --- */}";
+const uiMarkerEnd = "{/* --- FAST TAPPING RACER PLAY VIEW --- */}";
 
 const uiStartIndex = gameZone.indexOf(uiMarkerStart);
 const uiEndIndex = gameZone.indexOf(uiMarkerEnd);

@@ -836,7 +836,7 @@ interface GameZoneProps {
 }
 
 export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, childLevel: propChildLevel = "level1", forcedGame, setForcedGame }: GameZoneProps = {}) {
-  const [activeGame, setActiveGame] = useState<"menu" | "math" | "spelling" | "memory" | "catcher" | "coloring" | "spellingEn" | "sorting" | "spaceCatcher" | "connectDots" | "maze" | "safari" | "chef" | "farm" | "train" | "arrowRacer" | "tapRacer" | "quran" | "stories" | "dailyHabits" | "ninja" | "space">("menu");
+  const [activeGame, setActiveGame] = useState<"menu" | "math" | "spelling" | "memory" | "catcher" | "coloring" | "spellingEn" | "sorting" | "spaceCatcher" | "connectDots" | "maze" | "safari" | "chef" | "farm" | "train" | "arrowRacer" | "tapRacer" | "quran" | "stories" | "dailyHabits" | "ninja" | "space" | "ninja" | "space">("menu");
   const gameZoneRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -1044,22 +1044,69 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
   }, []);
 
   // ==========================================
-  // NEW GAME: TURBO ARROW RACER (سباق الاتجاهات الخارق)
-  // ==========================================
-  const [racerRound, setRacerRound] = useState(1);
-  const [racerSequence, setRacerSequence] = useState<("up" | "down" | "left" | "right")[]>([]);
-  const [racerInputIndex, setRacerInputIndex] = useState(0);
-  const [racerSpeed, setRacerSpeed] = useState(80); // Default start speed is 80 km/h so it's always moving!
-  const [racerFeedback, setRacerFeedback] = useState<"idle" | "correct" | "wrong" | "drift">("idle");
-  const [racerObstacle, setRacerObstacle] = useState<string>("🚧");
-  const [racerScore, setRacerScore] = useState(0);
-  const [racerLane, setRacerLane] = useState(0);
-  const [racerYOffset, setRacerYOffset] = useState(0);
-  const [racerTimeLeft, setRacerTimeLeft] = useState(30);
-  const [racerActive, setRacerActive] = useState(false);
+  // Endless Runner Logic to inject into GameZone.tsx
 
+  // NEW GAME: ENDLESS RUNNER (سباق التزلج اللانهائي) replacing TURBO ARROW RACER
+  const [runnerLane, setRunnerLane] = useState(1); // 0 = Left, 1 = Center, 2 = Right
+  const [runnerObstacles, setRunnerObstacles] = useState<{id: number, lane: number, y: number, type: string}[]>([]);
+  const [runnerSpeed, setRunnerSpeed] = useState(5);
+  const [runnerScore, setRunnerScore] = useState(0);
+  const [runnerActive, setRunnerActive] = useState(false);
+  const [runnerGameOver, setRunnerGameOver] = useState(false);
+  const requestRef = useRef<number>();
+  const lastTimeRef = useRef<number>();
+  
+  const runnerObstacleTypes = ["🚧", "🪨", "🪵", "🧱", "💧", "📦"];
 
-  // ==========================================
+  
+// Fruit Ninja (النينجا القاطع) Logic to inject into GameZone.tsx
+
+  // NEW GAME: FRUIT NINJA (النينجا القاطع)
+  const [ninjaFruits, setNinjaFruits] = useState<{
+    id: number;
+    type: string;
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    rotation: number;
+    isSliced: boolean;
+    isBomb: boolean;
+  }[]>([]);
+  const [ninjaParticles, setNinjaParticles] = useState<{id: number, x: number, y: number, color: string, vx: number, vy: number, life: number}[]>([]);
+  const [ninjaScore, setNinjaScore] = useState(0);
+  const [ninjaActive, setNinjaActive] = useState(false);
+  const [ninjaGameOver, setNinjaGameOver] = useState(false);
+  const [ninjaLives, setNinjaLives] = useState(3);
+  const [ninjaSlash, setNinjaSlash] = useState<{x: number, y: number}[]>([]);
+
+  const ninjaRequestRef = useRef<number>();
+  const ninjaLastTimeRef = useRef<number>();
+  const ninjaSpawnTimerRef = useRef<number>(0);
+  
+  const fruitEmojis = ["🍎", "🍉", "🥥", "🥝", "🍍", "🥭"];
+  const bombEmoji = "💣";
+
+  
+// Space Shooter (حرب الفضاء) Logic to inject into GameZone.tsx
+
+  // NEW GAME: SPACE SHOOTER (حرب الفضاء)
+  const [spacePlayerX, setSpacePlayerX] = useState(50);
+  const [spaceLasers, setSpaceLasers] = useState<{id: number, x: number, y: number}[]>([]);
+  const [spaceEnemies, setSpaceEnemies] = useState<{id: number, x: number, y: number, type: string, hp: number}[]>([]);
+  const [spaceParticles, setSpaceParticles] = useState<{id: number, x: number, y: number, color: string, vx: number, vy: number, life: number}[]>([]);
+  const [spaceScore, setSpaceScore] = useState(0);
+  const [spaceActive, setSpaceActive] = useState(false);
+  const [spaceGameOver, setSpaceGameOver] = useState(false);
+
+  const spaceRequestRef = useRef<number>();
+  const spaceLastTimeRef = useRef<number>();
+  const spaceFireTimerRef = useRef<number>(0);
+  const spaceSpawnTimerRef = useRef<number>(0);
+  
+  const spaceEnemyTypes = ["👾", "🛸", "☄️", "👽"];
+
+  
   // NEW GAME 1: MAGIC SORTING BASKET (تصنيف بلومي السحري)
   // ==========================================
   const sortingBank = [
@@ -1937,190 +1984,441 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
   };
 
   // ==========================================
-  // NEW GAME: TURBO ARROW RACER (سباق الاتجاهات الخارق) LOGIC
-  // ==========================================
-  const generateRacerRound = (round: number) => {
-    setRacerFeedback("idle");
-    setRacerInputIndex(0);
-    setRacerLane(0);
-    setRacerYOffset(0);
-    
-    const obstacles = ["🚧", "🪨", "🪵", "🧱", "💧", "🌪️", "📦"];
-    setRacerObstacle(obstacles[Math.floor(Math.random() * obstacles.length)]);
-
-    const directions: ("up" | "down" | "left" | "right")[] = ["up", "down", "left", "right"];
-    // Increase length as round goes up, up to 7 arrows max
-    const length = Math.min(2 + round, 7); 
-    const seq: typeof racerSequence = [];
-    for (let i = 0; i < length; i++) {
-      seq.push(directions[Math.floor(Math.random() * directions.length)]);
-    }
-    setRacerSequence(seq);
-  };
-
-  const startRacerGame = () => {
+  const startRunnerGame = () => {
     requireProfile(() => {
-      setRacerRound(1);
+      setRunnerLane(1);
+      setRunnerObstacles([]);
+      setRunnerSpeed(40); // 40 pixels per frame approximately based on delta
+      setRunnerScore(0);
+      setRunnerActive(true);
+      setRunnerGameOver(false);
       setStarsEarnedThisSession(0);
-      setRacerSpeed(80); // baseline speed is 80 km/h so it's always moving!
-      setRacerScore(0);
-      setRacerTimeLeft(35); // 35 seconds time trial!
-      setRacerActive(true);
       setActiveGame("arrowRacer");
-      sfx.speakArabic("أهلاً بك في سباق الاتجاهات الخارق! وجه بالأسهم وتفادى العقبات!", "welcome");
-      generateRacerRound(1);
+      sfx.speakArabic("أهلاً بك في سباق التزلج اللانهائي! اسحب يميناً ويساراً لتفادي العقبات!", "welcome");
+      lastTimeRef.current = performance.now();
+      requestRef.current = requestAnimationFrame(updateRunner);
     });
   };
 
-  const handleRacerInput = (direction: "up" | "down" | "left" | "right") => {
-    if (racerFeedback === "wrong" || !racerActive) return;
+  const updateRunner = (time: number) => {
+    if (!runnerActive || runnerGameOver) return;
     
-    const expected = racerSequence[racerInputIndex];
-    if (direction === expected) {
-      const nextIndex = racerInputIndex + 1;
-      setRacerInputIndex(nextIndex);
+    if (!lastTimeRef.current) lastTimeRef.current = time;
+    const deltaTime = (time - lastTimeRef.current) / 1000;
+    lastTimeRef.current = time;
+
+    setRunnerObstacles(prev => {
+      let newObstacles = prev.map(obs => ({ ...obs, y: obs.y + runnerSpeed * deltaTime * 10 }));
       
-      setRacerSpeed(prev => Math.min(prev + 25, 220));
+      // Collision detection (if y > 80 and < 95 and lane matches)
+      // Assuming track height is 100vh or 100%. Let's say player is at y=85.
+      const hit = newObstacles.some(obs => obs.lane === runnerLane && obs.y > 80 && obs.y < 90);
       
-      // Update vehicle positions based on steering
-      if (direction === "left") {
-        setRacerLane(-1);
-      } else if (direction === "right") {
-        setRacerLane(1);
-      } else if (direction === "up") {
-        setRacerYOffset(-30);
-        setTimeout(() => setRacerYOffset(0), 200);
-      } else if (direction === "down") {
-        setRacerYOffset(20);
-        setTimeout(() => setRacerYOffset(0), 200);
+      if (hit) {
+        setRunnerGameOver(true);
+        setRunnerActive(false);
+        sfx.playWrong();
+        return prev;
       }
 
-      // Play Engine Rev
-      try {
-        sfx.playEngineRev();
-      } catch (e) {}
-
-      if (nextIndex === racerSequence.length) {
-        setRacerFeedback("drift");
-        addStars(3);
-        setRacerScore(prev => prev + 150);
-        setRacerLane(0);
-        setRacerYOffset(0);
-        
-        try {
-          sfx.playSuccess();
-        } catch (e) {}
-
-        // Go to next round indefinitely until timer runs out
-        setTimeout(() => {
-          const nextRound = racerRound + 1;
-          setRacerRound(nextRound);
-          generateRacerRound(nextRound);
-        }, 1200);
-      } else {
-        setRacerFeedback("correct");
-        setTimeout(() => setRacerFeedback("idle"), 250);
-      }
-    } else {
-      setRacerFeedback("wrong");
-      // Drops to 80 km/h minimum so it is always moving!
-      setRacerSpeed(prev => Math.max(prev - 50, 80));
-      setRacerLane(0);
-      setRacerYOffset(0);
+      // Remove off-screen obstacles
+      newObstacles = newObstacles.filter(obs => obs.y < 110);
       
-      try {
-        sfx.playTireScreech();
-      } catch (e) {}
+      return newObstacles;
+    });
 
-      setTimeout(() => {
-        setRacerInputIndex(0);
-        setRacerFeedback("idle");
-      }, 1000);
+    setRunnerScore(prev => {
+      const newScore = prev + deltaTime * 10;
+      // Add stars every 100 points
+      if (Math.floor(newScore / 100) > Math.floor(prev / 100)) {
+        addStars(1);
+        sfx.playSuccess();
+      }
+      return newScore;
+    });
+    
+    setRunnerSpeed(prev => prev + deltaTime * 0.5); // Increase speed over time
+
+    requestRef.current = requestAnimationFrame(updateRunner);
+  };
+
+  // Spawn obstacles
+  useEffect(() => {
+    if (!runnerActive || runnerGameOver) return;
+    const interval = setInterval(() => {
+      setRunnerObstacles(prev => {
+        // Only spawn if not too many
+        if (prev.length > 5) return prev;
+        const newObs = {
+          id: Math.random(),
+          lane: Math.floor(Math.random() * 3), // 0, 1, 2
+          y: -10, // Start above the screen
+          type: runnerObstacleTypes[Math.floor(Math.random() * runnerObstacleTypes.length)]
+        };
+        return [...prev, newObs];
+      });
+    }, Math.max(800, 2000 - runnerSpeed * 20)); 
+    
+    return () => clearInterval(interval);
+  }, [runnerActive, runnerGameOver, runnerSpeed]);
+
+  useEffect(() => {
+    return () => {
+      if (requestRef.current) cancelAnimationFrame(requestRef.current);
+    };
+  }, []);
+
+  const handleRunnerSwipe = (direction: 'left' | 'right') => {
+    if (!runnerActive || runnerGameOver) return;
+    setRunnerLane(prev => {
+      if (direction === 'left') return Math.max(0, prev - 1);
+      if (direction === 'right') return Math.min(2, prev + 1);
+      return prev;
+    });
+  };
+
+  // Listen to keyboard
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (activeGame === 'arrowRacer' && runnerActive && !runnerGameOver) {
+        if (e.key === 'ArrowLeft' || e.key === 'a') handleRunnerSwipe('left');
+        if (e.key === 'ArrowRight' || e.key === 'd') handleRunnerSwipe('right');
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeGame, runnerActive, runnerGameOver]);
+
+
+const startNinjaGame = () => {
+    requireProfile(() => {
+      setNinjaFruits([]);
+      setNinjaParticles([]);
+      setNinjaScore(0);
+      setNinjaLives(3);
+      setNinjaActive(true);
+      setNinjaGameOver(false);
+      setStarsEarnedThisSession(0);
+      setActiveGame("ninja");
+      sfx.speakArabic("اقطع الفواكه وتجنب القنابل!", "welcome");
+      ninjaLastTimeRef.current = performance.now();
+      ninjaRequestRef.current = requestAnimationFrame(updateNinja);
+    });
+  };
+
+  const createParticles = (x: number, y: number, color: string) => {
+    const newParticles = [];
+    for (let i = 0; i < 8; i++) {
+      newParticles.push({
+        id: Math.random(),
+        x, y,
+        color,
+        vx: (Math.random() - 0.5) * 400,
+        vy: (Math.random() - 0.5) * 400,
+        life: 1
+      });
     }
+    setNinjaParticles(prev => [...prev, ...newParticles]);
+  };
+
+  const updateNinja = (time: number) => {
+    if (!ninjaActive || ninjaGameOver) return;
+    
+    if (!ninjaLastTimeRef.current) ninjaLastTimeRef.current = time;
+    const deltaTime = (time - ninjaLastTimeRef.current) / 1000;
+    ninjaLastTimeRef.current = time;
+
+    // Spawn fruits
+    ninjaSpawnTimerRef.current += deltaTime;
+    if (ninjaSpawnTimerRef.current > 1.5 - Math.min(1.0, ninjaScore / 100)) {
+      ninjaSpawnTimerRef.current = 0;
+      const count = Math.floor(Math.random() * 3) + 1; // 1 to 3 fruits
+      
+      setNinjaFruits(prev => {
+        const newSpawn = [];
+        for (let i=0; i<count; i++) {
+          const isBomb = Math.random() > 0.8;
+          newSpawn.push({
+            id: Math.random(),
+            type: isBomb ? bombEmoji : fruitEmojis[Math.floor(Math.random() * fruitEmojis.length)],
+            x: 20 + Math.random() * 60, // 20% to 80%
+            y: 110, // below screen
+            vx: (Math.random() - 0.5) * 40,
+            vy: -70 - Math.random() * 40, // throw up
+            rotation: Math.random() * 360,
+            isSliced: false,
+            isBomb
+          });
+        }
+        return [...prev, ...newSpawn];
+      });
+    }
+
+    // Update fruits
+    setNinjaFruits(prev => {
+      let activeFruits = prev.map(f => {
+        if (f.isSliced) {
+          return { ...f, y: f.y + 150 * deltaTime, rotation: f.rotation + 180 * deltaTime }; // sliced fall fast
+        }
+        return {
+          ...f,
+          x: f.x + f.vx * deltaTime,
+          y: f.y + f.vy * deltaTime,
+          vy: f.vy + 90 * deltaTime, // gravity
+          rotation: f.rotation + 90 * deltaTime
+        };
+      });
+
+      // Missed fruits (only active non-bomb fruits that fall below screen)
+      const missed = activeFruits.filter(f => !f.isBomb && !f.isSliced && f.y > 120 && f.vy > 0);
+      if (missed.length > 0) {
+        setNinjaLives(l => {
+          const newLives = l - missed.length;
+          if (newLives <= 0) {
+            setNinjaGameOver(true);
+            setNinjaActive(false);
+            sfx.playWrong();
+          }
+          return newLives;
+        });
+      }
+
+      activeFruits = activeFruits.filter(f => f.y < 130);
+      return activeFruits;
+    });
+
+    // Update particles
+    setNinjaParticles(prev => {
+      return prev.map(p => ({
+        ...p,
+        x: p.x + p.vx * deltaTime,
+        y: p.y + p.vy * deltaTime,
+        vy: p.vy + 300 * deltaTime, // heavy gravity
+        life: p.life - deltaTime * 2
+      })).filter(p => p.life > 0);
+    });
+    
+    // Clear slash trail gradually
+    setNinjaSlash(prev => {
+      if (prev.length > 0) return prev.slice(1);
+      return prev;
+    });
+
+    ninjaRequestRef.current = requestAnimationFrame(updateNinja);
   };
 
   useEffect(() => {
-    if (activeGame !== "arrowRacer") return;
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowUp" || e.key === "w" || e.key === "W") {
-        e.preventDefault();
-        handleRacerInput("up");
-      } else if (e.key === "ArrowDown" || e.key === "s" || e.key === "S") {
-        e.preventDefault();
-        handleRacerInput("down");
-      } else if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
-        e.preventDefault();
-        handleRacerInput("left");
-      } else if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
-        e.preventDefault();
-        handleRacerInput("right");
-      }
-    };
-
-    let touchStartX = 0;
-    let touchStartY = 0;
-
-    const handleTouchStart = (e: TouchEvent) => {
-      touchStartX = e.changedTouches[0].screenX;
-      touchStartY = e.changedTouches[0].screenY;
-    };
-
-    const handleTouchEnd = (e: TouchEvent) => {
-      const touchEndX = e.changedTouches[0].screenX;
-      const touchEndY = e.changedTouches[0].screenY;
-      
-      const diffX = touchEndX - touchStartX;
-      const diffY = touchEndY - touchStartY;
-      
-      const threshold = 30;
-      if (Math.abs(diffX) > Math.abs(diffY)) {
-        if (Math.abs(diffX) > threshold) {
-          if (diffX > 0) {
-            handleRacerInput("right");
-          } else {
-            handleRacerInput("left");
-          }
-        }
-      } else {
-        if (Math.abs(diffY) > threshold) {
-          if (diffY > 0) {
-            handleRacerInput("down");
-          } else {
-            handleRacerInput("up");
-          }
-        }
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("touchstart", handleTouchStart, { passive: true });
-    window.addEventListener("touchend", handleTouchEnd, { passive: true });
-
     return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      window.removeEventListener("touchstart", handleTouchStart);
-      window.removeEventListener("touchend", handleTouchEnd);
+      if (ninjaRequestRef.current) cancelAnimationFrame(ninjaRequestRef.current);
     };
-  }, [activeGame, racerRound, racerSequence, racerInputIndex, racerFeedback]);
+  }, []);
 
-  useEffect(() => {
-    if (activeGame !== "arrowRacer" || !racerActive) return;
-
-    if (racerTimeLeft <= 0) {
-      setRacerActive(false);
-      triggerVictory();
+  const handleNinjaPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!ninjaActive || ninjaGameOver) return;
+    
+    // Check if pointer is down
+    if (e.buttons !== 1) {
+      setNinjaSlash([]);
       return;
     }
 
-    const timer = setInterval(() => {
-      setRacerTimeLeft(prev => prev - 1);
-    }, 1000);
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    
+    setNinjaSlash(prev => {
+      const newSlash = [...prev, {x, y}];
+      if (newSlash.length > 10) newSlash.shift();
+      return newSlash;
+    });
 
-    return () => clearInterval(timer);
-  }, [activeGame, racerActive, racerTimeLeft]);
+    // Collision check
+    setNinjaFruits(prev => {
+      let hitBomb = false;
+      let scoreGained = 0;
+      
+      const newFruits = prev.map(f => {
+        if (f.isSliced) return f;
+        
+        // distance between fruit center and swipe point
+        const dx = f.x - x;
+        const dy = f.y - y;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        
+        if (dist < 10) { // Hit radius
+          if (f.isBomb) {
+            hitBomb = true;
+          } else {
+            scoreGained += 10;
+            // particles color based on fruit roughly
+            createParticles(x, y, f.type === '🍉' ? '#EF4444' : f.type === '🥝' ? '#84CC16' : '#FCD34D');
+            sfx.playSuccess();
+          }
+          return { ...f, isSliced: true };
+        }
+        return f;
+      });
 
-  // ==========================================
+      if (hitBomb) {
+        setNinjaGameOver(true);
+        setNinjaActive(false);
+        sfx.playWrong();
+      }
+
+      if (scoreGained > 0) {
+        setNinjaScore(s => {
+          const newScore = s + scoreGained;
+          if (Math.floor(newScore / 100) > Math.floor(s / 100)) addStars(1);
+          return newScore;
+        });
+      }
+
+      return newFruits;
+    });
+  };
+
+
+const startSpaceGame = () => {
+    requireProfile(() => {
+      setSpacePlayerX(50);
+      setSpaceLasers([]);
+      setSpaceEnemies([]);
+      setSpaceParticles([]);
+      setSpaceScore(0);
+      setSpaceActive(true);
+      setSpaceGameOver(false);
+      setStarsEarnedThisSession(0);
+      setActiveGame("space");
+      sfx.speakArabic("اقضِ على الغزاة الفضائيين وتفادى النيازك!", "welcome");
+      spaceLastTimeRef.current = performance.now();
+      spaceRequestRef.current = requestAnimationFrame(updateSpace);
+    });
+  };
+
+  const createSpaceParticles = (x: number, y: number, color: string) => {
+    const newParticles = [];
+    for (let i = 0; i < 10; i++) {
+      newParticles.push({
+        id: Math.random(),
+        x, y,
+        color,
+        vx: (Math.random() - 0.5) * 200,
+        vy: (Math.random() - 0.5) * 200,
+        life: 1
+      });
+    }
+    setSpaceParticles(prev => [...prev, ...newParticles]);
+  };
+
+  const updateSpace = (time: number) => {
+    if (!spaceActive || spaceGameOver) return;
+    
+    if (!spaceLastTimeRef.current) spaceLastTimeRef.current = time;
+    const deltaTime = (time - spaceLastTimeRef.current) / 1000;
+    spaceLastTimeRef.current = time;
+
+    // Fire laser automatically
+    spaceFireTimerRef.current += deltaTime;
+    if (spaceFireTimerRef.current > 0.3) {
+      spaceFireTimerRef.current = 0;
+      setSpaceLasers(prev => [...prev, { id: Math.random(), x: spacePlayerX, y: 90 }]); // Player is at y=90
+    }
+
+    // Spawn enemies
+    spaceSpawnTimerRef.current += deltaTime;
+    if (spaceSpawnTimerRef.current > Math.max(0.5, 2.0 - spaceScore / 200)) {
+      spaceSpawnTimerRef.current = 0;
+      setSpaceEnemies(prev => [
+        ...prev,
+        {
+          id: Math.random(),
+          x: 10 + Math.random() * 80,
+          y: -10,
+          type: spaceEnemyTypes[Math.floor(Math.random() * spaceEnemyTypes.length)],
+          hp: 1
+        }
+      ]);
+    }
+
+    // Move lasers
+    setSpaceLasers(prev => prev.map(l => ({ ...l, y: l.y - 100 * deltaTime })).filter(l => l.y > -10));
+
+    // Move enemies and check collision with player
+    setSpaceEnemies(prev => {
+      const moved = prev.map(e => ({ ...e, y: e.y + (20 + spaceScore/10) * deltaTime }));
+      
+      const hitPlayer = moved.some(e => e.y > 85 && e.y < 95 && Math.abs(e.x - spacePlayerX) < 10);
+      if (hitPlayer) {
+        setSpaceGameOver(true);
+        setSpaceActive(false);
+        sfx.playWrong();
+      }
+
+      return moved.filter(e => e.y < 110);
+    });
+
+    // Check laser-enemy collisions
+    setSpaceLasers(lasers => {
+      let currentLasers = [...lasers];
+      setSpaceEnemies(enemies => {
+        let currentEnemies = [...enemies];
+        let scoreGained = 0;
+
+        for (let i = currentLasers.length - 1; i >= 0; i--) {
+          const l = currentLasers[i];
+          for (let j = currentEnemies.length - 1; j >= 0; j--) {
+            const e = currentEnemies[j];
+            if (Math.abs(l.x - e.x) < 8 && Math.abs(l.y - e.y) < 8) {
+              // Hit!
+              createSpaceParticles(e.x, e.y, '#38BDF8');
+              scoreGained += 10;
+              sfx.playSuccess();
+              currentLasers.splice(i, 1);
+              currentEnemies.splice(j, 1);
+              break; // laser consumed
+            }
+          }
+        }
+
+        if (scoreGained > 0) {
+          setSpaceScore(s => {
+            const newScore = s + scoreGained;
+            if (Math.floor(newScore / 100) > Math.floor(s / 100)) addStars(1);
+            return newScore;
+          });
+        }
+        return currentEnemies;
+      });
+      return currentLasers;
+    });
+
+    // Update particles
+    setSpaceParticles(prev => {
+      return prev.map(p => ({
+        ...p,
+        x: p.x + p.vx * deltaTime,
+        y: p.y + p.vy * deltaTime,
+        life: p.life - deltaTime * 3
+      })).filter(p => p.life > 0);
+    });
+
+    spaceRequestRef.current = requestAnimationFrame(updateSpace);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (spaceRequestRef.current) cancelAnimationFrame(spaceRequestRef.current);
+    };
+  }, []);
+
+  const handleSpacePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!spaceActive || spaceGameOver) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    setSpacePlayerX(Math.max(5, Math.min(95, x)));
+  };
+
+
   // NEW GAME 14: MAGICAL SHAPES TRAIN (قطار الأشكال السحري)
   // ==========================================
   type ShapeType = "circle" | "square" | "triangle" | "star" | "heart" | "diamond" | "hexagon" | "crescent" | "cross" | "cloud" | "sun" | "lightning";
@@ -5394,241 +5692,298 @@ export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, chil
         </div>
       )}
 
-      {/* --- TURBO ARROW RACER PLAY VIEW --- */}
+      
+      {/* --- ENDLESS RUNNER PLAY VIEW --- */}
       {activeGame === "arrowRacer" && !showLevelMap && (
-        <div className="card-bubbly bg-[#0F172A] max-w-2xl mx-auto p-6 relative overflow-hidden text-white border-4 border-yellow-400">
-          
+        <div 
+          className="card-bubbly bg-[#0F172A] max-w-2xl mx-auto p-0 relative overflow-hidden text-white border-4 border-[#38BDF8] h-[600px] select-none"
+          onPointerDown={(e) => {
+            const startX = e.clientX;
+            window.onpointerup = (upEvent) => {
+              const endX = upEvent.clientX;
+              if (endX - startX > 50) handleRunnerSwipe('right');
+              else if (startX - endX > 50) handleRunnerSwipe('left');
+              window.onpointerup = null;
+            };
+          }}
+        >
+          {/* Background / Sky / Perspective Track */}
+          <div className="absolute inset-0 bg-gradient-to-b from-blue-900 to-slate-900 overflow-hidden">
+            {/* Stars/Clouds */}
+            <div className="absolute top-10 left-10 text-4xl opacity-50">☁️</div>
+            <div className="absolute top-20 right-10 text-4xl opacity-50">☁️</div>
+            
+            {/* Perspective Track */}
+            <div 
+              className="absolute bottom-0 w-[150%] h-[200%] bg-slate-800 left-1/2 -translate-x-1/2"
+              style={{ transform: 'translateX(-50%) perspective(500px) rotateX(60deg)', transformOrigin: 'bottom' }}
+            >
+              {/* Lane dividers */}
+              <div className="absolute top-0 bottom-0 left-1/3 w-2 bg-white/30 border-dashed" />
+              <div className="absolute top-0 bottom-0 left-2/3 w-2 bg-white/30 border-dashed" />
+              
+              {/* Speed lines */}
+              <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 animate-slide-down" style={{ animationDuration: `${100/runnerSpeed}s` }} />
+            </div>
+          </div>
+
           {/* Header */}
-          <div className="flex items-center justify-between border-b-2 border-slate-700 pb-4 mb-4 relative z-20">
+          <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 z-20 bg-gradient-to-b from-black/80 to-transparent">
             <button
               onClick={quitGame}
               className="flex items-center gap-1 font-bold text-sm text-[#FF5A92] hover:underline"
             >
-              <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
+              <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
               <span>خروج</span>
             </button>
-            <div className="font-extrabold text-yellow-400 text-base flex items-center gap-2">
-              <span>الجولة {racerRound} 🏁</span>
-              <span className={`px-2.5 py-0.5 rounded-full text-xs font-black tracking-wider ${racerTimeLeft <= 10 ? 'bg-red-600 animate-pulse text-white' : 'bg-slate-800 text-slate-300'}`}>
-                ⏱️ {racerTimeLeft}ث
-              </span>
+            <div className="font-extrabold text-yellow-400 text-xl flex items-center gap-2 drop-shadow-md">
+              <span>النقاط: {Math.floor(runnerScore)}</span>
             </div>
-            <div className="text-sm font-bold text-[#38BDF8]">
+            <div className="text-lg font-bold text-[#38BDF8] drop-shadow-md">
               ⭐ كسبت: {starsEarnedThisSession}
             </div>
           </div>
 
-          <h3 className="text-2xl font-extrabold text-yellow-400 text-center mb-4">
-            سباق الاتجاهات الخارق 🏍️💨
-          </h3>
+          {/* Game Over Overlay */}
+          {runnerGameOver && (
+            <div className="absolute inset-0 bg-black/70 z-50 flex flex-col items-center justify-center animate-in fade-in zoom-in">
+              <h2 className="text-5xl font-black text-red-500 mb-4 animate-bounce">تحطم! 💥</h2>
+              <p className="text-2xl text-white mb-6">النقاط: {Math.floor(runnerScore)}</p>
+              <button 
+                onClick={startRunnerGame}
+                className="bg-yellow-400 text-slate-900 px-8 py-3 rounded-full font-black text-xl hover:bg-yellow-300 hover:scale-105 transition-transform"
+              >
+                العب مرة أخرى 🔄
+              </button>
+            </div>
+          )}
 
-          {/* Racetrack Window */}
-          <div className="relative w-full h-64 bg-[#1e293b] border-4 border-slate-700 rounded-3xl mb-6 flex flex-col items-center justify-between p-4 shadow-2xl overflow-hidden">
-            
-            {/* Real Scrolling Road Background */}
-            <div 
-              className="absolute inset-0 animate-scroll-road" 
-              style={{ 
-                animationDuration: racerSpeed > 0 ? `${12 / racerSpeed}s` : '0s' 
-              }} 
-            />
-
-            {/* Center Lane Divider */}
-            <div className="absolute inset-y-0 left-1/2 w-2 border-r-4 border-dashed border-yellow-400 opacity-50 pointer-events-none transform -translate-x-1/2" />
-
-            {/* Speed Lines Background (only moving if speed > 80) */}
-            {racerSpeed > 80 && (
-              <div className="absolute inset-0 flex flex-col justify-around pointer-events-none opacity-20">
-                <div className="h-1 w-full bg-white animate-pulse" />
-                <div className="h-1 w-full bg-white animate-pulse" />
-              </div>
-            )}
-
-            {/* Parallax Clouds (Drifting slow background) */}
-            <div 
-              className="absolute left-[10%] top-2 text-4xl select-none pointer-events-none opacity-30 animate-parallax-element"
-              style={{
-                animationDuration: racerSpeed > 0 ? `${48 / racerSpeed}s` : '0s',
-                animationDelay: '0s'
-              }}
-            >☁️</div>
-            <div 
-              className="absolute right-[12%] top-6 text-4xl select-none pointer-events-none opacity-30 animate-parallax-element"
-              style={{
-                animationDuration: racerSpeed > 0 ? `${56 / racerSpeed}s` : '0s',
-                animationDelay: '-1.5s'
-              }}
-            >☁️</div>
-
-            {/* Parallax Trees on Left Margin */}
-            <div 
-              className="absolute left-[4%] top-4 text-4xl select-none pointer-events-none animate-parallax-element"
-              style={{
-                animationDuration: racerSpeed > 0 ? `${18 / racerSpeed}s` : '0s',
-                animationDelay: '0s'
-              }}
-            >🌲</div>
-            <div 
-              className="absolute left-[14%] top-8 text-4xl select-none pointer-events-none animate-parallax-element"
-              style={{
-                animationDuration: racerSpeed > 0 ? `${22 / racerSpeed}s` : '0s',
-                animationDelay: '-0.9s'
-              }}
-            >🌳</div>
-
-            {/* Parallax Trees on Right Margin */}
-            <div 
-              className="absolute right-[4%] top-3 text-4xl select-none pointer-events-none animate-parallax-element"
-              style={{
-                animationDuration: racerSpeed > 0 ? `${16 / racerSpeed}s` : '0s',
-                animationDelay: '-0.4s'
-              }}
-            >🌲</div>
-            <div 
-              className="absolute right-[14%] top-10 text-4xl select-none pointer-events-none animate-parallax-element"
-              style={{
-                animationDuration: racerSpeed > 0 ? `${20 / racerSpeed}s` : '0s',
-                animationDelay: '-1.3s'
-              }}
-            >🌴</div>
-
-            {/* Moving Obstacle */}
-            {racerFeedback !== "drift" && (
-              <motion.div
-                initial={{ y: -40, scale: 0.3, opacity: 0 }}
-                animate={{
-                  y: racerFeedback === "correct" ? 180 : 40,
-                  scale: racerFeedback === "correct" ? 1.5 : 0.8,
-                  opacity: racerFeedback === "correct" ? 0 : 1,
-                  // Position obstacle in a different lane to make it look dodged
-                  x: racerFeedback === "correct" ? -racerLane * 100 : 0
+          {/* Play Area */}
+          <div className="absolute inset-0 z-10 pointer-events-none">
+            {/* Obstacles */}
+            {runnerObstacles.map(obs => (
+              <div 
+                key={obs.id}
+                className="absolute text-5xl transition-transform duration-75 ease-linear"
+                style={{ 
+                  left: obs.lane === 0 ? '16%' : obs.lane === 1 ? '50%' : '84%', 
+                  top: `${obs.y}%`,
+                  transform: `translate(-50%, -50%) scale(${0.5 + obs.y / 100})`, // Gets bigger as it gets closer
+                  opacity: obs.y < 0 ? 0 : 1
                 }}
-                transition={{ duration: 0.8 }}
-                className="text-5xl z-10 select-none absolute top-10"
               >
-                {racerObstacle}
-              </motion.div>
-            )}
+                {obs.type}
+              </div>
+            ))}
 
-            {/* Player Vehicle */}
-            <motion.div
-              animate={{
-                x: racerLane * 80,
-                y: racerYOffset + (racerFeedback === "wrong" ? 10 : 0),
-                scale: racerFeedback === "correct" ? 1.15 : racerFeedback === "drift" ? 1.2 : 1,
-                rotate: racerFeedback === "wrong" ? [0, -15, 15, -15, 15, 0] : racerLane * 15
+            {/* Player Character */}
+            <div 
+              className="absolute bottom-[10%] text-7xl transition-all duration-200 ease-out drop-shadow-2xl"
+              style={{
+                left: runnerLane === 0 ? '16%' : runnerLane === 1 ? '50%' : '84%',
+                transform: `translateX(-50%) ${runnerActive && !runnerGameOver ? 'animate-bounce-slight' : ''}`
               }}
-              transition={{ type: "spring", stiffness: 220, damping: 14 }}
-              className="text-7xl z-20 select-none absolute bottom-4 drop-shadow-[0_12px_12px_rgba(0,0,0,0.6)]"
             >
-              {racerFeedback === "wrong" ? "💥" : racerRound % 2 === 0 ? "🏎️" : "🏍️"}
-              
-              {/* Drift smoke / Nitro sparks */}
-              {racerFeedback === "drift" && (
-                <span className="absolute -bottom-2 -left-4 text-3xl animate-bounce">💨</span>
-              )}
-              {racerSpeed > 100 && racerFeedback === "correct" && (
-                <span className="absolute -bottom-2 -left-6 text-3xl">🔥</span>
-              )}
-            </motion.div>
+              🛹
+            </div>
+          </div>
+        </div>
+      )}
 
-            {/* Score & Speed Dashboard */}
-            <div className="w-full flex justify-between items-center z-20 pointer-events-none mt-auto">
-              {/* Speedometer */}
-              <div className="bg-slate-950/80 px-4 py-2 rounded-2xl border-2 border-slate-700 flex flex-col items-center">
-                <span className="text-xs text-slate-400 font-bold">السرعة</span>
-                <span className="text-xl font-black text-green-400 tracking-wider">
-                  {racerSpeed} <span className="text-xs">كم/س</span>
-                </span>
-              </div>
 
-              {/* Score */}
-              <div className="bg-slate-950/80 px-4 py-2 rounded-2xl border-2 border-slate-700 flex flex-col items-center">
-                <span className="text-xs text-slate-400 font-bold">النقاط</span>
-                <span className="text-xl font-black text-yellow-400 tracking-wider">
-                  {racerScore}
-                </span>
-              </div>
+      {/* --- FRUIT NINJA PLAY VIEW --- */}
+      {activeGame === "ninja" && !showLevelMap && (
+        <div 
+          className="card-bubbly bg-[#451a03] max-w-2xl mx-auto p-0 relative overflow-hidden text-white border-4 border-amber-800 h-[600px] select-none touch-none"
+          onPointerMove={handleNinjaPointerMove}
+          onPointerDown={handleNinjaPointerMove}
+          style={{ backgroundImage: 'url("https://www.transparenttextures.com/patterns/wood-pattern.png")' }}
+        >
+          {/* Header */}
+          <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 z-20 bg-gradient-to-b from-black/60 to-transparent">
+            <button
+              onClick={quitGame}
+              className="flex items-center gap-1 font-bold text-sm text-[#FF5A92] hover:underline"
+            >
+              <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
+              <span>خروج</span>
+            </button>
+            <div className="font-extrabold text-white text-xl flex items-center gap-2 drop-shadow-md">
+              <span>النقاط: {ninjaScore}</span>
+              <span className="text-red-500 ml-4">
+                {Array.from({length: 3}).map((_, i) => i < ninjaLives ? '❤️' : '🖤')}
+              </span>
+            </div>
+            <div className="text-lg font-bold text-[#38BDF8] drop-shadow-md">
+              ⭐ كسبت: {starsEarnedThisSession}
             </div>
           </div>
 
-          {/* Sequence Arrows */}
-          <div className="flex flex-col items-center mb-6">
-            <span className="text-xs font-bold text-slate-400 mb-2">تسلسل الأسهم المطلوب:</span>
-            <div className="flex gap-3 justify-center items-center">
-              {racerSequence.map((dir, idx) => {
-                const isPassed = idx < racerInputIndex;
-                const isCurrent = idx === racerInputIndex;
-                const arrowMap = {
-                  up: "⬆️",
-                  down: "⬇️",
-                  left: "⬅️",
-                  right: "➡️"
-                };
-
-                return (
-                  <motion.div
-                    key={idx}
-                    animate={isCurrent ? { scale: [1, 1.2, 1], y: [0, -4, 0] } : {}}
-                    transition={{ repeat: Infinity, duration: 1 }}
-                    className={`w-12 h-12 rounded-full border-3 flex items-center justify-center text-2xl font-bold shadow-md transition-all ${
-                      isPassed
-                        ? "bg-green-500 border-green-300 scale-95 opacity-80"
-                        : isCurrent
-                        ? "bg-yellow-400 border-yellow-200 ring-4 ring-yellow-400/50 scale-110"
-                        : "bg-slate-800 border-slate-600 opacity-40"
-                    }`}
-                  >
-                    {arrowMap[dir]}
-                  </motion.div>
-                );
-              })}
+          {/* Game Over Overlay */}
+          {ninjaGameOver && (
+            <div className="absolute inset-0 bg-black/80 z-50 flex flex-col items-center justify-center animate-in fade-in zoom-in">
+              <h2 className="text-5xl font-black text-red-500 mb-4 animate-bounce">انتهت اللعبة! 💥</h2>
+              <p className="text-2xl text-white mb-6">النقاط: {ninjaScore}</p>
+              <button 
+                onClick={startNinjaGame}
+                className="bg-yellow-400 text-slate-900 px-8 py-3 rounded-full font-black text-xl hover:bg-yellow-300 hover:scale-105 transition-transform"
+              >
+                العب مرة أخرى 🔄
+              </button>
             </div>
-          </div>
+          )}
 
-          {/* On-Screen Arrow Controller */}
-          <div className="flex flex-col items-center gap-2 mb-4">
-            <span className="text-xs font-bold text-slate-400">تحكم باللمس للاتجاهات:</span>
+          {/* Play Area */}
+          <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden">
             
-            <div className="relative w-40 h-40">
-              {/* Up button */}
-              <button
-                onClick={() => handleRacerInput("up")}
-                className="absolute top-0 left-12 w-16 h-12 bg-blue-600 hover:bg-blue-500 border-b-4 border-blue-800 rounded-t-2xl flex items-center justify-center text-2xl active:scale-95 transition-transform"
+            {/* Particles */}
+            {ninjaParticles.map(p => (
+              <div 
+                key={p.id} 
+                className="absolute w-3 h-3 rounded-full"
+                style={{ 
+                  left: `${p.x}%`, 
+                  top: `${p.y}%`, 
+                  backgroundColor: p.color,
+                  opacity: p.life
+                }} 
+              />
+            ))}
+
+            {/* Fruits & Bombs */}
+            {ninjaFruits.map(f => (
+              <div 
+                key={f.id}
+                className="absolute text-6xl drop-shadow-lg"
+                style={{ 
+                  left: `${f.x}%`, 
+                  top: `${f.y}%`,
+                  transform: `translate(-50%, -50%) rotate(${f.rotation}deg)`,
+                  filter: f.isSliced ? 'grayscale(100%) opacity(50%)' : 'none'
+                }}
               >
-                ⬆️
-              </button>
-              {/* Left button */}
-              <button
-                onClick={() => handleRacerInput("left")}
-                className="absolute top-12 left-0 w-12 h-16 bg-blue-600 hover:bg-blue-500 border-r-4 border-blue-800 rounded-l-2xl flex items-center justify-center text-2xl active:scale-95 transition-transform"
-              >
-                ⬅️
-              </button>
-              {/* Middle Circle */}
-              <div className="absolute top-12 left-12 w-16 h-16 bg-slate-850 rounded-full border-2 border-slate-700 flex items-center justify-center text-xs font-bold text-slate-500">
-                DRIVE
+                {f.type}
               </div>
-              {/* Right button */}
-              <button
-                onClick={() => handleRacerInput("right")}
-                className="absolute top-12 right-0 w-12 h-16 bg-blue-600 hover:bg-blue-500 border-l-4 border-blue-800 rounded-r-2xl flex items-center justify-center text-2xl active:scale-95 transition-transform"
-              >
-                ➡️
-              </button>
-              {/* Down button */}
-              <button
-                onClick={() => handleRacerInput("down")}
-                className="absolute bottom-0 left-12 w-16 h-12 bg-blue-600 hover:bg-blue-500 border-t-4 border-blue-800 rounded-b-2xl flex items-center justify-center text-2xl active:scale-95 transition-transform"
-              >
-                ⬇️
-              </button>
+            ))}
+
+            {/* Slash trail */}
+            <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ filter: 'drop-shadow(0 0 4px white)' }}>
+              {ninjaSlash.length > 1 && (
+                <polyline 
+                  points={ninjaSlash.map(p => `${p.x}%,${p.y}%`).join(' ')} 
+                  fill="none" 
+                  stroke="white" 
+                  strokeWidth="6" 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                />
+              )}
+            </svg>
+          </div>
+        </div>
+      )}
+
+
+      {/* --- SPACE SHOOTER PLAY VIEW --- */}
+      {activeGame === "space" && !showLevelMap && (
+        <div 
+          className="card-bubbly bg-slate-900 max-w-2xl mx-auto p-0 relative overflow-hidden text-white border-4 border-indigo-500 h-[600px] select-none touch-none"
+          onPointerMove={handleSpacePointerMove}
+          onPointerDown={handleSpacePointerMove}
+        >
+          {/* Background Stars (Parallax simulation) */}
+          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-40 animate-slide-down" style={{ animationDuration: '4s' }} />
+          <div className="absolute inset-0 bg-gradient-to-t from-indigo-900/50 to-transparent" />
+
+          {/* Header */}
+          <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-4 z-20 bg-gradient-to-b from-black/80 to-transparent">
+            <button
+              onClick={quitGame}
+              className="flex items-center gap-1 font-bold text-sm text-[#FF5A92] hover:underline"
+            >
+              <ArrowLeft className="w-5 h-5 rtl:rotate-180" />
+              <span>خروج</span>
+            </button>
+            <div className="font-extrabold text-white text-xl flex items-center gap-2 drop-shadow-md">
+              <span>النقاط: {spaceScore}</span>
+            </div>
+            <div className="text-lg font-bold text-indigo-300 drop-shadow-md">
+              ⭐ كسبت: {starsEarnedThisSession}
             </div>
           </div>
-          
-          <p className="text-[10px] font-bold text-slate-400 text-center">
-            💡 اسحب على الشاشة 📱 أو اضغط أزرار الأسهم في الكيبورد ⌨️ أو استخدم لوحة التحكم الملونة!
-          </p>
+
+          {/* Game Over Overlay */}
+          {spaceGameOver && (
+            <div className="absolute inset-0 bg-black/80 z-50 flex flex-col items-center justify-center animate-in fade-in zoom-in">
+              <h2 className="text-5xl font-black text-red-500 mb-4 animate-bounce">تدمرت مركبتك! 💥</h2>
+              <p className="text-2xl text-white mb-6">النقاط: {spaceScore}</p>
+              <button 
+                onClick={startSpaceGame}
+                className="bg-indigo-500 text-white px-8 py-3 rounded-full font-black text-xl hover:bg-indigo-400 hover:scale-105 transition-transform shadow-lg shadow-indigo-500/50"
+              >
+                العب مرة أخرى 🔄
+              </button>
+            </div>
+          )}
+
+          {/* Play Area */}
+          <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden">
+            
+            {/* Particles */}
+            {spaceParticles.map(p => (
+              <div 
+                key={p.id} 
+                className="absolute w-2 h-2 rounded-full"
+                style={{ 
+                  left: `${p.x}%`, 
+                  top: `${p.y}%`, 
+                  backgroundColor: p.color,
+                  opacity: p.life,
+                  boxShadow: `0 0 8px ${p.color}`
+                }} 
+              />
+            ))}
+
+            {/* Lasers */}
+            {spaceLasers.map(l => (
+              <div 
+                key={l.id}
+                className="absolute w-1 h-6 bg-cyan-400 rounded-full"
+                style={{ 
+                  left: `${l.x}%`, 
+                  top: `${l.y}%`,
+                  transform: 'translate(-50%, -50%)',
+                  boxShadow: '0 0 10px #22d3ee'
+                }}
+              />
+            ))}
+
+            {/* Enemies */}
+            {spaceEnemies.map(e => (
+              <div 
+                key={e.id}
+                className="absolute text-5xl drop-shadow-[0_0_10px_rgba(255,0,0,0.5)]"
+                style={{ 
+                  left: `${e.x}%`, 
+                  top: `${e.y}%`,
+                  transform: 'translate(-50%, -50%)'
+                }}
+              >
+                {e.type}
+              </div>
+            ))}
+
+            {/* Player */}
+            <div 
+              className="absolute bottom-[5%] text-6xl drop-shadow-[0_0_15px_rgba(99,102,241,0.8)] transition-transform duration-75"
+              style={{
+                left: `${spacePlayerX}%`,
+                transform: 'translateX(-50%)'
+              }}
+            >
+              🚀
+            </div>
+          </div>
         </div>
       )}
 
