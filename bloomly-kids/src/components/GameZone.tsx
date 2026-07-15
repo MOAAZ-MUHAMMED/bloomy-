@@ -836,7 +836,7 @@ interface GameZoneProps {
 }
 
 export function GameZone({ onNeedRegister, globalStars = 0, setGlobalStars, childLevel: propChildLevel = "level1", forcedGame, setForcedGame }: GameZoneProps = {}) {
-  const [activeGame, setActiveGame] = useState<"menu" | "math" | "spelling" | "memory" | "catcher" | "coloring" | "spellingEn" | "sorting" | "spaceCatcher" | "connectDots" | "maze" | "safari" | "chef" | "farm" | "train" | "arrowRacer" | "tapRacer" | "quran" | "stories" | "dailyHabits">("menu");
+  const [activeGame, setActiveGame] = useState<"menu" | "math" | "spelling" | "memory" | "catcher" | "coloring" | "spellingEn" | "sorting" | "spaceCatcher" | "connectDots" | "maze" | "safari" | "chef" | "farm" | "train" | "arrowRacer" | "tapRacer" | "quran" | "stories" | "dailyHabits" | "ninja" | "space">("menu");
   const gameZoneRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
