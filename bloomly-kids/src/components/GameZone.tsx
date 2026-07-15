@@ -1,5 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import NinjaGame from "./games/NinjaGame";
+import SpaceGame from "./games/SpaceGame";
+import SubwayGame from "./games/SubwayGame";
+
 import { ArrowLeft } from "lucide-react";
 import { ScreenOrientation as CapScreenOrientation } from '@capacitor/screen-orientation';
 import QuranIsland from "./QuranIsland";
@@ -6771,6 +6775,39 @@ const startSpaceGame = () => {
 
       {/* Floating Music Box Toggle Button removed per user request */}
 
-    </section>
+    
+      {/* --- NINJA GAME PLAY VIEW --- */}
+      {activeGame === "ninja" && !showLevelMap && (
+        <NinjaGame 
+          onQuit={quitGame}
+          onWin={(stars) => {
+            awardStarsAndFinishLevel(stars);
+            quitGame();
+          }}
+        />
+      )}
+
+      {/* --- SPACE GAME PLAY VIEW --- */}
+      {activeGame === "space" && !showLevelMap && (
+        <SpaceGame 
+          onQuit={quitGame}
+          onWin={(stars) => {
+            awardStarsAndFinishLevel(stars);
+            quitGame();
+          }}
+        />
+      )}
+
+      {/* --- SUBWAY GAME PLAY VIEW (replaces arrowRacer) --- */}
+      {activeGame === "arrowRacer" && !showLevelMap && (
+        <SubwayGame 
+          onQuit={quitGame}
+          onWin={(stars) => {
+            awardStarsAndFinishLevel(stars);
+            quitGame();
+          }}
+        />
+      )}
+</section>
   );
 }
