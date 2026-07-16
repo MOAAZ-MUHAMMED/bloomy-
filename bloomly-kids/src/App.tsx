@@ -20,14 +20,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ScreenOrientation } from "@capacitor/screen-orientation";
 import { StatusBar } from "@capacitor/status-bar";
 
+import { StatusBar } from "@capacitor/status-bar";
+
 export default function App() {
   const [showIntro, setShowIntro] = useState(true);
 
   useEffect(() => {
     const initApp = async () => {
       try {
-        if (window.Capacitor?.isNativePlatform()) {
-          await ScreenOrientation.lock({ type: 'landscape' });
+        if ((window as any).Capacitor && (window as any).Capacitor.isNative) {
+          await ScreenOrientation.lock({ orientation: 'landscape' } as any);
           await StatusBar.hide();
         }
       } catch (e) {
