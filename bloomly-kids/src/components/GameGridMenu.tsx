@@ -19,10 +19,10 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
   onSelectCategory, 
   onSelectGame, 
   activeCategory, 
-  onBackToCategories, 
-  onOpenParents, 
-  onOpenMap, 
-  onOpenAbout 
+  onBackToCategories,
+  onOpenParents,
+  onOpenMap,
+  onOpenAbout
 }) => {
   const speakArabic = (text: string) => {
     if (!window.speechSynthesis) return;
@@ -34,28 +34,6 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
     window.speechSynthesis.speak(utterance);
   };
 
-  // View 1: Main Category Selection (Lamsa-style Layout)
-  if (!activeCategory) {
-    return (
-      <div className="flex flex-col w-full max-w-7xl mx-auto px-4 py-8 relative z-10 select-none">
-        {/* Header / Intro banner */}
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex flex-col items-start gap-2 bg-white/60 p-4 rounded-3xl backdrop-blur-md border border-white/50 shadow-lg">
-            <h2 className="text-3xl font-black text-[#4D2B82] drop-shadow-sm flex items-center gap-3">
-              <SproutMascot className="w-12 h-12" state="talking" />
-              مرحباً يا بطل! اختر مسارك ✨
-            </h2>
-            <p className="text-purple-700 font-bold px-2">اضغط على أي صندوق لتكتشف الألعاب السحرية بداخله!</p>
-          </div>
-        </div>
-
-        {/* Lamsa-style Horizontal Scrolling Boxes */}
-        <div 
-          className="flex gap-4 sm:gap-6 overflow-x-auto pb-8 pt-4 px-2 snap-x snap-mandatory hide-scrollbar" 
-          dir="rtl"
-          style={{ scrollBehavior: 'smooth' }}
-        >
-          
   const customBoxes = [
     {
       id: "parents",
@@ -88,10 +66,7 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
       action: onOpenAbout
     }
   ];
-  
-  // Combine categories and custom boxes.
-  // The user said "بنعرف عن نفسنا في الاخر" (About Us at the end).
-  // The farm box is already in categoriesData.
+
   const allBoxes = [
     ...categoriesData,
     customBoxes[0], // Parents
@@ -99,6 +74,27 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
     customBoxes[2]  // About Us
   ];
 
+  // View 1: Main Category Selection (Lamsa-style Layout)
+  if (!activeCategory) {
+    return (
+      <div className="flex flex-col w-full max-w-7xl mx-auto px-4 py-8 relative z-10 select-none">
+        {/* Header / Intro banner */}
+        <div className="flex justify-between items-center mb-8">
+          <div className="flex flex-col items-start gap-2 bg-white/60 p-4 rounded-3xl backdrop-blur-md border border-white/50 shadow-lg">
+            <h2 className="text-3xl font-black text-[#4D2B82] drop-shadow-sm flex items-center gap-3">
+              <SproutMascot className="w-12 h-12" state="talking" />
+              مرحباً يا بطل! اختر مسارك ✨
+            </h2>
+            <p className="text-purple-700 font-bold px-2">اضغط على أي صندوق لتكتشف الألعاب السحرية بداخله!</p>
+          </div>
+        </div>
+
+        {/* Lamsa-style Horizontal Scrolling Boxes */}
+        <div 
+          className="flex gap-4 sm:gap-6 overflow-x-auto pb-8 pt-4 px-2 snap-x snap-mandatory hide-scrollbar" 
+          dir="rtl"
+          style={{ scrollBehavior: 'smooth' }}
+        >
           {allBoxes.map((cat, index) => (
             <motion.div
               key={cat.id}
@@ -109,7 +105,11 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
               whileTap={{ scale: 0.95 }}
               onClick={() => {
                 speakArabic(cat.title);
-                if ((cat as any).action) { (cat as any).action(); } else if (onSelectCategory) onSelectCategory(cat.id);
+                if ((cat as any).action) {
+                  (cat as any).action();
+                } else if (onSelectCategory) {
+                  onSelectCategory(cat.id);
+                }
               }}
               className="snap-center shrink-0 flex flex-col items-center cursor-pointer group"
               style={{ width: '220px' }}
@@ -118,12 +118,12 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
               <div className="w-full h-[280px] bg-white rounded-[32px] border-[5px] shadow-[0_8px_15px_rgba(0,0,0,0.1)] flex flex-col items-center justify-center p-4 relative overflow-hidden transition-all duration-300" style={{ borderColor: cat.borderColor.replace('border-', '') }}>
                 
                 {/* Background decorative gradient blob */}
-                <div className={`absolute inset-0 opacity-20 bg-gradient-to-br ${cat.bgGradient}`} />
+                <div className={\`absolute inset-0 opacity-20 bg-gradient-to-br \${cat.bgGradient}\`} />
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/40 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
 
                 {/* English title at the top of the box */}
                 <div className="absolute top-4 w-full text-center">
-                  <span className={`font-black text-[11px] uppercase tracking-widest opacity-80 ${cat.textColor}`}>
+                  <span className={\`font-black text-[11px] uppercase tracking-widest opacity-80 \${cat.textColor}\`}>
                     {cat.englishTitle}
                   </span>
                 </div>
@@ -144,7 +144,7 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
 
               {/* Box Title (Arabic) below the box */}
               <div className="mt-4 bg-white/80 backdrop-blur-sm border-2 border-white px-6 py-2 rounded-full shadow-sm">
-                <h3 className={`text-lg font-black ${cat.textColor}`}>
+                <h3 className={\`text-lg font-black \${cat.textColor}\`}>
                   {cat.title}
                 </h3>
               </div>
@@ -153,7 +153,7 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
         </div>
 
         {/* Global Styles for horizontal scrollbar hiding */}
-        <style dangerouslySetInnerHTML={{__html: `
+        <style dangerouslySetInnerHTML={{__html: \`
           .hide-scrollbar::-webkit-scrollbar {
             display: none;
           }
@@ -161,7 +161,7 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
             -ms-overflow-style: none;
             scrollbar-width: none;
           }
-        `}} />
+        \`}} />
       </div>
     );
   }
@@ -190,10 +190,10 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
           </button>
           
           <div className="text-center sm:text-right flex-1">
-            <span className={`inline-block text-sm font-black bg-white/80 px-4 py-1 rounded-full mb-2 ${currentCategory?.textColor}`}>
+            <span className={\`inline-block text-sm font-black bg-white/80 px-4 py-1 rounded-full mb-2 \${currentCategory?.textColor}\`}>
               {currentCategory?.englishTitle}
             </span>
-            <h2 className={`text-3xl sm:text-4xl font-black mb-2 ${currentCategory?.textColor}`}>
+            <h2 className={\`text-3xl sm:text-4xl font-black mb-2 \${currentCategory?.textColor}\`}>
               {currentCategory?.icon} {currentCategory?.title}
             </h2>
             <p className="text-gray-600 font-bold text-sm sm:text-lg max-w-2xl bg-white/50 rounded-xl p-2 inline-block">
@@ -226,7 +226,7 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
               transition={{ delay: index * 0.05, type: 'spring', stiffness: 200, damping: 20 }}
               whileHover={{ y: -10, scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`relative flex flex-col items-center text-center p-6 bg-gradient-to-br ${bgFrom} ${bgTo} backdrop-blur-xl rounded-[40px] border-[3px] border-white/50 shadow-[0_15px_35px_rgba(0,0,0,0.1),inset_0_5px_15px_rgba(255,255,255,0.8)] cursor-pointer overflow-hidden group`}
+              className={\`relative flex flex-col items-center text-center p-6 bg-gradient-to-br \${bgFrom} \${bgTo} backdrop-blur-xl rounded-[40px] border-[3px] border-white/50 shadow-[0_15px_35px_rgba(0,0,0,0.1),inset_0_5px_15px_rgba(255,255,255,0.8)] cursor-pointer overflow-hidden group\`}
               onClick={() => onSelectGame(game.id)}
             >
               {/* Animated Light Reflection Overlay */}
@@ -251,7 +251,7 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
                   {game.badge}
                 </span>
                 
-                <h3 className={`text-xl sm:text-2xl font-black ${textColor} mb-3 drop-shadow-md leading-tight`}>
+                <h3 className={\`text-xl sm:text-2xl font-black \${textColor} mb-3 drop-shadow-md leading-tight\`}>
                   {game.gameName}
                 </h3>
                 
@@ -261,7 +261,7 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
 
                 {/* 3D Play Button */}
                 <div
-                  className={`mt-auto w-full py-3.5 rounded-3xl bg-white border-b-[6px] border-black/10 text-lg font-black ${textColor} shadow-lg group-hover:bg-gray-50 group-active:border-b-0 group-active:translate-y-[6px] transition-all flex items-center justify-center gap-2`}
+                  className={\`mt-auto w-full py-3.5 rounded-3xl bg-white border-b-[6px] border-black/10 text-lg font-black \${textColor} shadow-lg group-hover:bg-gray-50 group-active:border-b-0 group-active:translate-y-[6px] transition-all flex items-center justify-center gap-2\`}
                 >
                   <Play className="w-6 h-6 fill-current" />
                   {game.id === 'quran' ? 'احفظ الآن!' : 'ابدأ اللعب!'}

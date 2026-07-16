@@ -158,7 +158,7 @@ export default function SubwayGame({ onQuit, onWin }: SubwayGameProps) {
       
       const size = 10 + 80 * scale;
 
-      ctx.font = \`\${size}px Arial\`;
+      ctx.font = `${size}px Arial`;
       ctx.textAlign = "center";
       ctx.textBaseline = "bottom";
       ctx.fillText(obj.emoji, x, y);

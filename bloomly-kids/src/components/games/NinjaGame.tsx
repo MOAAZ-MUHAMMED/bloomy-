@@ -116,7 +116,7 @@ export default function NinjaGame({ onQuit, onWin }: NinjaGameProps) {
       ctx.save();
       ctx.translate(obj.x, obj.y);
       ctx.rotate(obj.rotation);
-      ctx.font = \`\${obj.size}px Arial\`;
+      ctx.font = `${obj.size}px Arial`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       if (obj.sliced) {

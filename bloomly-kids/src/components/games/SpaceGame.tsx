@@ -201,7 +201,7 @@ export default function SpaceGame({ onQuit, onWin }: SpaceGameProps) {
             objectsRef.current.splice(i, 1);
             continue;
           }
-          ctx.font = \`\${40 + (1 - obj.life) * 20}px Arial\`;
+          ctx.font = `${40 + (1 - obj.life) * 20}px Arial`;
           ctx.globalAlpha = obj.life;
           ctx.fillText("💥", obj.x, obj.y);
           ctx.globalAlpha = 1.0;
