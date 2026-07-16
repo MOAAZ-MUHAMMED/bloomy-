@@ -20,8 +20,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ScreenOrientation } from "@capacitor/screen-orientation";
 import { StatusBar } from "@capacitor/status-bar";
 
-import { StatusBar } from "@capacitor/status-bar";
-
 export default function App() {
   const [showIntro, setShowIntro] = useState(true);
 
