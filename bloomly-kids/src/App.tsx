@@ -18,9 +18,25 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ScreenOrientation } from "@capacitor/screen-orientation";
+import { StatusBar } from "@capacitor/status-bar";
 
 export default function App() {
   const [showIntro, setShowIntro] = useState(true);
+
+  useEffect(() => {
+    const initApp = async () => {
+      try {
+        if (window.Capacitor?.isNativePlatform()) {
+          await ScreenOrientation.lock({ type: 'landscape' });
+          await StatusBar.hide();
+        }
+      } catch (e) {
+        console.log("App init failed: ", e);
+      }
+    };
+    initApp();
+  }, []);
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showCharactersView, setShowCharactersView] = useState(false);
 

@@ -4010,7 +4010,7 @@ const startSpaceGame = () => {
 
       {/* Global Star Indicator Header */}
       {activeGame === "menu" && (
-        <div className="flex flex-col sm:flex-row items-center justify-between bg-white border-3 border-[#4D2B82] rounded-[24px] p-6 mb-12 shadow-[0_6px_0_0_#4D2B82] gap-4">
+        <div className="flex flex-col sm:flex-row-reverse items-center justify-between bg-white/80 backdrop-blur-md border-3 border-[#4D2B82] rounded-[24px] p-4 mb-4 shadow-[0_6px_0_0_#4D2B82] gap-4 absolute top-4 left-4 z-50 w-auto">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-full bg-[#E8F5E9] border-2 border-[#4CAF50] flex items-center justify-center text-2xl">
             🎮
@@ -4293,10 +4293,35 @@ const startSpaceGame = () => {
       {activeGame === "menu" && (
         <>
           <GameGridMenu 
-            onSelectCategory={(categoryId) => requireProfile(() => startLoadingAndOpenCategory(categoryId))}
+            onSelectCategory={(categoryId) => {
+              if (categoryId === 'farm') {
+                requireProfile(() => startLoadingAndOpenMap('farm'));
+              } else {
+                requireProfile(() => startLoadingAndOpenCategory(categoryId));
+              }
+            }}
             onSelectGame={(gameId) => requireProfile(() => startLoadingAndOpenMap(gameId as any))}
             activeCategory={activeCategory}
             onBackToCategories={() => setActiveCategory(null)}
+            onOpenParents={() => {
+              // Open Parents dashboard (usually by scrolling down or opening modal)
+              // Wait, the user said: "يوديه على المكان اللي هو تحت بتاع اولياء الامور"
+              // That means scroll down to the Parents Dashboard.
+              const parentsEl = document.getElementById('parents-dashboard');
+              if (parentsEl) {
+                 parentsEl.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+            onOpenMap={() => requireProfile(() => {
+              // Show the island map for the default game or a specific one
+              setShowLevelMap(true);
+              setActiveGame('maze'); // Arbitrarily pick maze to show map, or just show map directly
+            })}
+            onOpenAbout={() => {
+              // Scroll to footer or show about modal
+              const footer = document.querySelector('footer');
+              if (footer) footer.scrollIntoView({ behavior: 'smooth' });
+            }}
           />
         </>
       )}

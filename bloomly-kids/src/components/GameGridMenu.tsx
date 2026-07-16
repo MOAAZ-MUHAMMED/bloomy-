@@ -10,13 +10,19 @@ interface GameGridMenuProps {
   onSelectGame: (gameId: string) => void;
   activeCategory?: string | null;
   onBackToCategories?: () => void;
+  onOpenParents?: () => void;
+  onOpenMap?: () => void;
+  onOpenAbout?: () => void;
 }
 
 export const GameGridMenu: React.FC<GameGridMenuProps> = ({ 
   onSelectCategory, 
   onSelectGame, 
   activeCategory, 
-  onBackToCategories 
+  onBackToCategories, 
+  onOpenParents, 
+  onOpenMap, 
+  onOpenAbout 
 }) => {
   const speakArabic = (text: string) => {
     if (!window.speechSynthesis) return;
@@ -49,7 +55,51 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
           dir="rtl"
           style={{ scrollBehavior: 'smooth' }}
         >
-          {categoriesData.map((cat, index) => (
+          
+  const customBoxes = [
+    {
+      id: "parents",
+      title: "أولياء الأمور",
+      englishTitle: "PARENTS AREA",
+      icon: "👨‍👩‍👧‍👦",
+      bgGradient: "from-[#8E2DE2]/90 to-[#4A00E0]/90",
+      textColor: "text-purple-700",
+      borderColor: "border-purple-400",
+      action: onOpenParents
+    },
+    {
+      id: "island_map",
+      title: "خريطة الجزيرة",
+      englishTitle: "ISLAND MAP",
+      icon: "🗺️",
+      bgGradient: "from-[#11998e]/90 to-[#38ef7d]/90",
+      textColor: "text-green-700",
+      borderColor: "border-green-400",
+      action: onOpenMap
+    },
+    {
+      id: "about_us",
+      title: "بنعرف عن نفسنا",
+      englishTitle: "ABOUT US",
+      icon: "ℹ️",
+      bgGradient: "from-[#fc4a1a]/90 to-[#f7b733]/90",
+      textColor: "text-orange-700",
+      borderColor: "border-orange-400",
+      action: onOpenAbout
+    }
+  ];
+  
+  // Combine categories and custom boxes.
+  // The user said "بنعرف عن نفسنا في الاخر" (About Us at the end).
+  // The farm box is already in categoriesData.
+  const allBoxes = [
+    ...categoriesData,
+    customBoxes[0], // Parents
+    customBoxes[1], // Map
+    customBoxes[2]  // About Us
+  ];
+
+          {allBoxes.map((cat, index) => (
             <motion.div
               key={cat.id}
               initial={{ opacity: 0, scale: 0.9 }}
@@ -59,7 +109,7 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
               whileTap={{ scale: 0.95 }}
               onClick={() => {
                 speakArabic(cat.title);
-                if (onSelectCategory) onSelectCategory(cat.id);
+                if ((cat as any).action) { (cat as any).action(); } else if (onSelectCategory) onSelectCategory(cat.id);
               }}
               className="snap-center shrink-0 flex flex-col items-center cursor-pointer group"
               style={{ width: '220px' }}

@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 
 interface SubwayGameProps {
@@ -13,19 +12,30 @@ interface GameObject {
   type: "coin" | "obstacle" | "train";
   emoji: string;
   z: number; // 0 is far away, 100 is at player
+  speed: number;
 }
+
+const LANES = [0, 1, 2];
+const COINS = ["🪙", "💎", "💰"];
+const OBSTACLES = ["🚧", "🛑", "🪵"];
+const TRAINS = ["🚂", "🚆", "🚄"];
 
 export default function SubwayGame({ onQuit, onWin }: SubwayGameProps) {
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [gameState, setGameState] = useState<"playing" | "gameover" | "won">("playing");
-  
-  const [playerLane, setPlayerLane] = useState(1);
-  const [isJumping, setIsJumping] = useState(false);
-  const [objects, setObjects] = useState<GameObject[]>([]);
-  
+
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const requestRef = useRef<number>(0);
+  const playerLaneRef = useRef(1);
+  const isJumpingRef = useRef(false);
+  const jumpTimeRef = useRef(0);
+  const objectsRef = useRef<GameObject[]>([]);
   const lastSpawnTime = useRef<number>(Date.now());
+  
+  const scoreRef = useRef(0);
+  const livesRef = useRef(3);
+  
   const touchStartX = useRef<number | null>(null);
   const touchStartY = useRef<number | null>(null);
 
@@ -42,128 +52,212 @@ export default function SubwayGame({ onQuit, onWin }: SubwayGameProps) {
 
       if (type === "coin") {
         osc.type = "sine";
-        osc.frequency.setValueAtTime(1000, now);
-        osc.frequency.exponentialRampToValueAtTime(2000, now + 0.1);
+        osc.frequency.setValueAtTime(800, now);
+        osc.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
         gain.gain.setValueAtTime(0.2, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
         osc.start(now);
         osc.stop(now + 0.1);
       } else if (type === "hit") {
-        osc.type = "sawtooth";
-        osc.frequency.setValueAtTime(200, now);
-        osc.frequency.exponentialRampToValueAtTime(50, now + 0.3);
-        gain.gain.setValueAtTime(0.4, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-        osc.start(now);
-        osc.stop(now + 0.3);
-      } else if (type === "jump") {
-        osc.type = "triangle";
-        osc.frequency.setValueAtTime(300, now);
-        osc.frequency.exponentialRampToValueAtTime(600, now + 0.2);
-        gain.gain.setValueAtTime(0.2, now);
+        osc.type = "square";
+        osc.frequency.setValueAtTime(150, now);
+        osc.frequency.exponentialRampToValueAtTime(40, now + 0.2);
+        gain.gain.setValueAtTime(0.3, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
         osc.start(now);
         osc.stop(now + 0.2);
+      } else if (type === "jump") {
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.exponentialRampToValueAtTime(500, now + 0.15);
+        gain.gain.setValueAtTime(0.2, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+        osc.start(now);
+        osc.stop(now + 0.15);
       }
-    } catch (e) {}
+    } catch (e) {
+      console.warn(e);
+    }
   }, []);
 
-  const spawnObject = () => {
-    const lane = Math.floor(Math.random() * 3);
-    const rand = Math.random();
-    let type: "coin" | "obstacle" | "train" = "coin";
-    let emoji = "🟡";
+  const updateAndDraw = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
+    ctx.clearRect(0, 0, width, height);
     
-    if (rand < 0.4) {
-      type = "coin";
-      emoji = "🟡";
-    } else if (rand < 0.8) {
-      type = "obstacle";
-      emoji = "🚧"; // Low obstacle, can jump over
-    } else {
-      type = "train";
-      emoji = "🚆"; // High obstacle, must dodge
+    // Draw sky
+    const grad = ctx.createLinearGradient(0, 0, 0, height/2);
+    grad.addColorStop(0, "#87CEEB");
+    grad.addColorStop(1, "#E0F6FF");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, width, height/2);
+
+    // Draw Ground
+    ctx.fillStyle = "#8FBC8F";
+    ctx.fillRect(0, height/2, width, height/2);
+
+    // Draw Tracks
+    ctx.strokeStyle = "#555";
+    ctx.lineWidth = 2;
+    const horizonY = height/2;
+    const bottomY = height;
+    const center = width/2;
+    
+    // Perspective lines
+    ctx.beginPath();
+    ctx.moveTo(center, horizonY);
+    ctx.lineTo(center - width/2, bottomY);
+    ctx.moveTo(center, horizonY);
+    ctx.lineTo(center - width/6, bottomY);
+    ctx.moveTo(center, horizonY);
+    ctx.lineTo(center + width/6, bottomY);
+    ctx.moveTo(center, horizonY);
+    ctx.lineTo(center + width/2, bottomY);
+    ctx.stroke();
+
+    if (gameState !== "playing") return;
+
+    const now = Date.now();
+    if (now - lastSpawnTime.current > 800 - Math.min(scoreRef.current * 10, 400)) {
+      lastSpawnTime.current = now;
+      const r = Math.random();
+      let type: "coin" | "obstacle" | "train" = "coin";
+      let emoji = COINS[Math.floor(Math.random() * COINS.length)];
+      
+      if (r > 0.8) {
+        type = "train";
+        emoji = TRAINS[Math.floor(Math.random() * TRAINS.length)];
+      } else if (r > 0.5) {
+        type = "obstacle";
+        emoji = OBSTACLES[Math.floor(Math.random() * OBSTACLES.length)];
+      }
+
+      objectsRef.current.push({
+        id: Date.now(),
+        lane: Math.floor(Math.random() * 3),
+        type,
+        emoji,
+        z: 0,
+        speed: type === "train" ? 1.5 : 0.8 + (scoreRef.current * 0.02)
+      });
     }
-    
-    setObjects(prev => [...prev, {
-      id: Date.now(),
-      lane,
-      type,
-      emoji,
-      z: 0 // spawn far away
-    }]);
+
+    // Sort objects by z to draw back-to-front
+    objectsRef.current.sort((a, b) => a.z - b.z);
+
+    for (let i = objectsRef.current.length - 1; i >= 0; i--) {
+      const obj = objectsRef.current[i];
+      obj.z += obj.speed;
+
+      // Projection
+      const scale = obj.z / 100;
+      const y = horizonY + (bottomY - horizonY) * scale;
+      
+      let xOff = 0;
+      if (obj.lane === 0) xOff = -width/3;
+      if (obj.lane === 2) xOff = width/3;
+      const x = center + (xOff * scale);
+      
+      const size = 10 + 80 * scale;
+
+      ctx.font = \`\${size}px Arial\`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "bottom";
+      ctx.fillText(obj.emoji, x, y);
+
+      // Collision
+      if (obj.z > 90 && obj.z < 110 && obj.lane === playerLaneRef.current) {
+        // Simple jump bypass for obstacles
+        const isSafe = isJumpingRef.current && (obj.type === "obstacle");
+        
+        if (!isSafe) {
+          if (obj.type === "coin") {
+            playSound("coin");
+            scoreRef.current += 1;
+            setScore(scoreRef.current);
+          } else {
+            playSound("hit");
+            livesRef.current -= 1;
+            setLives(livesRef.current);
+            if (livesRef.current <= 0) {
+              setGameState("gameover");
+            }
+          }
+          objectsRef.current.splice(i, 1);
+          continue;
+        }
+      }
+
+      // Remove passed objects
+      if (obj.z > 120) {
+        objectsRef.current.splice(i, 1);
+      }
+    }
+
+    // Draw Player
+    let jumpOffset = 0;
+    if (isJumpingRef.current) {
+      const jumpProgress = (now - jumpTimeRef.current) / 500; // 500ms jump
+      if (jumpProgress < 1) {
+        jumpOffset = Math.sin(jumpProgress * Math.PI) * 100;
+      } else {
+        isJumpingRef.current = false;
+      }
+    }
+
+    let pXOff = 0;
+    if (playerLaneRef.current === 0) pXOff = -width/3;
+    if (playerLaneRef.current === 2) pXOff = width/3;
+    const px = center + pXOff;
+    const py = bottomY - 20 - jumpOffset;
+
+    ctx.font = "80px Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "bottom";
+    ctx.fillText("🏃", px, py);
+
+    // Win condition
+    if (scoreRef.current >= 30 && gameState === "playing") {
+      setGameState("won");
+      setTimeout(() => onWin(3), 1500);
+    }
   };
 
-  const updatePhysics = useCallback(() => {
-    if (gameState !== "playing") return;
-    const now = Date.now();
-    
-    // Spawn timing
-    if (now - lastSpawnTime.current > Math.max(1000 - score * 2, 400)) {
-      spawnObject();
-      lastSpawnTime.current = now;
+  const gameLoop = () => {
+    if (canvasRef.current) {
+      const ctx = canvasRef.current.getContext("2d");
+      if (ctx) {
+        const { width, height } = canvasRef.current;
+        updateAndDraw(ctx, width, height);
+      }
     }
-
-    // Move objects towards screen (z goes 0 to 100)
-    setObjects(prev => {
-      let active = prev.map(o => ({ ...o, z: o.z + 1.5 + (score / 200) }));
-      
-      // Collision detection at z around 85-95
-      active.forEach(o => {
-        if (o.z > 85 && o.z < 95 && o.lane === playerLane) {
-          if (o.type === "coin") {
-            o.z = 200; // mark collected
-            setScore(s => s + 10);
-            playSound("coin");
-          } else if (o.type === "obstacle") {
-            if (!isJumping) {
-              o.z = 200; // mark hit
-              playSound("hit");
-              setLives(l => {
-                const newL = l - 1;
-                if (newL <= 0) setGameState("gameover");
-                return Math.max(0, newL);
-              });
-            }
-          } else if (o.type === "train") {
-            // Can't jump over train
-            o.z = 200; // mark hit
-            playSound("hit");
-            setLives(l => {
-              const newL = l - 1;
-              if (newL <= 0) setGameState("gameover");
-              return Math.max(0, newL);
-            });
-          }
-        }
-      });
-
-      return active.filter(o => o.z < 100);
-    });
-
-    requestRef.current = requestAnimationFrame(updatePhysics);
-  }, [gameState, playerLane, isJumping, score, playSound]);
+    requestRef.current = requestAnimationFrame(gameLoop);
+  };
 
   useEffect(() => {
-    requestRef.current = requestAnimationFrame(updatePhysics);
-    return () => cancelAnimationFrame(requestRef.current!);
-  }, [updatePhysics]);
+    const handleResize = () => {
+      if (canvasRef.current) {
+        canvasRef.current.width = window.innerWidth;
+        canvasRef.current.height = window.innerHeight;
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    handleResize();
 
-  useEffect(() => {
-    if (score >= 400) {
-      setGameState("won");
-      onWin(3);
-    }
-  }, [score, onWin]);
+    requestRef.current = requestAnimationFrame(gameLoop);
 
-  // Handle Swipes
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      cancelAnimationFrame(requestRef.current);
+    };
+  }, [gameState]);
+
+  // Touch controls
   const handleTouchStart = (e: React.TouchEvent | React.MouseEvent) => {
     if ('touches' in e) {
       touchStartX.current = e.touches[0].clientX;
       touchStartY.current = e.touches[0].clientY;
     } else {
-      touchStartX.current = (e as React.MouseEvent).clientX;
-      touchStartY.current = (e as React.MouseEvent).clientY;
+      touchStartX.current = e.clientX;
+      touchStartY.current = e.clientY;
     }
   };
 
@@ -175,210 +269,144 @@ export default function SubwayGame({ onQuit, onWin }: SubwayGameProps) {
       endX = e.changedTouches[0].clientX;
       endY = e.changedTouches[0].clientY;
     } else {
-      endX = (e as React.MouseEvent).clientX;
-      endY = (e as React.MouseEvent).clientY;
+      endX = e.clientX;
+      endY = e.clientY;
     }
 
     const diffX = endX - touchStartX.current;
     const diffY = endY - touchStartY.current;
 
-    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 30) {
+    if (Math.abs(diffX) > Math.abs(diffY)) {
       // Horizontal swipe
-      if (diffX > 0 && playerLane < 2) setPlayerLane(l => l + 1);
-      else if (diffX < 0 && playerLane > 0) setPlayerLane(l => l - 1);
-    } else if (Math.abs(diffY) > 30 && diffY < 0) {
-      // Swipe up (Jump)
-      if (!isJumping) {
-        setIsJumping(true);
+      if (diffX > 30 && playerLaneRef.current < 2) {
+        playerLaneRef.current += 1; // right
+      } else if (diffX < -30 && playerLaneRef.current > 0) {
+        playerLaneRef.current -= 1; // left
+      }
+    } else {
+      // Vertical swipe
+      if (diffY < -30 && !isJumpingRef.current) {
+        isJumpingRef.current = true;
+        jumpTimeRef.current = Date.now();
         playSound("jump");
-        setTimeout(() => setIsJumping(false), 500); // jump duration
       }
     }
+
     touchStartX.current = null;
     touchStartY.current = null;
   };
 
-  // Keyboard controls
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "ArrowLeft" || e.key === "a") {
-        setPlayerLane(l => Math.max(0, l - 1));
-      } else if (e.key === "ArrowRight" || e.key === "d") {
-        setPlayerLane(l => Math.min(2, l + 1));
-      } else if (e.key === "ArrowUp" || e.key === "w") {
-        if (!isJumping) {
-          setIsJumping(true);
-          playSound("jump");
-          setTimeout(() => setIsJumping(false), 500);
-        }
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isJumping, playSound]);
-
-  // Utility to project 3D z onto 2D screen
-  const getProjection = (lane: number, z: number) => {
-    // lane 0,1,2 -> x pos -1, 0, 1
-    const xBase = lane - 1; 
-    
-    // As z goes 0->100, scale goes small->large, y goes top->bottom
-    const scale = 0.1 + (z / 100) * 0.9;
-    
-    // Perspective spread: x spreads out more as it gets closer
-    const spread = 40 * scale; // vw spread
-    const x = 50 + (xBase * spread); // center is 50vw
-    
-    const y = 30 + (z / 100) * 60; // 30vh to 90vh
-
-    return { x, y, scale };
-  };
-
   return (
-    <div 
-      className="fixed inset-0 bg-[#87CEEB] z-[9999] overflow-hidden select-none touch-none"
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-      onMouseDown={handleTouchStart}
-      onMouseUp={handleTouchEnd}
-    >
-      {/* City background skyline */}
-      <div className="absolute top-[10%] w-full h-[30%] flex items-end justify-center pointer-events-none opacity-60">
-        <div className="w-16 h-40 bg-gray-600 mx-2" />
-        <div className="w-24 h-60 bg-gray-500 mx-2" />
-        <div className="w-20 h-48 bg-gray-700 mx-2" />
-        <div className="w-32 h-72 bg-gray-800 mx-2" />
-        <div className="w-16 h-32 bg-gray-600 mx-2" />
-      </div>
-
-      {/* Perspective Ground */}
-      <div className="absolute bottom-0 w-full h-[60%] bg-[#7CFC00]" style={{ perspective: "1000px" }}>
-        {/* Tracks */}
-        <div className="absolute w-[80vw] h-full left-[10vw] bg-[#A9A9A9] border-x-4 border-gray-400" 
-             style={{ transform: "rotateX(70deg)", transformOrigin: "top" }}>
-          <div className="w-full h-full flex justify-between">
-            <div className="w-[33%] border-r-4 border-dashed border-white/50 animate-[slideDown_1s_linear_infinite]" />
-            <div className="w-[33%] border-r-4 border-dashed border-white/50 animate-[slideDown_1s_linear_infinite]" />
-            <div className="w-[33%]" />
-          </div>
-        </div>
-      </div>
-
+    <div className="fixed inset-0 bg-[#87CEEB] overflow-hidden select-none touch-none" style={{ touchAction: 'none' }}>
+      
       {/* Header */}
-      <div className="absolute top-0 left-0 right-0 p-4 sm:p-8 flex justify-between items-center z-50 pointer-events-none">
-        <button 
+      <div className="absolute top-4 left-4 right-4 z-10 flex justify-between items-center pointer-events-none">
+        <button
           onClick={onQuit}
-          className="pointer-events-auto bg-white/40 hover:bg-white/60 text-[#4D2B82] rounded-full p-3 backdrop-blur-sm transition-all"
+          className="w-12 h-12 rounded-full bg-white/50 backdrop-blur-md flex items-center justify-center text-[#4D2B82] hover:bg-white/80 transition-all border-2 border-white cursor-pointer pointer-events-auto"
         >
           <ArrowLeft className="w-6 h-6 rtl:rotate-180" />
         </button>
-        
-        <div className="flex flex-col items-center">
-          <span className="text-[#4D2B82] font-black text-sm drop-shadow-md">العملات</span>
-          <span className="text-[#F59E0B] font-black text-4xl sm:text-5xl drop-shadow-lg">{score}</span>
-        </div>
-
-        <div className="flex gap-1">
-          {[1, 2, 3].map(i => (
-            <span key={i} className={`text-2xl sm:text-3xl transition-all ${i <= lives ? 'text-red-500' : 'text-gray-500 grayscale opacity-50'}`}>
-              ❤️
-            </span>
-          ))}
+        <div className="flex gap-4">
+          <div className="bg-white/50 backdrop-blur-md px-6 py-2 rounded-full border-2 border-white shadow-sm text-[#4D2B82] font-black text-xl flex items-center gap-2">
+            <span>🪙</span> {score}
+          </div>
+          <div className="bg-white/50 backdrop-blur-md px-4 py-2 rounded-full border-2 border-white shadow-sm text-white font-black text-xl flex gap-1">
+            {[...Array(3)].map((_, i) => (
+              <span key={i} className={i < lives ? "opacity-100" : "opacity-30 grayscale"}>❤️</span>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Objects */}
-      {objects.map(obj => {
-        const p = getProjection(obj.lane, obj.z);
-        return (
-          <div
-            key={obj.id}
-            className="absolute text-6xl pointer-events-none filter drop-shadow-lg flex items-center justify-center"
-            style={{
-              left: `${p.x}vw`,
-              top: `${p.y}vh`,
-              transform: `translate(-50%, -100%) scale(${p.scale})`,
-              zIndex: Math.floor(obj.z)
-            }}
-          >
-            {obj.emoji}
-          </div>
-        );
-      })}
+      <canvas
+        ref={canvasRef}
+        className="block w-full h-full cursor-grab active:cursor-grabbing relative z-0"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+        onMouseDown={handleTouchStart}
+        onMouseUp={handleTouchEnd}
+      />
 
-      {/* Player Character */}
-      {(() => {
-        const p = getProjection(playerLane, 95); // Player is at z=95
-        return (
-          <motion.div
-            className="absolute text-7xl pointer-events-none filter drop-shadow-2xl"
-            animate={{
-              left: `${p.x}vw`,
-              top: `${p.y}vh`,
-              transform: `translate(-50%, -100%) scale(${p.scale}) translateY(${isJumping ? '-15vh' : '0vh'})`,
-            }}
-            transition={{ type: "spring", stiffness: 300, damping: 20, mass: 0.8 }}
-            style={{ zIndex: 100 }}
-          >
-            🏃‍♂️
-          </motion.div>
-        );
-      })()}
-
-      {/* Game Over / Win Screens */}
-      <AnimatePresence>
-        {gameState !== "playing" && (
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            className="absolute inset-0 bg-black/60 z-[200] flex flex-col items-center justify-center p-4 pointer-events-auto backdrop-blur-sm"
-          >
-            <motion.div
-              initial={{ scale: 0.5, y: 50 }}
-              animate={{ scale: 1, y: 0 }}
-              className="bg-white rounded-3xl p-8 max-w-sm w-full text-center border-4 border-[#F59E0B]"
+      {/* On-screen controls for PC */}
+      <div className="absolute bottom-10 left-0 right-0 flex justify-center gap-8 pointer-events-none">
+         <div className="flex flex-col items-center gap-2 bg-white/30 backdrop-blur-sm p-4 rounded-3xl pointer-events-auto">
+            <button 
+              className="w-16 h-16 bg-white/80 rounded-full font-black text-2xl active:bg-gray-200"
+              onClick={() => {
+                if (!isJumpingRef.current) {
+                  isJumpingRef.current = true;
+                  jumpTimeRef.current = Date.now();
+                  playSound("jump");
+                }
+              }}
             >
-              <div className="text-6xl mb-4">
-                {gameState === "won" ? "🏅" : "💥"}
-              </div>
-              <h2 className="text-3xl font-black text-[#4D2B82] mb-2">
-                {gameState === "won" ? "عداء أسطوري!" : "اوبس! اصطدمت"}
-              </h2>
-              <p className="text-[#F59E0B] font-bold text-lg mb-6">
-                جمعت: {score} عملة
-              </p>
-              
-              <div className="flex gap-4">
-                <button
-                  onClick={() => {
-                    setScore(0);
-                    setLives(3);
-                    setObjects([]);
-                    setPlayerLane(1);
-                    setGameState("playing");
-                  }}
-                  className="flex-1 bg-[#F59E0B] text-white font-black py-3 rounded-full hover:bg-[#D97706] active:scale-95 transition-all"
-                >
-                  العب مجدداً
-                </button>
-                <button
-                  onClick={onQuit}
-                  className="flex-1 bg-white text-[#E01E5A] font-black py-3 rounded-full border-2 border-[#E01E5A] hover:bg-red-50 active:scale-95 transition-all"
-                >
-                  خروج
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              ⬆️
+            </button>
+            <div className="flex gap-4 mt-2">
+              <button 
+                className="w-16 h-16 bg-white/80 rounded-full font-black text-2xl active:bg-gray-200"
+                onClick={() => { if(playerLaneRef.current > 0) playerLaneRef.current -= 1; }}
+              >
+                ⬅️
+              </button>
+              <button 
+                className="w-16 h-16 bg-white/80 rounded-full font-black text-2xl active:bg-gray-200"
+                onClick={() => { if(playerLaneRef.current < 2) playerLaneRef.current += 1; }}
+              >
+                ➡️
+              </button>
+            </div>
+         </div>
+      </div>
 
-      <style dangerouslySetInnerHTML={{__html: `
-        @keyframes slideDown {
-          0% { transform: translateY(-100%); }
-          100% { transform: translateY(0); }
-        }
-      `}} />
+      {/* Game Over Screen */}
+      {gameState === "gameover" && (
+        <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-50">
+          <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center border-4 border-red-500">
+            <h2 className="text-4xl font-black text-red-600 mb-4">انتهت اللعبة!</h2>
+            <p className="text-xl font-bold text-gray-700 mb-6">جمعت {score} عملة 🪙</p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => {
+                  scoreRef.current = 0;
+                  livesRef.current = 3;
+                  setScore(0);
+                  setLives(3);
+                  objectsRef.current = [];
+                  playerLaneRef.current = 1;
+                  setGameState("playing");
+                }}
+                className="flex-1 bg-green-500 text-white py-3 rounded-full font-black text-xl border-b-4 border-green-700 active:translate-y-1"
+              >
+                إعادة
+              </button>
+              <button
+                onClick={onQuit}
+                className="flex-1 bg-gray-200 text-gray-800 py-3 rounded-full font-black text-xl border-b-4 border-gray-400 active:translate-y-1"
+              >
+                خروج
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Win Screen */}
+      {gameState === "won" && (
+        <div className="absolute inset-0 bg-black/80 flex items-center justify-center z-50">
+          <div className="bg-white rounded-3xl p-8 max-w-sm w-full text-center border-4 border-yellow-400">
+            <h2 className="text-4xl font-black text-yellow-500 mb-4">بطل الجري! 🏃</h2>
+            <p className="text-xl font-bold text-gray-700 mb-6">لقد وصلت لخط النهاية!</p>
+            <button
+              onClick={() => onWin(3)}
+              className="w-full bg-yellow-400 text-white py-3 rounded-full font-black text-xl border-b-4 border-yellow-600 active:translate-y-1"
+            >
+              استمرار
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

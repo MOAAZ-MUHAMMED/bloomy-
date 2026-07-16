@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 
 interface SpaceGameProps {
@@ -7,32 +6,34 @@ interface SpaceGameProps {
   onWin: (stars: number) => void;
 }
 
+const ENEMIES = ["👾", "👽", "🛸", "☄️"];
+
 interface GameObject {
   id: number;
+  type: "laser" | "enemy" | "explosion";
+  emoji?: string;
   x: number;
   y: number;
-  type: "player" | "laser" | "enemy" | "explosion";
-  emoji?: string;
   width: number;
   height: number;
+  vy?: number;
+  life?: number; // for explosions
 }
-
-const ENEMIES = ["👾", "👽", "🛸", "☄️"];
 
 export default function SpaceGame({ onQuit, onWin }: SpaceGameProps) {
   const [score, setScore] = useState(0);
   const [lives, setLives] = useState(3);
   const [gameState, setGameState] = useState<"playing" | "gameover" | "won">("playing");
-  
-  const [playerX, setPlayerX] = useState(50); // percentage 0-100
-  const [lasers, setLasers] = useState<GameObject[]>([]);
-  const [enemies, setEnemies] = useState<GameObject[]>([]);
-  const [explosions, setExplosions] = useState<{id: number, x: number, y: number}[]>([]);
-  
-  const containerRef = useRef<HTMLDivElement>(null);
+
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const requestRef = useRef<number>(0);
+  const playerXRef = useRef(50); // percentage 0-100
+  const objectsRef = useRef<GameObject[]>([]);
+  
   const lastShotTime = useRef<number>(Date.now());
   const lastEnemyTime = useRef<number>(Date.now());
+  const scoreRef = useRef(0);
+  const livesRef = useRef(3);
 
   const playSound = useCallback((type: "shoot" | "explosion" | "hit") => {
     try {
@@ -44,11 +45,10 @@ export default function SpaceGame({ onQuit, onWin }: SpaceGameProps) {
       osc.connect(gain);
       gain.connect(ctx.destination);
       const now = ctx.currentTime;
-
       if (type === "shoot") {
         osc.type = "square";
         osc.frequency.setValueAtTime(800, now);
-        osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+        osc.frequency.exponentialRampToValueAtTime(300, now + 0.1);
         gain.gain.setValueAtTime(0.1, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
         osc.start(now);
@@ -62,270 +62,271 @@ export default function SpaceGame({ onQuit, onWin }: SpaceGameProps) {
         osc.start(now);
         osc.stop(now + 0.3);
       }
-    } catch (e) {}
+    } catch (e) {
+      console.warn(e);
+    }
   }, []);
 
-  const updatePhysics = useCallback(() => {
+  const shoot = (width: number, height: number) => {
+    const now = Date.now();
+    if (now - lastShotTime.current < 200) return;
+    lastShotTime.current = now;
+    playSound("shoot");
+    
+    objectsRef.current.push({
+      id: Date.now(),
+      type: "laser",
+      x: (playerXRef.current / 100) * width,
+      y: height - 100,
+      width: 4,
+      height: 20
+    });
+  };
+
+  const updateAndDraw = (ctx: CanvasRenderingContext2D, width: number, height: number) => {
+    ctx.clearRect(0, 0, width, height);
+
     if (gameState !== "playing") return;
+
     const now = Date.now();
     
-    // Auto shoot
-    if (now - lastShotTime.current > 400) {
-      setLasers(prev => [...prev, {
-        id: Date.now(),
-        x: playerX,
-        y: 80, // percentage from top
-        type: "laser",
-        width: 4,
-        height: 20
-      }]);
-      playSound("shoot");
-      lastShotTime.current = now;
-    }
+    // Auto-fire
+    shoot(width, height);
 
-    // Spawn enemies
-    if (now - lastEnemyTime.current > Math.max(800 - score * 2, 300)) {
-      setEnemies(prev => [...prev, {
-        id: Date.now(),
-        x: Math.random() * 90 + 5,
-        y: -10,
+    // Spawn Enemy
+    if (now - lastEnemyTime.current > 1000 - Math.min(scoreRef.current * 15, 600)) {
+      lastEnemyTime.current = now;
+      objectsRef.current.push({
+        id: Date.now() + Math.random(),
         type: "enemy",
         emoji: ENEMIES[Math.floor(Math.random() * ENEMIES.length)],
+        x: Math.random() * (width - 60) + 30,
+        y: -50,
         width: 40,
-        height: 40
-      }]);
-      lastEnemyTime.current = now;
+        height: 40,
+        vy: 2 + Math.random() * 2 + (scoreRef.current * 0.05)
+      });
     }
 
-    // Move Lasers up
-    setLasers(prev => prev.map(l => ({ ...l, y: l.y - 2 })).filter(l => l.y > -10));
+    // Draw Player (Spaceship)
+    const px = (playerXRef.current / 100) * width;
+    const py = height - 80;
+    ctx.font = "50px Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("🚀", px, py);
 
-    // Move Enemies down
-    setEnemies(prev => {
-      let missedCount = 0;
-      const moved = prev.map(e => ({ ...e, y: e.y + 0.5 + (score / 500) }));
-      const active = moved.filter(e => {
-        if (e.y > 110) {
-          missedCount++;
-          return false;
-        }
-        return true;
-      });
+    // Update and draw objects
+    for (let i = objectsRef.current.length - 1; i >= 0; i--) {
+      const obj = objectsRef.current[i];
       
-      if (missedCount > 0) {
-        setLives(l => {
-          const newL = l - missedCount;
-          if (newL <= 0) setGameState("gameover");
-          return Math.max(0, newL);
-        });
-      }
-      return active;
-    });
-
-    // Collision detection
-    setLasers(currentLasers => {
-      let lasersToKeep = [...currentLasers];
-      setEnemies(currentEnemies => {
-        let enemiesToKeep = [...currentEnemies];
+      if (obj.type === "laser") {
+        obj.y -= 10;
+        ctx.fillStyle = "#00FFFF";
+        ctx.fillRect(obj.x - obj.width/2, obj.y - obj.height/2, obj.width, obj.height);
         
-        for (let i = lasersToKeep.length - 1; i >= 0; i--) {
-          const l = lasersToKeep[i];
-          for (let j = enemiesToKeep.length - 1; j >= 0; j--) {
-            const e = enemiesToKeep[j];
-            // Simple percentage bounding box collision roughly
-            if (Math.abs(l.x - e.x) < 5 && Math.abs(l.y - e.y) < 5) {
+        // Laser offscreen
+        if (obj.y < 0) {
+          objectsRef.current.splice(i, 1);
+          continue;
+        }
+        
+        // Collision with enemy
+        let hit = false;
+        for (let j = objectsRef.current.length - 1; j >= 0; j--) {
+          const enemy = objectsRef.current[j];
+          if (enemy.type === "enemy") {
+            const dx = obj.x - enemy.x;
+            const dy = obj.y - enemy.y;
+            if (Math.abs(dx) < 30 && Math.abs(dy) < 30) {
               // Hit!
-              lasersToKeep.splice(i, 1);
-              enemiesToKeep.splice(j, 1);
-              setScore(s => s + 10);
               playSound("explosion");
-              setExplosions(ex => [...ex, { id: Date.now() + Math.random(), x: e.x, y: e.y }]);
+              scoreRef.current += 1;
+              setScore(scoreRef.current);
+              
+              // Spawn explosion
+              objectsRef.current.push({
+                id: Date.now(),
+                type: "explosion",
+                x: enemy.x,
+                y: enemy.y,
+                width: 50,
+                height: 50,
+                life: 1.0
+              });
+              
+              objectsRef.current.splice(j, 1); // remove enemy
+              hit = true;
               break;
             }
           }
         }
-        return enemiesToKeep;
-      });
-      return lasersToKeep;
-    });
-
-    requestRef.current = requestAnimationFrame(updatePhysics);
-  }, [gameState, playerX, score, playSound]);
-
-  useEffect(() => {
-    requestRef.current = requestAnimationFrame(updatePhysics);
-    return () => cancelAnimationFrame(requestRef.current!);
-  }, [updatePhysics]);
-
-  useEffect(() => {
-    if (score >= 300) {
-      setGameState("won");
-      onWin(3);
+        if (hit) {
+          objectsRef.current.splice(i, 1); // remove laser
+        }
+      } 
+      else if (obj.type === "enemy") {
+        obj.y += obj.vy || 2;
+        ctx.font = "40px Arial";
+        ctx.fillText(obj.emoji || "👾", obj.x, obj.y);
+        
+        // Check collision with player
+        const pdx = px - obj.x;
+        const pdy = py - obj.y;
+        if (Math.abs(pdx) < 40 && Math.abs(pdy) < 40) {
+          playSound("explosion");
+          livesRef.current -= 1;
+          setLives(livesRef.current);
+          objectsRef.current.splice(i, 1);
+          if (livesRef.current <= 0) {
+            setGameState("gameover");
+          }
+          continue;
+        }
+        
+        // Enemy offscreen (missed)
+        if (obj.y > height + 50) {
+          livesRef.current -= 1;
+          setLives(livesRef.current);
+          objectsRef.current.splice(i, 1);
+          if (livesRef.current <= 0) {
+            setGameState("gameover");
+          }
+        }
+      }
+      else if (obj.type === "explosion") {
+        if (obj.life !== undefined) {
+          obj.life -= 0.05;
+          if (obj.life <= 0) {
+            objectsRef.current.splice(i, 1);
+            continue;
+          }
+          ctx.font = \`\${40 + (1 - obj.life) * 20}px Arial\`;
+          ctx.globalAlpha = obj.life;
+          ctx.fillText("💥", obj.x, obj.y);
+          ctx.globalAlpha = 1.0;
+        }
+      }
     }
-  }, [score, onWin]);
+
+    if (scoreRef.current >= 30 && gameState === "playing") {
+      setGameState("won");
+      setTimeout(() => onWin(3), 1500);
+    }
+  };
+
+  const gameLoop = () => {
+    if (canvasRef.current) {
+      const ctx = canvasRef.current.getContext("2d");
+      if (ctx) {
+        const { width, height } = canvasRef.current;
+        updateAndDraw(ctx, width, height);
+      }
+    }
+    requestRef.current = requestAnimationFrame(gameLoop);
+  };
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (canvasRef.current) {
+        canvasRef.current.width = window.innerWidth;
+        canvasRef.current.height = window.innerHeight;
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    handleResize();
+
+    requestRef.current = requestAnimationFrame(gameLoop);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      cancelAnimationFrame(requestRef.current);
+    };
+  }, [gameState]);
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (gameState !== "playing" || !containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    setPlayerX(Math.max(5, Math.min(95, x)));
+    if (gameState !== "playing") return;
+    const x = Math.max(5, Math.min(95, (e.clientX / window.innerWidth) * 100));
+    playerXRef.current = x;
   };
 
   return (
-    <div 
-      className="fixed inset-0 bg-[#0B0C10] z-[9999] overflow-hidden select-none touch-none"
-      ref={containerRef}
-      onPointerMove={handlePointerMove}
-      onPointerDown={handlePointerMove}
-    >
-      {/* Starfield Background */}
-      <div className="absolute inset-0 pointer-events-none">
-        {Array.from({length: 50}).map((_, i) => (
-          <div 
-            key={i} 
-            className="absolute bg-white rounded-full animate-pulse"
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-              width: `${Math.random() * 3}px`,
-              height: `${Math.random() * 3}px`,
-              animationDuration: `${Math.random() * 2 + 1}s`
-            }}
-          />
-        ))}
-      </div>
-
+    <div className="fixed inset-0 bg-[#0A0A2A] overflow-hidden select-none touch-none" style={{ touchAction: 'none' }}>
+      {/* Background Starfield */}
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MDAiIGhlaWdodD0iNDAwIj48ZyBmaWxsPSIjRkZGRkZGIiBvcGFjaXR5PSIwLjMiPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjE1MCIgcj0iMSIvPjxjaXJjbGUgY3g9IjMwMCIgY3k9IjUwIiByPSIxIi8+PGNpcmNsZSBjeD0iMjAwIiBjeT0iMzAwIiByPSIxLjUiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjM1MCIgcj0iMSIvPjwvZz48L3N2Zz4=')] bg-repeat opacity-50 animate-[driftSide_10s_linear_infinite]" />
+      
       {/* Header */}
-      <div className="absolute top-0 left-0 right-0 p-4 sm:p-8 flex justify-between items-center z-50 pointer-events-none">
-        <button 
+      <div className="absolute top-4 left-4 right-4 z-10 flex justify-between items-center">
+        <button
           onClick={onQuit}
-          className="pointer-events-auto bg-white/10 hover:bg-white/20 text-white rounded-full p-3 backdrop-blur-sm transition-all"
+          className="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white hover:bg-white/20 transition-all border border-white/20 cursor-pointer shadow-[0_0_15px_rgba(0,255,255,0.2)]"
         >
           <ArrowLeft className="w-6 h-6 rtl:rotate-180" />
         </button>
-        
-        <div className="flex flex-col items-center">
-          <span className="text-cyan-400 font-bold text-sm">النقاط</span>
-          <span className="text-white font-black text-3xl sm:text-4xl drop-shadow-[0_0_10px_#00E5FF]">{score}</span>
-        </div>
-
-        <div className="flex gap-1">
-          {[1, 2, 3].map(i => (
-            <span key={i} className={`text-2xl sm:text-3xl transition-all ${i <= lives ? 'text-red-500 drop-shadow-[0_0_5px_red]' : 'text-gray-800 grayscale'}`}>
-              ❤️
-            </span>
-          ))}
+        <div className="flex gap-4">
+          <div className="bg-white/10 backdrop-blur-md px-6 py-2 rounded-full border border-cyan-500/30 shadow-[0_0_15px_rgba(0,255,255,0.2)] text-cyan-300 font-black text-xl flex items-center gap-2">
+            <span>👾</span> {score}
+          </div>
+          <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-pink-500/30 shadow-[0_0_15px_rgba(255,0,128,0.2)] text-white font-black text-xl flex gap-1">
+            {[...Array(3)].map((_, i) => (
+              <span key={i} className={i < lives ? "opacity-100" : "opacity-30 grayscale"}>❤️</span>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Player Spaceship */}
-      <div 
-        className="absolute bottom-[10%] text-5xl pointer-events-none filter drop-shadow-[0_0_15px_#00E5FF]"
-        style={{ left: `${playerX}%`, transform: "translateX(-50%)" }}
-      >
-        🚀
-      </div>
+      <canvas
+        ref={canvasRef}
+        className="block w-full h-full cursor-crosshair relative z-0"
+        onPointerMove={handlePointerMove}
+      />
 
-      {/* Lasers */}
-      {lasers.map(l => (
-        <div
-          key={l.id}
-          className="absolute bg-[#00E5FF] shadow-[0_0_10px_#00E5FF] rounded-full pointer-events-none"
-          style={{
-            left: `${l.x}%`,
-            top: `${l.y}%`,
-            width: `${l.width}px`,
-            height: `${l.height}px`,
-            transform: "translate(-50%, -50%)"
-          }}
-        />
-      ))}
-
-      {/* Enemies */}
-      {enemies.map(e => (
-        <div
-          key={e.id}
-          className="absolute text-4xl pointer-events-none filter drop-shadow-[0_0_10px_#FF0055]"
-          style={{
-            left: `${e.x}%`,
-            top: `${e.y}%`,
-            transform: "translate(-50%, -50%)"
-          }}
-        >
-          {e.emoji}
+      {/* Game Over Screen */}
+      {gameState === "gameover" && (
+        <div className="absolute inset-0 bg-black/90 flex items-center justify-center z-50">
+          <div className="bg-[#1A1A3A] rounded-3xl p-8 max-w-sm w-full text-center border-4 border-cyan-500 shadow-[0_0_50px_rgba(0,255,255,0.3)]">
+            <h2 className="text-4xl font-black text-cyan-400 mb-4 drop-shadow-[0_0_10px_rgba(0,255,255,0.8)]">انتهت المهمة!</h2>
+            <p className="text-xl font-bold text-cyan-100 mb-6">دمرت {score} فضائي 👾</p>
+            <div className="flex gap-4">
+              <button
+                onClick={() => {
+                  scoreRef.current = 0;
+                  livesRef.current = 3;
+                  setScore(0);
+                  setLives(3);
+                  objectsRef.current = [];
+                  setGameState("playing");
+                }}
+                className="flex-1 bg-cyan-500 text-[#0A0A2A] py-3 rounded-full font-black text-xl hover:bg-cyan-400 shadow-[0_0_15px_rgba(0,255,255,0.5)] transition-all"
+              >
+                إعادة المحاولة
+              </button>
+              <button
+                onClick={onQuit}
+                className="flex-1 bg-transparent text-cyan-500 border-2 border-cyan-500 py-3 rounded-full font-black text-xl hover:bg-cyan-500/10 transition-all"
+              >
+                خروج
+              </button>
+            </div>
+          </div>
         </div>
-      ))}
+      )}
 
-      {/* Explosions */}
-      <AnimatePresence>
-        {explosions.map(ex => (
-          <motion.div
-            key={ex.id}
-            initial={{ scale: 0.5, opacity: 1 }}
-            animate={{ scale: 2.5, opacity: 0 }}
-            transition={{ duration: 0.4 }}
-            className="absolute text-5xl pointer-events-none"
-            style={{
-              left: `${ex.x}%`,
-              top: `${ex.y}%`,
-              transform: "translate(-50%, -50%)"
-            }}
-            onAnimationComplete={() => {
-              setExplosions(prev => prev.filter(p => p.id !== ex.id));
-            }}
-          >
-            💥
-          </motion.div>
-        ))}
-      </AnimatePresence>
-
-      {/* Game Over / Win Screens */}
-      <AnimatePresence>
-        {gameState !== "playing" && (
-          <motion.div 
-            initial={{ opacity: 0 }} 
-            animate={{ opacity: 1 }} 
-            className="absolute inset-0 bg-black/80 z-[100] flex flex-col items-center justify-center p-4 pointer-events-auto backdrop-blur-sm"
-          >
-            <motion.div
-              initial={{ scale: 0.5, y: 50 }}
-              animate={{ scale: 1, y: 0 }}
-              className="bg-[#1F2833] rounded-3xl p-8 max-w-sm w-full text-center border-4 border-[#00E5FF] shadow-[0_0_30px_#00E5FF]"
+      {/* Win Screen */}
+      {gameState === "won" && (
+        <div className="absolute inset-0 bg-black/90 flex items-center justify-center z-50">
+          <div className="bg-[#1A1A3A] rounded-3xl p-8 max-w-sm w-full text-center border-4 border-yellow-400 shadow-[0_0_50px_rgba(255,255,0,0.3)]">
+            <h2 className="text-4xl font-black text-yellow-400 mb-4 drop-shadow-[0_0_10px_rgba(255,255,0,0.8)]">بطل الفضاء! 🌟</h2>
+            <p className="text-xl font-bold text-yellow-100 mb-6">لقد أنقذت المجرة!</p>
+            <button
+              onClick={() => onWin(3)}
+              className="w-full bg-yellow-400 text-[#0A0A2A] py-3 rounded-full font-black text-xl shadow-[0_0_15px_rgba(255,255,0,0.5)] transition-all"
             >
-              <div className="text-6xl mb-4">
-                {gameState === "won" ? "🌍" : "☠️"}
-              </div>
-              <h2 className="text-3xl font-black text-white mb-2">
-                {gameState === "won" ? "أنت بطل الفضاء!" : "غزونا الفضائيين!"}
-              </h2>
-              <p className="text-[#00E5FF] font-bold text-lg mb-6">
-                النقاط: {score}
-              </p>
-              
-              <div className="flex gap-4">
-                <button
-                  onClick={() => {
-                    setScore(0);
-                    setLives(3);
-                    setEnemies([]);
-                    setLasers([]);
-                    setGameState("playing");
-                  }}
-                  className="flex-1 bg-[#00E5FF] text-black font-black py-3 rounded-full hover:bg-white active:scale-95 transition-all"
-                >
-                  العب مجدداً
-                </button>
-                <button
-                  onClick={onQuit}
-                  className="flex-1 bg-transparent text-[#00E5FF] font-black py-3 rounded-full border-2 border-[#00E5FF] active:scale-95 transition-all"
-                >
-                  خروج
-                </button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+              استمرار
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
