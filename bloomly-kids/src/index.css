@@ -20,7 +20,7 @@
 
 @layer base {
   html, body {
-    background-color: var(--color-brand-mint); /* Prevents white space when zooming out */
+    background-color: var(--theme-bg); /* Prevents white space when zooming out */
   }
   body {
     font-family: var(--font-sans);
