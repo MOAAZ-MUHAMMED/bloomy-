@@ -4307,7 +4307,7 @@ const startSpaceGame = () => {
               // Open Parents dashboard (usually by scrolling down or opening modal)
               // Wait, the user said: "يوديه على المكان اللي هو تحت بتاع اولياء الامور"
               // That means scroll down to the Parents Dashboard.
-              const parentsEl = document.getElementById('parents-dashboard');
+              const parentsEl = document.getElementById('parents');
               if (parentsEl) {
                  parentsEl.scrollIntoView({ behavior: 'smooth' });
               }

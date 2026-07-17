@@ -981,7 +981,7 @@ export default function App() {
       />
 
       {/* 4. Hero Text Section (Moved below Games) */}
-      <section className="container mx-auto px-4 py-16 relative z-10">
+      <section id="what-we-teach" className="container mx-auto px-4 py-16 relative z-10">
         <div className="flex flex-col items-center text-center space-y-8 max-w-4xl mx-auto bg-white/60 p-8 sm:p-12 rounded-[36px] border-4 border-purple-200 shadow-xl backdrop-blur-sm">
           
           {/* Playful Tag */}
