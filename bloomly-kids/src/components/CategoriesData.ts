@@ -92,9 +92,9 @@ export const categoriesData: CategoryData[] = [
   },
   {
     id: "farm",
-    title: "مزرعة بلومي",
-    englishTitle: "BLOOMLY FARM",
-    icon: "🚜",
+    title: "مزرعتي السحرية",
+    englishTitle: "MY MAGICAL FARM",
+    icon: "🚜🌾",
     bgGradient: "from-[#c2e59c]/90 to-[#64b3f4]/90",
     textColor: "text-teal-700",
     borderColor: "border-teal-300",

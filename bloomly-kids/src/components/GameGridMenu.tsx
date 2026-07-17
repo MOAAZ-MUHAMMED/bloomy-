@@ -67,11 +67,15 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
     }
   ];
 
+  const farmBox = categoriesData.find(c => c.id === 'farm');
+  const restCategories = categoriesData.filter(c => c.id !== 'farm');
+
   const allBoxes = [
-    ...categoriesData,
-    customBoxes[0], // Parents
-    customBoxes[1], // Map
-    customBoxes[2]  // About Us
+    customBoxes[0], // Parents (أولياء الأمور)
+    customBoxes[1], // Map (خريطة الجزيرة)
+    ...(farmBox ? [farmBox] : []), // Farm (مزرعتي السحرية)
+    ...restCategories,
+    customBoxes[2]  // About Us (بنعرف عن نفسنا)
   ];
 
   // View 1: Main Category Selection (Lamsa-style Layout)
