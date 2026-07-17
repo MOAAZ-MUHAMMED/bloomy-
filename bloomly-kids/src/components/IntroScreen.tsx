@@ -507,7 +507,7 @@ export function IntroScreen({ onFinish }: IntroScreenProps) {
           animate={playCardState}
         >
           <div className="bg-white border-4 border-[#4D2B82] rounded-[36px] shadow-[0_8px_0_0_#4D2B82] px-6 py-2 sm:px-10 sm:py-4 transform -rotate-6">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF5A92] to-[#FF7A00] text-4xl sm:text-5xl md:text-7xl font-black tracking-wider">العب</span>
+            <span className="text-[#E01E5A] text-4xl sm:text-5xl md:text-7xl font-black tracking-wider">العب</span>
           </div>
         </motion.div>
 
@@ -539,7 +539,7 @@ export function IntroScreen({ onFinish }: IntroScreenProps) {
           animate={learnCardState}
         >
           <div className="bg-white border-4 border-[#4D2B82] rounded-[36px] shadow-[0_8px_0_0_#4D2B82] px-6 py-2 sm:px-10 sm:py-4 transform rotate-6">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#5BC0F8] to-[#A855F7] text-4xl sm:text-5xl md:text-7xl font-black tracking-wider">تعلم</span>
+            <span className="text-[#4D2B82] text-4xl sm:text-5xl md:text-7xl font-black tracking-wider">تعلم</span>
           </div>
         </motion.div>
 
