@@ -470,12 +470,12 @@
    GLOBAL PREMIUM THEME OVERRIDES (Ocean Teal & Coral)
    ======================================================== */
 :root {
-  --theme-main: #0F766E;        /* Replaces #4D2B82 */
-  --theme-dark: #115E59;        /* Replaces #3D1E6D */
-  --theme-darker: #134E4A;      /* Replaces #2D1560 */
-  --theme-light: #0EA5E9;       /* Replaces #6B4E9E */
-  --theme-accent: #F43F5E;      /* Replaces #E01E5A */
-  --theme-bg: #F0FDFA;          /* Replaces #FAF7FD */
+  --theme-main: #0284C7;        /* Beautiful Sky Blue */
+  --theme-dark: #0369A1;        /* Dark Sky Blue */
+  --theme-darker: #075985;      /* Deepest Sky Blue */
+  --theme-light: #38BDF8;       /* Light vibrant blue */
+  --theme-accent: #F59E0B;      /* Golden/Amber accent */
+  --theme-bg: #F0F9FF;          /* Very soft, clean sky background */
 }
 
 /* Overriding Tailwind Arbitrary Values */

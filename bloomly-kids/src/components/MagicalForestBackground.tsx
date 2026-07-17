@@ -58,7 +58,7 @@ export const MagicalForestBackground: React.FC = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden bg-gradient-to-br from-[#E0F2FE] via-[#FEF08A] to-[#FCE7F3]">
+    <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-[#bae6fd] via-[#e0f2fe] to-[#bfdbfe]">
       {/* Sunbeams - simplified */}
       <div className="absolute top-0 right-0 w-[150%] h-[150%] origin-top-right animate-spin-slow opacity-20" style={{
         background: 'conic-gradient(from 0deg at 100% 0%, transparent 0deg, rgba(253, 224, 71, 0.3) 15deg, transparent 30deg, rgba(253, 224, 71, 0.3) 45deg, transparent 60deg, rgba(253, 224, 71, 0.3) 75deg, transparent 90deg)',
