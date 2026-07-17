@@ -464,4 +464,91 @@
     flex-direction: column !important;
   }
 }
-@keyframes shimmer { 100% { left: 200%%; } } 
+@keyframes shimmer { 100% { left: 200%; } } 
+
+/* ========================================================
+   GLOBAL PREMIUM THEME OVERRIDES (Ocean Teal & Coral)
+   ======================================================== */
+:root {
+  --theme-main: #0F766E;        /* Replaces #4D2B82 */
+  --theme-dark: #115E59;        /* Replaces #3D1E6D */
+  --theme-darker: #134E4A;      /* Replaces #2D1560 */
+  --theme-light: #0EA5E9;       /* Replaces #6B4E9E */
+  --theme-accent: #F43F5E;      /* Replaces #E01E5A */
+  --theme-bg: #F0FDFA;          /* Replaces #FAF7FD */
+}
+
+/* Overriding Tailwind Arbitrary Values */
+.bg-\[\#4D2B82\] { background-color: var(--theme-main) !important; }
+.border-\[\#4D2B82\] { border-color: var(--theme-main) !important; }
+.text-\[\#4D2B82\] { color: var(--theme-main) !important; }
+.shadow-\[0_4px_0_0_\#4D2B82\] { box-shadow: 0 4px 0 0 var(--theme-main) !important; }
+.shadow-\[0_5px_0_0_\#4D2B82\] { box-shadow: 0 5px 0 0 var(--theme-main) !important; }
+.shadow-\[0_6px_0_0_\#4D2B82\] { box-shadow: 0 6px 0 0 var(--theme-main) !important; }
+.shadow-\[0_8px_0_0_\#4D2B82\] { box-shadow: 0 8px 0 0 var(--theme-main) !important; }
+.shadow-\[0_12px_0_0_\#4D2B82\] { box-shadow: 0 12px 0 0 var(--theme-main) !important; }
+.border-y-4.border-\[\#4D2B82\] { border-top-color: var(--theme-main) !important; border-bottom-color: var(--theme-main) !important; }
+
+.bg-\[\#3D1E6D\] { background-color: var(--theme-dark) !important; }
+.border-\[\#3D1E6D\] { border-color: var(--theme-dark) !important; }
+
+.bg-\[\#2D1560\] { background-color: var(--theme-darker) !important; }
+.border-\[\#2D1560\] { border-color: var(--theme-darker) !important; }
+.shadow-\[0_3px_0_0_\#2D1560\] { box-shadow: 0 3px 0 0 var(--theme-darker) !important; }
+.shadow-\[0_5px_0_0_\#2D1560\] { box-shadow: 0 5px 0 0 var(--theme-darker) !important; }
+
+.text-\[\#6B4E9E\] { color: var(--theme-light) !important; }
+.bg-\[\#6B4E9E\] { background-color: var(--theme-light) !important; }
+
+.text-\[\#E01E5A\] { color: var(--theme-accent) !important; }
+.border-\[\#E01E5A\] { border-color: var(--theme-accent) !important; }
+.bg-\[\#E01E5A\] { background-color: var(--theme-accent) !important; }
+
+.bg-\[\#FAF7FD\] { background-color: var(--theme-bg) !important; }
+
+/* Overriding CSS Custom Properties for buttons */
+.btn-bubbly-primary {
+  border-color: var(--theme-main) !important;
+  box-shadow: 0 6px 0 0 var(--theme-main) !important;
+  background: linear-gradient(135deg, #2DD4BF 0%, var(--theme-main) 100%) !important;
+}
+.btn-bubbly-primary:hover {
+  box-shadow: 0 8px 0 0 var(--theme-main) !important;
+}
+.btn-bubbly-primary:active {
+  box-shadow: 0 2px 0 0 var(--theme-main) !important;
+}
+
+.btn-bubbly-secondary {
+  border-color: var(--theme-main) !important;
+  color: var(--theme-main) !important;
+  box-shadow: 0 6px 0 0 var(--theme-main) !important;
+}
+.btn-bubbly-secondary:hover {
+  box-shadow: 0 8px 0 0 var(--theme-main) !important;
+  background: var(--theme-bg) !important;
+}
+.btn-bubbly-secondary:active {
+  box-shadow: 0 2px 0 0 var(--theme-main) !important;
+}
+
+.btn-bubbly-purple {
+  border-color: var(--theme-main) !important;
+  background: var(--theme-light) !important;
+  box-shadow: 0 6px 0 0 var(--theme-main) !important;
+}
+.btn-bubbly-purple:hover {
+  background: #0284C7 !important;
+  box-shadow: 0 8px 0 0 var(--theme-main) !important;
+}
+.btn-bubbly-purple:active {
+  box-shadow: 0 2px 0 0 var(--theme-main) !important;
+}
+
+.card-bubbly {
+  border-color: var(--theme-main) !important;
+  box-shadow: 0 8px 0 0 rgba(15, 118, 110, 0.15) !important;
+}
+.card-bubbly:hover {
+  box-shadow: 0 12px 0 0 rgba(15, 118, 110, 0.2) !important;
+}

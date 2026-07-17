@@ -67,7 +67,7 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
         style={{ width }}
       >
         <div 
-          className="w-full bg-white rounded-[28px] border-[4px] shadow-[0_8px_15px_rgba(0,0,0,0.15)] flex flex-col items-center justify-between p-4 relative overflow-hidden transition-all duration-300" 
+          className="w-full bg-white rounded-[36px] border-[5px] shadow-[0_12px_25px_rgba(0,0,0,0.2)] flex flex-col items-center justify-between p-5 relative overflow-hidden transition-all duration-300 hover:shadow-[0_15px_35px_rgba(0,0,0,0.3)] hover:-translate-y-2" 
           style={{ 
             height,
             borderColor: cat.borderColor ? cat.borderColor.replace('border-', '') : '#4D2B82' 
@@ -157,11 +157,10 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
           </div>
         </div>
 
-        {/* Lamsa-style Grid Columns */}
         <div 
-          className="flex gap-6 overflow-x-auto pb-8 pt-4 px-2 hide-scrollbar w-full max-w-7xl mx-auto items-center" 
-          dir="rtl"
-          style={{ scrollBehavior: 'smooth', minHeight: '380px' }}
+          className="flex gap-8 overflow-x-auto pb-10 pt-6 px-4 hide-scrollbar w-full max-w-7xl mx-auto items-center" 
+          dir="ltr"
+          style={{ scrollBehavior: 'smooth', minHeight: '400px' }}
         >
           {/* Column 1: Farm (Tall) */}
           {farmBox && renderCard(

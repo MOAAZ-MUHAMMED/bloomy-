@@ -839,6 +839,7 @@ interface GameZoneProps {
   setForcedGame?: React.Dispatch<React.SetStateAction<string | null>>;
   onOpenParents?: () => void;
   onOpenAbout?: () => void;
+  onOpenMagicGarden?: () => void;
 }
 
 export function GameZone({ 
@@ -849,7 +850,8 @@ export function GameZone({
   forcedGame, 
   setForcedGame,
   onOpenParents,
-  onOpenAbout
+  onOpenAbout,
+  onOpenMagicGarden
 }: GameZoneProps = {}) {
   const [activeGame, setActiveGame] = useState<any>("menu");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -4306,7 +4308,9 @@ const startSpaceGame = () => {
           <GameGridMenu 
             onSelectCategory={(categoryId) => {
               if (categoryId === 'farm') {
-                requireProfile(() => startLoadingAndOpenMap('farm'));
+                requireProfile(() => {
+                  if (onOpenMagicGarden) onOpenMagicGarden();
+                });
               } else {
                 requireProfile(() => startLoadingAndOpenCategory(categoryId));
               }
