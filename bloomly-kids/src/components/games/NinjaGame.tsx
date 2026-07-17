@@ -38,11 +38,16 @@ export default function NinjaGame({ onQuit, onWin }: NinjaGameProps) {
   const scoreRef = useRef(0);
   const livesRef = useRef(3);
 
+  const audioCtxRef = useRef<any>(null);
   const playSound = useCallback((type: "slice" | "bomb" | "gameover") => {
     try {
-      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
-      if (!AudioContext) return;
-      const ctx = new AudioContext();
+      if (!audioCtxRef.current) {
+        const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+        if (AudioContextClass) audioCtxRef.current = new AudioContextClass();
+      }
+      const ctx = audioCtxRef.current;
+      if (!ctx) return;
+      if (ctx.state === "suspended") ctx.resume();
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain);

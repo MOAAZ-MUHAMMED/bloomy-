@@ -22,6 +22,7 @@ import { StatusBar } from "@capacitor/status-bar";
 
 export default function App() {
   const [showIntro, setShowIntro] = useState(true);
+  const [currentView, setCurrentView] = useState<'main' | 'parents' | 'about'>('main');
 
   useEffect(() => {
     const initApp = async () => {
@@ -460,10 +461,19 @@ export default function App() {
   return (
     <div className="min-h-screen relative font-sans overflow-x-hidden pb-16 bg-transparent">
       <MagicalForestBackground />
+      {currentView === 'main' && (
+        <>
+
       <AnimatePresence>
         {showIntro && (
           <IntroScreen onFinish={() => {
             setShowIntro(false);
+            try {
+              if ((window as any).Capacitor) {
+                (window as any).ScreenOrientation.lock({ orientation: 'landscape' }).catch(() => {});
+                (window as any).StatusBar.hide().catch(() => {});
+              }
+            } catch(e) {}
             if (!childProfile) {
               setShowLogin(true);
             }
@@ -956,17 +966,7 @@ export default function App() {
           
           <InteractiveGarden />
 
-          {/* Entry button to Large Garden */}
-          <button
-            onClick={() => {
-              playBubbleSound();
-              startLoadingGarden();
-            }}
-            className="btn-bubbly-primary text-xl px-12 py-5 flex items-center justify-center gap-3 animate-bounce-slow w-full sm:w-auto mt-4 shadow-[0_0_30px_rgba(255,122,0,0.4)] hover:shadow-[0_0_50px_rgba(255,122,0,0.6)]"
-          >
-            <span className="text-3xl">🚪🌿</span>
-            <span>دخول الحديقة السحرية الكبيرة</span>
-          </button>
+          
         </div>
       </section>
 
@@ -978,53 +978,20 @@ export default function App() {
         childLevel={childProfile?.level}
         forcedGame={forcedGame}
         setForcedGame={setForcedGame}
+        onOpenParents={() => {
+          setCurrentView('parents');
+          if (window.speechSynthesis) window.speechSynthesis.speak(new SpeechSynthesisUtterance("لوحة التحكم لأولياء الأمور"));
+        }}
+        onOpenAbout={() => {
+          setCurrentView('about');
+          if (window.speechSynthesis) window.speechSynthesis.speak(new SpeechSynthesisUtterance("معلومات عن التطبيق"));
+        }}
       />
+        </>
+      )}
 
       {/* 4. Hero Text Section (Moved below Games) */}
-      <section id="what-we-teach" className="container mx-auto px-4 py-16 relative z-10">
-        <div className="flex flex-col items-center text-center space-y-8 max-w-4xl mx-auto bg-white/60 p-8 sm:p-12 rounded-[36px] border-4 border-purple-200 shadow-xl backdrop-blur-sm">
-          
-          {/* Playful Tag */}
-          <div className="bg-[#FFECA1] border-2 border-[#D97706] text-[#B45309] font-extrabold text-sm px-4 py-1.5 rounded-full shadow-sm flex items-center justify-center gap-1.5 mx-auto animate-bounce-slow">
-            <span>🐞</span>
-            <span>للأطفال الأذكياء من عمر 4 إلى 12 سنة</span>
-          </div>
-
-          {/* Main Bouncy Heading */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-[#4D2B82] leading-[1.2] tracking-tight">
-            مغامرات صغيرة.
-            <span className="block mt-4">
-              عقول{" "}
-              <span className="text-[#FF7A00] highlight-underline relative inline-block">
-                تزهر بالعلم!
-                <span className="absolute -top-4 -right-8 text-yellow-400 text-2xl animate-pulse">✨</span>
-              </span>{" "}
-              🌱
-            </span>
-          </h1>
-
-          {/* Description Paragraph */}
-          <p className="text-lg sm:text-xl text-[#6B4E9E] font-medium leading-relaxed max-w-2xl mx-auto">
-            بلومي يحوّل تعلّم القراءة والحساب والقرآن الكريم إلى مغامرات حديقة ممتعة يعشقها الأطفال - صُمم بواسطة معلمين وخبراء، خالٍ تماماً من الإعلانات، ولطيف على وقت الشاشة.
-          </p>
-
-          {/* Trust Badges */}
-          <div className="flex flex-wrap items-center justify-center gap-6 pt-4 text-sm sm:text-base font-bold text-[#6B4E9E]">
-            <div className="flex items-center gap-2 bg-purple-50 px-4 py-2 rounded-xl shadow-sm border border-purple-100">
-              <span className="text-yellow-400 text-xl">★</span>
-              <span>4.9 في متاجر التطبيقات</span>
-            </div>
-            <div className="flex items-center gap-2 bg-purple-50 px-4 py-2 rounded-xl shadow-sm border border-purple-100">
-              <span className="text-xl">👥</span>
-              <span>محبوب من 240,000+ عائلة</span>
-            </div>
-            <div className="flex items-center gap-2 bg-purple-50 px-4 py-2 rounded-xl shadow-sm border border-purple-100">
-              <span className="text-xl">🚫</span>
-              <span>بيئة آمنة بدون إعلانات</span>
-            </div>
-          </div>
-        </div>
-      </section>
+      
 
       {/* 5. How It Works Section */}
       <section id="how-it-works" className="py-20 bg-white border-y-4 border-[#4D2B82] relative z-10">
@@ -1083,159 +1050,7 @@ export default function App() {
       </section>
 
       {/* 6. Parent Dashboard/Testimonial Section */}
-      <section id="parents" className="container mx-auto px-4 py-20 relative z-10">
-        <div className="card-bubbly bg-[#FFFCE6] p-8 md:p-12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center border-[#D97706]">
-          
-          <div className="lg:col-span-7 space-y-6 text-right">
-            
-            {/* Stat Pill */}
-            <div className="inline-flex items-center gap-1 text-xs font-extrabold text-[#D97706] bg-[#FEF7D2] px-3 py-1 rounded-full border border-[#D97706]/20">
-              <span>👪</span>
-              <span>لوحة تحكم خاصة بأولياء الأمور</span>
-            </div>
-
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#4D2B82]">
-              تابع تقدم طفلك خطوة بخطوة 📈
-            </h2>
-
-            <p className="text-base sm:text-lg text-[#6B4E9E] font-medium leading-relaxed">
-              نوفر لك لوحة تحكم ذكية ترسل لك تقارير دورية حول الكلمات التي قرأها طفلك، والمسائل الرياضية التي قام بحلها، ومستوى الحفظ القرآني، مع إمكانية تعديل أوقات الجلسات اليومية وتحديد فترات الراحة.
-            </p>
-
-            {/* Check Features */}
-            <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-extrabold text-[#4D2B82] pt-2">
-              <li className="flex items-center gap-2">
-                <span className="text-[#198754] text-lg">✔</span>
-                <span>تقارير تقدم يومية عبر البريد</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="text-[#198754] text-lg">✔</span>
-                <span>التحكم في أوقات الشاشة اليومية</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="text-[#198754] text-lg">✔</span>
-                <span>مراجعة وتقييم مسارات التعلم</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="text-[#198754] text-lg">✔</span>
-                <span>مزامنة الأجهزة المتعددة للعائلة</span>
-              </li>
-            </ul>
-
-          </div>
-
-          <div className="lg:col-span-5 flex flex-col space-y-5">
-            
-            {/* Live Parent Dashboard Card */}
-            <div className="card-bubbly bg-white p-5 border-[#2ECC71] shadow-md text-right relative overflow-hidden">
-              <div className="absolute top-0 right-0 left-0 h-2 bg-[#2ECC71]" />
-              <h3 className="text-lg font-black text-[#4D2B82] mb-4 flex items-center justify-start gap-2 flex-row-reverse">
-                <span>📊</span>
-                <span>تقرير البطل الحالي</span>
-              </h3>
-              {childProfile ? (
-                <div className="space-y-2.5">
-                  <div className="flex justify-between items-center border-b border-purple-50 pb-2">
-                    <span className="text-[11px] font-bold text-purple-400">البطل المسجل</span>
-                    <span className="font-extrabold text-xs sm:text-sm text-[#4D2B82] flex items-center gap-1.5">
-                      <span className="w-6 h-6 rounded-full overflow-hidden border border-[#4D2B82] bg-white inline-block">
-                        {childProfile.gender === "boy" ? (
-                          <BoyAvatar className="w-full h-full" />
-                        ) : (
-                          <GirlAvatar className="w-full h-full" />
-                        )}
-                      </span>
-                      {childProfile.name} ({childProfile.gender === "boy" ? "ولد" : "بنت"})
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center border-b border-purple-50 pb-2">
-                    <span className="text-[11px] font-bold text-purple-400">رقم الهاتف</span>
-                    <span className="font-extrabold text-xs sm:text-sm text-[#4D2B82] ltr-only">{childProfile.phone}</span>
-                  </div>
-                  <div className="flex justify-between items-center border-b border-purple-50 pb-2">
-                    <span className="text-[11px] font-bold text-purple-400">العمر والمستوى</span>
-                    <span className="font-extrabold text-xs sm:text-sm text-[#4D2B82]">
-                      {childProfile.age === "1" ? "سنة 1" : childProfile.age === "2" ? "سنتين 2" : childProfile.age === "+8" ? "+8 سنوات" : `${childProfile.age} سنوات`}
-                      {" - "}
-                      {childProfile.level === "level1" ? "المستوى الأول" : childProfile.level === "level2" ? "المستوى الثاني" : childProfile.level === "level3" ? "المستوى الثالث" : "المستوى الفائق"}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center border-b border-purple-50 pb-2">
-                    <span className="text-[11px] font-bold text-purple-400">وقت اللعب الإجمالي</span>
-                    <span className="font-extrabold text-xs sm:text-sm text-[#4D2B82]">
-                      {childProfile.playtimeMinutes || 0} دقيقة
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center border-b border-purple-50 pb-2">
-                    <span className="text-[11px] font-bold text-purple-400">التوصيات الذكية</span>
-                    <span className="font-extrabold text-[10px] sm:text-xs text-[#2ECC71]">
-                      مستواه ممتاز، استمر في دعمه! 🌟
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center pt-1">
-                    <span className="text-[11px] font-bold text-purple-400">مجموع النجوم</span>
-                    <span className="bg-yellow-100 text-yellow-700 px-2.5 py-0.5 rounded-full font-black text-xs sm:text-sm border border-yellow-200 flex items-center gap-1">
-                      <span>⭐</span>
-                      <span>{globalStars} نجمة</span>
-                    </span>
-                  </div>
-                </div>
-              ) : (
-                <div className="text-center py-4">
-                  <span className="text-3xl">👋</span>
-                  <p className="font-bold text-sm text-[#6B4E9E] mt-2">لم يتم تسجيل أي بطل بعد!</p>
-                  <p className="text-[11px] text-purple-300 mt-0.5">دع طفلك يبدأ اللعب وسنقوم بحفظ تقدمه هنا.</p>
-                </div>
-              )}
-            </div>
-
-            {/* Bouncy Review Card 1 */}
-            <div className="card-bubbly p-5 bg-white transform rotate-1 border-purple-200">
-              <p className="text-sm font-bold text-[#6B4E9E] italic mb-3">
-                "بلومي غيّر روتين طفلي تماماً! كان يكره القراءة، والآن هو من يطلب اللعب بعشر دقائق الحديقة السحرية ليجمع النجوم. برنامج رائع ومريح للأمهات."
-              </p>
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center text-xs">👩</div>
-                <div>
-                  <h4 className="text-xs font-extrabold text-[#4D2B82]">سارة م.</h4>
-                  <span className="text-[10px] font-bold text-purple-400">أم ليوسف (6 سنوات)</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Bouncy Review Card 2 */}
-            <div className="card-bubbly p-5 bg-white transform -rotate-1 border-purple-200">
-              <p className="text-sm font-bold text-[#6B4E9E] italic mb-3">
-                "أفضل تطبيق ألعاب تعليمي استخدمناه حتى الآن. الأهم أنه آمن تماماً، وبدون إعلانات، ويساعدهم على الفهم وحفظ سور القرآن بطريقة مرحة."
-              </p>
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-xs">👨</div>
-                <div>
-                  <h4 className="text-xs font-extrabold text-[#4D2B82]">أحمد ك.</h4>
-                  <span className="text-[10px] font-bold text-purple-400">والد لمايا (5 سنوات)</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Bouncy Review Card 3 */}
-            <div className="card-bubbly p-5 bg-white transform rotate-2 border-purple-200">
-              <p className="text-sm font-bold text-[#6B4E9E] italic mb-3">
-                "كان ابني يعاني من بطء في الحساب وتشتت التركيز، لكن حديقة الأرقام والألعاب السحرية الممتعة جعلته يعشق الرياضيات ويحل المسائل بذكاء وسرعة. فكرة الخريطة والجوائز عبقرية!"
-              </p>
-              <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center text-xs">👩</div>
-                <div>
-                  <h4 className="text-xs font-extrabold text-[#4D2B82]">منى ع.</h4>
-                  <span className="text-[10px] font-bold text-purple-400">أم لآدم (8 سنوات)</span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
+      
 
 
 
@@ -1498,6 +1313,150 @@ export default function App() {
               <span className="absolute inset-0 flex items-center justify-center font-black text-xs text-[#4D2B82]">
                 {gardenLoadingProgress}%
               </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+    
+      {/* --- PARENTS VIEW --- */}
+      {currentView === 'parents' && (
+        <div className="min-h-screen bg-[#3D1E6D] py-12 px-4 select-none" dir="rtl">
+          <div className="max-w-4xl mx-auto flex flex-col gap-6">
+            <div className="flex justify-between items-center bg-white p-4 rounded-3xl border-3 border-purple-200 shadow-md">
+              <button 
+                onClick={() => {
+                  setCurrentView("main");
+                  playBubbleSound();
+                }}
+                className="btn-bubbly-secondary text-sm py-2 px-5 text-[#4D2B82] bg-white rounded-full flex items-center gap-1 cursor-pointer border-2 border-[#4D2B82] shadow-[0_4px_0_0_#4D2B82] active:translate-y-1 active:shadow-[0_0_0_0_#4D2B82] transition-all"
+              >
+                <span>🔙 رجوع للقائمة</span>
+              </button>
+              <h2 className="text-2xl font-black text-[#4D2B82]">👨‍👩‍👧‍👦 لوحة تحكم أولياء الأمور</h2>
+            </div>
+            
+            <div className="card-bubbly bg-[#FFFCE6] p-8 md:p-12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center border-[#D97706] rounded-[36px]">
+              <div className="lg:col-span-7 space-y-6 text-right">
+                <div className="inline-flex items-center gap-1 text-xs font-extrabold text-[#D97706] bg-[#FEF7D2] px-3 py-1 rounded-full border border-[#D97706]/20">
+                  <span>👪</span>
+                  <span>لوحة تحكم خاصة بأولياء الأمور</span>
+                </div>
+                <h2 className="text-3xl sm:text-4xl font-extrabold text-[#4D2B82]">
+                  تابع تقدم طفلك خطوة بخطوة 📈
+                </h2>
+                <p className="text-base sm:text-lg text-[#6B4E9E] font-medium leading-relaxed">
+                  نوفر لك لوحة تحكم ذكية ترسل لك تقارير دورية حول الكلمات التي قرأها طفلك، والمسائل الرياضية التي قام بحلها، ومستوى الحفظ القرآني، مع إمكانية تعديل أوقات الجلسات اليومية وتحديد فترات الراحة.
+                </p>
+                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-extrabold text-[#4D2B82] pt-2">
+                  <li className="flex items-center gap-2">
+                    <span className="text-[#198754] text-lg">✔</span>
+                    <span>تقارير تقدم يومية عبر البريد</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-[#198754] text-lg">✔</span>
+                    <span>التحكم في أوقات الشاشة اليومية</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-[#198754] text-lg">✔</span>
+                    <span>مراجعة وتقييم مسارات التعلم</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <span className="text-[#198754] text-lg">✔</span>
+                    <span>مزامنة الأجهزة المتعددة للعائلة</span>
+                  </li>
+                </ul>
+              </div>
+
+              <div className="lg:col-span-5 flex flex-col space-y-5">
+                <div className="card-bubbly bg-white p-5 border-[#2ECC71] shadow-md text-right relative overflow-hidden rounded-[24px]">
+                  <div className="absolute top-0 right-0 left-0 h-2 bg-[#2ECC71]" />
+                  <h3 className="text-lg font-black text-[#4D2B82] mb-4 flex items-center justify-start gap-2 flex-row-reverse">
+                    <span>📊</span>
+                    <span>تقرير البطل الحالي</span>
+                  </h3>
+                  {childProfile ? (
+                    <div className="space-y-2.5">
+                      <div className="flex justify-between items-center border-b border-purple-50 pb-2">
+                        <span className="text-[11px] font-bold text-purple-400">البطل المسجل</span>
+                        <span className="font-extrabold text-xs sm:text-sm text-[#4D2B82] flex items-center gap-1.5">
+                          {childProfile?.name} ({childProfile?.gender === "boy" ? "ولد" : "بنت"})
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center border-b border-purple-50 pb-2">
+                        <span className="text-[11px] font-bold text-purple-400">رقم الهاتف</span>
+                        <span className="font-extrabold text-xs sm:text-sm text-[#4D2B82]">{childProfile?.phone}</span>
+                      </div>
+                      <div className="flex justify-between items-center border-b border-purple-50 pb-2">
+                        <span className="text-[11px] font-bold text-purple-400">العمر والمستوى</span>
+                        <span className="font-extrabold text-xs sm:text-sm text-[#4D2B82]">
+                          {childProfile?.age} سنوات - {childProfile?.level === "level1" ? "المستوى الأول" : "المستوى الفائق"}
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center border-b border-purple-50 pb-2">
+                        <span className="text-[11px] font-bold text-purple-400">وقت اللعب الإجمالي</span>
+                        <span className="font-extrabold text-xs sm:text-sm text-[#4D2B82]">
+                          {childProfile?.playtimeMinutes || 0} دقيقة
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center pt-1">
+                        <span className="text-[11px] font-bold text-purple-400">مجموع النجوم</span>
+                        <span className="bg-yellow-100 text-yellow-700 px-2.5 py-0.5 rounded-full font-black text-xs sm:text-sm border border-yellow-200">
+                          ⭐ {globalStars} نجمة
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-4">
+                      <span className="text-3xl">👋</span>
+                      <p className="font-bold text-sm text-[#6B4E9E] mt-2">لم يتم تسجيل أي بطل بعد!</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- ABOUT VIEW --- */}
+      {currentView === 'about' && (
+        <div className="min-h-screen bg-[#3D1E6D] py-12 px-4 select-none" dir="rtl">
+          <div className="max-w-4xl mx-auto flex flex-col gap-6">
+            <div className="flex justify-between items-center bg-white p-4 rounded-3xl border-3 border-purple-200 shadow-md">
+              <button 
+                onClick={() => {
+                  setCurrentView("main");
+                  playBubbleSound();
+                }}
+                className="btn-bubbly-secondary text-sm py-2 px-5 text-[#4D2B82] bg-white rounded-full flex items-center gap-1 cursor-pointer border-2 border-[#4D2B82] shadow-[0_4px_0_0_#4D2B82] active:translate-y-1 active:shadow-[0_0_0_0_#4D2B82] transition-all"
+              >
+                <span>🔙 رجوع للقائمة</span>
+              </button>
+              <h2 className="text-2xl font-black text-[#4D2B82]">ℹ️ بنعرف عن نفسنا</h2>
+            </div>
+            
+            <div className="bg-white/95 p-8 sm:p-12 rounded-[36px] border-4 border-purple-200 shadow-xl space-y-8 text-right">
+              <div className="bg-[#FFECA1] border-2 border-[#D97706] text-[#B45309] font-extrabold text-sm px-4 py-1.5 rounded-full shadow-sm flex items-center justify-center gap-1.5 mx-auto w-fit animate-bounce-slow">
+                <span>🐞</span>
+                <span>للأطفال الأذكياء من عمر 4 إلى 12 سنة</span>
+              </div>
+              <h1 className="text-4xl sm:text-5xl font-extrabold text-[#4D2B82] leading-[1.2] tracking-tight">
+                مغامرات صغيرة. عقول تزهر بالعلم! 🌱
+              </h1>
+              <p className="text-lg text-[#6B4E9E] font-medium leading-relaxed max-w-2xl mx-auto">
+                بلومي يحوّل تعلّم القراءة والحساب والقرآن الكريم إلى مغامرات حديقة ممتعة يعشقها الأطفال - صُمم بواسطة معلمين وخبراء، خالٍ تماماً من الإعلانات، ولطيف على وقت الشاشة.
+              </p>
+              
+              <div className="border-t border-purple-100 pt-6 flex flex-col items-center justify-center space-y-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 bg-[#2ECC71] rounded-full flex items-center justify-center text-[10px]">🌱</div>
+                  <span className="font-extrabold text-xl text-[#4D2B82]">بلومي للأطفال</span>
+                </div>
+                <p className="text-xs text-[#8A6FB8] font-bold">
+                  جميع الحقوق محفوظة © {new Date().getFullYear()} بلومي للألعاب التعليمية السحرية.
+                </p>
+              </div>
             </div>
           </div>
         </div>

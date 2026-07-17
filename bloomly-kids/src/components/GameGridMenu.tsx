@@ -13,6 +13,8 @@ interface GameGridMenuProps {
   onOpenParents?: () => void;
   onOpenMap?: () => void;
   onOpenAbout?: () => void;
+  childProfile?: any;
+  globalStars?: number;
 }
 
 export const GameGridMenu: React.FC<GameGridMenuProps> = ({ 
@@ -22,7 +24,9 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
   onBackToCategories,
   onOpenParents,
   onOpenMap,
-  onOpenAbout
+  onOpenAbout,
+  childProfile,
+  globalStars = 0
 }) => {
   const speakArabic = (text: string) => {
     if (!window.speechSynthesis) return;
@@ -34,126 +38,213 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
     window.speechSynthesis.speak(utterance);
   };
 
-  const customBoxes = [
-    {
-      id: "parents",
-      title: "أولياء الأمور",
-      englishTitle: "PARENTS AREA",
-      icon: "👨‍👩‍👧‍👦",
-      bgGradient: "from-[#8E2DE2]/90 to-[#4A00E0]/90",
-      textColor: "text-purple-700",
-      borderColor: "border-purple-400",
-      action: onOpenParents
-    },
-    {
-      id: "island_map",
-      title: "خريطة الجزيرة",
-      englishTitle: "ISLAND MAP",
-      icon: "🗺️",
-      bgGradient: "from-[#11998e]/90 to-[#38ef7d]/90",
-      textColor: "text-green-700",
-      borderColor: "border-green-400",
-      action: onOpenMap
-    },
-    {
-      id: "about_us",
-      title: "بنعرف عن نفسنا",
-      englishTitle: "ABOUT US",
-      icon: "ℹ️",
-      bgGradient: "from-[#fc4a1a]/90 to-[#f7b733]/90",
-      textColor: "text-orange-700",
-      borderColor: "border-orange-400",
-      action: onOpenAbout
-    }
-  ];
-
   const farmBox = categoriesData.find(c => c.id === 'farm');
-  const restCategories = categoriesData.filter(c => c.id !== 'farm');
+  const funGamesBox = categoriesData.find(c => c.id === 'fun_games');
+  const kitchenBox = categoriesData.find(c => c.id === 'kitchen');
+  const storiesBox = categoriesData.find(c => c.id === 'stories');
+  const mathBox = categoriesData.find(c => c.id === 'math');
+  const arabicBox = categoriesData.find(c => c.id === 'arabic');
+  const englishBox = categoriesData.find(c => c.id === 'english');
+  const coloringBox = categoriesData.find(c => c.id === 'coloring');
+  const habitsBox = categoriesData.find(c => c.id === 'habits');
 
-  const allBoxes = [
-    customBoxes[0], // Parents (أولياء الأمور)
-    customBoxes[1], // Map (خريطة الجزيرة)
-    ...(farmBox ? [farmBox] : []), // Farm (مزرعتي السحرية)
-    ...restCategories,
-    customBoxes[2]  // About Us (بنعرف عن نفسنا)
-  ];
+  const renderCard = (cat: any, width: string, height: string, isTall: boolean) => {
+    if (!cat) return null;
+    return (
+      <motion.div
+        key={cat.id}
+        whileHover={{ y: -8, scale: 1.02 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => {
+          speakArabic(cat.title);
+          if (cat.action) {
+            cat.action();
+          } else if (onSelectCategory) {
+            onSelectCategory(cat.id);
+          }
+        }}
+        className="flex flex-col items-center cursor-pointer shrink-0"
+        style={{ width }}
+      >
+        <div 
+          className="w-full bg-white rounded-[28px] border-[4px] shadow-[0_8px_15px_rgba(0,0,0,0.15)] flex flex-col items-center justify-between p-4 relative overflow-hidden transition-all duration-300" 
+          style={{ 
+            height,
+            borderColor: cat.borderColor ? cat.borderColor.replace('border-', '') : '#4D2B82' 
+          }}
+        >
+          {/* Background decorative gradient blob */}
+          <div className={`absolute inset-0 opacity-15 bg-gradient-to-br ${cat.bgGradient || 'from-purple-100 to-indigo-100'}`} />
+          <div className="absolute top-0 right-0 w-24 h-24 bg-white/40 rounded-full blur-xl -mr-8 -mt-8 pointer-events-none" />
+
+          {/* English title at the top of the box */}
+          {isTall && (
+            <div className="w-full text-center mt-2 z-10">
+              <span className={`font-black text-[10px] uppercase tracking-wider opacity-85 ${cat.textColor || 'text-purple-700'}`}>
+                {cat.englishTitle}
+              </span>
+            </div>
+          )}
+
+          {/* Main Icon/Emoji */}
+          <motion.div 
+            className={`${isTall ? 'text-7xl sm:text-8xl' : 'text-5xl'} filter drop-shadow-[0_8px_8px_rgba(0,0,0,0.12)] z-10 flex-1 flex items-center justify-center`}
+            animate={isTall ? { y: [0, -6, 0], rotate: [0, 3, -3, 0] } : {}}
+            transition={{ repeat: Infinity, duration: 3, ease: "easeInOut" }}
+          >
+            {cat.icon}
+          </motion.div>
+
+          {/* Decorative particles */}
+          {isTall && (
+            <>
+              <div className="absolute bottom-4 left-4 text-lg opacity-40 animate-pulse">✨</div>
+              <div className="absolute top-1/2 right-4 text-xs opacity-40 animate-bounce">⭐</div>
+            </>
+          )}
+        </div>
+
+        {/* Box Title (Arabic) below the box */}
+        <div className="mt-2 bg-white/95 border border-purple-100 px-4 py-1 rounded-full shadow-xs">
+          <h3 className={`text-xs font-black text-center ${cat.textColor || 'text-[#4D2B82]'}`}>
+            {cat.title}
+          </h3>
+        </div>
+      </motion.div>
+    );
+  };
 
   // View 1: Main Category Selection (Lamsa-style Layout)
   if (!activeCategory) {
     return (
-      <div className="flex flex-col w-full max-w-7xl mx-auto px-4 py-8 relative z-10 select-none">
-        {/* Header / Intro banner */}
-        <div className="flex justify-between items-center mb-8">
-          <div className="flex flex-col items-start gap-2 bg-white/60 p-4 rounded-3xl backdrop-blur-md border border-white/50 shadow-lg">
-            <h2 className="text-3xl font-black text-[#4D2B82] drop-shadow-sm flex items-center gap-3">
-              <SproutMascot className="w-12 h-12" state="talking" />
-              مرحباً يا بطل! اختر مسارك ✨
-            </h2>
-            <p className="text-purple-700 font-bold px-2">اضغط على أي صندوق لتكتشف الألعاب السحرية بداخله!</p>
+      <div className="flex flex-col w-full min-h-screen bg-[#3D1E6D] px-4 py-6 relative z-10 select-none overflow-hidden justify-start items-center">
+        
+        {/* Top Profile / Coins Bar */}
+        <div className="flex justify-between items-center mb-6 w-full max-w-7xl mx-auto px-2">
+          {/* Left: Avatar, Name, Age, Coins */}
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white bg-white">
+              <SproutMascot className="w-full h-full" state="idle" />
+            </div>
+            <div className="text-right text-white">
+              <h3 className="text-sm font-black">
+                {childProfile?.name || 'البطل السحري'}
+              </h3>
+              <span className="text-[10px] font-bold text-purple-200 bg-white/10 px-2 py-0.5 rounded-full">
+                {childProfile?.age ? `${childProfile.age} سنوات` : '٥ سنوات'}
+              </span>
+            </div>
+            
+            {/* Coins container */}
+            <div className="bg-gradient-to-r from-yellow-400 to-amber-500 text-white font-black text-xs px-3 py-1.5 rounded-full flex items-center gap-1 border border-yellow-300 shadow-md">
+              <span>⭐</span>
+              <span>{globalStars}</span>
+            </div>
+          </div>
+
+          {/* Right: Hamburger menu, download button, and promo banner */}
+          <div className="flex items-center gap-2">
+            <div className="hidden sm:flex bg-[#FF3366] text-white font-black text-xs px-4 py-1.5 rounded-full items-center gap-1 animate-pulse">
+              <span>🔥</span>
+              <span>خصم 50% لفترة محدودة</span>
+            </div>
+            <button className="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20 active:scale-95 transition-all text-lg cursor-pointer">
+              📥
+            </button>
+            <button className="w-10 h-10 rounded-full bg-white/10 text-white flex items-center justify-center hover:bg-white/20 active:scale-95 transition-all text-lg cursor-pointer">
+              ☰
+            </button>
           </div>
         </div>
 
-        {/* Lamsa-style Horizontal Scrolling Boxes */}
+        {/* Lamsa-style Grid Columns */}
         <div 
-          className="flex gap-4 sm:gap-6 overflow-x-auto pb-8 pt-4 px-2 snap-x snap-mandatory hide-scrollbar" 
+          className="flex gap-6 overflow-x-auto pb-8 pt-4 px-2 hide-scrollbar w-full max-w-7xl mx-auto items-center" 
           dir="rtl"
-          style={{ scrollBehavior: 'smooth' }}
+          style={{ scrollBehavior: 'smooth', minHeight: '380px' }}
         >
-          {allBoxes.map((cat, index) => (
-            <motion.div
-              key={cat.id}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.1, type: 'spring' }}
-              whileHover={{ y: -8, scale: 1.02 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => {
-                speakArabic(cat.title);
-                if ((cat as any).action) {
-                  (cat as any).action();
-                } else if (onSelectCategory) {
-                  onSelectCategory(cat.id);
-                }
-              }}
-              className="snap-center shrink-0 flex flex-col items-center cursor-pointer group"
-              style={{ width: '220px' }}
-            >
-              {/* Main Box containing icon/image */}
-              <div className="w-full h-[280px] bg-white rounded-[32px] border-[5px] shadow-[0_8px_15px_rgba(0,0,0,0.1)] flex flex-col items-center justify-center p-4 relative overflow-hidden transition-all duration-300" style={{ borderColor: cat.borderColor.replace('border-', '') }}>
-                
-                {/* Background decorative gradient blob */}
-                <div className={`absolute inset-0 opacity-20 bg-gradient-to-br ${cat.bgGradient}`} />
-                <div className="absolute top-0 right-0 w-32 h-32 bg-white/40 rounded-full blur-2xl -mr-10 -mt-10 pointer-events-none" />
+          {/* Column 1: Farm (Tall) */}
+          {farmBox && renderCard(
+            { ...farmBox, action: () => onSelectCategory?.('farm') }, 
+            '220px', 
+            '280px', 
+            true
+          )}
 
-                {/* English title at the top of the box */}
-                <div className="absolute top-4 w-full text-center">
-                  <span className={`font-black text-[11px] uppercase tracking-widest opacity-80 ${cat.textColor}`}>
-                    {cat.englishTitle}
-                  </span>
-                </div>
+          {/* Column 2: Island Map (Tall) */}
+          {renderCard(
+            {
+              id: "island_map",
+              title: "خريطة الجزيرة",
+              englishTitle: "ISLAND MAP",
+              icon: "🗺️",
+              bgGradient: "from-[#11998e]/90 to-[#38ef7d]/90",
+              textColor: "text-green-700",
+              borderColor: "border-[#38ef7d]",
+              action: onOpenMap
+            }, 
+            '220px', 
+            '280px', 
+            true
+          )}
 
-                {/* Main Icon/Emoji */}
-                <motion.div 
-                  className="text-7xl sm:text-8xl filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.15)] z-10"
-                  animate={{ y: [0, -10, 0], rotate: [0, 5, -5, 0] }}
-                  transition={{ repeat: Infinity, duration: 3 + index * 0.5, ease: "easeInOut" }}
-                >
-                  {cat.icon}
-                </motion.div>
+          {/* Column 3: Stack (Fun Games & Kitchen) */}
+          <div className="flex flex-col justify-between h-[320px] shrink-0 gap-3">
+            {funGamesBox && renderCard(funGamesBox, '190px', '125px', false)}
+            {kitchenBox && renderCard(kitchenBox, '190px', '125px', false)}
+          </div>
 
-                {/* Decorative particles */}
-                <div className="absolute bottom-4 left-4 text-xl opacity-50 animate-pulse">✨</div>
-                <div className="absolute top-1/2 right-4 text-sm opacity-50 animate-bounce">⭐</div>
-              </div>
+          {/* Column 4: Let's Read (Tall) */}
+          {storiesBox && renderCard(storiesBox, '220px', '280px', true)}
 
-              {/* Box Title (Arabic) below the box */}
-              <div className="mt-4 bg-white/80 backdrop-blur-sm border-2 border-white px-6 py-2 rounded-full shadow-sm">
-                <h3 className={`text-lg font-black ${cat.textColor}`}>
-                  {cat.title}
-                </h3>
-              </div>
-            </motion.div>
-          ))}
+          {/* Column 5: Stack (Math & Arabic/English) */}
+          <div className="flex flex-col justify-between h-[320px] shrink-0 gap-3">
+            {mathBox && renderCard(mathBox, '220px', '125px', false)}
+            <div className="flex gap-2 w-[220px] justify-between">
+              {arabicBox && renderCard(arabicBox, '105px', '125px', false)}
+              {englishBox && renderCard(englishBox, '105px', '125px', false)}
+            </div>
+          </div>
+
+          {/* Column 6: Stack (Coloring & Habits) */}
+          <div className="flex flex-col justify-between h-[320px] shrink-0 gap-3">
+            {coloringBox && renderCard(coloringBox, '190px', '125px', false)}
+            {habitsBox && renderCard(habitsBox, '190px', '125px', false)}
+          </div>
+
+          {/* Column 7: Parents Area (Tall) */}
+          {renderCard(
+            {
+              id: "parents",
+              title: "أولياء الأمور",
+              englishTitle: "PARENTS AREA",
+              icon: "👨‍👩‍👧‍👦",
+              bgGradient: "from-[#8E2DE2]/90 to-[#4A00E0]/90",
+              textColor: "text-purple-700",
+              borderColor: "border-[#8E2DE2]",
+              action: onOpenParents
+            }, 
+            '220px', 
+            '280px', 
+            true
+          )}
+
+          {/* Column 8: About Us (Tall) */}
+          {renderCard(
+            {
+              id: "about_us",
+              title: "بنعرف عن نفسنا",
+              englishTitle: "ABOUT US",
+              icon: "ℹ️",
+              bgGradient: "from-[#fc4a1a]/90 to-[#f7b733]/90",
+              textColor: "text-orange-700",
+              borderColor: "border-[#fc4a1a]",
+              action: onOpenAbout
+            }, 
+            '220px', 
+            '280px', 
+            true
+          )}
         </div>
 
         {/* Global Styles for horizontal scrollbar hiding */}
@@ -175,20 +266,20 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
   const categoryGames = islandsData.filter(game => currentCategory?.games.includes(game.id));
 
   return (
-    <div className="flex flex-col gap-8 w-full max-w-7xl mx-auto px-4 py-8 relative z-10">
+    <div className="flex flex-col gap-8 w-full max-w-7xl mx-auto px-4 py-8 relative z-10 min-h-screen bg-[#3D1E6D] justify-start">
       
       {/* Category Header */}
       <motion.div 
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative bg-white/60 backdrop-blur-xl rounded-[40px] p-6 sm:p-8 flex items-center justify-between gap-4 sm:gap-6 shadow-lg border-4"
+        className="relative bg-white/95 rounded-[40px] p-6 flex items-center justify-between gap-6 shadow-lg border-4"
         style={{ borderColor: currentCategory?.borderColor.replace('border-', '') || '#4D2B82' }}
       >
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 z-10 w-full">
           {/* Back Button */}
           <button 
             onClick={onBackToCategories}
-            className="w-12 h-12 rounded-full bg-white hover:bg-gray-50 border-3 border-gray-200 flex items-center justify-center text-gray-500 shadow-sm active:scale-95 transition-all self-start sm:self-center shrink-0"
+            className="w-12 h-12 rounded-full bg-white hover:bg-gray-50 border-3 border-gray-200 flex items-center justify-center text-gray-500 shadow-sm active:scale-95 transition-all self-start sm:self-center shrink-0 cursor-pointer"
           >
             <ArrowRight className="w-6 h-6" />
           </button>
@@ -208,9 +299,8 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
       </motion.div>
 
       {/* Grid of Games for this category */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6 sm:gap-8 pb-16">
         {categoryGames.map((game, index) => {
-          // Keep the existing pastel gradients logic for game cards
           const gradients = [
             "from-[#ff9a9e]/80 to-[#fecfef]/80 border-pink-300 text-pink-700", 
             "from-[#a1c4fd]/80 to-[#c2e9fb]/80 border-blue-300 text-blue-700", 
@@ -230,14 +320,12 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
               transition={{ delay: index * 0.05, type: 'spring', stiffness: 200, damping: 20 }}
               whileHover={{ y: -10, scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              className={`relative flex flex-col items-center text-center p-6 bg-gradient-to-br ${bgFrom} ${bgTo} backdrop-blur-xl rounded-[40px] border-[3px] border-white/50 shadow-[0_15px_35px_rgba(0,0,0,0.1),inset_0_5px_15px_rgba(255,255,255,0.8)] cursor-pointer overflow-hidden group`}
+              className={`relative flex flex-col items-center text-center p-6 bg-gradient-to-br ${bgFrom} ${bgTo} backdrop-blur-xl rounded-[40px] border-[3px] border-white/50 shadow-[0_15px_35px_rgba(0,0,0,0.15),inset_0_5px_15px_rgba(255,255,255,0.8)] cursor-pointer overflow-hidden group`}
               onClick={() => onSelectGame(game.id)}
             >
-              {/* Animated Light Reflection Overlay */}
               <div className="absolute inset-0 bg-gradient-to-b from-white/40 to-transparent h-1/2 pointer-events-none rounded-t-[36px]" />
               <div className="absolute top-0 left-[-100%] w-1/2 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-20deg] group-hover:animate-[shimmer_1.5s_infinite]" />
 
-              {/* Floating Emoji Icon Container */}
               <motion.div 
                 animate={{ y: [0, -8, 0] }}
                 transition={{ repeat: Infinity, duration: 2.5 + index * 0.2, ease: "easeInOut" }}
@@ -249,7 +337,6 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
                 </div>
               </motion.div>
 
-              {/* Text Content */}
               <div className="relative z-10 flex flex-col flex-1 w-full items-center">
                 <span className="bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-full text-xs font-black text-gray-600 shadow-sm mb-4 border border-white">
                   {game.badge}
@@ -263,7 +350,6 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
                   {game.quest}
                 </p>
 
-                {/* 3D Play Button */}
                 <div
                   className={`mt-auto w-full py-3.5 rounded-3xl bg-white border-b-[6px] border-black/10 text-lg font-black ${textColor} shadow-lg group-hover:bg-gray-50 group-active:border-b-0 group-active:translate-y-[6px] transition-all flex items-center justify-center gap-2`}
                 >
