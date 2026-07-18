@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Play, ArrowRight, Sparkles } from 'lucide-react';
 import { islandsData } from './LearningPathMap';
 import { SproutMascot } from './GameZone';
 import { categoriesData } from './CategoriesData';
@@ -17,6 +17,43 @@ interface GameGridMenuProps {
   globalStars?: number;
 }
 
+// Particle Component for explosion effect on click
+const ClickSparkles = () => (
+  <div className="absolute inset-0 pointer-events-none z-50 overflow-visible flex items-center justify-center">
+    {[...Array(6)].map((_, i) => (
+      <motion.div
+        key={i}
+        initial={{ opacity: 1, scale: 0, x: 0, y: 0 }}
+        animate={{ 
+          opacity: [1, 1, 0], 
+          scale: [0, 1.5, 0.5],
+          x: (Math.random() - 0.5) * 150,
+          y: (Math.random() - 0.5) * 150,
+          rotate: Math.random() * 360
+        }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="absolute text-yellow-400 text-2xl drop-shadow-md"
+      >
+        <Sparkles fill="currentColor" />
+      </motion.div>
+    ))}
+    {[...Array(8)].map((_, i) => (
+      <motion.div
+        key={`dot-${i}`}
+        initial={{ opacity: 1, scale: 0, x: 0, y: 0 }}
+        animate={{ 
+          opacity: [1, 1, 0], 
+          scale: [0, 1, 0],
+          x: (Math.random() - 0.5) * 200,
+          y: (Math.random() - 0.5) * 200,
+        }}
+        transition={{ duration: 0.5, ease: "easeOut" }}
+        className={`absolute w-3 h-3 rounded-full ${['bg-pink-400', 'bg-cyan-400', 'bg-yellow-400', 'bg-green-400'][i % 4]}`}
+      />
+    ))}
+  </div>
+);
+
 export const GameGridMenu: React.FC<GameGridMenuProps> = ({ 
   onSelectCategory, 
   onSelectGame, 
@@ -28,6 +65,8 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
   childProfile,
   globalStars = 0
 }) => {
+  const [clickedId, setClickedId] = useState<string | null>(null);
+
   const speakArabic = (text: string) => {
     if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();
@@ -48,23 +87,23 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
   const coloringBox = categoriesData.find(c => c.id === 'coloring');
   const habitsBox = categoriesData.find(c => c.id === 'habits');
 
-  // Solid, vibrant colors for the "Clay/Toy" material look
+  // Upgraded Premium Colors (Gradients)
   const clayItems = [
-    { id: 'farm', title: 'مزرعتي السحرية', englishTitle: 'MY FARM', icon: farmBox?.icon || '🚜', action: () => onSelectCategory?.('farm'), bgColor: '#a6f366', color: 'text-green-900' },
-    { id: 'island_map', title: 'خريطة الجزيرة', englishTitle: 'ISLAND MAP', icon: '🗺️', action: onOpenMap, bgColor: '#4dd2ff', color: 'text-cyan-900' },
-    { id: 'stories', title: 'هيا نقرأ', englishTitle: 'LET\'S READ', icon: storiesBox?.icon || '📖', action: () => onSelectCategory?.('stories'), bgColor: '#c68cff', color: 'text-purple-900' },
-    { id: 'math', title: 'أرقام وحساب', englishTitle: 'MATH', icon: mathBox?.icon || '🔢', action: () => onSelectCategory?.('math'), bgColor: '#ff8c42', color: 'text-orange-950' },
-    { id: 'arabic', title: 'حروفي العربية', englishTitle: 'ARABIC', icon: arabicBox?.icon || 'أ', action: () => onSelectCategory?.('arabic'), bgColor: '#ffd11a', color: 'text-yellow-900' },
-    { id: 'english', title: 'حروفي الإنجليزية', englishTitle: 'ENGLISH', icon: englishBox?.icon || 'A', action: () => onSelectCategory?.('english'), bgColor: '#ff7eb3', color: 'text-pink-900' },
-    { id: 'fun_games', title: 'ألعاب ومرح', englishTitle: 'FUN GAMES', icon: funGamesBox?.icon || '🎈', action: () => onSelectCategory?.('fun_games'), bgColor: '#9999ff', color: 'text-indigo-900' },
-    { id: 'kitchen', title: 'المطبخ الصغير', englishTitle: 'KITCHEN', icon: kitchenBox?.icon || '🍳', action: () => onSelectCategory?.('kitchen'), bgColor: '#ffa366', color: 'text-orange-900' },
-    { id: 'coloring', title: 'لوّن وارسم', englishTitle: 'COLORING', icon: coloringBox?.icon || '🎨', action: () => onSelectCategory?.('coloring'), bgColor: '#4df0a3', color: 'text-emerald-900' },
-    { id: 'habits', title: 'عادات صحية', englishTitle: 'HABITS', icon: habitsBox?.icon || '🧼', action: () => onSelectCategory?.('habits'), bgColor: '#e6f2ff', color: 'text-slate-800' },
-    { id: 'parents', title: 'أولياء الأمور', englishTitle: 'PARENTS AREA', icon: '👨‍👩‍👧‍👦', action: onOpenParents, bgColor: '#66e0ff', color: 'text-cyan-900' },
-    { id: 'about_us', title: 'عن التطبيق', englishTitle: 'ABOUT US', icon: 'ℹ️', action: onOpenAbout, bgColor: '#ffb3e6', color: 'text-fuchsia-900' },
+    { id: 'farm', title: 'مزرعتي السحرية', englishTitle: 'MY FARM', icon: farmBox?.icon || '🚜', action: () => onSelectCategory?.('farm'), bgGradient: 'linear-gradient(135deg, #a6f366, #79d732)', color: 'text-green-900', glow: 'rgba(121,215,50,0.5)' },
+    { id: 'island_map', title: 'خريطة الجزيرة', englishTitle: 'ISLAND MAP', icon: '🗺️', action: onOpenMap, bgGradient: 'linear-gradient(135deg, #4dd2ff, #1ab2ff)', color: 'text-cyan-900', glow: 'rgba(26,178,255,0.5)' },
+    { id: 'stories', title: 'هيا نقرأ', englishTitle: 'LET\'S READ', icon: storiesBox?.icon || '📖', action: () => onSelectCategory?.('stories'), bgGradient: 'linear-gradient(135deg, #d8a6ff, #b366ff)', color: 'text-purple-900', glow: 'rgba(179,102,255,0.5)' },
+    { id: 'math', title: 'أرقام وحساب', englishTitle: 'MATH', icon: mathBox?.icon || '🔢', action: () => onSelectCategory?.('math'), bgGradient: 'linear-gradient(135deg, #ffa666, #ff7a29)', color: 'text-orange-950', glow: 'rgba(255,122,41,0.5)' },
+    { id: 'arabic', title: 'حروفي العربية', englishTitle: 'ARABIC', icon: arabicBox?.icon || 'أ', action: () => onSelectCategory?.('arabic'), bgGradient: 'linear-gradient(135deg, #ffe066, #ffcc00)', color: 'text-yellow-900', glow: 'rgba(255,204,0,0.5)' },
+    { id: 'english', title: 'حروفي الإنجليزية', englishTitle: 'ENGLISH', icon: englishBox?.icon || 'A', action: () => onSelectCategory?.('english'), bgGradient: 'linear-gradient(135deg, #ff99c2, #ff5c99)', color: 'text-pink-900', glow: 'rgba(255,92,153,0.5)' },
+    { id: 'fun_games', title: 'ألعاب ومرح', englishTitle: 'FUN GAMES', icon: funGamesBox?.icon || '🎈', action: () => onSelectCategory?.('fun_games'), bgGradient: 'linear-gradient(135deg, #b3b3ff, #8080ff)', color: 'text-indigo-900', glow: 'rgba(128,128,255,0.5)' },
+    { id: 'kitchen', title: 'المطبخ الصغير', englishTitle: 'KITCHEN', icon: kitchenBox?.icon || '🍳', action: () => onSelectCategory?.('kitchen'), bgGradient: 'linear-gradient(135deg, #ffb880, #ff8f40)', color: 'text-orange-900', glow: 'rgba(255,143,64,0.5)' },
+    { id: 'coloring', title: 'لوّن وارسم', englishTitle: 'COLORING', icon: coloringBox?.icon || '🎨', action: () => onSelectCategory?.('coloring'), bgGradient: 'linear-gradient(135deg, #7af4ba, #33eb96)', color: 'text-emerald-900', glow: 'rgba(51,235,150,0.5)' },
+    { id: 'habits', title: 'عادات صحية', englishTitle: 'HABITS', icon: habitsBox?.icon || '🧼', action: () => onSelectCategory?.('habits'), bgGradient: 'linear-gradient(135deg, #f2f7ff, #cce0ff)', color: 'text-slate-800', glow: 'rgba(204,224,255,0.5)' },
+    { id: 'parents', title: 'أولياء الأمور', englishTitle: 'PARENTS AREA', icon: '👨‍👩‍👧‍👦', action: onOpenParents, bgGradient: 'linear-gradient(135deg, #8ce6ff, #33ccff)', color: 'text-cyan-900', glow: 'rgba(51,204,255,0.5)' },
+    { id: 'about_us', title: 'عن التطبيق', englishTitle: 'ABOUT US', icon: 'ℹ️', action: onOpenAbout, bgGradient: 'linear-gradient(135deg, #ffcceb, #ff99d6)', color: 'text-fuchsia-900', glow: 'rgba(255,153,214,0.5)' },
   ];
 
-  // View 1: 3D Claymorphism Symmetrical Grid
+  // View 1: 3D Premium Claymorphism Symmetrical Grid
   if (!activeCategory) {
     return (
       <div className="flex flex-col w-full min-h-screen relative z-10 select-none overflow-x-hidden justify-start items-center bg-transparent">
@@ -72,10 +111,10 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
         {/* Top Profile / Coins Bar */}
         <div className="flex justify-between items-center mb-8 mt-6 w-full max-w-6xl mx-auto px-4 z-50">
           <div 
-            className="flex items-center gap-3 bg-white/70 backdrop-blur-md p-2 pr-4 rounded-[30px] border-4 border-white"
-            style={{ boxShadow: '10px 10px 20px rgba(0,0,0,0.1), inset 4px 4px 10px rgba(255,255,255,0.8)' }}
+            className="flex items-center gap-3 bg-white/70 backdrop-blur-md p-2 pr-4 rounded-[30px] border-[4px] border-white/80"
+            style={{ boxShadow: '0px 15px 30px rgba(0,0,0,0.1), inset 0px 4px 10px rgba(255,255,255,0.9)' }}
           >
-            <div className="w-14 h-14 rounded-full overflow-hidden border-[3px] border-white bg-white shadow-inner">
+            <div className="w-14 h-14 rounded-full overflow-hidden border-[3px] border-white bg-white shadow-inner relative">
               <SproutMascot className="w-full h-full" state="idle" />
             </div>
             <div className="text-right text-[#4D2B82]">
@@ -86,16 +125,19 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
                 {childProfile?.age ? `${childProfile.age} سنوات` : '٥ سنوات'}
               </span>
             </div>
-            <div className="bg-yellow-400 text-yellow-900 font-black text-sm px-4 py-2 rounded-full flex items-center gap-1.5 border-[3px] border-white shadow-md ml-2 mr-3 relative">
-              <span className="text-lg absolute -right-3 -top-2">⭐</span>
-              <span className="pl-1">{globalStars}</span>
+            <div className="bg-gradient-to-r from-yellow-400 to-amber-500 text-white font-black text-sm px-4 py-2 rounded-full flex items-center gap-1.5 border-[3px] border-white shadow-md ml-2 mr-3 relative overflow-hidden group">
+              <div className="absolute top-0 left-[-100%] w-1/2 h-full bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-20deg] group-hover:animate-[shimmer_1.5s_infinite]" />
+              <span className="text-lg absolute -right-3 -top-2 drop-shadow-md">⭐</span>
+              <span className="pl-1 drop-shadow-sm">{globalStars}</span>
             </div>
           </div>
         </div>
 
-        {/* The Symmetrical Clay Grid */}
-        <div className="w-full max-w-6xl mx-auto px-4 pb-24 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 auto-rows-fr">
+        {/* The Premium Symmetrical Clay Grid */}
+        <div className="w-full max-w-6xl mx-auto px-4 pb-24 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 auto-rows-fr relative">
           {clayItems.map((item, index) => {
+            const isClicked = clickedId === item.id;
+            
             return (
               <motion.div
                 key={item.id}
@@ -107,51 +149,90 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
                   stiffness: 250, 
                   damping: 20 
                 }}
-                whileHover={{ y: -8, scale: 1.03 }}
+                whileHover={{ y: -10, scale: 1.04 }}
                 whileTap={{ y: 5, scale: 0.95 }}
-                className="relative cursor-pointer flex flex-col items-center justify-center p-6 md:p-8 rounded-[40px] border-[5px] border-white/40 group w-full aspect-[4/5] md:aspect-square"
+                className="relative cursor-pointer flex flex-col items-center justify-center p-6 md:p-8 rounded-[40px] border-[4px] border-white/60 group w-full aspect-[4/5] md:aspect-square overflow-hidden"
                 style={{
-                  backgroundColor: item.bgColor,
-                  // The magic of Claymorphism: Outer drop shadow + Inner dark shadow + Inner light shadow
+                  background: item.bgGradient,
+                  // Glass-Clay Hybrid: Frosted look with deep 3D shadows and outer glow on hover
                   boxShadow: `
-                    12px 15px 25px rgba(0,0,0,0.15), 
-                    inset -10px -10px 20px rgba(0,0,0,0.12), 
-                    inset 10px 10px 20px rgba(255,255,255,0.8)
+                    0px 20px 40px rgba(0,0,0,0.15), 
+                    inset -12px -12px 25px rgba(0,0,0,0.15), 
+                    inset 12px 12px 25px rgba(255,255,255,0.9)
                   `
                 }}
                 onClick={() => {
+                  setClickedId(item.id);
                   speakArabic(item.title);
-                  if (item.action) item.action();
+                  setTimeout(() => {
+                    if (item.action) item.action();
+                    setClickedId(null);
+                  }, 600); // Wait for the sparkle explosion
                 }}
               >
-                {/* Floating Icon */}
-                <motion.div 
-                  className="text-7xl md:text-8xl mb-6 relative z-10"
-                  animate={{ y: [0, -8, 0] }}
-                  transition={{ repeat: Infinity, duration: 3 + (index % 3), ease: "easeInOut" }}
-                  style={{ filter: 'drop-shadow(0px 15px 10px rgba(0,0,0,0.15))' }}
-                >
-                  {item.icon}
-                </motion.div>
+                {/* Noise Texture for Premium Material feel */}
+                <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }} />
+
+                {/* Shimmer Effect overlay */}
+                <div className="absolute top-0 left-[-100%] w-[120%] h-full bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-[-30deg] animate-[shimmer_4s_infinite] pointer-events-none opacity-50 group-hover:opacity-100" style={{ animationDelay: `${index * 0.2}s` }} />
+
+                {/* Ambient Glow behind icon */}
+                <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-white/40 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+
+                {/* Floating 3D Icon with dynamic shadow */}
+                <div className="relative mb-6 z-10 flex flex-col items-center justify-center">
+                  <motion.div 
+                    className="text-7xl md:text-8xl relative z-10"
+                    animate={{ y: [0, -12, 0] }}
+                    transition={{ repeat: Infinity, duration: 2.5 + (index % 3), ease: "easeInOut" }}
+                    style={{ filter: 'drop-shadow(0px 10px 8px rgba(0,0,0,0.2))' }}
+                  >
+                    {item.icon}
+                  </motion.div>
+                  {/* Dynamic Floor Shadow tracking the bounce */}
+                  <motion.div 
+                    className="absolute -bottom-2 w-12 h-3 bg-black/20 rounded-[100%] blur-sm"
+                    animate={{ scale: [1, 0.6, 1], opacity: [0.3, 0.1, 0.3] }}
+                    transition={{ repeat: Infinity, duration: 2.5 + (index % 3), ease: "easeInOut" }}
+                  />
+                </div>
                 
                 {/* Text Badge */}
-                <div className="mt-auto flex flex-col items-center w-full">
-                  <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-black/40 mb-1">
+                <div className="mt-auto flex flex-col items-center w-full z-10 relative">
+                  <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-black/50 mb-1 drop-shadow-sm">
                     {item.englishTitle}
                   </span>
                   <div 
-                    className="w-full bg-white/95 backdrop-blur-sm px-3 py-2 rounded-[20px] z-10 border-2 border-white flex items-center justify-center"
-                    style={{ boxShadow: '0 8px 15px rgba(0,0,0,0.05), inset 0 2px 5px rgba(255,255,255,0.8)' }}
+                    className="w-full bg-white/95 backdrop-blur-md px-3 py-2.5 rounded-[20px] z-10 border-[3px] border-white flex items-center justify-center transition-transform group-hover:scale-105"
+                    style={{ boxShadow: '0 10px 20px rgba(0,0,0,0.1), inset 0 2px 5px rgba(255,255,255,0.8)' }}
                   >
-                    <h3 className={`text-[13px] md:text-[16px] font-black ${item.color} text-center leading-tight`}>
+                    <h3 className={`text-[13px] md:text-[16px] font-black ${item.color} text-center leading-tight drop-shadow-sm`}>
                       {item.title}
                     </h3>
                   </div>
                 </div>
+
+                {/* Sparkle Explosion when clicked */}
+                <AnimatePresence>
+                  {isClicked && <ClickSparkles />}
+                </AnimatePresence>
+                
+                {/* Custom Hover Glow Style injected via DOM */}
+                <style dangerouslySetInnerHTML={{__html: `
+                  .group:hover { box-shadow: 0px 25px 50px ${item.glow}, inset -12px -12px 25px rgba(0,0,0,0.15), inset 12px 12px 25px rgba(255,255,255,0.9) !important; }
+                `}} />
               </motion.div>
             );
           })}
         </div>
+
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes shimmer { 
+            0% { left: -100%; } 
+            20% { left: 200%; }
+            100% { left: 200%; }
+          }
+        `}} />
       </div>
     );
   }
@@ -168,33 +249,42 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
       <motion.div 
         initial={{ opacity: 0, y: -20, scale: 0.9 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        className="relative rounded-[40px] p-6 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 border-[6px] border-white/50"
+        className="relative rounded-[40px] p-6 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 border-[6px] border-white/60 overflow-hidden"
         style={{ 
-          backgroundColor: activeClay?.bgColor || '#e0c3fc',
+          background: activeClay?.bgGradient || 'linear-gradient(135deg, #e0c3fc, #8ec5fc)',
           boxShadow: `
-            15px 20px 30px rgba(0,0,0,0.15), 
-            inset -12px -12px 25px rgba(0,0,0,0.12), 
-            inset 12px 12px 25px rgba(255,255,255,0.8)
+            0px 25px 50px rgba(0,0,0,0.2), 
+            inset -15px -15px 30px rgba(0,0,0,0.15), 
+            inset 15px 15px 30px rgba(255,255,255,0.9)
           `
         }}
       >
+        <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }} />
+
         <div className="relative flex flex-col sm:flex-row items-center sm:items-start gap-4 z-10 w-full">
           {/* Back Button */}
           <button 
             onClick={onBackToCategories}
-            className="w-14 h-14 rounded-full bg-white border-[4px] border-white shadow-[5px_5px_15px_rgba(0,0,0,0.1),inset_2px_2px_5px_rgba(255,255,255,0.9)] flex items-center justify-center text-gray-600 active:scale-95 transition-all self-start sm:self-center shrink-0 cursor-pointer"
+            className="w-14 h-14 rounded-full bg-white border-[4px] border-white shadow-[0_10px_20px_rgba(0,0,0,0.15),inset_2px_2px_5px_rgba(255,255,255,0.9)] flex items-center justify-center text-gray-600 hover:scale-110 active:scale-95 transition-all self-start sm:self-center shrink-0 cursor-pointer"
           >
             <ArrowRight className="w-8 h-8" />
           </button>
           
           <div className="text-center sm:text-right flex-1">
-            <span className={`inline-block text-xs font-black bg-white/70 px-4 py-1.5 rounded-full mb-3 shadow-inner ${activeClay?.color}`}>
+            <span className={`inline-block text-xs font-black bg-white/80 backdrop-blur-md px-4 py-1.5 rounded-full mb-3 shadow-inner ${activeClay?.color}`}>
               {activeClay?.englishTitle}
             </span>
             <h2 className={`text-4xl sm:text-5xl font-black mb-3 drop-shadow-md ${activeClay?.color}`}>
-              {activeClay?.icon} {activeClay?.title}
+              <motion.span 
+                className="inline-block"
+                animate={{ rotate: [0, -10, 10, -10, 0] }}
+                transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+              >
+                {activeClay?.icon}
+              </motion.span> 
+              {' '} {activeClay?.title}
             </h2>
-            <p className="text-gray-800 font-bold text-sm sm:text-lg max-w-2xl bg-white/80 rounded-[20px] p-3 inline-block shadow-sm border border-white">
+            <p className="text-gray-800 font-bold text-sm sm:text-lg max-w-2xl bg-white/85 backdrop-blur-md rounded-[20px] p-3 inline-block shadow-[0_5px_15px_rgba(0,0,0,0.05)] border-2 border-white">
               اختر لعبة من هذه المجموعة للبدء في المغامرة!
             </p>
           </div>
@@ -210,12 +300,12 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
               initial={{ opacity: 0, y: 30, scale: 0.8 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ delay: index * 0.05, type: 'spring', stiffness: 250, damping: 20 }}
-              whileHover={{ y: -8, scale: 1.03 }}
+              whileHover={{ y: -8, scale: 1.04 }}
               whileTap={{ y: 5, scale: 0.95 }}
-              className="relative flex flex-col items-center text-center p-5 bg-white rounded-[40px] border-[5px] border-white cursor-pointer group"
+              className="relative flex flex-col items-center text-center p-5 bg-white/95 backdrop-blur-xl rounded-[40px] border-[5px] border-white cursor-pointer group"
               style={{
                 boxShadow: `
-                  10px 15px 25px rgba(0,0,0,0.1), 
+                  0px 15px 30px rgba(0,0,0,0.1), 
                   inset -8px -8px 20px rgba(0,0,0,0.05), 
                   inset 8px 8px 20px rgba(255,255,255,0.9)
                 `
@@ -225,22 +315,22 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
               <motion.div 
                 animate={{ y: [0, -6, 0] }}
                 transition={{ repeat: Infinity, duration: 2.5 + index * 0.2, ease: "easeInOut" }}
-                className="relative z-10 w-20 h-20 bg-gray-50 rounded-full border-[4px] border-white shadow-[inset_4px_4px_10px_rgba(0,0,0,0.05)] flex items-center justify-center text-5xl mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300"
+                className="relative z-10 w-20 h-20 bg-gray-50 rounded-full border-[4px] border-white shadow-[0_10px_20px_rgba(0,0,0,0.1),inset_4px_4px_10px_rgba(0,0,0,0.05)] flex items-center justify-center text-5xl mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300"
               >
                 <div style={{ filter: 'drop-shadow(0px 5px 5px rgba(0,0,0,0.15))' }}>
                   {game.emoji}
                 </div>
-                <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-full border-[3px] border-white flex items-center justify-center text-xl shadow-md">
+                <div className="absolute -bottom-2 -right-2 w-9 h-9 bg-white rounded-full border-[3px] border-white flex items-center justify-center text-xl shadow-lg">
                   {game.characterEmoji}
                 </div>
               </motion.div>
 
               <div className="relative z-10 flex flex-col flex-1 w-full items-center">
-                <span className="bg-gray-100 px-3 py-1 rounded-full text-[10px] font-black text-gray-500 shadow-inner mb-3">
+                <span className="bg-gray-100 px-3 py-1 rounded-full text-[10px] font-black text-gray-500 shadow-inner mb-3 border border-white">
                   {game.badge}
                 </span>
                 
-                <h3 className="text-lg sm:text-xl font-black text-gray-800 mb-2 drop-shadow-sm leading-tight">
+                <h3 className="text-lg sm:text-xl font-black text-gray-800 mb-2 drop-shadow-sm leading-tight group-hover:text-[#4D2B82] transition-colors">
                   {game.gameName}
                 </h3>
                 
@@ -249,15 +339,16 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
                 </p>
 
                 <div
-                  className="mt-auto w-full py-2.5 rounded-[20px] text-sm font-black shadow-md flex items-center justify-center gap-1.5 transition-all"
+                  className="mt-auto w-full py-2.5 rounded-[20px] text-sm font-black shadow-md flex items-center justify-center gap-1.5 transition-all relative overflow-hidden"
                   style={{
-                    backgroundColor: activeClay?.bgColor || '#f0f0f0',
+                    background: activeClay?.bgGradient || '#f0f0f0',
                     color: activeClay?.color || '#333',
                     boxShadow: `0 5px 0px rgba(0,0,0,0.1)`
                   }}
                 >
-                  <Play className="w-5 h-5 fill-current" />
-                  {game.id === 'quran' ? 'احفظ الآن!' : 'ابدأ اللعب!'}
+                  <div className="absolute top-0 left-[-100%] w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-[-20deg] group-hover:animate-[shimmer_1s_infinite]" />
+                  <Play className="w-5 h-5 fill-current relative z-10" />
+                  <span className="relative z-10">{game.id === 'quran' ? 'احفظ الآن!' : 'ابدأ اللعب!'}</span>
                 </div>
               </div>
             </motion.div>
