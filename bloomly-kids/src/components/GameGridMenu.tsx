@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, ArrowRight } from 'lucide-react';
+import { Play, ArrowRight, ArrowLeft } from 'lucide-react';
 import { islandsData } from './LearningPathMap';
 import { SproutMascot } from './GameZone';
 import { categoriesData } from './CategoriesData';
@@ -48,92 +48,105 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
   const coloringBox = categoriesData.find(c => c.id === 'coloring');
   const habitsBox = categoriesData.find(c => c.id === 'habits');
 
-  // The Living Blobs Data (Mosaic Layout)
-  const blobItems = [
-    { id: 'farm', title: 'مزرعتي السحرية', englishTitle: 'MY FARM', icon: farmBox?.icon || '🚜', action: () => onSelectCategory?.('farm'), bgFrom: '#a8ff78', bgTo: '#78ffd6', color: 'text-green-800', span: 'col-span-2 row-span-2 min-h-[300px]' },
-    { id: 'island_map', title: 'خريطة الجزيرة', englishTitle: 'ISLAND MAP', icon: '🗺️', action: onOpenMap, bgFrom: '#11998e', bgTo: '#38ef7d', color: 'text-emerald-900', span: 'col-span-1 row-span-1 min-h-[140px]' },
-    { id: 'fun_games', title: 'ألعاب ومرح', englishTitle: 'FUN GAMES', icon: funGamesBox?.icon || '🎈', action: () => onSelectCategory?.('fun_games'), bgFrom: '#a18cd1', bgTo: '#fbc2eb', color: 'text-purple-900', span: 'col-span-1 row-span-1 min-h-[140px]' },
-    { id: 'stories', title: 'هيا نقرأ', englishTitle: 'LET\'S READ', icon: storiesBox?.icon || '📖', action: () => onSelectCategory?.('stories'), bgFrom: '#e0c3fc', bgTo: '#8ec5fc', color: 'text-indigo-900', span: 'col-span-2 row-span-1 min-h-[140px]' },
-    { id: 'math', title: 'أرقام وحساب', englishTitle: 'MATH', icon: mathBox?.icon || '🔢', action: () => onSelectCategory?.('math'), bgFrom: '#a1c4fd', bgTo: '#c2e9fb', color: 'text-blue-900', span: 'col-span-1 row-span-2 min-h-[300px]' },
-    { id: 'kitchen', title: 'المطبخ الصغير', englishTitle: 'KITCHEN', icon: kitchenBox?.icon || '🍳', action: () => onSelectCategory?.('kitchen'), bgFrom: '#ffecd2', bgTo: '#fcb69f', color: 'text-red-900', span: 'col-span-1 row-span-1 min-h-[140px]' },
-    { id: 'arabic', title: 'حروفي العربية', englishTitle: 'ARABIC', icon: arabicBox?.icon || 'أ', action: () => onSelectCategory?.('arabic'), bgFrom: '#f6d365', bgTo: '#fda085', color: 'text-orange-900', span: 'col-span-1 row-span-1 min-h-[140px]' },
-    { id: 'english', title: 'حروفي الإنجليزية', englishTitle: 'ENGLISH', icon: englishBox?.icon || 'A', action: () => onSelectCategory?.('english'), bgFrom: '#ff9a9e', bgTo: '#fecfef', color: 'text-pink-900', span: 'col-span-1 row-span-1 min-h-[140px]' },
-    { id: 'coloring', title: 'لوّن وارسم', englishTitle: 'COLORING', icon: coloringBox?.icon || '🎨', action: () => onSelectCategory?.('coloring'), bgFrom: '#84fab0', bgTo: '#8fd3f4', color: 'text-teal-900', span: 'col-span-2 row-span-1 min-h-[140px]' },
-    { id: 'habits', title: 'عادات صحية', englishTitle: 'HABITS', icon: habitsBox?.icon || '🧼', action: () => onSelectCategory?.('habits'), bgFrom: '#cfd9df', bgTo: '#e2ebf0', color: 'text-slate-800', span: 'col-span-1 row-span-1 min-h-[140px]' },
-    { id: 'parents', title: 'أولياء الأمور', englishTitle: 'PARENTS AREA', icon: '👨‍👩‍👧‍👦', action: onOpenParents, bgFrom: '#4facfe', bgTo: '#00f2fe', color: 'text-cyan-900', span: 'col-span-1 row-span-1 min-h-[140px]' },
-    { id: 'about_us', title: 'بنعرف عن نفسنا', englishTitle: 'ABOUT US', icon: 'ℹ️', action: onOpenAbout, bgFrom: '#fccb90', bgTo: '#d57eeb', color: 'text-fuchsia-900', span: 'col-span-2 row-span-1 min-h-[140px]' },
+  // Solid, vibrant colors for the "Clay/Toy" material look
+  const clayItems = [
+    { id: 'farm', title: 'مزرعتي السحرية', englishTitle: 'MY FARM', icon: farmBox?.icon || '🚜', action: () => onSelectCategory?.('farm'), bgColor: '#a6f366', color: 'text-green-900' },
+    { id: 'island_map', title: 'خريطة الجزيرة', englishTitle: 'ISLAND MAP', icon: '🗺️', action: onOpenMap, bgColor: '#4dd2ff', color: 'text-cyan-900' },
+    { id: 'stories', title: 'هيا نقرأ', englishTitle: 'LET\'S READ', icon: storiesBox?.icon || '📖', action: () => onSelectCategory?.('stories'), bgColor: '#c68cff', color: 'text-purple-900' },
+    { id: 'math', title: 'أرقام وحساب', englishTitle: 'MATH', icon: mathBox?.icon || '🔢', action: () => onSelectCategory?.('math'), bgColor: '#ff8c42', color: 'text-orange-950' },
+    { id: 'arabic', title: 'حروفي العربية', englishTitle: 'ARABIC', icon: arabicBox?.icon || 'أ', action: () => onSelectCategory?.('arabic'), bgColor: '#ffd11a', color: 'text-yellow-900' },
+    { id: 'english', title: 'حروفي الإنجليزية', englishTitle: 'ENGLISH', icon: englishBox?.icon || 'A', action: () => onSelectCategory?.('english'), bgColor: '#ff7eb3', color: 'text-pink-900' },
+    { id: 'fun_games', title: 'ألعاب ومرح', englishTitle: 'FUN GAMES', icon: funGamesBox?.icon || '🎈', action: () => onSelectCategory?.('fun_games'), bgColor: '#9999ff', color: 'text-indigo-900' },
+    { id: 'kitchen', title: 'المطبخ الصغير', englishTitle: 'KITCHEN', icon: kitchenBox?.icon || '🍳', action: () => onSelectCategory?.('kitchen'), bgColor: '#ffa366', color: 'text-orange-900' },
+    { id: 'coloring', title: 'لوّن وارسم', englishTitle: 'COLORING', icon: coloringBox?.icon || '🎨', action: () => onSelectCategory?.('coloring'), bgColor: '#4df0a3', color: 'text-emerald-900' },
+    { id: 'habits', title: 'عادات صحية', englishTitle: 'HABITS', icon: habitsBox?.icon || '🧼', action: () => onSelectCategory?.('habits'), bgColor: '#e6f2ff', color: 'text-slate-800' },
+    { id: 'parents', title: 'أولياء الأمور', englishTitle: 'PARENTS AREA', icon: '👨‍👩‍👧‍👦', action: onOpenParents, bgColor: '#66e0ff', color: 'text-cyan-900' },
+    { id: 'about_us', title: 'عن التطبيق', englishTitle: 'ABOUT US', icon: 'ℹ️', action: onOpenAbout, bgColor: '#ffb3e6', color: 'text-fuchsia-900' },
   ];
 
-  // View 1: The Living Blobs Mosaic
+  // View 1: 3D Claymorphism Symmetrical Grid
   if (!activeCategory) {
     return (
       <div className="flex flex-col w-full min-h-screen relative z-10 select-none overflow-x-hidden justify-start items-center bg-transparent">
         
         {/* Top Profile / Coins Bar */}
-        <div className="flex justify-between items-center mb-6 mt-6 w-full max-w-7xl mx-auto px-4 z-50">
-          <div className="flex items-center gap-3 bg-white/60 backdrop-blur-md p-2 pr-4 rounded-full border-[3px] border-white shadow-[0_8px_20px_rgba(0,0,0,0.1)]">
-            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white bg-white">
+        <div className="flex justify-between items-center mb-8 mt-6 w-full max-w-6xl mx-auto px-4 z-50">
+          <div 
+            className="flex items-center gap-3 bg-white/70 backdrop-blur-md p-2 pr-4 rounded-[30px] border-4 border-white"
+            style={{ boxShadow: '10px 10px 20px rgba(0,0,0,0.1), inset 4px 4px 10px rgba(255,255,255,0.8)' }}
+          >
+            <div className="w-14 h-14 rounded-full overflow-hidden border-[3px] border-white bg-white shadow-inner">
               <SproutMascot className="w-full h-full" state="idle" />
             </div>
             <div className="text-right text-[#4D2B82]">
-              <h3 className="text-sm font-black">
+              <h3 className="text-sm font-black drop-shadow-sm">
                 {childProfile?.name || 'البطل السحري'}
               </h3>
-              <span className="text-[10px] font-bold text-white bg-[#4D2B82]/80 px-2 py-0.5 rounded-full">
+              <span className="text-[11px] font-bold text-white bg-[#4D2B82]/90 px-3 py-0.5 rounded-full shadow-inner block mt-1">
                 {childProfile?.age ? `${childProfile.age} سنوات` : '٥ سنوات'}
               </span>
             </div>
-            <div className="bg-gradient-to-r from-yellow-400 to-amber-500 text-white font-black text-xs px-3 py-1.5 rounded-full flex items-center gap-1 border-2 border-yellow-300 shadow-md mr-2">
-              <span>⭐</span>
-              <span>{globalStars}</span>
+            <div className="bg-yellow-400 text-yellow-900 font-black text-sm px-4 py-2 rounded-full flex items-center gap-1.5 border-[3px] border-white shadow-md ml-2 mr-3 relative">
+              <span className="text-lg absolute -right-3 -top-2">⭐</span>
+              <span className="pl-1">{globalStars}</span>
             </div>
           </div>
         </div>
 
-        {/* The Magic Blobs Grid */}
-        <div className="w-full max-w-5xl mx-auto px-4 pb-24 grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 auto-rows-auto">
-          {blobItems.map((item, index) => {
-            // Alternating organic shapes
-            const radiusAnim = index % 2 === 0 
-              ? ["40% 60% 70% 30% / 40% 50% 60% 50%", "60% 40% 30% 70% / 60% 50% 40% 50%", "40% 60% 70% 30% / 40% 50% 60% 50%"]
-              : ["50% 50% 30% 70% / 50% 60% 40% 40%", "40% 60% 70% 30% / 60% 50% 40% 50%", "50% 50% 30% 70% / 50% 60% 40% 40%"];
-
+        {/* The Symmetrical Clay Grid */}
+        <div className="w-full max-w-6xl mx-auto px-4 pb-24 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 auto-rows-fr">
+          {clayItems.map((item, index) => {
             return (
               <motion.div
                 key={item.id}
-                layoutId={`magic-blob-container-${item.id}`} // The hero magic layout connection
-                className={`relative cursor-pointer flex flex-col items-center justify-center p-6 border-[4px] border-white/80 shadow-[0_15px_40px_rgba(0,0,0,0.15)] group overflow-hidden ${item.span}`}
-                animate={{ borderRadius: radiusAnim, y: [0, -8, 0] }}
+                initial={{ opacity: 0, y: 30, scale: 0.8 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
                 transition={{ 
-                  borderRadius: { repeat: Infinity, duration: 6 + index * 0.2, ease: "easeInOut" },
-                  y: { repeat: Infinity, duration: 4 + index * 0.3, ease: "easeInOut" }
+                  delay: index * 0.05, 
+                  type: 'spring', 
+                  stiffness: 250, 
+                  damping: 20 
                 }}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ y: -8, scale: 1.03 }}
+                whileTap={{ y: 5, scale: 0.95 }}
+                className="relative cursor-pointer flex flex-col items-center justify-center p-6 md:p-8 rounded-[40px] border-[5px] border-white/40 group w-full aspect-[4/5] md:aspect-square"
                 style={{
-                  background: `linear-gradient(135deg, ${item.bgFrom}, ${item.bgTo})`,
-                  backdropFilter: 'blur(10px)'
+                  backgroundColor: item.bgColor,
+                  // The magic of Claymorphism: Outer drop shadow + Inner dark shadow + Inner light shadow
+                  boxShadow: `
+                    12px 15px 25px rgba(0,0,0,0.15), 
+                    inset -10px -10px 20px rgba(0,0,0,0.12), 
+                    inset 10px 10px 20px rgba(255,255,255,0.8)
+                  `
                 }}
                 onClick={() => {
                   speakArabic(item.title);
                   if (item.action) item.action();
                 }}
               >
-                {/* Internal Shimmer */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-white/0 via-white/40 to-white/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
-
+                {/* Floating Icon */}
                 <motion.div 
-                  className={`drop-shadow-[0_10px_10px_rgba(0,0,0,0.2)] z-10 ${item.span.includes('row-span-2') ? 'text-8xl md:text-9xl' : 'text-6xl md:text-7xl'}`}
-                  animate={{ rotate: [0, 6, -6, 0] }}
-                  transition={{ repeat: Infinity, duration: 3.5 + index * 0.1, ease: "easeInOut" }}
+                  className="text-7xl md:text-8xl mb-6 relative z-10"
+                  animate={{ y: [0, -8, 0] }}
+                  transition={{ repeat: Infinity, duration: 3 + (index % 3), ease: "easeInOut" }}
+                  style={{ filter: 'drop-shadow(0px 15px 10px rgba(0,0,0,0.15))' }}
                 >
                   {item.icon}
                 </motion.div>
                 
-                <div className="mt-4 bg-white/95 backdrop-blur-md px-4 py-2 rounded-full shadow-[0_5px_15px_rgba(0,0,0,0.1)] z-10 pointer-events-none border-2 border-white/50">
-                  <h3 className={`text-sm md:text-lg font-black ${item.color} whitespace-nowrap`}>
-                    {item.title}
-                  </h3>
+                {/* Text Badge */}
+                <div className="mt-auto flex flex-col items-center w-full">
+                  <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-black/40 mb-1">
+                    {item.englishTitle}
+                  </span>
+                  <div 
+                    className="w-full bg-white/95 backdrop-blur-sm px-3 py-2 rounded-[20px] z-10 border-2 border-white flex items-center justify-center"
+                    style={{ boxShadow: '0 8px 15px rgba(0,0,0,0.05), inset 0 2px 5px rgba(255,255,255,0.8)' }}
+                  >
+                    <h3 className={`text-[13px] md:text-[16px] font-black ${item.color} text-center leading-tight`}>
+                      {item.title}
+                    </h3>
+                  </div>
                 </div>
               </motion.div>
             );
@@ -143,42 +156,45 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
     );
   }
 
-  // View 2: Games inside the selected Category (The Hero Expanded State)
+  // View 2: Games inside the selected Category
   const currentCategory = categoriesData.find(c => c.id === activeCategory);
-  const activeBlob = blobItems.find(b => b.id === activeCategory);
   const categoryGames = islandsData.filter(game => currentCategory?.games.includes(game.id));
+  const activeClay = clayItems.find(c => c.id === activeCategory);
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-6xl mx-auto px-4 py-6 relative z-10 min-h-screen bg-transparent justify-start">
+    <div className="flex flex-col gap-8 w-full max-w-6xl mx-auto px-4 py-8 relative z-10 min-h-screen bg-transparent justify-start">
       
-      {/* Category Header (The Expanded Blob!) */}
+      {/* Category Header */}
       <motion.div 
-        layoutId={`magic-blob-container-${activeCategory}`}
-        className="relative p-6 flex items-center justify-between shadow-2xl border-[4px] border-white overflow-hidden rounded-[40px] md:rounded-[50px] min-h-[160px]"
+        initial={{ opacity: 0, y: -20, scale: 0.9 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        className="relative rounded-[40px] p-6 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 border-[6px] border-white/50"
         style={{ 
-          background: `linear-gradient(135deg, ${activeBlob?.bgFrom || '#e0c3fc'}, ${activeBlob?.bgTo || '#8ec5fc'})`,
+          backgroundColor: activeClay?.bgColor || '#e0c3fc',
+          boxShadow: `
+            15px 20px 30px rgba(0,0,0,0.15), 
+            inset -12px -12px 25px rgba(0,0,0,0.12), 
+            inset 12px 12px 25px rgba(255,255,255,0.8)
+          `
         }}
       >
-        {/* Soft white overlay so text is highly readable */}
-        <div className="absolute inset-0 bg-white/50 backdrop-blur-sm pointer-events-none" />
-
         <div className="relative flex flex-col sm:flex-row items-center sm:items-start gap-4 z-10 w-full">
           {/* Back Button */}
           <button 
             onClick={onBackToCategories}
-            className="w-14 h-14 rounded-full bg-white hover:bg-gray-50 border-4 border-white shadow-[0_5px_15px_rgba(0,0,0,0.15)] flex items-center justify-center text-gray-600 active:scale-95 transition-all self-start sm:self-center shrink-0 cursor-pointer"
+            className="w-14 h-14 rounded-full bg-white border-[4px] border-white shadow-[5px_5px_15px_rgba(0,0,0,0.1),inset_2px_2px_5px_rgba(255,255,255,0.9)] flex items-center justify-center text-gray-600 active:scale-95 transition-all self-start sm:self-center shrink-0 cursor-pointer"
           >
             <ArrowRight className="w-8 h-8" />
           </button>
           
           <div className="text-center sm:text-right flex-1">
-            <span className={`inline-block text-xs font-black bg-white/90 px-4 py-1.5 rounded-full mb-2 shadow-sm ${activeBlob?.color}`}>
-              {activeBlob?.englishTitle}
+            <span className={`inline-block text-xs font-black bg-white/70 px-4 py-1.5 rounded-full mb-3 shadow-inner ${activeClay?.color}`}>
+              {activeClay?.englishTitle}
             </span>
-            <h2 className={`text-3xl sm:text-4xl font-black mb-2 drop-shadow-md ${activeBlob?.color}`}>
-              {activeBlob?.icon} {activeBlob?.title}
+            <h2 className={`text-4xl sm:text-5xl font-black mb-3 drop-shadow-md ${activeClay?.color}`}>
+              {activeClay?.icon} {activeClay?.title}
             </h2>
-            <p className="text-gray-800 font-bold text-sm sm:text-lg max-w-2xl bg-white/70 backdrop-blur-md rounded-2xl p-3 inline-block shadow-sm border border-white/50">
+            <p className="text-gray-800 font-bold text-sm sm:text-lg max-w-2xl bg-white/80 rounded-[20px] p-3 inline-block shadow-sm border border-white">
               اختر لعبة من هذه المجموعة للبدء في المغامرة!
             </p>
           </div>
@@ -186,58 +202,59 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
       </motion.div>
 
       {/* Grid of Games for this category */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6 pb-16 mt-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6 pb-16">
         {categoryGames.map((game, index) => {
-          const gradients = [
-            "from-[#ff9a9e]/90 to-[#fecfef]/90 border-pink-300 text-pink-800", 
-            "from-[#a1c4fd]/90 to-[#c2e9fb]/90 border-blue-300 text-blue-800", 
-            "from-[#ffecd2]/90 to-[#fcb69f]/90 border-orange-300 text-orange-800", 
-            "from-[#84fab0]/90 to-[#8fd3f4]/90 border-emerald-300 text-emerald-800", 
-            "from-[#e0c3fc]/90 to-[#8ec5fc]/90 border-indigo-300 text-indigo-800", 
-            "from-[#fccb90]/90 to-[#d57eeb]/90 border-purple-300 text-purple-800", 
-          ];
-          const style = gradients[index % gradients.length];
-          const [bgFrom, bgTo, borderColor, textColor] = style.split(' ');
-
           return (
             <motion.div
               key={game.id}
-              initial={{ opacity: 0, y: 30, scale: 0.9 }}
+              initial={{ opacity: 0, y: 30, scale: 0.8 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ delay: index * 0.05, type: 'spring', stiffness: 250, damping: 20 }}
               whileHover={{ y: -8, scale: 1.03 }}
-              whileTap={{ scale: 0.95 }}
-              className={`relative flex flex-col items-center text-center p-5 bg-gradient-to-br ${bgFrom} ${bgTo} backdrop-blur-xl rounded-[36px] border-[4px] border-white shadow-[0_12px_25px_rgba(0,0,0,0.12)] cursor-pointer overflow-hidden group`}
+              whileTap={{ y: 5, scale: 0.95 }}
+              className="relative flex flex-col items-center text-center p-5 bg-white rounded-[40px] border-[5px] border-white cursor-pointer group"
+              style={{
+                boxShadow: `
+                  10px 15px 25px rgba(0,0,0,0.1), 
+                  inset -8px -8px 20px rgba(0,0,0,0.05), 
+                  inset 8px 8px 20px rgba(255,255,255,0.9)
+                `
+              }}
               onClick={() => onSelectGame(game.id)}
             >
-              <div className="absolute inset-0 bg-gradient-to-b from-white/50 to-transparent h-1/2 pointer-events-none rounded-t-[32px]" />
-
               <motion.div 
                 animate={{ y: [0, -6, 0] }}
                 transition={{ repeat: Infinity, duration: 2.5 + index * 0.2, ease: "easeInOut" }}
-                className="relative z-10 w-20 h-20 bg-white/95 backdrop-blur-md rounded-full border-4 border-white shadow-[0_8px_20px_rgba(0,0,0,0.1)] flex items-center justify-center text-5xl mb-4 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300"
+                className="relative z-10 w-20 h-20 bg-gray-50 rounded-full border-[4px] border-white shadow-[inset_4px_4px_10px_rgba(0,0,0,0.05)] flex items-center justify-center text-5xl mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform duration-300"
               >
-                {game.emoji}
+                <div style={{ filter: 'drop-shadow(0px 5px 5px rgba(0,0,0,0.15))' }}>
+                  {game.emoji}
+                </div>
                 <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-white rounded-full border-[3px] border-white flex items-center justify-center text-xl shadow-md">
                   {game.characterEmoji}
                 </div>
               </motion.div>
 
               <div className="relative z-10 flex flex-col flex-1 w-full items-center">
-                <span className="bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-black text-gray-700 shadow-sm mb-3 border border-gray-100">
+                <span className="bg-gray-100 px-3 py-1 rounded-full text-[10px] font-black text-gray-500 shadow-inner mb-3">
                   {game.badge}
                 </span>
                 
-                <h3 className={`text-lg sm:text-xl font-black ${textColor} mb-2 drop-shadow-sm leading-tight`}>
+                <h3 className="text-lg sm:text-xl font-black text-gray-800 mb-2 drop-shadow-sm leading-tight">
                   {game.gameName}
                 </h3>
                 
-                <p className="text-gray-800 font-bold text-[10px] sm:text-xs leading-relaxed mb-5 opacity-85 px-1 line-clamp-2">
+                <p className="text-gray-500 font-bold text-[10px] sm:text-xs leading-relaxed mb-5 px-1 line-clamp-2">
                   {game.quest}
                 </p>
 
                 <div
-                  className={`mt-auto w-full py-2.5 rounded-2xl bg-white border-b-[5px] border-black/10 text-sm font-black ${textColor} shadow-md group-hover:bg-gray-50 group-active:border-b-0 group-active:translate-y-[5px] transition-all flex items-center justify-center gap-1.5`}
+                  className="mt-auto w-full py-2.5 rounded-[20px] text-sm font-black shadow-md flex items-center justify-center gap-1.5 transition-all"
+                  style={{
+                    backgroundColor: activeClay?.bgColor || '#f0f0f0',
+                    color: activeClay?.color || '#333',
+                    boxShadow: `0 5px 0px rgba(0,0,0,0.1)`
+                  }}
                 >
                   <Play className="w-5 h-5 fill-current" />
                   {game.id === 'quran' ? 'احفظ الآن!' : 'ابدأ اللعب!'}
