@@ -4,6 +4,7 @@ import { InteractiveGarden } from "./components/InteractiveGarden";
 import { GameZone } from "./components/GameZone";
 import { IntroScreen } from "./components/IntroScreen";
 import { RegisterScreen } from "./components/RegisterScreen";
+import { BoyAvatar, GirlAvatar } from "./components/Avatars";
 import MagicGarden from "./components/MagicGarden";
 import { MagicalForestBackground } from "./components/MagicalForestBackground";
 
