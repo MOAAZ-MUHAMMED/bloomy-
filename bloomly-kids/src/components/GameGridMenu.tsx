@@ -87,20 +87,20 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
   const coloringBox = categoriesData.find(c => c.id === 'coloring');
   const habitsBox = categoriesData.find(c => c.id === 'habits');
 
-  // Upgraded Premium Colors (Gradients)
+  // Upgraded Premium Colors (Candy Pastels / Macaron Style)
   const clayItems = [
-    { id: 'farm', title: 'مزرعتي السحرية', englishTitle: 'MY FARM', icon: farmBox?.icon || '🚜', action: () => onSelectCategory?.('farm'), bgGradient: 'linear-gradient(135deg, #a6f366, #79d732)', color: 'text-green-900', glow: 'rgba(121,215,50,0.5)' },
-    { id: 'island_map', title: 'خريطة الجزيرة', englishTitle: 'ISLAND MAP', icon: '🗺️', action: onOpenMap, bgGradient: 'linear-gradient(135deg, #4dd2ff, #1ab2ff)', color: 'text-cyan-900', glow: 'rgba(26,178,255,0.5)' },
-    { id: 'stories', title: 'هيا نقرأ', englishTitle: 'LET\'S READ', icon: storiesBox?.icon || '📖', action: () => onSelectCategory?.('stories'), bgGradient: 'linear-gradient(135deg, #d8a6ff, #b366ff)', color: 'text-purple-900', glow: 'rgba(179,102,255,0.5)' },
-    { id: 'math', title: 'أرقام وحساب', englishTitle: 'MATH', icon: mathBox?.icon || '🔢', action: () => onSelectCategory?.('math'), bgGradient: 'linear-gradient(135deg, #ffa666, #ff7a29)', color: 'text-orange-950', glow: 'rgba(255,122,41,0.5)' },
-    { id: 'arabic', title: 'حروفي العربية', englishTitle: 'ARABIC', icon: arabicBox?.icon || 'أ', action: () => onSelectCategory?.('arabic'), bgGradient: 'linear-gradient(135deg, #ffe066, #ffcc00)', color: 'text-yellow-900', glow: 'rgba(255,204,0,0.5)' },
-    { id: 'english', title: 'حروفي الإنجليزية', englishTitle: 'ENGLISH', icon: englishBox?.icon || 'A', action: () => onSelectCategory?.('english'), bgGradient: 'linear-gradient(135deg, #ff99c2, #ff5c99)', color: 'text-pink-900', glow: 'rgba(255,92,153,0.5)' },
-    { id: 'fun_games', title: 'ألعاب ومرح', englishTitle: 'FUN GAMES', icon: funGamesBox?.icon || '🎈', action: () => onSelectCategory?.('fun_games'), bgGradient: 'linear-gradient(135deg, #b3b3ff, #8080ff)', color: 'text-indigo-900', glow: 'rgba(128,128,255,0.5)' },
-    { id: 'kitchen', title: 'المطبخ الصغير', englishTitle: 'KITCHEN', icon: kitchenBox?.icon || '🍳', action: () => onSelectCategory?.('kitchen'), bgGradient: 'linear-gradient(135deg, #ffb880, #ff8f40)', color: 'text-orange-900', glow: 'rgba(255,143,64,0.5)' },
-    { id: 'coloring', title: 'لوّن وارسم', englishTitle: 'COLORING', icon: coloringBox?.icon || '🎨', action: () => onSelectCategory?.('coloring'), bgGradient: 'linear-gradient(135deg, #7af4ba, #33eb96)', color: 'text-emerald-900', glow: 'rgba(51,235,150,0.5)' },
-    { id: 'habits', title: 'عادات صحية', englishTitle: 'HABITS', icon: habitsBox?.icon || '🧼', action: () => onSelectCategory?.('habits'), bgGradient: 'linear-gradient(135deg, #f2f7ff, #cce0ff)', color: 'text-slate-800', glow: 'rgba(204,224,255,0.5)' },
-    { id: 'parents', title: 'أولياء الأمور', englishTitle: 'PARENTS AREA', icon: '👨‍👩‍👧‍👦', action: onOpenParents, bgGradient: 'linear-gradient(135deg, #8ce6ff, #33ccff)', color: 'text-cyan-900', glow: 'rgba(51,204,255,0.5)' },
-    { id: 'about_us', title: 'عن التطبيق', englishTitle: 'ABOUT US', icon: 'ℹ️', action: onOpenAbout, bgGradient: 'linear-gradient(135deg, #ffcceb, #ff99d6)', color: 'text-fuchsia-900', glow: 'rgba(255,153,214,0.5)' },
+    { id: 'farm', title: 'مزرعتي السحرية', englishTitle: 'MY FARM', icon: farmBox?.icon || '🚜', action: () => onSelectCategory?.('farm'), bgGradient: 'linear-gradient(135deg, #d4fc79, #96e6a1)', color: 'text-green-900', glow: 'rgba(150,230,161,0.6)' },
+    { id: 'island_map', title: 'خريطة الجزيرة', englishTitle: 'ISLAND MAP', icon: '🗺️', action: onOpenMap, bgGradient: 'linear-gradient(135deg, #a1c4fd, #c2e9fb)', color: 'text-cyan-900', glow: 'rgba(161,196,253,0.6)' },
+    { id: 'stories', title: 'هيا نقرأ', englishTitle: 'LET\'S READ', icon: storiesBox?.icon || '📖', action: () => onSelectCategory?.('stories'), bgGradient: 'linear-gradient(135deg, #e0c3fc, #8ec5fc)', color: 'text-indigo-900', glow: 'rgba(224,195,252,0.6)' },
+    { id: 'math', title: 'أرقام وحساب', englishTitle: 'MATH', icon: mathBox?.icon || '🔢', action: () => onSelectCategory?.('math'), bgGradient: 'linear-gradient(135deg, #ffecd2, #fcb69f)', color: 'text-orange-950', glow: 'rgba(252,182,159,0.6)' },
+    { id: 'arabic', title: 'حروفي العربية', englishTitle: 'ARABIC', icon: arabicBox?.icon || 'أ', action: () => onSelectCategory?.('arabic'), bgGradient: 'linear-gradient(135deg, #f6d365, #fda085)', color: 'text-orange-900', glow: 'rgba(253,160,133,0.6)' },
+    { id: 'english', title: 'حروفي الإنجليزية', englishTitle: 'ENGLISH', icon: englishBox?.icon || 'A', action: () => onSelectCategory?.('english'), bgGradient: 'linear-gradient(135deg, #ff9a9e, #fecfef)', color: 'text-pink-900', glow: 'rgba(255,154,158,0.6)' },
+    { id: 'fun_games', title: 'ألعاب ومرح', englishTitle: 'FUN GAMES', icon: funGamesBox?.icon || '🎈', action: () => onSelectCategory?.('fun_games'), bgGradient: 'linear-gradient(135deg, #a18cd1, #fbc2eb)', color: 'text-purple-900', glow: 'rgba(161,140,209,0.6)' },
+    { id: 'kitchen', title: 'المطبخ الصغير', englishTitle: 'KITCHEN', icon: kitchenBox?.icon || '🍳', action: () => onSelectCategory?.('kitchen'), bgGradient: 'linear-gradient(135deg, #fad0c4, #ffd1ff)', color: 'text-rose-900', glow: 'rgba(250,208,196,0.6)' },
+    { id: 'coloring', title: 'لوّن وارسم', englishTitle: 'COLORING', icon: coloringBox?.icon || '🎨', action: () => onSelectCategory?.('coloring'), bgGradient: 'linear-gradient(135deg, #84fab0, #8fd3f4)', color: 'text-teal-900', glow: 'rgba(132,250,176,0.6)' },
+    { id: 'habits', title: 'عادات صحية', englishTitle: 'HABITS', icon: habitsBox?.icon || '🧼', action: () => onSelectCategory?.('habits'), bgGradient: 'linear-gradient(135deg, #e0c3fc, #cfd9df)', color: 'text-slate-800', glow: 'rgba(224,195,252,0.6)' },
+    { id: 'parents', title: 'أولياء الأمور', englishTitle: 'PARENTS AREA', icon: '👨‍👩‍👧‍👦', action: onOpenParents, bgGradient: 'linear-gradient(135deg, #89f7fe, #66a6ff)', color: 'text-blue-900', glow: 'rgba(137,247,254,0.6)' },
+    { id: 'about_us', title: 'عن التطبيق', englishTitle: 'ABOUT US', icon: 'ℹ️', action: onOpenAbout, bgGradient: 'linear-gradient(135deg, #fccb90, #d57eeb)', color: 'text-fuchsia-900', glow: 'rgba(213,126,235,0.6)' },
   ];
 
   // View 1: 3D Premium Claymorphism Symmetrical Grid
