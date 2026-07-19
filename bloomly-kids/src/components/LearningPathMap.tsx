@@ -274,6 +274,149 @@ export const islandsData = [
     badge: "زراعة ورعاية",
     x: 70,
     y: 40
+  },
+  {
+    id: "arabicLetterTracing",
+    title: "تتبع الحروف السحري ✍️",
+    character: "🦉 البومة كوكو (المعلمة)",
+    characterEmoji: "🦉",
+    emoji: "✍️",
+    gameName: "تتبع الحروف السحري",
+    quest: "لنقم بتتبع الحروف العربية المضيئة لننير الظلام ونتعلم رسم الحروف!",
+    superpower: "رسم وكتابة الحروف العربية ببراعة! ✨",
+    badge: "لغة عربية",
+    x: 10,
+    y: 95
+  },
+  {
+    id: "arabicShadowMatch",
+    title: "مطابقة الظل 🦇",
+    character: "🦊 الثعلب فطن (المحقق)",
+    characterEmoji: "🦊",
+    emoji: "🦇",
+    gameName: "مطابقة الظل السحري",
+    quest: "هل يمكنك مساعدة الثعلب فطن في مطابقة الكلمة مع ظلها الصحيح؟",
+    superpower: "قوة الملاحظة ومعرفة الكلمات العربية! 🔍",
+    badge: "لغة عربية",
+    x: 30,
+    y: 95
+  },
+  {
+    id: "mathNumberTrain",
+    title: "قطار الأرقام 🚂",
+    character: "🐰 الأرنب سمسم",
+    characterEmoji: "🐰",
+    emoji: "🚂",
+    gameName: "قطار الأرقام السريع",
+    quest: "القطار على وشك الانطلاق! ضع الرقم الناقص في العربة ليكتمل التسلسل.",
+    superpower: "معرفة ترتيب الأرقام المنطقي! 🔢",
+    badge: "حساب وأرقام",
+    x: 50,
+    y: 95
+  },
+  {
+    id: "mathSpaceTower",
+    title: "برج الفضاء 🚀",
+    character: "👽 الفضائي زيكو",
+    characterEmoji: "👽",
+    emoji: "🚀",
+    gameName: "بناء برج الفضاء",
+    quest: "رتب المكعبات تصاعدياً لنبني منصة انطلاق الصاروخ السحري!",
+    superpower: "الترتيب التصاعدي وحساب الأحجام! 🏗️",
+    badge: "حساب وأرقام",
+    x: 70,
+    y: 95
+  },
+  {
+    id: "englishLetterTracing",
+    title: "English Tracing 🔤",
+    character: "🦁 الأسد سيمبا",
+    characterEmoji: "🦁",
+    emoji: "🔤",
+    gameName: "Magic English Tracing",
+    quest: "Let's trace the magic English letters together to make them glow!",
+    superpower: "Mastering the English Alphabet! ✨",
+    badge: "لغة إنجليزية",
+    x: 90,
+    y: 95
+  },
+  {
+    id: "englishColorCloud",
+    title: "Color Cloud 🌧️",
+    character: "🐼 الباندا فودي",
+    characterEmoji: "🐼",
+    emoji: "🌧️",
+    gameName: "Magic Color Cloud",
+    quest: "Match the English colors with the clouds to make it rain beautiful colors!",
+    superpower: "Knowing all colors in English! 🌈",
+    badge: "لغة إنجليزية",
+    x: 20,
+    y: 110
+  },
+  {
+    id: "kitchenSandwichMaker",
+    title: "صانع الساندوتشات 🥪",
+    character: "🐼 الشيف باندا",
+    characterEmoji: "🐼",
+    emoji: "🥪",
+    gameName: "صانع الساندوتشات العملاق",
+    quest: "صديقنا جائع! حضّر له الساندوتش بترتيب المكونات الصحيح ليفرح.",
+    superpower: "دقة الترتيب ومهارات الطبخ! 👨‍🍳",
+    badge: "مطبخ ووصفات",
+    x: 40,
+    y: 110
+  },
+  {
+    id: "kitchenBakingCake",
+    title: "خباز الكيك 🎂",
+    character: "🐰 الأرنب الخباز",
+    characterEmoji: "🐰",
+    emoji: "🎂",
+    gameName: "خباز الكيك المبدع",
+    quest: "قلّب العجين، واخبز الكيكة، ثم زينها بالكريمة والفواكه اللذيذة!",
+    superpower: "إبداع التزيين وصنع الحلويات! 🧁",
+    badge: "مطبخ ووصفات",
+    x: 60,
+    y: 110
+  },
+  {
+    id: "drawingSymmetry",
+    title: "رسم التماثل 🦋",
+    character: "🦋 الفراشة رسمة",
+    characterEmoji: "🦋",
+    emoji: "🦋",
+    gameName: "رسم النصف الآخر",
+    quest: "الفراشة ينقصها جناح! ارسم النصف المماثل تماماً لكي تطير بسلام.",
+    superpower: "التطابق والملاحظة الدقيقة! 🎨",
+    badge: "رسم وفنون",
+    x: 80,
+    y: 110
+  },
+  {
+    id: "funWhackAMole",
+    title: "اضرب الدودة 🐛",
+    character: "🦘 الكنغر قفاز",
+    characterEmoji: "🦘",
+    emoji: "🐛",
+    gameName: "اضرب الدودة الشقية",
+    quest: "الديدان الشقية تخرج من الحفر، اضربها بسرعة قبل أن تهرب لجمع النقاط!",
+    superpower: "سرعة البديهة والتركيز السريع! ⚡",
+    badge: "ألعاب ممتعة",
+    x: 30,
+    y: 125
+  },
+  {
+    id: "funHiddenCup",
+    title: "الأكواب السحرية 🪄",
+    character: "🦊 الثعلب فطن",
+    characterEmoji: "🦊",
+    emoji: "🪄",
+    gameName: "الأكواب السحرية المخفية",
+    quest: "ركز جيداً! الكرة تختبئ تحت الكوب، أين ذهبت بعد الخلط السريع؟",
+    superpower: "قوة الملاحظة والتركيز البصري! 👁️",
+    badge: "ألعاب ممتعة",
+    x: 70,
+    y: 125
   }
 ];
 
@@ -428,8 +571,8 @@ export default function LearningPathMap({
   const svgPathStr = islandsData.map((isl, idx) => `${idx === 0 ? 'M' : 'L'} ${isl.x} ${isl.y}`).join(' ');
 
   return (
-    <div className="w-full overflow-x-auto rounded-[36px] border-4 border-[#4D2B82] shadow-inner mb-8 bg-[#29B6F6] custom-scrollbar" style={{ minHeight: '600px' }} dir="rtl">
-      <div className="relative min-w-[1200px] h-[800px] md:h-[1200px] select-none cursor-default z-10" style={{
+    <div className="w-full overflow-x-auto rounded-[36px] border-4 border-[#4D2B82] shadow-inner mb-8 bg-[#29B6F6] custom-scrollbar" style={{ minHeight: '800px' }} dir="rtl">
+      <div className="relative min-w-[1200px] h-[1200px] md:h-[1800px] select-none cursor-default z-10" style={{
         backgroundImage: `radial-gradient(#0288D1 1.5px, transparent 1.5px), linear-gradient(to bottom, #29B6F6, #0288D1)`,
         backgroundSize: '24px 24px, 100% 100%'
       }}>

@@ -13,6 +13,19 @@ import MascotCharacter from "./MascotCharacter";
 import { GameGridMenu } from "./GameGridMenu";
 import LearningPathMap, { islandsData } from "./LearningPathMap";
 
+// New 11 minigames
+import ArabicLetterTracing from "./ArabicLetterTracing";
+import ArabicShadowMatch from "./ArabicShadowMatch";
+import MathNumberTrain from "./MathNumberTrain";
+import MathSpaceTower from "./MathSpaceTower";
+import EnglishLetterTracing from "./EnglishLetterTracing";
+import EnglishColorCloud from "./EnglishColorCloud";
+import KitchenSandwichMaker from "./KitchenSandwichMaker";
+import KitchenBakingCake from "./KitchenBakingCake";
+import DrawingSymmetry from "./DrawingSymmetry";
+import FunWhackAMole from "./FunWhackAMole";
+import FunHiddenCup from "./FunHiddenCup";
+
 export function SproutMascot({ className = "w-24 h-24", state = "idle" }: { className?: string; state?: "idle" | "happy" | "sad" | "talking" }) {
   const poseMap = {
     idle: "thinking" as const,
@@ -1027,7 +1040,14 @@ export function GameZone({
           setIsLoadingGame(false);
           setActiveGame(gameName);
           // Directly show Level Map without difficulty selection
-          if (gameName !== "quran" && gameName !== "stories") {
+          const directLaunchGames = [
+            "quran", "stories", "arabicLetterTracing", "arabicShadowMatch", 
+            "mathNumberTrain", "mathSpaceTower", "englishLetterTracing", 
+            "englishColorCloud", "kitchenSandwichMaker", "kitchenBakingCake", 
+            "drawingSymmetry", "funWhackAMole", "funHiddenCup"
+          ];
+          
+          if (!directLaunchGames.includes(gameName)) {
             if (propChildLevel) {
               setActiveDifficulty(propChildLevel as any);
               setEffectiveLevel(propChildLevel as any);
@@ -6858,6 +6878,41 @@ const startSpaceGame = () => {
           }}
         />
       )}
+      {/* --- NEW 11 MINIGAMES VIEWS --- */}
+      {activeGame === "arabicLetterTracing" && !showLevelMap && (
+        <ArabicLetterTracing onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
+      )}
+      {activeGame === "arabicShadowMatch" && !showLevelMap && (
+        <ArabicShadowMatch onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
+      )}
+      {activeGame === "mathNumberTrain" && !showLevelMap && (
+        <MathNumberTrain onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
+      )}
+      {activeGame === "mathSpaceTower" && !showLevelMap && (
+        <MathSpaceTower onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
+      )}
+      {activeGame === "englishLetterTracing" && !showLevelMap && (
+        <EnglishLetterTracing onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
+      )}
+      {activeGame === "englishColorCloud" && !showLevelMap && (
+        <EnglishColorCloud onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
+      )}
+      {activeGame === "kitchenSandwichMaker" && !showLevelMap && (
+        <KitchenSandwichMaker onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
+      )}
+      {activeGame === "kitchenBakingCake" && !showLevelMap && (
+        <KitchenBakingCake onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
+      )}
+      {activeGame === "drawingSymmetry" && !showLevelMap && (
+        <DrawingSymmetry onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
+      )}
+      {activeGame === "funWhackAMole" && !showLevelMap && (
+        <FunWhackAMole onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
+      )}
+      {activeGame === "funHiddenCup" && !showLevelMap && (
+        <FunHiddenCup onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
+      )}
+
 </section>
   );
 }
