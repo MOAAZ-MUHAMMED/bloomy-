@@ -26,6 +26,7 @@ import DrawingSymmetry from "./DrawingSymmetry";
 import FunWhackAMole from "./FunWhackAMole";
 import FunHiddenCup from "./FunHiddenCup";
 import KitchenMarketList from "./KitchenMarketList";
+import MathHungryCrocodile from "./MathHungryCrocodile";
 
 export function SproutMascot({ className = "w-24 h-24", state = "idle" }: { className?: string; state?: "idle" | "happy" | "sad" | "talking" }) {
   const poseMap = {
@@ -1045,7 +1046,7 @@ export function GameZone({
             "quran", "stories", "arabicLetterTracing", "arabicShadowMatch", 
             "mathNumberTrain", "mathSpaceTower", "englishLetterTracing", 
             "englishColorCloud", "kitchenSandwichMaker", "kitchenBakingCake", 
-            "drawingSymmetry", "funWhackAMole", "funHiddenCup", "kitchenMarketList"
+            "drawingSymmetry", "funWhackAMole", "funHiddenCup", "kitchenMarketList", "mathHungryCrocodile"
           ];
           
           if (!directLaunchGames.includes(gameName)) {
@@ -6915,6 +6916,9 @@ const startSpaceGame = () => {
       )}
       {activeGame === "kitchenMarketList" && !showLevelMap && (
         <KitchenMarketList onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
+      )}
+      {activeGame === "mathHungryCrocodile" && !showLevelMap && (
+        <MathHungryCrocodile onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
       )}
 
 </section>

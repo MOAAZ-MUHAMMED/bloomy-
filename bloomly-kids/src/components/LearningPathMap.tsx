@@ -430,6 +430,19 @@ export const islandsData = [
     badge: "مطبخ ووصفات",
     x: 50,
     y: 95
+  },
+  {
+    id: "mathHungryCrocodile",
+    title: "التمساح الجائع 🐊",
+    character: "🐊 التمساح كروكو",
+    characterEmoji: "🐊",
+    emoji: "🍗",
+    gameName: "التمساح الجائع للأرقام",
+    quest: "التمساح جائع جداً! دائمًا يفتح فمه ليأكل الرقم الأكبر، هل يمكنك مساعدته؟",
+    superpower: "مقارنة الأرقام ومهارة الأكبر والأصغر! 🐊",
+    badge: "حساب وأرقام",
+    x: 20,
+    y: 95
   }
 ];
 
