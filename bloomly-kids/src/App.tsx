@@ -7,6 +7,7 @@ import { RegisterScreen } from "./components/RegisterScreen";
 import { BoyAvatar, GirlAvatar } from "./components/Avatars";
 import MagicGarden from "./components/MagicGarden";
 import { MagicalForestBackground } from "./components/MagicalForestBackground";
+import ParentsDashboard from "./components/ParentsDashboard";
 
 import { 
   Sparkles, 
@@ -60,6 +61,20 @@ export default function App() {
     maxIslandUnlocked?: number;
     lastLoginDate?: string;
     playtimeMinutes?: number;
+    dailyTimeLimit?: number; // in minutes
+    bedTime?: string; // "HH:MM"
+    activityLog?: Array<{ id: string, timestamp: number, title: string, stars: number, category: string }>;
+    categoryProgress?: {
+      arabic: number;
+      math: number;
+      english: number;
+      coloring: number;
+      habits: number;
+      iq: number;
+      kitchen: number;
+      fun: number;
+      general: number;
+    };
   } | null>(() => {
     try {
       const saved = localStorage.getItem("childProfile");
@@ -379,6 +394,57 @@ export default function App() {
     return () => clearInterval(playtimeInterval);
   }, [childProfile?.id]); // Only run when a child logs in
 
+  const [isBlocked, setIsBlocked] = useState<'screen_time' | 'bedtime' | null>(null);
+
+  // Check limits continuously
+  useEffect(() => {
+    if (!childProfile) {
+      setIsBlocked(null);
+      return;
+    }
+    
+    const checkLimits = () => {
+      // 1. Check Bedtime
+      if (childProfile.bedTime) {
+        const now = new Date();
+        const currentHour = now.getHours();
+        const currentMin = now.getMinutes();
+        
+        const [bedHourStr, bedMinStr] = childProfile.bedTime.split(':');
+        const bedHour = parseInt(bedHourStr, 10);
+        const bedMin = parseInt(bedMinStr, 10);
+        
+        // Block if current time is after bedtime and before 6 AM
+        let blockedByBedtime = false;
+        if (currentHour > bedHour || (currentHour === bedHour && currentMin >= bedMin)) {
+          blockedByBedtime = true;
+        } else if (currentHour < 6) { // Blocked until 6 AM next day
+          blockedByBedtime = true;
+        }
+
+        if (blockedByBedtime) {
+          setIsBlocked('bedtime');
+          return;
+        }
+      }
+
+      // 2. Check Screen Time Limit
+      if (childProfile.dailyTimeLimit && childProfile.dailyTimeLimit > 0) {
+        const currentMins = childProfile.playtimeMinutes || 0;
+        if (currentMins >= childProfile.dailyTimeLimit) {
+          setIsBlocked('screen_time');
+          return;
+        }
+      }
+
+      setIsBlocked(null);
+    };
+
+    checkLimits();
+    const limitInterval = setInterval(checkLimits, 30000); // check every 30s
+    return () => clearInterval(limitInterval);
+  }, [childProfile]);
+
   // Scroll helper
   const scrollToGames = () => {
     setMobileMenuOpen(false);
@@ -458,6 +524,42 @@ export default function App() {
       icon: <Trophy className="w-8 h-8" />
     }
   ];
+
+  const handleActivityComplete = (gameName: string, categoryId: string, starsEarned: number) => {
+    if (!childProfile) return;
+    setChildProfile(prev => {
+      if (!prev) return prev;
+      
+      const updatedLog = prev.activityLog ? [...prev.activityLog] : [];
+      updatedLog.unshift({
+        id: Date.now().toString(),
+        timestamp: Date.now(),
+        title: `لعب لعبة (${gameName}) وحصل على ${starsEarned} نجوم`,
+        stars: starsEarned,
+        category: categoryId
+      });
+      // Keep only last 10 logs
+      if (updatedLog.length > 10) updatedLog.length = 10;
+
+      const newCategoryProgress = { 
+        arabic: 0, math: 0, english: 0, coloring: 0, habits: 0, iq: 0, kitchen: 0, fun: 0, general: 0,
+        ...prev.categoryProgress 
+      };
+      
+      const safeCategory = (categoryId in newCategoryProgress) ? categoryId as keyof typeof newCategoryProgress : 'general';
+      newCategoryProgress[safeCategory] += starsEarned;
+
+      const updated = {
+        ...prev,
+        activityLog: updatedLog,
+        categoryProgress: newCategoryProgress
+      };
+      
+      localStorage.setItem("childProfile", JSON.stringify(updated));
+      saveProfileToBackend(updated);
+      return updated;
+    });
+  };
 
   return (
     <div className="min-h-screen relative font-sans overflow-x-hidden pb-16 bg-transparent">
@@ -843,7 +945,7 @@ export default function App() {
             <a href="#characters" onClick={(e) => { e.preventDefault(); setShowCharactersView(true); playBubbleSound(); }} className="hover:text-[#E01E5A] transition-colors">شخصيات بلومي 🦉</a>
             <a href="#what-we-teach" className="hover:text-[#E01E5A] transition-colors">ماذا نتعلّم؟</a>
             <a href="#how-it-works" className="hover:text-[#E01E5A] transition-colors">كيف نعمل؟</a>
-            <a href="#parents" className="hover:text-[#E01E5A] transition-colors">أولياء الأمور</a>
+            <button onClick={() => { setCurrentView('parents'); playBubbleSound(); }} className="hover:text-[#E01E5A] transition-colors cursor-pointer font-bold bg-transparent border-none">أولياء الأمور</button>
           </nav>
 
           {/* Start Free Button & Profile Tag */}
@@ -946,7 +1048,7 @@ export default function App() {
             <button onClick={() => { playBubbleSound(); setMobileMenuOpen(false); setForcedGame("stories"); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A] cursor-pointer text-right w-full font-bold bg-transparent border-none">قصص بلومي 📚</button>
             <a href="#characters" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); setShowCharactersView(true); playBubbleSound(); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">شخصيات بلومي 🦉</a>
             <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">كيف نعمل؟</a>
-            <a href="#parents" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">أولياء الأمور</a>
+            <button onClick={() => { setMobileMenuOpen(false); setCurrentView('parents'); playBubbleSound(); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A] cursor-pointer text-right w-full font-bold bg-transparent border-none">أولياء الأمور</button>
 
             <button 
               onClick={scrollToGames}
@@ -988,6 +1090,7 @@ export default function App() {
           if (window.speechSynthesis) window.speechSynthesis.speak(new SpeechSynthesisUtterance("معلومات عن التطبيق"));
         }}
         onOpenMagicGarden={() => startLoadingGarden()}
+        onActivityComplete={handleActivityComplete}
       />
         </>
       )}
@@ -1269,102 +1372,16 @@ export default function App() {
     
       {/* --- PARENTS VIEW --- */}
       {currentView === 'parents' && (
-        <div className="min-h-screen bg-[#3D1E6D] py-12 px-4 select-none" dir="rtl">
-          <div className="max-w-4xl mx-auto flex flex-col gap-6">
-            <div className="flex justify-between items-center bg-white p-4 rounded-3xl border-3 border-purple-200 shadow-md">
-              <button 
-                onClick={() => {
-                  setCurrentView("main");
-                  playBubbleSound();
-                }}
-                className="btn-bubbly-secondary text-sm py-2 px-5 text-[#4D2B82] bg-white rounded-full flex items-center gap-1 cursor-pointer border-2 border-[#4D2B82] shadow-[0_4px_0_0_#4D2B82] active:translate-y-1 active:shadow-[0_0_0_0_#4D2B82] transition-all"
-              >
-                <span>🔙 رجوع للقائمة</span>
-              </button>
-              <h2 className="text-2xl font-black text-[#4D2B82]">👨‍👩‍👧‍👦 لوحة تحكم أولياء الأمور</h2>
-            </div>
-            
-            <div className="card-bubbly bg-[#FFFCE6] p-8 md:p-12 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center border-[#D97706] rounded-[36px]">
-              <div className="lg:col-span-7 space-y-6 text-right">
-                <div className="inline-flex items-center gap-1 text-xs font-extrabold text-[#D97706] bg-[#FEF7D2] px-3 py-1 rounded-full border border-[#D97706]/20">
-                  <span>👪</span>
-                  <span>لوحة تحكم خاصة بأولياء الأمور</span>
-                </div>
-                <h2 className="text-3xl sm:text-4xl font-extrabold text-[#4D2B82]">
-                  تابع تقدم طفلك خطوة بخطوة 📈
-                </h2>
-                <p className="text-base sm:text-lg text-[#6B4E9E] font-medium leading-relaxed">
-                  نوفر لك لوحة تحكم ذكية ترسل لك تقارير دورية حول الكلمات التي قرأها طفلك، والمسائل الرياضية التي قام بحلها، ومستوى الحفظ القرآني، مع إمكانية تعديل أوقات الجلسات اليومية وتحديد فترات الراحة.
-                </p>
-                <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm font-extrabold text-[#4D2B82] pt-2">
-                  <li className="flex items-center gap-2">
-                    <span className="text-[#198754] text-lg">✔</span>
-                    <span>تقارير تقدم يومية عبر البريد</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-[#198754] text-lg">✔</span>
-                    <span>التحكم في أوقات الشاشة اليومية</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-[#198754] text-lg">✔</span>
-                    <span>مراجعة وتقييم مسارات التعلم</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <span className="text-[#198754] text-lg">✔</span>
-                    <span>مزامنة الأجهزة المتعددة للعائلة</span>
-                  </li>
-                </ul>
-              </div>
-
-              <div className="lg:col-span-5 flex flex-col space-y-5">
-                <div className="card-bubbly bg-white p-5 border-[#2ECC71] shadow-md text-right relative overflow-hidden rounded-[24px]">
-                  <div className="absolute top-0 right-0 left-0 h-2 bg-[#2ECC71]" />
-                  <h3 className="text-lg font-black text-[#4D2B82] mb-4 flex items-center justify-start gap-2 flex-row-reverse">
-                    <span>📊</span>
-                    <span>تقرير البطل الحالي</span>
-                  </h3>
-                  {childProfile ? (
-                    <div className="space-y-2.5">
-                      <div className="flex justify-between items-center border-b border-purple-50 pb-2">
-                        <span className="text-[11px] font-bold text-purple-400">البطل المسجل</span>
-                        <span className="font-extrabold text-xs sm:text-sm text-[#4D2B82] flex items-center gap-1.5">
-                          {childProfile?.name} ({childProfile?.gender === "boy" ? "ولد" : "بنت"})
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center border-b border-purple-50 pb-2">
-                        <span className="text-[11px] font-bold text-purple-400">رقم الهاتف</span>
-                        <span className="font-extrabold text-xs sm:text-sm text-[#4D2B82]">{childProfile?.phone}</span>
-                      </div>
-                      <div className="flex justify-between items-center border-b border-purple-50 pb-2">
-                        <span className="text-[11px] font-bold text-purple-400">العمر والمستوى</span>
-                        <span className="font-extrabold text-xs sm:text-sm text-[#4D2B82]">
-                          {childProfile?.age} سنوات - {childProfile?.level === "level1" ? "المستوى الأول" : "المستوى الفائق"}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center border-b border-purple-50 pb-2">
-                        <span className="text-[11px] font-bold text-purple-400">وقت اللعب الإجمالي</span>
-                        <span className="font-extrabold text-xs sm:text-sm text-[#4D2B82]">
-                          {childProfile?.playtimeMinutes || 0} دقيقة
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center pt-1">
-                        <span className="text-[11px] font-bold text-purple-400">مجموع النجوم</span>
-                        <span className="bg-yellow-100 text-yellow-700 px-2.5 py-0.5 rounded-full font-black text-xs sm:text-sm border border-yellow-200">
-                          ⭐ {globalStars} نجمة
-                        </span>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-center py-4">
-                      <span className="text-3xl">👋</span>
-                      <p className="font-bold text-sm text-[#6B4E9E] mt-2">لم يتم تسجيل أي بطل بعد!</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <ParentsDashboard 
+          childProfile={childProfile}
+          setChildProfile={setChildProfile}
+          globalStars={globalStars}
+          onClose={() => {
+            setCurrentView("main");
+            playBubbleSound();
+          }}
+          onSaveProfileToBackend={saveProfileToBackend}
+        />
       )}
 
       {/* --- ABOUT VIEW --- */}
@@ -1455,6 +1472,38 @@ export default function App() {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* --- BLOCKING OVERLAY (TIME LIMIT / BEDTIME) --- */}
+      {isBlocked && currentView !== 'parents' && (
+        <div className="fixed inset-0 bg-black/80 z-[99999] flex flex-col items-center justify-center p-6 select-none backdrop-blur-md">
+          <div className="bg-white p-8 md:p-12 rounded-[36px] max-w-lg w-full text-center border-4 border-[#4D2B82] shadow-2xl relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-3 bg-gradient-to-r from-[#E01E5A] to-[#F1C40F]" />
+            <span className="text-8xl block mb-6 animate-bounce">
+              {isBlocked === 'bedtime' ? '😴' : '⏳'}
+            </span>
+            <h2 className="text-3xl font-black text-[#4D2B82] mb-4">
+              {isBlocked === 'bedtime' ? 'حان وقت النوم يا بطل!' : 'انتهى وقت اللعب اليوم!'}
+            </h2>
+            <p className="text-[#6B4E9E] font-bold text-lg mb-8 leading-relaxed">
+              {isBlocked === 'bedtime' 
+                ? 'لقد تأخر الوقت وبلومي يشعر بالنعاس، نلقاك غداً في مغامرة جديدة إن شاء الله.' 
+                : 'لقد أكملت وقتك المسموح للعب اليوم بنجاح، دعنا نرتاح ونعود غداً بنشاط!'}
+            </p>
+            
+            <div className="flex flex-col gap-3 w-full">
+              {/* Optional: Add a lock code for parents to dismiss, or just a button to go to parents dashboard */}
+              <button 
+                onClick={() => {
+                  setCurrentView('parents');
+                }}
+                className="btn-bubbly-secondary text-sm py-3 px-6 text-[#4D2B82] bg-purple-50 rounded-full font-black border-2 border-purple-200"
+              >
+                🔐 أنا ولي الأمر (تعديل الإعدادات)
+              </button>
             </div>
           </div>
         </div>

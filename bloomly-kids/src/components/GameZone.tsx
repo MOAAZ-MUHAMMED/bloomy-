@@ -857,6 +857,7 @@ interface GameZoneProps {
   onOpenParents?: () => void;
   onOpenAbout?: () => void;
   onOpenMagicGarden?: () => void;
+  onActivityComplete?: (gameName: string, categoryId: string, starsEarned: number) => void;
 }
 
 export function GameZone({ 
@@ -868,7 +869,8 @@ export function GameZone({
   setForcedGame,
   onOpenParents,
   onOpenAbout,
-  onOpenMagicGarden
+  onOpenMagicGarden,
+  onActivityComplete
 }: GameZoneProps = {}) {
   const [activeGame, setActiveGame] = useState<any>("menu");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
@@ -2814,13 +2816,18 @@ const startSpaceGame = () => {
     sfx.playVictory();
     
     // Save level stars to map progress (includes difficulty in key)
+    let calculatedStars = 3;
     if (selectedLevelIndex !== null) {
       const starKey = `bloomly_stars_${activeGame}_${activeDifficulty}_level_${selectedLevelIndex}`;
-      const calculatedStars = starsEarnedThisSession >= 5 ? 3 : starsEarnedThisSession >= 3 ? 2 : 1;
+      calculatedStars = starsEarnedThisSession >= 5 ? 3 : starsEarnedThisSession >= 3 ? 2 : 1;
       const currentSaved = parseInt(localStorage.getItem(starKey) || "0", 10);
       if (calculatedStars > currentSaved) {
         localStorage.setItem(starKey, String(calculatedStars));
       }
+    }
+    
+    if (onActivityComplete) {
+      onActivityComplete(activeGame, activeCategory || 'general', Math.max(3, starsEarnedThisSession));
     }
 
     // Unlock next island in LearningPathMap
