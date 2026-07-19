@@ -417,6 +417,19 @@ export const islandsData = [
     badge: "ألعاب ممتعة",
     x: 70,
     y: 90
+  },
+  {
+    id: "kitchenMarketList",
+    title: "قائمة التسوق 🛒",
+    character: "🌱 البرعم الطباخ",
+    characterEmoji: "🌱",
+    emoji: "🛒",
+    gameName: "قائمة تسوق البرعم",
+    quest: "هيا نساعد البرعم في قراءة القائمة وتجهيز الخضار من السوق لعمل ألذ طبخة!",
+    superpower: "القراءة والتركيز والذاكرة! 🧠",
+    badge: "مطبخ ووصفات",
+    x: 50,
+    y: 95
   }
 ];
 

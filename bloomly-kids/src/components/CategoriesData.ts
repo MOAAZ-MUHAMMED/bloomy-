@@ -28,7 +28,7 @@ export const categoriesData: CategoryData[] = [
     bgGradient: "from-[#a1c4fd]/90 to-[#c2e9fb]/90",
     textColor: "text-blue-700",
     borderColor: "border-blue-300",
-    games: ["spelling", "sorting", "quran", "arabicLetterTracing", "arabicShadowMatch"]
+    games: ["spelling", "sorting", "quran", "arabicLetterTracing", "arabicShadowMatch", "kitchenMarketList"]
   },
   {
     id: "math",
@@ -48,7 +48,7 @@ export const categoriesData: CategoryData[] = [
     bgGradient: "from-[#fccb90]/90 to-[#d57eeb]/90",
     textColor: "text-purple-700",
     borderColor: "border-purple-300",
-    games: ["chef", "kitchenSandwichMaker", "kitchenBakingCake"]
+    games: ["chef", "kitchenSandwichMaker", "kitchenBakingCake", "kitchenMarketList"]
   },
   {
     id: "stories",

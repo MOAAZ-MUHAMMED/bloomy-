@@ -25,6 +25,7 @@ import KitchenBakingCake from "./KitchenBakingCake";
 import DrawingSymmetry from "./DrawingSymmetry";
 import FunWhackAMole from "./FunWhackAMole";
 import FunHiddenCup from "./FunHiddenCup";
+import KitchenMarketList from "./KitchenMarketList";
 
 export function SproutMascot({ className = "w-24 h-24", state = "idle" }: { className?: string; state?: "idle" | "happy" | "sad" | "talking" }) {
   const poseMap = {
@@ -1044,7 +1045,7 @@ export function GameZone({
             "quran", "stories", "arabicLetterTracing", "arabicShadowMatch", 
             "mathNumberTrain", "mathSpaceTower", "englishLetterTracing", 
             "englishColorCloud", "kitchenSandwichMaker", "kitchenBakingCake", 
-            "drawingSymmetry", "funWhackAMole", "funHiddenCup"
+            "drawingSymmetry", "funWhackAMole", "funHiddenCup", "kitchenMarketList"
           ];
           
           if (!directLaunchGames.includes(gameName)) {
@@ -6911,6 +6912,9 @@ const startSpaceGame = () => {
       )}
       {activeGame === "funHiddenCup" && !showLevelMap && (
         <FunHiddenCup onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
+      )}
+      {activeGame === "kitchenMarketList" && !showLevelMap && (
+        <KitchenMarketList onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
       )}
 
 </section>
