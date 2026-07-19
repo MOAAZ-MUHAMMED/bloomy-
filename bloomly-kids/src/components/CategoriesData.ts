@@ -18,7 +18,7 @@ export const categoriesData: CategoryData[] = [
     bgGradient: "from-[#ff9a9e]/90 to-[#fecfef]/90",
     textColor: "text-pink-700",
     borderColor: "border-pink-300",
-    games: ["arrowRacer", "tapRacer", "safari", "catcher", "spaceCatcher", "maze", "ninja", "space", "train"]
+    games: ["arrowRacer", "tapRacer", "safari", "catcher", "spaceCatcher", "maze", "ninja", "space", "train", "funWhackAMole", "funHiddenCup"]
   },
   {
     id: "arabic",
@@ -28,7 +28,7 @@ export const categoriesData: CategoryData[] = [
     bgGradient: "from-[#a1c4fd]/90 to-[#c2e9fb]/90",
     textColor: "text-blue-700",
     borderColor: "border-blue-300",
-    games: ["spelling", "sorting", "quran"]
+    games: ["spelling", "sorting", "quran", "arabicLetterTracing", "arabicShadowMatch"]
   },
   {
     id: "math",
@@ -38,7 +38,7 @@ export const categoriesData: CategoryData[] = [
     bgGradient: "from-[#ffecd2]/90 to-[#fcb69f]/90",
     textColor: "text-orange-700",
     borderColor: "border-orange-300",
-    games: ["math", "connectDots", "memory"]
+    games: ["math", "connectDots", "memory", "mathNumberTrain", "mathSpaceTower"]
   },
   {
     id: "kitchen",
@@ -48,7 +48,7 @@ export const categoriesData: CategoryData[] = [
     bgGradient: "from-[#fccb90]/90 to-[#d57eeb]/90",
     textColor: "text-purple-700",
     borderColor: "border-purple-300",
-    games: ["chef"]
+    games: ["chef", "kitchenSandwichMaker", "kitchenBakingCake"]
   },
   {
     id: "stories",
@@ -68,7 +68,7 @@ export const categoriesData: CategoryData[] = [
     bgGradient: "from-[#e0c3fc]/90 to-[#8ec5fc]/90",
     textColor: "text-indigo-700",
     borderColor: "border-indigo-300",
-    games: ["spellingEn"]
+    games: ["spellingEn", "englishLetterTracing", "englishColorCloud"]
   },
   {
     id: "coloring",
@@ -78,7 +78,7 @@ export const categoriesData: CategoryData[] = [
     bgGradient: "from-[#ffd1ff]/90 to-[#fad0c4]/90",
     textColor: "text-rose-600",
     borderColor: "border-rose-300",
-    games: ["coloring"]
+    games: ["coloring", "drawingSymmetry"]
   },
   {
     id: "habits",
