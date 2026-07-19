@@ -13,7 +13,7 @@ export const islandsData = [
     superpower: "الحساب السريع وحل المسائل في رمشة عين! 🧠",
     badge: "عمر 5-9 سنوات",
     x: 10,
-    y: 15
+    y: 11
   },
   {
     id: "spelling",
@@ -26,7 +26,7 @@ export const islandsData = [
     superpower: "قراءة الكتب والخرائط القديمة بطلاقة وسرعة فائقة! ⚡",
     badge: "عمر 4-8 سنوات",
     x: 25,
-    y: 25
+    y: 18
   },
   {
     id: "memory",
@@ -39,7 +39,7 @@ export const islandsData = [
     superpower: "التركيز الخارق وكشف كل الأسرار وحل الألغاز الصعبة! 🎯",
     badge: "معسكر نشط",
     x: 45,
-    y: 15
+    y: 11
   },
   {
     id: "catcher",
@@ -52,7 +52,7 @@ export const islandsData = [
     superpower: "السرعة الفائقة والتركيز الخارق في التقاط الفرص! ⚡",
     badge: "سرعة وتركيز",
     x: 65,
-    y: 20
+    y: 14
   },
   {
     id: "coloring",
@@ -65,7 +65,7 @@ export const islandsData = [
     superpower: "تحويل خيالك ورسوماتك البسيطة إلى لوحات فنية تبهر الجميع! 🌈",
     badge: "ورش عمل إبداعية",
     x: 85,
-    y: 15
+    y: 11
   },
   {
     id: "spellingEn",
@@ -78,7 +78,7 @@ export const islandsData = [
     superpower: "التحدث باللغة الإنجليزية وتكوين صداقات حول العالم! 🌍",
     badge: "عمر 4-10 سنوات",
     x: 85,
-    y: 35
+    y: 25
   },
   {
     id: "sorting",
@@ -91,7 +91,7 @@ export const islandsData = [
     superpower: "التفكير المنطقي والترتيب الذكي لكل شيء من حولك! 🧩",
     badge: "ذكاء منطقي",
     x: 65,
-    y: 45
+    y: 32
   },
   {
     id: "spaceCatcher",
@@ -104,7 +104,7 @@ export const islandsData = [
     superpower: "سرعة البديهة والتقاط الرموز الصحيحة في غمضة عين! 🎯",
     badge: "سرعة بديهة",
     x: 45,
-    y: 35
+    y: 25
   },
   {
     id: "connectDots",
@@ -117,7 +117,7 @@ export const islandsData = [
     superpower: "الدقة الهندسية ورسم الأشكال الرائعة بيسر وسهولة! 📐",
     badge: "رسم وهندسة",
     x: 25,
-    y: 45
+    y: 32
   },
   {
     id: "maze",
@@ -130,7 +130,7 @@ export const islandsData = [
     superpower: "التخطيط الذكي وتخطي العقبات والوصول لأي هدف تريده! 🧭",
     badge: "توجيه وتخطيط",
     x: 10,
-    y: 60
+    y: 43
   },
   {
     id: "safari",
@@ -143,7 +143,7 @@ export const islandsData = [
     superpower: "قوة الاستماع والتركيز السمعي الخارق لتمييز الأصوات! 👂",
     badge: "تركيز سمعي",
     x: 30,
-    y: 65
+    y: 47
   },
   {
     id: "chef",
@@ -156,7 +156,7 @@ export const islandsData = [
     superpower: "الطبخ الإبداعي والترتيب الدقيق للخطوات والوصفات! 🎂",
     badge: "طهي ووصفات",
     x: 50,
-    y: 55
+    y: 40
   },
   {
     id: "train",
@@ -169,7 +169,7 @@ export const islandsData = [
     superpower: "معرفة الأشكال الهندسية والتركيب الذكي! 📐",
     badge: "هندسة وتركيب",
     x: 70,
-    y: 65
+    y: 47
   },
   {
     id: "arrowRacer",
@@ -182,7 +182,7 @@ export const islandsData = [
     superpower: "السرعة الفائقة والتمييز السريع للاتجاهات! ⚡",
     badge: "سرعة وانتباه",
     x: 90,
-    y: 75
+    y: 54
   },
   {
     id: "tapRacer",
@@ -195,7 +195,7 @@ export const islandsData = [
     superpower: "رد الفعل السريع والدقة المطلقة! 🎯",
     badge: "رد فعل سريع",
     x: 70,
-    y: 85
+    y: 61
   },
   {
     id: "quran",
@@ -208,7 +208,7 @@ export const islandsData = [
     superpower: "حفظ سور القرآن وتلاوتها بصوت ندي وجميل! 🕋✨",
     badge: "تحفيظ وقيم",
     x: 45,
-    y: 80
+    y: 58
   },
   {
     id: "stories",
@@ -221,7 +221,7 @@ export const islandsData = [
     superpower: "قراءة القصص بطلاقة وتعلم الأخلاق الكريمة والأمانة! 🌟📖",
     badge: "قصص وقيم",
     x: 20,
-    y: 85
+    y: 61
   },
   {
     id: "dailyHabits",
@@ -234,7 +234,7 @@ export const islandsData = [
     superpower: "النظافة الشخصية والترتيب يجعلك بطلاً خارقاً محبوباً! ✨",
     badge: "عادات وقيم",
     x: 90,
-    y: 15
+    y: 11
   },
   {
     id: "ninja",
@@ -247,7 +247,7 @@ export const islandsData = [
     superpower: "السرعة الخارقة والتركيز العالي! ⚡",
     badge: "سرعة ورد فعل",
     x: 50,
-    y: 30
+    y: 22
   },
   {
     id: "space",
@@ -260,7 +260,7 @@ export const islandsData = [
     superpower: "دقة التصويب وتفادي العقبات! 🎯",
     badge: "مغامرة فضائية",
     x: 30,
-    y: 50
+    y: 36
   },
   {
     id: "farm",
@@ -273,7 +273,7 @@ export const islandsData = [
     superpower: "الصبر، الرعاية، والزراعة! 🌱",
     badge: "زراعة ورعاية",
     x: 70,
-    y: 40
+    y: 29
   },
   {
     id: "arabicLetterTracing",
@@ -286,7 +286,7 @@ export const islandsData = [
     superpower: "رسم وكتابة الحروف العربية ببراعة! ✨",
     badge: "لغة عربية",
     x: 10,
-    y: 95
+    y: 68
   },
   {
     id: "arabicShadowMatch",
@@ -299,7 +299,7 @@ export const islandsData = [
     superpower: "قوة الملاحظة ومعرفة الكلمات العربية! 🔍",
     badge: "لغة عربية",
     x: 30,
-    y: 95
+    y: 68
   },
   {
     id: "mathNumberTrain",
@@ -312,7 +312,7 @@ export const islandsData = [
     superpower: "معرفة ترتيب الأرقام المنطقي! 🔢",
     badge: "حساب وأرقام",
     x: 50,
-    y: 95
+    y: 68
   },
   {
     id: "mathSpaceTower",
@@ -325,7 +325,7 @@ export const islandsData = [
     superpower: "الترتيب التصاعدي وحساب الأحجام! 🏗️",
     badge: "حساب وأرقام",
     x: 70,
-    y: 95
+    y: 68
   },
   {
     id: "englishLetterTracing",
@@ -338,7 +338,7 @@ export const islandsData = [
     superpower: "Mastering the English Alphabet! ✨",
     badge: "لغة إنجليزية",
     x: 90,
-    y: 95
+    y: 68
   },
   {
     id: "englishColorCloud",
@@ -351,7 +351,7 @@ export const islandsData = [
     superpower: "Knowing all colors in English! 🌈",
     badge: "لغة إنجليزية",
     x: 20,
-    y: 110
+    y: 79
   },
   {
     id: "kitchenSandwichMaker",
@@ -364,7 +364,7 @@ export const islandsData = [
     superpower: "دقة الترتيب ومهارات الطبخ! 👨‍🍳",
     badge: "مطبخ ووصفات",
     x: 40,
-    y: 110
+    y: 79
   },
   {
     id: "kitchenBakingCake",
@@ -377,7 +377,7 @@ export const islandsData = [
     superpower: "إبداع التزيين وصنع الحلويات! 🧁",
     badge: "مطبخ ووصفات",
     x: 60,
-    y: 110
+    y: 79
   },
   {
     id: "drawingSymmetry",
@@ -390,7 +390,7 @@ export const islandsData = [
     superpower: "التطابق والملاحظة الدقيقة! 🎨",
     badge: "رسم وفنون",
     x: 80,
-    y: 110
+    y: 79
   },
   {
     id: "funWhackAMole",
@@ -403,7 +403,7 @@ export const islandsData = [
     superpower: "سرعة البديهة والتركيز السريع! ⚡",
     badge: "ألعاب ممتعة",
     x: 30,
-    y: 125
+    y: 90
   },
   {
     id: "funHiddenCup",
@@ -416,7 +416,7 @@ export const islandsData = [
     superpower: "قوة الملاحظة والتركيز البصري! 👁️",
     badge: "ألعاب ممتعة",
     x: 70,
-    y: 125
+    y: 90
   }
 ];
 
@@ -571,8 +571,8 @@ export default function LearningPathMap({
   const svgPathStr = islandsData.map((isl, idx) => `${idx === 0 ? 'M' : 'L'} ${isl.x} ${isl.y}`).join(' ');
 
   return (
-    <div className="w-full overflow-x-auto rounded-[36px] border-4 border-[#4D2B82] shadow-inner mb-8 bg-[#29B6F6] custom-scrollbar" style={{ minHeight: '800px' }} dir="rtl">
-      <div className="relative min-w-[1200px] h-[1200px] md:h-[1800px] select-none cursor-default z-10" style={{
+    <div className="w-full overflow-x-auto rounded-[36px] border-4 border-[#4D2B82] shadow-inner mb-8 bg-[#29B6F6] custom-scrollbar" style={{ minHeight: '1200px' }} dir="rtl">
+      <div className="relative min-w-[1200px] h-[1800px] md:h-[2600px] select-none cursor-default z-10" style={{
         backgroundImage: `radial-gradient(#0288D1 1.5px, transparent 1.5px), linear-gradient(to bottom, #29B6F6, #0288D1)`,
         backgroundSize: '24px 24px, 100% 100%'
       }}>
@@ -681,9 +681,9 @@ export default function LearningPathMap({
             />
 
             <motion.div
-              initial={{ opacity: 0, scale: 0.8, y: 50 }}
+              initial={{ opacity: 0, scale: 0.8, y: 36 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8, y: 50 }}
+              exit={{ opacity: 0, scale: 0.8, y: 36 }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
               className="relative bg-white border-4 border-[#4D2B82] rounded-[36px] shadow-[0_12px_0_0_#4D2B82] max-w-md w-full p-6 sm:p-8 text-right font-sans overflow-hidden max-h-[90vh] overflow-y-auto z-10"
             >
