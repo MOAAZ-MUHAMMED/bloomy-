@@ -62,23 +62,23 @@ export const categoriesData: CategoryData[] = [
   },
   {
     id: "english",
-    title: "اللغة الإنجليزية",
-    englishTitle: "ENGLISH LANGUAGE",
-    icon: "🔤",
-    bgGradient: "from-[#e0c3fc]/90 to-[#8ec5fc]/90",
-    textColor: "text-indigo-700",
-    borderColor: "border-indigo-300",
-    games: ["spellingEn", "englishLetterTracing", "englishColorCloud"]
+    title: "حروفي الإنجليزية",
+    englishTitle: "ABC GAMES",
+    icon: "ABC",
+    bgGradient: "from-[#ff9a9e]/90 to-[#fecfef]/90",
+    textColor: "text-pink-700",
+    borderColor: "border-pink-300",
+    games: ["spellingEn", "sorting", "spaceCatcher", "englishLetterTracing", "englishColorCloud", "englishSpaceDecoder"]
   },
   {
     id: "coloring",
-    title: "التلوين والفن",
-    englishTitle: "ART & COLORING",
+    title: "لوحة الألوان",
+    englishTitle: "COLORING",
     icon: "🎨",
-    bgGradient: "from-[#ffd1ff]/90 to-[#fad0c4]/90",
-    textColor: "text-rose-600",
+    bgGradient: "from-[#84fab0]/90 to-[#8fd3f4]/90",
+    textColor: "text-rose-700",
     borderColor: "border-rose-300",
-    games: ["coloring", "drawingSymmetry"]
+    games: ["coloring", "drawingSymmetry", "drawingNeonArt"]
   },
   {
     id: "habits",
@@ -99,5 +99,15 @@ export const categoriesData: CategoryData[] = [
     textColor: "text-teal-700",
     borderColor: "border-teal-300",
     games: ["farm"]
+  },
+  {
+    id: "iq",
+    title: "ألعاب الذكاء",
+    englishTitle: "IQ GAMES",
+    icon: "🧠",
+    bgGradient: "from-[#fbc2eb]/90 to-[#a6c1ee]/90",
+    textColor: "text-indigo-700",
+    borderColor: "border-indigo-300",
+    games: []
   }
 ];

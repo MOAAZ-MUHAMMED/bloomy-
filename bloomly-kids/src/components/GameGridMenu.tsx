@@ -99,6 +99,7 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
     { id: 'kitchen', title: 'المطبخ الصغير', englishTitle: 'KITCHEN', icon: kitchenBox?.icon || '🍳', action: () => onSelectCategory?.('kitchen'), bgGradient: 'linear-gradient(135deg, #fad0c4, #ffd1ff)', color: 'text-rose-900', glow: 'rgba(250,208,196,0.6)' },
     { id: 'coloring', title: 'لوّن وارسم', englishTitle: 'COLORING', icon: coloringBox?.icon || '🎨', action: () => onSelectCategory?.('coloring'), bgGradient: 'linear-gradient(135deg, #84fab0, #8fd3f4)', color: 'text-teal-900', glow: 'rgba(132,250,176,0.6)' },
     { id: 'habits', title: 'عادات صحية', englishTitle: 'HABITS', icon: habitsBox?.icon || '🧼', action: () => onSelectCategory?.('habits'), bgGradient: 'linear-gradient(135deg, #e0c3fc, #cfd9df)', color: 'text-slate-800', glow: 'rgba(224,195,252,0.6)' },
+    { id: 'iq', title: 'ألعاب الذكاء', englishTitle: 'IQ GAMES', icon: '🧠', action: () => onSelectCategory?.('iq'), bgGradient: 'linear-gradient(135deg, #fbc2eb, #a6c1ee)', color: 'text-indigo-900', glow: 'rgba(166,193,238,0.6)' },
     { id: 'parents', title: 'أولياء الأمور', englishTitle: 'PARENTS AREA', icon: '👨‍👩‍👧‍👦', action: onOpenParents, bgGradient: 'linear-gradient(135deg, #89f7fe, #66a6ff)', color: 'text-blue-900', glow: 'rgba(137,247,254,0.6)' },
     { id: 'about_us', title: 'عن التطبيق', englishTitle: 'ABOUT US', icon: 'ℹ️', action: onOpenAbout, bgGradient: 'linear-gradient(135deg, #fccb90, #d57eeb)', color: 'text-fuchsia-900', glow: 'rgba(213,126,235,0.6)' },
   ];

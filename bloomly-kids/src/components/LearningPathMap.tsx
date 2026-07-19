@@ -441,8 +441,34 @@ export const islandsData = [
     quest: "التمساح جائع جداً! دائمًا يفتح فمه ليأكل الرقم الأكبر، هل يمكنك مساعدته؟",
     superpower: "مقارنة الأرقام ومهارة الأكبر والأصغر! 🐊",
     badge: "حساب وأرقام",
-    x: 20,
-    y: 95
+    x: 80,
+    y: 100
+  },
+  {
+    id: "englishSpaceDecoder",
+    title: "شفرة الفضاء 🛸",
+    character: "👽 الفضائي زيكو",
+    characterEmoji: "👽",
+    emoji: "🛸",
+    gameName: "فك شفرة الفضاء",
+    quest: "اضغط على النيازك بالترتيب الصحيح لتكوين الكلمة الإنجليزية وتشغيل الصاروخ!",
+    superpower: "التهجئة واللغة الإنجليزية! 🔤",
+    badge: "إنجليزي",
+    x: 30,
+    y: 105
+  },
+  {
+    id: "drawingNeonArt",
+    title: "لوحة النيون 🎨",
+    character: "✨ الرسام السحري",
+    characterEmoji: "✨",
+    emoji: "🎨",
+    gameName: "رسم النيون السحري",
+    quest: "ارسم أشكالاً رائعة باستخدام خطوط النيون المضيئة وأطلق العنان لإبداعك!",
+    superpower: "الإبداع والخيال الفني! 🌟",
+    badge: "رسم وفنون",
+    x: 70,
+    y: 110
   }
 ];
 
@@ -597,8 +623,8 @@ export default function LearningPathMap({
   const svgPathStr = islandsData.map((isl, idx) => `${idx === 0 ? 'M' : 'L'} ${isl.x} ${isl.y}`).join(' ');
 
   return (
-    <div className="w-full overflow-x-auto rounded-[36px] border-4 border-[#4D2B82] shadow-inner mb-8 bg-[#29B6F6] custom-scrollbar" style={{ minHeight: '1200px' }} dir="rtl">
-      <div className="relative min-w-[1200px] h-[1800px] md:h-[2600px] select-none cursor-default z-10" style={{
+    <div className="w-full overflow-x-auto rounded-[36px] border-4 border-[#4D2B82] shadow-inner mb-8 bg-[#29B6F6] custom-scrollbar" style={{ minHeight: '1400px' }} dir="rtl">
+      <div className="relative min-w-[1200px] h-[2200px] md:h-[3000px] select-none cursor-default z-10" style={{
         backgroundImage: `radial-gradient(#0288D1 1.5px, transparent 1.5px), linear-gradient(to bottom, #29B6F6, #0288D1)`,
         backgroundSize: '24px 24px, 100% 100%'
       }}>
