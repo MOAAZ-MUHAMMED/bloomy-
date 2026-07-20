@@ -1407,10 +1407,10 @@ export default function InteractiveStories({ onClose, globalStars, setGlobalStar
                 </div>
 
                 {/* Right Column: Text */}
-                <div className="story-right-col w-full md:w-1/2 flex flex-col justify-center">
+                <div className="story-right-col w-full md:w-1/2 flex flex-col justify-center max-h-[180px] md:max-h-[250px]">
                   {/* Story Arabic Text (With highlighted word span) */}
-                  <div className="text-center leading-relaxed px-4 py-3 bg-purple-50/30 rounded-2xl border border-purple-100 min-h-[100px] flex items-center justify-center">
-                    <div className="text-right tracking-wide leading-loose">
+                  <div className="text-center leading-relaxed px-4 py-3 bg-purple-50/30 rounded-2xl border border-purple-100 h-full w-full overflow-y-auto custom-scrollbar flex items-start justify-center">
+                    <div className="text-right tracking-wide leading-loose w-full pb-2">
                       {renderTextSpans(activeStory.pages[currentPageIdx].text)}
                     </div>
                   </div>
