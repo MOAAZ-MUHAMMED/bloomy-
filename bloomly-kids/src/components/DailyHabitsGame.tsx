@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, CheckCircle, ArrowRight } from "lucide-react";
 import confetti from "canvas-confetti";
 import { ScreenOrientation } from '@capacitor/screen-orientation';
+import { SproutMascot } from './GameZone';
 
 interface DailyHabitsGameProps {
   onClose: () => void;
@@ -111,6 +112,11 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
   const [hairMessy, setHairMessy] = useState(100);
   const [placedBedItems, setPlacedBedItems] = useState<string[]>([]);
 
+  // TEETH State
+  const [brushTimeLeft, setBrushTimeLeft] = useState(100);
+  const [isBrushing, setIsBrushing] = useState(false);
+  const [foamSpots, setFoamSpots] = useState<{id: number, x: number, y: number}[]>([]);
+
   // FRUITS State
   const initialFruits = [
     { id: 1, emoji: "🍎" },
@@ -130,9 +136,9 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
     setActiveHabit(h);
     if (h === "ROOM") setRoomItems(initialRoomItems);
     if (h === "WASH") {
-      setWashPhase("FACE"); setFaceSpots([1, 2, 3, 4]); setHandBubbles([1, 2, 3, 4, 5, 6, 7, 8]);
+      setWashPhase("FACE"); setFaceSpots([1, 2, 3, 4, 5, 6, 7, 8]); setHandBubbles([1, 2, 3, 4, 5, 6, 7, 8]);
     }
-    if (h === "TEETH") setTeethDirt(Array(10).fill(100));
+    if (h === "TEETH") { setBrushTimeLeft(100); setIsBrushing(false); setFoamSpots([]); }
     if (h === "BREAKFAST") { setBreakfastItems(initialBreakfastItems); setIsMouthOpen(false); }
     if (h === "HAIR") setHairMessy(100);
     if (h === "BED") setPlacedBedItems([]);
@@ -159,15 +165,45 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
     return foundTarget;
   };
 
+  useEffect(() => {
+    let interval: any;
+    if (activeHabit === "TEETH" && isBrushing && brushTimeLeft > 0) {
+      interval = setInterval(() => {
+        setBrushTimeLeft(prev => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            completeHabit("TEETH");
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 100);
+    }
+    return () => clearInterval(interval);
+  }, [activeHabit, isBrushing, brushTimeLeft]);
+
   // --- 1. TEETH ---
-  const handleBrushTooth = (index: number) => {
-    if (teethDirt[index] > 0) {
-      const newDirt = [...teethDirt];
-      newDirt[index] = Math.max(0, newDirt[index] - 5);
-      setTeethDirt(newDirt);
-      if (newDirt.every(d => d === 0)) completeHabit("TEETH");
+  const handleBrushDrag = (e: any, info: any) => {
+    const mouth = document.getElementById("mouth-zone");
+    if (mouth) {
+      const rect = mouth.getBoundingClientRect();
+      const left = rect.left + window.scrollX;
+      const right = rect.right + window.scrollX;
+      const top = rect.top + window.scrollY;
+      const bottom = rect.bottom + window.scrollY;
+
+      if (info.point.x >= left && info.point.x <= right && info.point.y >= top && info.point.y <= bottom) {
+        setIsBrushing(true);
+        if (Math.random() > 0.6) {
+          setFoamSpots(prev => [...prev.slice(-15), { id: Date.now(), x: info.point.x - left, y: info.point.y - top }]);
+        }
+      } else {
+        setIsBrushing(false);
+      }
     }
   };
+  
+  const handleBrushEnd = () => setIsBrushing(false);
 
   // --- 2. ROOM ---
   const handleDropRoomItem = (e: any, info: any, item: any) => {
@@ -343,24 +379,49 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
               
               {/* --- TEETH --- */}
               {activeHabit === "TEETH" && (
-                <div className="relative w-[400px] h-[340px] bg-red-50 rounded-[40px] border-8 border-red-200 flex flex-col justify-center gap-2 p-8 overflow-hidden shadow-inner"
-                     style={{ cursor: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"40\" style=\"font-size:30px\"><text y=\"30\">🪥</text></svg>'), auto" }}>
-                  <div className="flex justify-center gap-1.5 w-full bg-pink-400 rounded-b-full p-3 pb-8 shadow-[inset_0_-10px_20px_rgba(0,0,0,0.1)]">
-                    {[0,1,2,3,4].map(i => (
-                      <div key={i} onMouseMove={() => handleBrushTooth(i)} onTouchMove={() => handleBrushTooth(i)}
-                           className="w-12 h-20 bg-white rounded-[24px] rounded-t-[4px] shadow-[0_4px_6px_rgba(0,0,0,0.15)] relative overflow-hidden border-2 border-gray-100">
-                        <div className="absolute inset-0 bg-yellow-600/80 transition-opacity duration-100" style={{ opacity: teethDirt[i] / 100 }} />
-                      </div>
+                <div className="relative w-full h-full flex flex-col items-center justify-center">
+                  {/* Timer UI */}
+                  <div className="absolute top-4 flex flex-col items-center gap-1 bg-white px-6 py-2 rounded-full border-4 border-purple-200 shadow-md z-20">
+                    <span className="text-xs font-black text-purple-800">وقت التنظيف المتبقي</span>
+                    <div className="w-32 h-3 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-full bg-emerald-400 transition-all duration-200" style={{ width: `${brushTimeLeft}%` }} />
+                    </div>
+                  </div>
+                  {/* Mouth Zone */}
+                  <div id="mouth-zone" className="relative w-[320px] h-[280px] bg-red-800 rounded-[80px] border-[12px] border-red-300 flex flex-col justify-center gap-2 p-6 overflow-hidden shadow-[inset_0_15px_30px_rgba(0,0,0,0.5)]">
+                    {/* Top Teeth */}
+                    <div className="flex justify-center w-full gap-0.5">
+                      {[0,1,2,3,4].map(i => (
+                        <div key={`top-${i}`} className="w-12 h-16 bg-white rounded-b-xl shadow-inner relative overflow-hidden border border-gray-200">
+                          <div className="absolute inset-0 bg-yellow-600/80 transition-opacity duration-300" style={{ opacity: brushTimeLeft / 100 }} />
+                        </div>
+                      ))}
+                    </div>
+                    {/* Dark throat area */}
+                    <div className="flex-grow bg-red-950 rounded-full opacity-60 mx-4" />
+                    {/* Bottom Teeth */}
+                    <div className="flex justify-center w-full gap-0.5">
+                      {[5,6,7,8,9].map(i => (
+                        <div key={`bot-${i}`} className="w-12 h-16 bg-white rounded-t-xl shadow-inner relative overflow-hidden border border-gray-200">
+                          <div className="absolute inset-0 bg-yellow-600/80 transition-opacity duration-300" style={{ opacity: brushTimeLeft / 100 }} />
+                        </div>
+                      ))}
+                    </div>
+                    {/* Foam UI */}
+                    {foamSpots.map(f => (
+                      <motion.div key={f.id} initial={{ scale: 0 }} animate={{ scale: 1, opacity: [1, 0.5, 0] }} transition={{ duration: 1 }}
+                        className="absolute w-8 h-8 bg-white rounded-full shadow-md mix-blend-screen pointer-events-none"
+                        style={{ top: f.y - 16, left: f.x - 16 }}
+                      />
                     ))}
                   </div>
-                  <div className="flex justify-center gap-1.5 w-full bg-pink-400 rounded-t-full p-3 pt-8 shadow-[inset_0_10px_20px_rgba(0,0,0,0.1)] mt-2">
-                    {[5,6,7,8,9].map(i => (
-                      <div key={i} onMouseMove={() => handleBrushTooth(i)} onTouchMove={() => handleBrushTooth(i)}
-                           className="w-12 h-20 bg-white rounded-[24px] rounded-b-[4px] shadow-[0_-4px_6px_rgba(0,0,0,0.15)] relative overflow-hidden border-2 border-gray-100">
-                        <div className="absolute inset-0 bg-yellow-600/80 transition-opacity duration-100" style={{ opacity: teethDirt[i] / 100 }} />
-                      </div>
-                    ))}
-                  </div>
+                  {/* Draggable Toothbrush */}
+                  <motion.div drag dragMomentum={false}
+                    onDrag={handleBrushDrag} onDragEnd={handleBrushEnd}
+                    className="absolute bottom-10 right-10 text-6xl cursor-grab active:cursor-grabbing z-40 hover:scale-110 drop-shadow-xl"
+                  >
+                    🪥
+                  </motion.div>
                 </div>
               )}
 
@@ -401,20 +462,25 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
                   <AnimatePresence mode="wait">
                     {washPhase === "FACE" ? (
                       <motion.div key="face" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }}
-                        className="relative w-80 h-80 bg-orange-50 rounded-full border-8 border-orange-200 flex items-center justify-center shadow-lg"
+                        className="relative w-80 h-80 bg-orange-50 rounded-[60px] border-8 border-orange-200 flex items-center justify-center shadow-lg overflow-hidden"
                         style={{ cursor: "url('data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"40\" height=\"40\" style=\"font-size:30px\"><text y=\"30\">🧼</text></svg>'), auto" }}>
-                        <span className="text-[140px] select-none pointer-events-none">👦</span>
+                        <div className="scale-[2.5] pointer-events-none mt-16">
+                          <SproutMascot state="idle" />
+                        </div>
                         {faceSpots.map(spot => (
                           <div key={spot} onMouseMove={() => handleWashFace(spot)} onTouchMove={() => handleWashFace(spot)}
-                            className="absolute w-12 h-12 bg-amber-800/80 rounded-full blur-[2px]"
-                            style={{ top: spot === 1 ? '25%' : spot === 2 ? '45%' : spot === 3 ? '60%' : '50%', left: spot === 1 ? '30%' : spot === 2 ? '65%' : spot === 3 ? '35%' : '70%' }}
+                            className="absolute w-12 h-12 bg-amber-900/90 rounded-full blur-[3px]"
+                            style={{ 
+                              top: `${20 + (spot * 10)}%`, 
+                              left: `${20 + ((spot * 37) % 60)}%` 
+                            }}
                           />
                         ))}
                       </motion.div>
                     ) : (
                       <motion.div key="hands" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
                         className="relative w-80 h-80 flex items-center justify-center bg-blue-50 rounded-full border-4 border-blue-200">
-                        <span className="text-[140px]">👐</span>
+                        <span className="text-[120px]">🖐️</span>
                         {handBubbles.map(b => (
                           <motion.div key={b} onMouseMove={() => handlePopBubble(b)} onTouchMove={() => handlePopBubble(b)}
                             className="absolute w-16 h-16 rounded-full bg-blue-200/60 border border-blue-300 shadow-inner flex items-center justify-center cursor-pointer backdrop-blur-sm"
@@ -433,18 +499,20 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
               {activeHabit === "BREAKFAST" && (
                 <div className="relative w-full h-full flex flex-col justify-between">
                   {/* Face in middle */}
-                  <div className="flex-grow flex items-center justify-center z-10 pointer-events-none">
-                    <div data-mouth="true" className="text-[160px] pointer-events-auto flex items-center justify-center w-64 h-64 transition-transform duration-200">
-                      {isMouthOpen ? "😮" : "👦"}
+                  <div className="flex-grow flex items-center justify-center z-10 pointer-events-none pt-12">
+                    <div data-mouth="true" className="pointer-events-auto flex items-center justify-center transition-transform duration-200" style={{ transform: isMouthOpen ? 'scale(1.2)' : 'scale(1)' }}>
+                      <div className="w-64 h-64 relative">
+                        <SproutMascot state={isMouthOpen ? "cheering" : "idle"} />
+                      </div>
                     </div>
                   </div>
-                  {/* Tray at bottom - Add pb-6 so it's not cut off by the rounded container corners */}
-                  <div className="bg-amber-50 rounded-t-3xl border-t-8 border-amber-200 flex justify-center items-center gap-6 z-20 py-6 px-4 shrink-0">
+                  {/* Tray at bottom */}
+                  <div className="bg-amber-50 rounded-t-3xl border-t-8 border-amber-200 flex justify-center items-center gap-6 z-20 py-6 px-4 shrink-0 shadow-[0_-10px_20px_rgba(0,0,0,0.05)]">
                     {breakfastItems.map(food => (
                       <motion.div key={food.id} drag dragMomentum={false}
                         onDrag={(e, info) => handleBreakfastDrag(e, info)}
                         onDragEnd={(e, info) => handleBreakfastDrop(e, info, food)}
-                        className="text-6xl cursor-grab active:cursor-grabbing bg-white p-3 rounded-full shadow-lg border-4 border-yellow-300 z-30 hover:scale-110"
+                        className="w-20 h-20 cursor-grab active:cursor-grabbing bg-white rounded-full shadow-lg border-4 border-yellow-300 z-30 hover:scale-110 flex items-center justify-center text-5xl"
                       >
                         {food.emoji}
                       </motion.div>
