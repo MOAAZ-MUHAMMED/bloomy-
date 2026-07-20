@@ -502,7 +502,7 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
                   <div className="flex-grow flex items-center justify-center z-10 pointer-events-none pt-12">
                     <div data-mouth="true" className="pointer-events-auto flex items-center justify-center transition-transform duration-200" style={{ transform: isMouthOpen ? 'scale(1.2)' : 'scale(1)' }}>
                       <div className="w-64 h-64 relative">
-                        <SproutMascot state={isMouthOpen ? "cheering" : "idle"} />
+                        <SproutMascot state={isMouthOpen ? "happy" : "idle"} />
                       </div>
                     </div>
                   </div>
