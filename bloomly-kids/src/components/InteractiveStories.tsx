@@ -537,6 +537,9 @@ const baseStories: Story[] = [
       { id: 2, text: "بحث سمسم في كل مكان، وسأل أصدقاءه الحيوانات في الغابة عن الجزر.", illustration: (anim) => SVGArnoobCarrot(anim) },
       { id: 3, text: "قرر السنجاب والبومة مساعدة سمسم في البحث، وتعاونوا معاً.", illustration: (anim) => SVGArnoobCarrot(anim) },
       { id: 4, text: "أخيراً وجدوا الجزر مخبأً خلف شجرة البلوط، وشكرهم سمسم على تعاونهم ومساعدتهم.", illustration: (anim) => SVGArnoobCarrot(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobCarrot(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobCarrot(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobCarrot(anim) }
     ]
   },
   {
@@ -550,6 +553,9 @@ const baseStories: Story[] = [
       { id: 2, text: "بينما كانت بعض الحيوانات تلعب، كان بندق يعمل بجد لجمع طعامه.", illustration: (anim) => SVGArnoobSquirrel(anim) },
       { id: 3, text: "جاء الشتاء البارد ولم يجد الكثيرون طعاماً ليأكلوه.", illustration: (anim) => SVGArnoobSquirrel(anim) },
       { id: 4, text: "لكن بندق كان مستعداً، وشارك طعامه مع أصدقائه، فعرفوا أهمية العمل الجاد.", illustration: (anim) => SVGArnoobSquirrel(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobSquirrel(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobSquirrel(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobSquirrel(anim) }
     ]
   },
   {
@@ -563,6 +569,9 @@ const baseStories: Story[] = [
       { id: 2, text: "كانت الرحلة طويلة ومليئة بالمغامرات واكتشاف الأماكن الجديدة.", illustration: (anim) => SVGArnoobSharing(anim) },
       { id: 3, text: "اعتمد دبدوب على نفسه وتتبع رائحة الأزهار ليجد خلية النحل.", illustration: (anim) => SVGArnoobSharing(anim) },
       { id: 4, text: "بعد تعب، وجد دبدوب العسل، وتعلم أن الاعتماد على النفس يجعله أقوى.", illustration: (anim) => SVGArnoobSharing(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobSharing(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobSharing(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobSharing(anim) }
     ]
   },
   {
@@ -576,6 +585,9 @@ const baseStories: Story[] = [
       { id: 2, text: "كان فرفوش يقفز عالياً، بينما ضخم يستخدم خرطومه لرش الماء.", illustration: (anim) => SVGSproutWorking(anim) },
       { id: 3, text: "في أحد الأيام، سخر بعض الحيوانات من صداقتهما الغريبة.", illustration: (anim) => SVGSproutWorking(anim) },
       { id: 4, text: "لكنهما أثبتا للجميع أن الصداقة الحقيقية تعتمد على المحبة وليس الشكل.", illustration: (anim) => SVGSproutWorking(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGSproutWorking(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGSproutWorking(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGSproutWorking(anim) }
     ]
   },
   {
@@ -589,6 +601,9 @@ const baseStories: Story[] = [
       { id: 2, text: "بدأ السباق وانطلق الأرنب بسرعة فائقة تاركاً السلحفاة خلفه بكثير.", illustration: (anim) => SVGSproutTurtle(anim) },
       { id: 3, text: "اغتر الأرنب بسرعته وقرر أن ينام قليلاً تحت شجرة، بينما استمرت السلحفاة في السير.", illustration: (anim) => SVGSproutTurtle(anim) },
       { id: 4, text: "استيقظ الأرنب ليجد السلحفاة قد وصلت لخط النهاية وفازت بالسباق!", illustration: (anim) => SVGSproutTurtle(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGSproutTurtle(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGSproutTurtle(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGSproutTurtle(anim) }
     ]
   },
   {
@@ -602,6 +617,9 @@ const baseStories: Story[] = [
       { id: 2, text: "شجعه أصدقاؤه وأمه على فرد جناحيه وتجربة الطيران.", illustration: (anim) => SVGSproutBlooming(anim) },
       { id: 3, text: "أخذ زقزوق نفساً عميقاً، وأغمض عينيه، وقفز من العش عالياً.", illustration: (anim) => SVGSproutBlooming(anim) },
       { id: 4, text: "فتح عينيه ليجد نفسه يحلق في السماء الزرقاء، فشعر بالفخر والشجاعة.", illustration: (anim) => SVGSproutBlooming(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGSproutBlooming(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGSproutBlooming(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGSproutBlooming(anim) }
     ]
   },
   {
@@ -615,6 +633,9 @@ const baseStories: Story[] = [
       { id: 2, text: "كل نحلة في الخلية كان لها دور مهم، يعملون معاً كنظام واحد.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 3, text: "يوم بعد يوم، امتلأت الخلية بالعسل اللذيذ بفضل جهودهم المشتركة.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 4, text: "أدركت زينة أن العمل الجماعي يجعل تحقيق الأهداف أسهل وأسرع.", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobForest(anim) }
     ]
   },
   {
@@ -628,6 +649,9 @@ const baseStories: Story[] = [
       { id: 2, text: "سقطت الحبة منها عدة مرات، لكنها لم تستسلم وحاولت مراراً وتكراراً.", illustration: (anim) => SVGArnoobCarrot(anim) },
       { id: 3, text: "رآها الجندب وسخر منها، لكنها واصلت المحاولة بعزيمة قوية.", illustration: (anim) => SVGArnoobCarrot(anim) },
       { id: 4, text: "أخيراً، أوصلت حبة القمح إلى بيتها، وأثبتت أن الإصرار مفتاح النجاح.", illustration: (anim) => SVGArnoobCarrot(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobCarrot(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobCarrot(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobCarrot(anim) }
     ]
   },
   {
@@ -641,6 +665,9 @@ const baseStories: Story[] = [
       { id: 2, text: "رأت زهرة ذابلة حزينة لأن أحداً لا يقف عليها.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 3, text: "قررت الفراشة أن تقف على الزهرة وتواسيها وتتحدث معها كل يوم.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 4, text: "عادت الزهرة للحياة وأزهرت من جديد بفضل لطف وعطف الفراشة.", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobForest(anim) }
     ]
   },
   {
@@ -654,6 +681,9 @@ const baseStories: Story[] = [
       { id: 2, text: "في يوم ما، نقلها صياد طيب إلى النهر الكبير.", illustration: (anim) => SVGArnoobSharing(anim) },
       { id: 3, text: "اكتشفت السمكة أن النهر مليء بالأسماك المفترسة والمخاطر الكثيرة.", illustration: (anim) => SVGArnoobSharing(anim) },
       { id: 4, text: "عادت تتمنى بركتها الصغيرة الآمنة، وعرفت أهمية القناعة بما نملك.", illustration: (anim) => SVGArnoobSharing(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobSharing(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobSharing(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobSharing(anim) }
     ]
   },
   {
@@ -667,6 +697,9 @@ const baseStories: Story[] = [
       { id: 2, text: "تشابك الخيط حول الأثاث وأحدث فوضى كبيرة في الغرفة.", illustration: (anim) => SVGArnoobSquirrel(anim) },
       { id: 3, text: "عندما عادت الجدة، حزنت لرؤية الفوضى.", illustration: (anim) => SVGArnoobSquirrel(anim) },
       { id: 4, text: "اعتذرت مشمشة وتعلمت أن تستأذن قبل أن تأخذ شيئاً ليس لها.", illustration: (anim) => SVGArnoobSquirrel(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobSquirrel(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobSquirrel(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobSquirrel(anim) }
     ]
   },
   {
@@ -680,6 +713,9 @@ const baseStories: Story[] = [
       { id: 2, text: "في يوم عاصف، ضل بسبوس طريقه ولم يعد للمنزل.", illustration: (anim) => SVGArnoobSharing(anim) },
       { id: 3, text: "خرج شجاع يبحث عنه في كل مكان رغم البرد والمطر.", illustration: (anim) => SVGArnoobSharing(anim) },
       { id: 4, text: "وجد شجاع بسبوس مختبئاً، وعادا معاً للمنزل بأمان.", illustration: (anim) => SVGArnoobSharing(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobSharing(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobSharing(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobSharing(anim) }
     ]
   },
   {
@@ -693,6 +729,9 @@ const baseStories: Story[] = [
       { id: 2, text: "في يوم من الأيام، علق ذيله الجميل في بعض الأشواك ولم يستطع التخلص منها.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 3, text: "طلب المساعدة من الطيور التي سخر منها سابقاً.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 4, text: "ساعدوه بكل طيبة، فأدرك الطاووس أن الأخلاق أهم من الشكل الجميل.", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobForest(anim) }
     ]
   },
   {
@@ -706,6 +745,9 @@ const baseStories: Story[] = [
       { id: 2, text: "أخبرتهم البومة الحكيمة أن الليل هادئ وجميل وفيه نجوم تلمع.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 3, text: "أخذت الحيوانات في جولة ليلية ليروا جمال القمر.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 4, text: "أدرك الجميع أن الظلام ليس مخيفاً بل له سحره الخاص.", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobForest(anim) }
     ]
   },
   {
@@ -719,6 +761,9 @@ const baseStories: Story[] = [
       { id: 2, text: "قفز وقفز لكنه لم يستطع الوصول إليه أبداً.", illustration: (anim) => SVGArnoobCarrot(anim) },
       { id: 3, text: "بدلاً من أن يعترف بعجزه، قال: العنب حامض ولا أريده.", illustration: (anim) => SVGArnoobCarrot(anim) },
       { id: 4, text: "سمعه العصفور وقال له: كان الأجدر بك أن تطلب المساعدة أو تعترف بصعوبة الأمر.", illustration: (anim) => SVGArnoobCarrot(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobCarrot(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobCarrot(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobCarrot(anim) }
     ]
   },
   {
@@ -732,6 +777,9 @@ const baseStories: Story[] = [
       { id: 2, text: "اجتمع الجميع لسماع القانون الذي يمنع القوي من أكل طعام الضعيف.", illustration: (anim) => SVGArnoobSharing(anim) },
       { id: 3, text: "فرحت الحيوانات الصغيرة وشعرت بالأمان لأول مرة.", illustration: (anim) => SVGArnoobSharing(anim) },
       { id: 4, text: "أصبح الأسد محبوباً ومحترماً لعدله ورحمته.", illustration: (anim) => SVGArnoobSharing(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobSharing(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobSharing(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobSharing(anim) }
     ]
   },
   {
@@ -745,6 +793,9 @@ const baseStories: Story[] = [
       { id: 2, text: "لكن الضفدع الصغير كان يقفز بسعادة في البرك المائية ويغني.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 3, text: "استغرب الجميع من سعادته وسط المطر.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 4, text: "أخبرهم الضفدع أن المطر يسقي الزرع ويجلب الحياة، فتعلموا التفاؤل.", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobForest(anim) }
     ]
   },
   {
@@ -758,6 +809,9 @@ const baseStories: Story[] = [
       { id: 2, text: "في يوم سألها الخروف: لماذا أنتِ سعيدة دائماً؟", illustration: (anim) => SVGArnoobSquirrel(anim) },
       { id: 3, text: "أجابت البقرة: لأنني أشكر الله كل يوم على هذا المرعى الجميل.", illustration: (anim) => SVGArnoobSquirrel(anim) },
       { id: 4, text: "تعلم الخروف أن الامتنان والشكر يجلبان السعادة والراحة.", illustration: (anim) => SVGArnoobSquirrel(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobSquirrel(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobSquirrel(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobSquirrel(anim) }
     ]
   },
   {
@@ -771,6 +825,9 @@ const baseStories: Story[] = [
       { id: 2, text: "كان البرق يتصدر السباق عندما رأى حصاناً آخر يتعثر ويسقط.", illustration: (anim) => SVGArnoobCarrot(anim) },
       { id: 3, text: "بدلاً من إكمال السباق والفوز، توقف البرق لمساعدة الحصان المصاب.", illustration: (anim) => SVGArnoobCarrot(anim) },
       { id: 4, text: "خسر البرق السباق لكنه فاز باحترام وتقدير الجميع لأخلاقه.", illustration: (anim) => SVGArnoobCarrot(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobCarrot(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobCarrot(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobCarrot(anim) }
     ]
   },
   {
@@ -784,6 +841,9 @@ const baseStories: Story[] = [
       { id: 2, text: "في يوم كسل كوكو ولم يصحُ، فتأخر الجميع عن أعمالهم.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 3, text: "عندما استيقظ، أدرك أهمية صياحه ونشاطه للجميع.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 4, text: "وعد نفسه أن لا يتكاسل أبداً وأن يظل نشيطاً ومستيقظاً مبكراً.", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobForest(anim) }
     ]
   },
   {
@@ -797,6 +857,9 @@ const baseStories: Story[] = [
       { id: 2, text: "كانت بقية الحيوانات جائعة ولا تستطيع الوصول للأوراق اللذيذة.", illustration: (anim) => SVGArnoobSharing(anim) },
       { id: 3, text: "قررت الزرافة أن تقطف الأوراق وتوزعها على أصدقائها.", illustration: (anim) => SVGArnoobSharing(anim) },
       { id: 4, text: "علمت الزرافة أن ميزاتها خُلقت لتكون عوناً للآخرين.", illustration: (anim) => SVGArnoobSharing(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobSharing(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobSharing(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobSharing(anim) }
     ]
   },
   {
@@ -810,6 +873,9 @@ const baseStories: Story[] = [
       { id: 2, text: "مر الفأر الصغير ورأى الأسد في مأزق.", illustration: (anim) => SVGArnoobSquirrel(anim) },
       { id: 3, text: "بأسنانه الصغيرة، بدأ الفأر يقضم حبال الشبكة بذكاء وصبر.", illustration: (anim) => SVGArnoobSquirrel(anim) },
       { id: 4, text: "انقطعت الشبكة وتحرر الأسد، وعلم أن الذكاء والصبر يتغلبان على القوة.", illustration: (anim) => SVGArnoobSquirrel(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobSquirrel(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobSquirrel(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobSquirrel(anim) }
     ]
   },
   {
@@ -823,6 +889,9 @@ const baseStories: Story[] = [
       { id: 2, text: "كلما رأت شجاراً بين عصفورين، كانت تتدخل بلطف لتصلح بينهما.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 3, text: "أصبحت الغابة مكاناً هادئاً ومليئاً بالمحبة بفضل جهودها.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 4, text: "أدرك الجميع أن السلام والمحبة هما أجمل ما في الحياة.", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobForest(anim) }
     ]
   },
   {
@@ -836,6 +905,9 @@ const baseStories: Story[] = [
       { id: 2, text: "حذره أصدقاؤه من الجليد الرقيق لكنه لم يستمع.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 3, text: "كاد كيمو أن يقع في الماء البارد لولا مساعدة أصدقائه.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 4, text: "تعلم كيمو أهمية الحذر والاستماع لنصائح الآخرين قبل التصرف.", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobForest(anim) }
     ]
   },
   {
@@ -849,6 +921,9 @@ const baseStories: Story[] = [
       { id: 2, text: "لكنه كان يستاء من شكل ساقيه النحيفتين.", illustration: (anim) => SVGArnoobCarrot(anim) },
       { id: 3, text: "عندما ظهر ذئب مفترس، كانت ساقاه النحيفتان هما ما ساعده على الركض والنجاة، بينما كادت قرونه أن تعلقه بالشجر.", illustration: (anim) => SVGArnoobCarrot(anim) },
       { id: 4, text: "أدرك الغزال أن الفائدة الحقيقية أهم بكثير من المظهر الجميل.", illustration: (anim) => SVGArnoobCarrot(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobCarrot(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobCarrot(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobCarrot(anim) }
     ]
   },
   {
@@ -862,6 +937,9 @@ const baseStories: Story[] = [
       { id: 2, text: "كان الخروف الصغير ذكياً ولاحظ أن أسنان هذا الخروف الجديد حادة جداً.", illustration: (anim) => SVGArnoobSharing(anim) },
       { id: 3, text: "أخبر الكلب الحارس فوراً، فكشف الكلب خدعة الذئب وطرده.", illustration: (anim) => SVGArnoobSharing(anim) },
       { id: 4, text: "تعلم القطيع أن لا ينخدعوا بالمظاهر ويكونوا حذرين.", illustration: (anim) => SVGArnoobSharing(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobSharing(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobSharing(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobSharing(anim) }
     ]
   },
   {
@@ -875,6 +953,9 @@ const baseStories: Story[] = [
       { id: 2, text: "في يوم، اقترب خطر حقيقي، ولم يفلح دفن الرأس في الحماية.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 3, text: "أدركت النعامة أن الهروب من المشاكل لا يحلها.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 4, text: "رفعت رأسها وواجهت الموقف بشجاعة وركضت للنجاة.", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobForest(anim) }
     ]
   },
   {
@@ -888,6 +969,9 @@ const baseStories: Story[] = [
       { id: 2, text: "اكتشف القرد خدعته وأخبر بقية الحيوانات.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 3, text: "عندما مرض التمساح وبكى بصدق، لم يصدقه أحد ولم يساعده.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 4, text: "تعلم التمساح درساً قاسياً عن أهمية الصدق في المشاعر.", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobForest(anim) }
     ]
   },
   {
@@ -901,6 +985,9 @@ const baseStories: Story[] = [
       { id: 2, text: "قرر الخفاش أن يشرح للطيور عن طبيعته وفائدته في أكل الحشرات الضارة.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 3, text: "فهمت الطيور أسلوب حياة الخفاش واحترمت اختلافه.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 4, text: "أصبح الجميع يعيشون بسلام وتفهم لاختلافات بعضهم البعض.", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobForest(anim) }
     ]
   },
   {
@@ -914,6 +1001,9 @@ const baseStories: Story[] = [
       { id: 2, text: "لاحظت أن بعض الحيوانات ترمي الأوساخ في البحيرة.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 3, text: "قامت البجعة بتنظيف البحيرة يومياً وشجعت الحيوانات على الحفاظ عليها.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 4, text: "أصبحت البحيرة أجمل مكان في الغابة بفضل النظافة.", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobForest(anim) }
     ]
   },
   {
@@ -927,6 +1017,9 @@ const baseStories: Story[] = [
       { id: 2, text: "ضحكت الحشرات من بطئه، لكنه لم يتأثر وواصل طريقه بهدوء.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 3, text: "استغرق الأمر أياماً، لكنه وصل للقمة واستمتع بأجمل منظر للغابة.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 4, text: "أثبت الحلزون أن الصبر والمثابرة يوصلان لأعلى القمم.", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobForest(anim) }
     ]
   },
   {
@@ -940,6 +1033,9 @@ const baseStories: Story[] = [
       { id: 2, text: "لم يستطع الوصول للماء بمنقاره، ففكر في حل ذكي.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 3, text: "بدأ يجمع الحصى ويرميها في الجرة حتى ارتفع الماء للأعلى.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 4, text: "شرب الغراب وارتوى، وتأكد أن التفكير يحل أصعب المشكلات.", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobForest(anim) }
     ]
   },
   {
@@ -953,6 +1049,9 @@ const baseStories: Story[] = [
       { id: 2, text: "كان النورس هادئاً، وبدلاً من الخوف، استخدم الرياح القوية للتحليق عالياً دون مجهود.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 3, text: "تعلمت بقية الطيور كيف تستغل الظروف الصعبة لصالحها.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 4, text: "أدركوا أن التكيف أفضل من الاستسلام للخوف.", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobForest(anim) }
     ]
   },
   {
@@ -966,6 +1065,9 @@ const baseStories: Story[] = [
       { id: 2, text: "كانت تعطي الخيوط للحيوانات ليصنعوا منها ملابس شتوية دافئة.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 3, text: "لم تطلب شيئاً بالمقابل، كانت سعيدة برؤية أصدقائها دافئين.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 4, text: "أصبحت دودة القز محبوبة الجميع لكرمها وعطائها.", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobForest(anim) }
     ]
   },
   {
@@ -979,6 +1081,9 @@ const baseStories: Story[] = [
       { id: 2, text: "اختبأ ولم يخرج للصيد أو اللعب مع أصدقائه.", illustration: (anim) => SVGArnoobSharing(anim) },
       { id: 3, text: "عندما نظر في البحيرة، وجد أن خطوطه ما زالت موجودة، وأن الأمر مجرد وهم.", illustration: (anim) => SVGArnoobSharing(anim) },
       { id: 4, text: "تعلم النمر أن يثق بنفسه وبشكله ولا يدع الأوهام تسيطر عليه.", illustration: (anim) => SVGArnoobSharing(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobSharing(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobSharing(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobSharing(anim) }
     ]
   },
   {
@@ -992,6 +1097,9 @@ const baseStories: Story[] = [
       { id: 2, text: "أسرع الدلفين ورفع الطائر على ظهره وأخرجه للشاطئ.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 3, text: "شكر الطائر الدلفين على إنقاذ حياته.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 4, text: "تعلم الدلفين أن مساعدة الآخرين هي أجمل أنواع اللعب.", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobForest(anim) }
     ]
   },
   {
@@ -1005,6 +1113,9 @@ const baseStories: Story[] = [
       { id: 2, text: "بمرور الوقت، أصبح يمتلك أجمل وأتنوع صوت في الغابة.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 3, text: "سألوه كيف فعل ذلك، فأجاب: بالاستماع والتعلم المستمر.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 4, text: "أدرك الجميع أن التعلم من الآخرين يزيدنا جمالاً ومعرفة.", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobForest(anim) }
     ]
   },
   {
@@ -1018,6 +1129,9 @@ const baseStories: Story[] = [
       { id: 2, text: "كلما هدمت الرياح شبكته، كان يعيد بناءها بصبر أكبر وإتقان أفضل.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 3, text: "في النهاية، صنع شبكة قوية لم تتأثر بالرياح.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 4, text: "تعلمت الحيوانات من العنكبوت أن إتقان العمل يحتاج لصبر وعزيمة.", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobForest(anim) }
     ]
   },
   {
@@ -1031,6 +1145,9 @@ const baseStories: Story[] = [
       { id: 2, text: "سخرت الحيوانات الكبيرة من حجمها الصغير وطموحها الكبير.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 3, text: "لكنها لم تتوقف ودحرجت الكرة حتى أوصلتها لبيتها.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 4, text: "انبهر الجميع بقوتها وعزيمتها، وتعلموا ألا يستصغروا أحداً لحجمه.", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobForest(anim) }
     ]
   },
   {
@@ -1044,6 +1161,9 @@ const baseStories: Story[] = [
       { id: 2, text: "حزنت في البداية واعتقدت أنها فقدت جزءاً من جمالها وقوتها.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 3, text: "لكن مع مرور الأيام، بدأ ذيلها ينمو من جديد.", illustration: (anim) => SVGArnoobForest(anim) },
       { id: 4, text: "تعلمت السحلية أن الخسارة ليست النهاية، وأننا قادرون على التجدد والبدء من جديد بقوة أكبر.", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 5, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 6, text: "...", illustration: (anim) => SVGArnoobForest(anim) },
+      { id: 7, text: "...", illustration: (anim) => SVGArnoobForest(anim) }
     ]
   },
 ];
