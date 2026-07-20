@@ -254,7 +254,8 @@ export default function App() {
 
   useEffect(() => {
     fetchAllProfiles();
-    const interval = setInterval(fetchAllProfiles, 5000);
+    // Reduced fetching frequency from 5s to 60s to fix overall app lag
+    const interval = setInterval(fetchAllProfiles, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -281,7 +282,8 @@ export default function App() {
         console.warn("Failed to sync stars:", e);
       }
     };
-    const interval = setInterval(syncStars, 1000);
+    // Reduced local storage polling from 1s to 15s to fix overall app lag
+    const interval = setInterval(syncStars, 15000);
     window.addEventListener("storage", syncStars);
     return () => {
       clearInterval(interval);

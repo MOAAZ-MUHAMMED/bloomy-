@@ -163,12 +163,8 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
                   `
                 }}
                 onClick={() => {
-                  setClickedId(item.id);
                   speakArabic(item.title);
-                  setTimeout(() => {
-                    if (item.action) item.action();
-                    setClickedId(null);
-                  }, 600); // Wait for the sparkle explosion
+                  if (item.action) item.action();
                 }}
               >
                 {/* Noise Texture for Premium Material feel */}
@@ -213,10 +209,7 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
                   </div>
                 </div>
 
-                {/* Sparkle Explosion when clicked */}
-                <AnimatePresence>
-                  {isClicked && <ClickSparkles />}
-                </AnimatePresence>
+                {/* Sparkle Explosion removed for performance and speed */}
                 
                 {/* Custom Hover Glow Style injected via DOM */}
                 <style dangerouslySetInnerHTML={{__html: `

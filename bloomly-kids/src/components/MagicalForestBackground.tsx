@@ -25,9 +25,9 @@ export const MagicalForestBackground: React.FC = () => {
 
     let lastMoveTime = 0;
     const handlePointerMove = (e: PointerEvent) => {
-      // Throttle pointer move to max 1 bubble per 150ms
+      // Throttle pointer move significantly to reduce lag (max 1 per 1000ms)
       const now = Date.now();
-      if (now - lastMoveTime < 150) return;
+      if (now - lastMoveTime < 1000) return;
       lastMoveTime = now;
       
       const newBubble: Bubble = {
@@ -37,11 +37,11 @@ export const MagicalForestBackground: React.FC = () => {
         color: ['#FDE047', '#F472B6', '#60A5FA', '#34D399'][Math.floor(Math.random() * 4)]
       };
 
-      setBubbles(prev => [...prev.slice(-6), newBubble]); // keep only last 7 bubbles
+      setBubbles(prev => [...prev.slice(-2), newBubble]); // keep only last 3 bubbles
 
       setTimeout(() => {
         setBubbles(prev => prev.filter(f => f.id !== newBubble.id));
-      }, 1500);
+      }, 1000);
     };
 
     window.addEventListener('pointermove', handlePointerMove);
@@ -64,29 +64,12 @@ export const MagicalForestBackground: React.FC = () => {
         background: 'conic-gradient(from 0deg at 100% 0%, transparent 0deg, rgba(253, 224, 71, 0.3) 15deg, transparent 30deg, rgba(253, 224, 71, 0.3) 45deg, transparent 60deg, rgba(253, 224, 71, 0.3) 75deg, transparent 90deg)',
       }} />
 
-      {/* Background Soft Glows - reduced blur to blur-3xl (64px) for better performance */}
-      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-blue-300/30 blur-3xl" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-pink-300/30 blur-3xl" />
-      <div className="absolute top-[30%] left-[40%] w-[50%] h-[50%] rounded-full bg-yellow-200/40 blur-3xl" />
+      {/* Background Soft Glows - optimized blur and stronger colors */}
+      <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] rounded-full bg-blue-400/50 blur-2xl" />
+      <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-pink-400/50 blur-2xl" />
+      <div className="absolute top-[30%] left-[40%] w-[50%] h-[50%] rounded-full bg-yellow-300/50 blur-2xl" />
 
-      {/* Hot Air Balloons */}
-      <motion.div
-        className="absolute top-[20%]"
-        initial={{ x: '-20vw' }}
-        animate={{ x: '120vw', y: [0, -20, 0] }}
-        transition={{ x: { duration: 60, repeat: Infinity, ease: "linear" }, y: { duration: 4, repeat: Infinity, ease: "easeInOut" } }}
-      >
-        <span className="text-6xl drop-shadow-sm">🎈</span>
-      </motion.div>
-      <motion.div
-        className="absolute top-[40%]"
-        initial={{ x: '120vw' }}
-        animate={{ x: '-20vw', y: [0, 30, 0] }}
-        transition={{ x: { duration: 80, repeat: Infinity, ease: "linear", delay: 10 }, y: { duration: 5, repeat: Infinity, ease: "easeInOut" } }}
-        style={{ transform: 'scaleX(-1)' }}
-      >
-        <span className="text-7xl drop-shadow-sm">🎈</span>
-      </motion.div>
+      {/* Hot Air Balloons Removed for better performance */}
 
       {/* Floating Stars and Magic Shapes - reduced drop shadows */}
       {floatingStars.map(star => (
@@ -118,8 +101,8 @@ export const MagicalForestBackground: React.FC = () => {
         </motion.div>
       ))}
 
-      {/* Floating ambient bubbles - reduced from 30 to 12 */}
-      {Array.from({ length: 12 }).map((_, i) => (
+      {/* Floating ambient bubbles - reduced to 4 to save performance */}
+      {Array.from({ length: 4 }).map((_, i) => (
         <motion.div
           key={`ambient-${i}`}
           className="absolute rounded-full border border-white/50 backdrop-blur-sm"
