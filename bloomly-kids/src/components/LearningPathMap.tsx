@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export const islandsData = [
@@ -619,6 +619,7 @@ export default function LearningPathMap({
   maxIslandUnlocked: number
 }) {
   const [selectedIslandIndex, setSelectedIslandIndex] = useState<number | null>(null);
+  const mapConstraintsRef = useRef(null);
 
   const playBubbleSound = () => {
     try {
@@ -662,31 +663,42 @@ export default function LearningPathMap({
   const svgPathStr = islandsData.map((isl, idx) => `${idx === 0 ? 'M' : 'L'} ${isl.x} ${isl.y}`).join(' ');
 
   return (
-    <div className="w-full overflow-x-auto rounded-[36px] border-4 border-[#4D2B82] shadow-inner mb-8 bg-[#29B6F6] custom-scrollbar" style={{ minHeight: '1400px' }} dir="rtl">
-      <div className="relative min-w-[1200px] h-[2200px] md:h-[3000px] select-none cursor-default z-10" style={{
-        backgroundImage: `radial-gradient(#0288D1 1.5px, transparent 1.5px), linear-gradient(to bottom, #29B6F6, #0288D1)`,
-        backgroundSize: '24px 24px, 100% 100%'
-      }}>
-      
-      {/* Ocean waves emojis floating in background */}
-      <div className="absolute top-[5%] left-[8%] text-blue-100/30 text-3xl pointer-events-none select-none">🌊</div>
-      <div className="absolute top-[85%] left-[90%] text-blue-100/30 text-4xl pointer-events-none select-none">🌊</div>
-      <div className="absolute top-[50%] left-[92%] text-blue-100/30 text-3xl pointer-events-none select-none">🌊</div>
-      <div className="absolute top-[90%] left-[10%] text-blue-100/30 text-2xl pointer-events-none select-none">⛵</div>
-      <div className="absolute top-[12%] left-[82%] text-blue-100/30 text-2xl pointer-events-none select-none">🐠</div>
-
-      {/* Sand Shore layer - organic shaped island covering most of the map */}
-      <div className="absolute inset-[4%] bg-[#FFE0B2] border-3 border-[#E5A93C] shadow-2xl pointer-events-none" style={{
-        borderRadius: "42% 45% 40% 48% / 45% 42% 48% 40%"
-      }}>
-        {/* Green forest landmass */}
-        <div className="absolute inset-[2.5%] bg-gradient-to-br from-[#81C784] via-[#4CAF50] to-[#2E7D32] shadow-inner" style={{
-          borderRadius: "40% 43% 38% 45% / 43% 40% 45% 38%"
-        }}>
-          {/* Subtle grass texture */}
-          <div className="absolute inset-0 opacity-15 bg-[radial-gradient(#1b5e20_15%,transparent_15%)] bg-[length:18px_18px]" />
-        </div>
+    <div className="relative mb-8 text-center group">
+      <div className="absolute -top-4 right-4 bg-yellow-400 text-yellow-900 font-black text-xs px-3 py-1 rounded-full shadow-md z-20 animate-pulse border-2 border-white">
+        💡 اسحب الخريطة بإصبعك لتستكشف الجزر!
       </div>
+      <div ref={mapConstraintsRef} className="w-full h-[65vh] sm:h-[75vh] min-h-[500px] overflow-hidden rounded-[40px] border-[6px] border-[#1E3A8A] shadow-[inset_0_0_50px_rgba(30,58,138,0.4),0_15px_30px_rgba(0,0,0,0.2)] bg-[#38BDF8] relative" dir="rtl">
+        <motion.div 
+          drag
+          dragConstraints={mapConstraintsRef}
+          dragElastic={0.15}
+          initial={{ x: 0, y: 0 }}
+          className="relative w-[1800px] h-[2800px] sm:w-[2400px] sm:h-[3200px] select-none cursor-grab active:cursor-grabbing z-10 touch-none" 
+          style={{
+            backgroundImage: `radial-gradient(rgba(2, 132, 199, 0.4) 3px, transparent 3px), linear-gradient(180deg, #38BDF8 0%, #0284C7 100%)`,
+            backgroundSize: '40px 40px, 100% 100%'
+          }}
+        >
+        
+        {/* Ocean waves emojis floating in background */}
+        <div className="absolute top-[5%] left-[8%] text-blue-100/40 text-4xl pointer-events-none select-none">🌊</div>
+        <div className="absolute top-[85%] left-[90%] text-blue-100/40 text-5xl pointer-events-none select-none">🌊</div>
+        <div className="absolute top-[50%] left-[92%] text-blue-100/40 text-4xl pointer-events-none select-none">🌊</div>
+        <div className="absolute top-[90%] left-[10%] text-blue-100/40 text-3xl pointer-events-none select-none">⛵</div>
+        <div className="absolute top-[12%] left-[82%] text-blue-100/40 text-3xl pointer-events-none select-none">🐠</div>
+
+        {/* Sand Shore layer - organic shaped island covering most of the map */}
+        <div className="absolute inset-[3%] bg-gradient-to-br from-[#FEF08A] to-[#FBBF24] border-4 border-[#F59E0B] shadow-[0_0_40px_rgba(0,0,0,0.15)] pointer-events-none" style={{
+          borderRadius: "42% 45% 40% 48% / 45% 42% 48% 40%"
+        }}>
+          {/* Green forest landmass */}
+          <div className="absolute inset-[3%] bg-gradient-to-br from-[#4ADE80] via-[#22C55E] to-[#15803D] shadow-[inset_0_0_60px_rgba(0,0,0,0.2)] border-2 border-[#166534]/30" style={{
+            borderRadius: "40% 43% 38% 45% / 43% 40% 45% 38%"
+          }}>
+            {/* Subtle grass texture */}
+            <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#14532D_15%,transparent_15%)] bg-[length:24px_24px]" />
+          </div>
+        </div>
 
       {/* Decorative island icons in empty spaces */}
       <div className="absolute top-[26%] left-[24%] text-2xl select-none pointer-events-none opacity-85 animate-float">🌴</div>
@@ -869,6 +881,7 @@ export default function LearningPathMap({
           </div>
         )}
       </AnimatePresence>
+      </motion.div>
       </div>
     </div>
   );

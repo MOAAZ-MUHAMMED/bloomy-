@@ -988,7 +988,7 @@ const uprightStyle = { transform: "none", transformOrigin: "bottom center" };
 
 export default function MagicGarden({ onClose, globalStars, setGlobalStars, spectateMode = false, spectateFarmData }: MagicGardenProps) {
   // ─── UI / System States ─────────────────────────────────────────
-  const [zoomScale, setZoomScale] = useState(0.85);
+  const [zoomScale, setZoomScale] = useState(0.65);
   const [timeOfDay, setTimeOfDay] = useState<"day" | "sunset" | "night">("day");
   const [noticeText, setNoticeText] = useState<string | null>(null);
   const [selectedPaddockToBuy, setSelectedPaddockToBuy] = useState<PaddockType | null>(null);
@@ -1015,7 +1015,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
         e.touches[0].clientY - e.touches[1].clientY
       );
       const scaleChange = (dist - initialPinchDist) * 0.005;
-      setZoomScale(s => Math.min(1.2, Math.max(0.6, s + scaleChange)));
+      setZoomScale(s => Math.min(0.9, Math.max(0.4, s + scaleChange)));
       setInitialPinchDist(dist);
     }
   };
@@ -1315,8 +1315,8 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
   const handleBuyAnimal = (type: PaddockType) => {
     const config = PADDOCK_DATA[type];
     const currentCount = animalCounts[type];
-    if (currentCount >= 24) {
-      synth.playPop(); triggerNotice(`❌ ${config.name} ممتلئة بالكامل (الحد الأقصى ٢٤ حيوان).`); return;
+    if (currentCount >= 12) {
+      synth.playPop(); triggerNotice(`❌ ${config.name} ممتلئة بالكامل (الحد الأقصى ١٢ حيوان).`); return;
     }
     if (globalStars < config.buyCost) {
       synth.playPop(); triggerNotice("❌ ليس لديك نجوم كافية لشراء هذا الحيوان!"); return;
@@ -1377,7 +1377,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
   const roadBorder = timeOfDay === "night" ? "border-[#5A4025]/60" : "border-[#8C6D47]/60";
 
   const renderAnimalSVG = (type: PaddockType, animal: AnimalState, adult: boolean) => {
-    const size = "w-14 h-14";
+    const size = "w-24 h-24";
     switch (type) {
       case "sheep": return <SVGSheep className={size} isEating={animal.isEating} />;
       case "rabbit": return <SVGBunny className={size} isEating={animal.isEating} />;
@@ -1452,10 +1452,10 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
         <div className="flex items-center gap-4">
           {/* Zoom controls */}
           <div className="bg-slate-100 rounded-full p-1 border-2 border-slate-200 flex items-center gap-1.5">
-            <button onClick={() => setZoomScale(s => Math.min(1.2, s + 0.05))} className="p-1.5 text-slate-600 hover:text-[#4D2B82] cursor-pointer"><ZoomIn className="w-4 h-4" /></button>
+            <button onClick={() => setZoomScale(s => Math.min(0.9, s + 0.05))} className="p-1.5 text-slate-600 hover:text-[#4D2B82] cursor-pointer"><ZoomIn className="w-4 h-4" /></button>
             <span className="text-[10px] font-black text-slate-500">{Math.round(zoomScale * 100)}%</span>
-            <button onClick={() => setZoomScale(s => Math.max(0.6, s - 0.05))} className="p-1.5 text-slate-600 hover:text-[#4D2B82] cursor-pointer"><ZoomOut className="w-4 h-4" /></button>
-            <button onClick={() => setZoomScale(0.85)} className="p-1.5 text-slate-400 hover:text-slate-600 cursor-pointer"><Maximize2 className="w-3.5 h-3.5" /></button>
+            <button onClick={() => setZoomScale(s => Math.max(0.4, s - 0.05))} className="p-1.5 text-slate-600 hover:text-[#4D2B82] cursor-pointer"><ZoomOut className="w-4 h-4" /></button>
+            <button onClick={() => setZoomScale(0.65)} className="p-1.5 text-slate-400 hover:text-slate-600 cursor-pointer"><Maximize2 className="w-3.5 h-3.5" /></button>
           </div>
 
           <div className="bg-[#FFFCE6] border-4 border-[#D97706] rounded-full px-8 py-3 flex items-center gap-3 shadow-xl transform hover:scale-105 transition-transform">
@@ -1562,7 +1562,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
                   }}
                 >
                   <div className={`font-black text-xs bg-black/30 w-fit px-2.5 py-0.5 rounded-full z-20 text-white`} style={uprightStyle}>
-                    {config.emoji} {config.name} ({count}/24)
+                    {config.emoji} {config.name} ({count}/12)
                   </div>
                   
                   {/* Premium Wooden Fence border decoration if unlocked */}
@@ -1695,7 +1695,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
                 synth.playPop();
                 triggerNotice("🏡 مرحباً بك في منزلي السعيد! أنا المزارع سعيد 👨‍🌾👋");
               }}
-              className="absolute left-[100px] top-[2000px] w-[680px] h-[520px] z-10 cursor-pointer hover:scale-[1.03] active:scale-[0.98] transition-all"
+              className="absolute left-[150px] top-[1250px] w-[680px] h-[520px] z-10 cursor-pointer hover:scale-[1.03] active:scale-[0.98] transition-all"
               style={uprightStyle}
             >
               <SVGFarmerHouse className="w-full h-full" />
@@ -1764,7 +1764,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
               <div className="text-5xl mb-3 mt-4">{PADDOCK_DATA[selectedPaddockToBuy].emoji}</div>
               <h3 className="text-xl font-black text-[#4D2B82] mb-1">{PADDOCK_DATA[selectedPaddockToBuy].name}</h3>
               <p className="text-xs font-bold text-gray-500 mb-2">
-                العدد الحالي: {animalCounts[selectedPaddockToBuy]}/24
+                العدد الحالي: {animalCounts[selectedPaddockToBuy]}/12
               </p>
 
               {/* Evolution progress */}
@@ -1809,7 +1809,7 @@ export default function MagicGarden({ onClose, globalStars, setGlobalStars, spec
                 <div className="flex gap-3 justify-center">
                   <button
                     onClick={() => { handleBuyAnimal(selectedPaddockToBuy); setSelectedPaddockToBuy(null); }}
-                    disabled={animalCounts[selectedPaddockToBuy] >= 24}
+                    disabled={animalCounts[selectedPaddockToBuy] >= 12}
                     className="bg-yellow-400 hover:bg-yellow-500 disabled:bg-gray-200 disabled:text-gray-400 text-yellow-900 border-3 border-yellow-600 px-6 py-2.5 rounded-full font-black text-sm cursor-pointer shadow-[0_3px_0_0_#D97706] active:translate-y-0.5 active:shadow-none flex-grow">
                     شراء ({PADDOCK_DATA[selectedPaddockToBuy].buyCost}⭐)
                   </button>
