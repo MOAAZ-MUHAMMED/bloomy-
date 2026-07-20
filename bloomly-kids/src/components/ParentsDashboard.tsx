@@ -95,7 +95,7 @@ export default function ParentsDashboard({ childProfile, setChildProfile, global
   }, [chartData]);
 
   return (
-    <div className="min-h-screen bg-[#3D1E6D] py-12 px-4 select-none" dir="rtl">
+    <div className="min-h-screen bg-transparent py-12 px-4 select-none" dir="rtl">
       <div className="max-w-5xl mx-auto flex flex-col gap-6">
         
         {/* Header */}

@@ -1357,7 +1357,7 @@ export default function App() {
 
       {/* --- ABOUT VIEW --- */}
       {currentView === 'about' && (
-        <div className="min-h-screen bg-[#3D1E6D] py-12 px-4 select-none" dir="rtl">
+        <div className="min-h-screen bg-transparent py-12 px-4 select-none" dir="rtl">
           <div className="max-w-4xl mx-auto flex flex-col gap-6">
             <div className="flex justify-between items-center bg-white p-4 rounded-3xl border-3 border-purple-200 shadow-md">
               <button 
