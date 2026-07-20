@@ -30,6 +30,11 @@ import MathHungryCrocodile from "./MathHungryCrocodile";
 import EnglishSpaceDecoder from "./EnglishSpaceDecoder";
 import DrawingNeonArt from "./DrawingNeonArt";
 
+// New IQ Games
+import IqOddOneOut from "./IqOddOneOut";
+import IqMissingPiece from "./IqMissingPiece";
+import IqSpotDifferences from "./IqSpotDifferences";
+
 export function SproutMascot({ className = "w-24 h-24", state = "idle" }: { className?: string; state?: "idle" | "happy" | "sad" | "talking" }) {
   const poseMap = {
     idle: "thinking" as const,
@@ -6611,6 +6616,18 @@ const startSpaceGame = () => {
           globalStars={globalStars}
           setGlobalStars={setGlobalStars}
         />
+      )}
+
+      {activeGame === "iqOddOneOut" && (
+        <IqOddOneOut onWin={(stars) => { addStars(stars); triggerVictory(); }} />
+      )}
+
+      {activeGame === "iqMissingPiece" && (
+        <IqMissingPiece onWin={(stars) => { addStars(stars); triggerVictory(); }} />
+      )}
+
+      {activeGame === "iqSpotDifferences" && (
+        <IqSpotDifferences onWin={(stars) => { addStars(stars); triggerVictory(); }} />
       )}
 
 

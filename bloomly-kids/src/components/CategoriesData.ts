@@ -38,7 +38,7 @@ export const categoriesData: CategoryData[] = [
     bgGradient: "from-[#ffecd2]/90 to-[#fcb69f]/90",
     textColor: "text-orange-700",
     borderColor: "border-orange-300",
-    games: ["math", "connectDots", "memory", "mathNumberTrain", "mathSpaceTower", "mathHungryCrocodile"]
+    games: ["math", "connectDots", "mathNumberTrain", "mathSpaceTower", "mathHungryCrocodile"]
   },
   {
     id: "kitchen",
@@ -108,6 +108,6 @@ export const categoriesData: CategoryData[] = [
     bgGradient: "from-[#fbc2eb]/90 to-[#a6c1ee]/90",
     textColor: "text-indigo-700",
     borderColor: "border-indigo-300",
-    games: []
+    games: ["memory", "iqOddOneOut", "iqMissingPiece", "iqSpotDifferences"]
   }
 ];
