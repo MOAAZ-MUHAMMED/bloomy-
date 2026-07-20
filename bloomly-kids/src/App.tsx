@@ -21,6 +21,8 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { ScreenOrientation } from "@capacitor/screen-orientation";
 import { StatusBar } from "@capacitor/status-bar";
+import { db } from "./firebase";
+import { collection, doc, setDoc, onSnapshot, deleteDoc, updateDoc } from "firebase/firestore";
 
 export default function App() {
   const [showIntro, setShowIntro] = useState(true);
@@ -110,77 +112,49 @@ export default function App() {
     }
   });
 
-  // Dynamic backend API URL resolver
-  const getApiUrl = (path: string) => {
-    const ip = localStorage.getItem("bloomly_server_ip") || "";
-    if (ip) {
-      return `http://${ip}:5000${path}`;
-    }
-    const origin = window.location.origin;
-    if (origin.includes(":5173")) {
-      return origin.replace(":5173", ":5000") + path;
-    }
-    return `${origin}${path}`;
-  };
+  // Firebase Realtime Sync for All Profiles
+  useEffect(() => {
+    const unsub = onSnapshot(collection(db, "profiles"), (snapshot) => {
+      const profiles = snapshot.docs.map(doc => doc.data());
+      setAllProfiles(profiles);
+      localStorage.setItem("bloomly_all_profiles", JSON.stringify(profiles));
+    });
+    return () => unsub();
+  }, []);
 
-  // API Call: Fetch all profiles from backend database
-  const fetchAllProfiles = async () => {
-    try {
-      const url = getApiUrl("/api/child-profiles");
-      const res = await fetch(url);
-      if (res.ok) {
-        const data = await res.json();
-        setAllProfiles(data);
-        localStorage.setItem("bloomly_all_profiles", JSON.stringify(data));
-      }
-    } catch (e) {
-      console.warn("Failed to fetch backend profiles:", e);
-    }
-  };
+  // Empty fallback to prevent errors where fetchAllProfiles was called
+  const fetchAllProfiles = () => {};
 
-  // API Call: Save child profile to database
+  // Firebase: Save child profile
   const saveProfileToBackend = async (profile: any) => {
     try {
-      const url = getApiUrl("/api/child-profiles");
-      await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(profile)
-      });
+      await setDoc(doc(db, "profiles", profile.id), profile, { merge: true });
     } catch (e) {
-      console.warn("Failed to save child profile to backend:", e);
+      console.warn("Firebase save error:", e);
     }
   };
 
-  // API Call: Update child stars in database
+  // Firebase: Update stars
   const updateStarsOnBackend = async (id: string, stars: number) => {
     try {
-      const url = getApiUrl(`/api/child-profiles/${id}/stars`);
-      await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ stars })
-      });
+      await updateDoc(doc(db, "profiles", id), { stars });
     } catch (e) {
-      console.warn("Failed to update stars on backend:", e);
+      console.warn("Firebase update stars error:", e);
     }
   };
 
-  // API Call: Delete child profile from database
+  // Firebase: Delete profile
   const deleteProfile = async (id: string) => {
     try {
-      const url = getApiUrl(`/api/child-profiles/${id}`);
-      await fetch(url, { method: "DELETE" });
+      await deleteDoc(doc(db, "profiles", id));
     } catch (e) {
-      console.warn("Failed to delete profile from backend:", e);
+      console.warn("Firebase delete error:", e);
     }
-    // Remove from local state
     setAllProfiles(prev => {
       const nextList = prev.filter(p => p.id !== id);
       localStorage.setItem("bloomly_all_profiles", JSON.stringify(nextList));
       return nextList;
     });
-    // If deleted profile is the logged-in one, log out
     if (childProfile?.id === id) {
       setChildProfile(null);
       localStorage.removeItem("childProfile");
@@ -252,12 +226,7 @@ export default function App() {
   };
 
 
-  useEffect(() => {
-    fetchAllProfiles();
-    // Reduced fetching frequency from 5s to 60s to fix overall app lag
-    const interval = setInterval(fetchAllProfiles, 60000);
-    return () => clearInterval(interval);
-  }, []);
+  // Polling removed since Firebase onSnapshot handles real-time syncing automatically
 
   // Sync global stars count from localStorage for the parent dashboard
   const [globalStars, setGlobalStars] = useState<number>(() => {
