@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell, CartesianGrid, LabelList } from 'recharts';
 
 interface ParentsDashboardProps {
   childProfile: any;
@@ -69,15 +69,12 @@ export default function ParentsDashboard({ childProfile, setChildProfile, global
   };
 
   const chartData = useMemo(() => {
-    if (!childProfile?.categoryProgress) return [];
-    return Object.entries(childProfile.categoryProgress)
-      .filter(([_, stars]: any) => stars > 0)
-      .map(([cat, stars]: any) => ({
-        name: getCategoryName(cat),
-        stars: stars,
-        color: getCategoryColor(cat)
-      }))
-      .sort((a, b) => b.stars - a.stars);
+    const allCategories = ['arabic', 'math', 'english', 'coloring', 'kitchen', 'iq', 'fun', 'general'];
+    return allCategories.map(cat => ({
+      name: getCategoryName(cat),
+      stars: childProfile?.categoryProgress?.[cat] || 0,
+      color: getCategoryColor(cat)
+    }));
   }, [childProfile]);
 
   const smartInsight = useMemo(() => {
@@ -132,7 +129,7 @@ export default function ParentsDashboard({ childProfile, setChildProfile, global
                 onClick={() => setActiveTab('activity')}
                 className={`p-4 rounded-2xl border-3 font-black text-right transition-all ${activeTab === 'activity' ? 'bg-[#E0F2FE] border-[#0284C7] text-[#0369A1]' : 'bg-white border-purple-100 text-purple-400 hover:bg-purple-50'}`}
               >
-                📝 سجل النشاط اليومي
+                🎯 المهام والمكافآت
               </button>
               <button 
                 onClick={() => setActiveTab('settings')}
@@ -200,15 +197,17 @@ export default function ParentsDashboard({ childProfile, setChildProfile, global
                       {chartData.length > 0 ? (
                         <div className="flex-1 w-full h-full min-h-[250px]">
                           <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
-                              <XAxis dataKey="name" tick={{ fill: '#4D2B82', fontWeight: 'bold' }} axisLine={false} tickLine={false} />
+                            <BarChart data={chartData} margin={{ top: 25, right: 10, left: 10, bottom: 5 }}>
+                              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E2E8F0" />
+                              <XAxis dataKey="name" tick={{ fill: '#4D2B82', fontWeight: 'bold', fontSize: 12 }} axisLine={false} tickLine={false} />
                               <YAxis hide />
                               <Tooltip 
                                 cursor={{ fill: 'rgba(0,0,0,0.05)' }} 
                                 contentStyle={{ borderRadius: '16px', border: '2px solid #4D2B82', fontWeight: 'bold' }} 
                                 formatter={(value: any) => [`${value} نجمة`, 'الرصيد']}
                               />
-                              <Bar dataKey="stars" radius={[8, 8, 8, 8]}>
+                              <Bar dataKey="stars" radius={[12, 12, 0, 0]} animationDuration={1500} animationEasing="ease-out">
+                                <LabelList dataKey="stars" position="top" fill="#4D2B82" fontWeight="black" fontSize={14} />
                                 {chartData.map((entry: any, index: number) => (
                                   <Cell key={`cell-${index}`} fill={entry.color} />
                                 ))}
@@ -226,33 +225,50 @@ export default function ParentsDashboard({ childProfile, setChildProfile, global
                 </div>
               )}
 
-              {/* TAB: ACTIVITY LOG */}
+              {/* TAB: MISSIONS */}
               {activeTab === 'activity' && (
-                <div className="bg-white p-6 rounded-[24px] border-3 border-[#0284C7] shadow-md min-h-[400px]">
-                  <h3 className="text-xl font-black text-[#0369A1] mb-6 flex items-center gap-2"><span>📝</span> السجل اليومي للألعاب</h3>
+                <div className="bg-gradient-to-b from-sky-50 to-white p-6 rounded-[24px] border-3 border-[#0284C7] shadow-md min-h-[400px]">
+                  <div className="flex justify-between items-center mb-6">
+                    <h3 className="text-xl font-black text-[#0369A1] flex items-center gap-2">
+                      <span className="text-3xl">🎯</span> المهام الواقعية (Mission Control)
+                    </h3>
+                  </div>
+                  <p className="text-sky-700 font-bold mb-6">شجع طفلك في الحياة الواقعية! كافئه على السلوكيات الجيدة بنجوم تضاف مباشرة لرصيده في التطبيق.</p>
                   
-                  <div className="space-y-4">
-                    {childProfile.activityLog && childProfile.activityLog.length > 0 ? (
-                      childProfile.activityLog.map((log: any) => (
-                        <div key={log.id} className="flex items-center gap-4 p-4 rounded-2xl bg-sky-50 border border-sky-100">
-                          <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center text-xl shadow-sm border-2 border-sky-200 shrink-0">
-                            {log.category === 'math' ? '🔢' : log.category === 'arabic' ? 'أ' : log.category === 'english' ? 'A' : log.category === 'coloring' ? '🎨' : '🎮'}
-                          </div>
-                          <div className="flex-1 text-right">
-                            <p className="font-black text-sky-900 text-sm">{log.title}</p>
-                            <p className="text-xs font-bold text-sky-600 mt-0.5">{new Date(log.timestamp).toLocaleTimeString('ar-EG')} - {new Date(log.timestamp).toLocaleDateString('ar-EG')}</p>
-                          </div>
-                          <div className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full font-black text-xs border border-yellow-200 shrink-0">
-                            +{log.stars} ⭐
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {[
+                      { id: 1, title: 'غسيل الأسنان قبل النوم', stars: 10, icon: '🪥' },
+                      { id: 2, title: 'ترتيب السرير والغرفة', stars: 15, icon: '🛏️' },
+                      { id: 3, title: 'إنهاء الواجبات المدرسية', stars: 20, icon: '📚' },
+                      { id: 4, title: 'مساعدة الأم في المطبخ', stars: 15, icon: '🍽️' },
+                      { id: 5, title: 'أكل الخضروات الصحي', stars: 10, icon: '🥗' },
+                      { id: 6, title: 'الصلاة في وقتها', stars: 25, icon: '🕌' },
+                    ].map(mission => (
+                      <div key={mission.id} className="flex items-center justify-between p-4 rounded-2xl bg-white border-2 border-sky-100 shadow-sm hover:border-sky-300 hover:shadow-md transition-all">
+                        <div className="flex items-center gap-3">
+                          <span className="text-3xl">{mission.icon}</span>
+                          <div>
+                            <p className="font-black text-sky-900">{mission.title}</p>
+                            <p className="text-sm font-bold text-amber-500">+{mission.stars} نجمة</p>
                           </div>
                         </div>
-                      ))
-                    ) : (
-                      <div className="text-center py-12 text-sky-300">
-                        <span className="text-5xl">😴</span>
-                        <p className="font-bold text-lg mt-4">لا توجد أنشطة مسجلة حتى الآن.</p>
+                        <button 
+                          onClick={() => {
+                            const currentStars = childProfile.categoryProgress?.general || 0;
+                            updateSettings({ 
+                              categoryProgress: {
+                                ...childProfile.categoryProgress,
+                                general: currentStars + mission.stars
+                              }
+                            });
+                            alert(`تم بنجاح إضافة ${mission.stars} نجمة للبطل!`);
+                          }}
+                          className="bg-[#2ECC71] hover:bg-[#27AE60] text-white py-2 px-4 rounded-xl font-black text-sm shadow-[0_4px_0_0_#1E8449] active:translate-y-1 active:shadow-[0_0_0_0_#1E8449] transition-all"
+                        >
+                          إنجاز ✔️
+                        </button>
                       </div>
-                    )}
+                    ))}
                   </div>
                 </div>
               )}
