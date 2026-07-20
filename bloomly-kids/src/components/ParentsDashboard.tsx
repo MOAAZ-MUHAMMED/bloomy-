@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 
 interface ParentsDashboardProps {
   childProfile: any;
@@ -66,6 +67,35 @@ export default function ParentsDashboard({ childProfile, setChildProfile, global
     const map: any = { arabic: '#3b82f6', math: '#ef4444', english: '#8b5cf6', coloring: '#ec4899', kitchen: '#f59e0b', iq: '#10b981', fun: '#14b8a6', general: '#64748b' };
     return map[cat] || '#64748b';
   };
+
+  const chartData = useMemo(() => {
+    if (!childProfile?.categoryProgress) return [];
+    return Object.entries(childProfile.categoryProgress)
+      .filter(([_, stars]: any) => stars > 0)
+      .map(([cat, stars]: any) => ({
+        name: getCategoryName(cat),
+        stars: stars,
+        color: getCategoryColor(cat)
+      }))
+      .sort((a, b) => b.stars - a.stars);
+  }, [childProfile]);
+
+  const smartInsight = useMemo(() => {
+    if (chartData.length === 0) return "دع طفلك يبدأ رحلته في الحديقة السحرية لنتمكن من تحليل مهاراته وميوله بدقة!";
+    
+    const strongest = chartData[0];
+    const weakest = chartData[chartData.length - 1];
+    
+    if (chartData.length === 1) {
+      return `مرحلة رائعة للبدء! طفلك يركز حالياً على (${strongest.name})، شجعه على اكتشاف باقي الأقسام مثل الحساب واللغات لتطوير مهاراته المتكاملة.`;
+    }
+
+    if (strongest.stars === weakest.stars) {
+      return "ما شاء الله! طفلك متوازن جداً ويوزع مجهوده على جميع المواد بالتساوي. استمر في تشجيعه!";
+    }
+
+    return `بناءً على تحليل ذكائيات طفلك، نلاحظ أنه عبقري ومبدع جداً في (${strongest.name}) 🌟، ولكنه قد يحتاج لبعض التشجيع والمشاركة منك في ألعاب (${weakest.name}) ليصبح متفوقاً في كل المجالات.`;
+  }, [chartData]);
 
   return (
     <div className="min-h-screen bg-[#3D1E6D] py-12 px-4 select-none" dir="rtl">
@@ -149,33 +179,47 @@ export default function ParentsDashboard({ childProfile, setChildProfile, global
                     </button>
                   </div>
 
-                  {/* Category Progress Graph */}
-                  <div className="bg-white p-6 rounded-[24px] border-3 border-indigo-200 shadow-md">
-                    <h3 className="text-xl font-black text-indigo-900 mb-4 flex items-center gap-2"><span>📈</span> نقاط القوة والمواد المفضلة</h3>
-                    <div className="space-y-4">
-                      {Object.entries(childProfile.categoryProgress || {}).map(([cat, stars]: [string, any]) => {
-                        if (stars === 0) return null;
-                        const percentage = Math.min(100, Math.round((stars / (globalStars || 1)) * 100));
-                        return (
-                          <div key={cat}>
-                            <div className="flex justify-between text-xs font-bold text-gray-600 mb-1">
-                              <span>{getCategoryName(cat)} ({stars} نجمة)</span>
-                              <span>{percentage}%</span>
-                            </div>
-                            <div className="w-full bg-gray-100 h-4 rounded-full overflow-hidden border border-gray-200">
-                              <motion.div 
-                                initial={{ width: 0 }}
-                                animate={{ width: `${percentage}%` }}
-                                transition={{ duration: 1, ease: 'easeOut' }}
-                                className="h-full rounded-full"
-                                style={{ backgroundColor: getCategoryColor(cat) }}
+                  {/* Smart Advisor & Analytics Section */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    {/* Smart Advisor */}
+                    <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-6 rounded-[24px] border-3 border-indigo-200 shadow-md flex flex-col justify-center relative overflow-hidden">
+                      <div className="absolute top-[-20px] left-[-20px] text-8xl opacity-10 pointer-events-none">🧠</div>
+                      <h3 className="text-xl font-black text-indigo-900 mb-4 flex items-center gap-2 relative z-10">
+                        <span className="text-2xl animate-bounce">🤖</span> المستشار التربوي الذكي
+                      </h3>
+                      <p className="text-indigo-800 font-bold leading-relaxed relative z-10 bg-white/60 p-4 rounded-xl border border-indigo-100 shadow-sm text-lg">
+                        {smartInsight}
+                      </p>
+                    </div>
+
+                    {/* Analytics Chart */}
+                    <div className="bg-white p-6 rounded-[24px] border-3 border-[#0284C7] shadow-md flex flex-col h-[350px]">
+                      <h3 className="text-xl font-black text-[#0369A1] mb-4 flex items-center gap-2">
+                        <span>📊</span> تحليل النشاط البياني
+                      </h3>
+                      {chartData.length > 0 ? (
+                        <div className="flex-1 w-full h-full min-h-[250px]">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                              <XAxis dataKey="name" tick={{ fill: '#4D2B82', fontWeight: 'bold' }} axisLine={false} tickLine={false} />
+                              <YAxis hide />
+                              <Tooltip 
+                                cursor={{ fill: 'rgba(0,0,0,0.05)' }} 
+                                contentStyle={{ borderRadius: '16px', border: '2px solid #4D2B82', fontWeight: 'bold' }} 
+                                formatter={(value: any) => [`${value} نجمة`, 'الرصيد']}
                               />
-                            </div>
-                          </div>
-                        );
-                      })}
-                      {(!childProfile.categoryProgress || Object.values(childProfile.categoryProgress).every(v => v === 0)) && (
-                        <p className="text-center text-gray-400 font-bold py-4">لم يلعب أي ألعاب بعد ليتم تحليل مستواه.</p>
+                              <Bar dataKey="stars" radius={[8, 8, 8, 8]}>
+                                {chartData.map((entry: any, index: number) => (
+                                  <Cell key={`cell-${index}`} fill={entry.color} />
+                                ))}
+                              </Bar>
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+                      ) : (
+                        <div className="flex-1 flex items-center justify-center text-sky-300">
+                          <p className="font-bold text-center">لا توجد بيانات كافية لرسم التحليل البياني بعد.</p>
+                        </div>
                       )}
                     </div>
                   </div>
