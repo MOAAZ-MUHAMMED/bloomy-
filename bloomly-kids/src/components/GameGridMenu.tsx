@@ -155,20 +155,15 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
                 className="relative cursor-pointer flex flex-col items-center justify-center p-6 md:p-8 rounded-[40px] border-[4px] border-white/60 group w-full aspect-[4/5] md:aspect-square overflow-hidden"
                 style={{
                   background: item.bgGradient,
-                  // Glass-Clay Hybrid: Frosted look with deep 3D shadows and outer glow on hover
-                  boxShadow: `
-                    0px 20px 40px rgba(0,0,0,0.15), 
-                    inset -12px -12px 25px rgba(0,0,0,0.15), 
-                    inset 12px 12px 25px rgba(255,255,255,0.9)
-                  `
+                  // Simplified shadow for performance
+                  boxShadow: '0px 10px 20px rgba(0,0,0,0.1)'
                 }}
                 onClick={() => {
                   speakArabic(item.title);
                   if (item.action) item.action();
                 }}
               >
-                {/* Noise Texture for Premium Material feel */}
-                <div className="absolute inset-0 opacity-[0.03] mix-blend-overlay pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }} />
+                {/* Noise Texture removed for performance */}
 
                 {/* Shimmer Effect overlay */}
                 <div className="absolute top-0 left-[-100%] w-[120%] h-full bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-[-30deg] animate-[shimmer_4s_infinite] pointer-events-none opacity-50 group-hover:opacity-100" style={{ animationDelay: `${index * 0.2}s` }} />
@@ -176,13 +171,12 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
                 {/* Ambient Glow behind icon */}
                 <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 bg-white/40 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-                {/* Floating 3D Icon with dynamic shadow */}
+                {/* Floating 3D Icon without expensive drop shadow */}
                 <div className="relative mb-6 z-10 flex flex-col items-center justify-center">
                   <motion.div 
                     className="text-7xl md:text-8xl relative z-10"
                     animate={{ y: [0, -12, 0] }}
                     transition={{ repeat: Infinity, duration: 2.5 + (index % 3), ease: "easeInOut" }}
-                    style={{ filter: 'drop-shadow(0px 10px 8px rgba(0,0,0,0.2))' }}
                   >
                     {item.icon}
                   </motion.div>
@@ -211,9 +205,9 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
 
                 {/* Sparkle Explosion removed for performance and speed */}
                 
-                {/* Custom Hover Glow Style injected via DOM */}
+                {/* Custom Hover Glow Style simplified */}
                 <style dangerouslySetInnerHTML={{__html: `
-                  .group:hover { box-shadow: 0px 25px 50px ${item.glow}, inset -12px -12px 25px rgba(0,0,0,0.15), inset 12px 12px 25px rgba(255,255,255,0.9) !important; }
+                  .group:hover { box-shadow: 0px 15px 30px ${item.glow} !important; }
                 `}} />
               </motion.div>
             );
@@ -246,14 +240,9 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
         className="relative rounded-[40px] p-6 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 border-[6px] border-white/60 overflow-hidden"
         style={{ 
           background: activeClay?.bgGradient || 'linear-gradient(135deg, #e0c3fc, #8ec5fc)',
-          boxShadow: `
-            0px 25px 50px rgba(0,0,0,0.2), 
-            inset -15px -15px 30px rgba(0,0,0,0.15), 
-            inset 15px 15px 30px rgba(255,255,255,0.9)
-          `
+          boxShadow: '0px 15px 30px rgba(0,0,0,0.1)'
         }}
       >
-        <div className="absolute inset-0 opacity-[0.05] mix-blend-overlay pointer-events-none" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22/%3E%3C/svg%3E")' }} />
 
         <div className="relative flex flex-col sm:flex-row items-center sm:items-start gap-4 z-10 w-full">
           {/* Back Button */}
@@ -296,13 +285,9 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
               transition={{ delay: index * 0.05, type: 'spring', stiffness: 250, damping: 20 }}
               whileHover={{ y: -8, scale: 1.04 }}
               whileTap={{ y: 5, scale: 0.95 }}
-              className="relative flex flex-col items-center text-center p-5 bg-white/95 backdrop-blur-xl rounded-[40px] border-[5px] border-white cursor-pointer group"
+              className="relative flex flex-col items-center text-center p-5 bg-white/95 backdrop-blur-md rounded-[40px] border-[5px] border-white cursor-pointer group"
               style={{
-                boxShadow: `
-                  0px 15px 30px rgba(0,0,0,0.1), 
-                  inset -8px -8px 20px rgba(0,0,0,0.05), 
-                  inset 8px 8px 20px rgba(255,255,255,0.9)
-                `
+                boxShadow: '0px 10px 20px rgba(0,0,0,0.1)'
               }}
               onClick={() => onSelectGame(game.id)}
             >
