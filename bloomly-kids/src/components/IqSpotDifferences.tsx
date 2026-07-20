@@ -65,7 +65,7 @@ export default function IqSpotDifferences({ onWin }: IqSpotDifferencesProps) {
         <polygon points="60,150 125,80 190,150" fill="#92400e" />
         
         {/* House Window */}
-        <rect x="85" y="165" width="30" height="30" fill="#bfdbfe" border="2" />
+        <rect x="85" y="165" width="30" height="30" fill="#bfdbfe" stroke="#3b82f6" strokeWidth="2" />
         
         {/* Door */}
         <g onClick={() => isModified && handleDiffClick('door')} className={isModified ? 'cursor-pointer hover:opacity-90' : ''}>
