@@ -1488,10 +1488,10 @@ export function GameZone({
     setDotsFeedback("idle");
     setDotsRevealed(false);
     setActiveGame("connectDots");
-    generateConnectDotsRound(1);
+    generateConnectDotsRound();
   };
 
-  const generateConnectDotsRound = () => {
+  const generateConnectDotsRound = (_roundNum?: number) => {
     setDotsFeedback("idle");
     setDotsRevealed(false);
     setDotsLines([]);
