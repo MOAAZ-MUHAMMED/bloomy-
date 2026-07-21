@@ -3628,7 +3628,7 @@ const startSpaceGame = () => {
   // Auto-select template based on level for Coloring Game
   useEffect(() => {
     if (activeGame === 'coloring') {
-      const levelNum = parseInt(propChildLevel.replace('level', '')) || 1;
+      const levelNum = parseInt((propChildLevel || 'level1').replace('level', '')) || 1;
       const templates = ['apple', 'orange', 'rocket', 'cat', 'monkey', 'dove', 'free'];
       const index = (levelNum - 1) % templates.length;
       setActiveTemplate(templates[index] as any);
@@ -6920,7 +6920,7 @@ const startSpaceGame = () => {
       )}
       {activeGame === "drawingSymmetry" && !showLevelMap && (
         <DrawingSymmetry
-          level={parseInt(propChildLevel.replace('level', '')) || 1}
+          level={parseInt((propChildLevel || 'level1').replace('level', '')) || 1}
           onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
       )}
       {activeGame === "funWhackAMole" && !showLevelMap && (
