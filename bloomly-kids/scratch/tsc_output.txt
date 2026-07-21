@@ -1,0 +1,4 @@
+ERROR
+src/components/GameZone.tsx(3631,33): error TS18047: 'propChildLevel' is possibly 'null'.
+src/components/GameZone.tsx(6923,27): error TS18047: 'propChildLevel' is possibly 'null'.
+

@@ -735,6 +735,11 @@ export default function LearningPathMap({
                   alert("عليك إكمال التحدي السابق لفتح هذه الجزيرة السحرية يا بطل!");
                   return;
                 }
+                if (island.id === "drawingNeonArt") {
+                  onSelectGame(island.id);
+                  playBubbleSound();
+                  return;
+                }
                 setSelectedIslandIndex(index);
                 playBubbleSound();
               }}
