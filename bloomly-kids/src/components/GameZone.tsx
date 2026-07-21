@@ -29,6 +29,7 @@ import KitchenMarketList from "./KitchenMarketList";
 import MathHungryCrocodile from "./MathHungryCrocodile";
 import EnglishSpaceDecoder from "./EnglishSpaceDecoder";
 import DrawingNeonArt from "./DrawingNeonArt";
+import EnglishWordSafari from "./EnglishWordSafari";
 
 // New IQ Games
 import IqOddOneOut from "./IqOddOneOut";
@@ -3722,55 +3723,148 @@ const startSpaceGame = () => {
   // 5. GAME: ENGLISH SPELLING ADVENTURE (مغامرة الحروف الإنجليزية)
   // ==========================================
   const [spellingEnRound, setSpellingEnRound] = useState(1);
+  const [usedSpellingEnIndexes, setUsedSpellingEnIndexes] = useState<number[]>([]);
   const [spellingEnQuestion, setSpellingEnQuestion] = useState<{
     emoji: string;
     word: string;
     correctLetter: string;
     options: string[];
-    qType: "letter" | "word";
-  }>({ emoji: "", word: "", correctLetter: "", options: [], qType: "letter" });
+    qType: "letter" | "word" | "first_letter" | "last_letter";
+    titleText: string;
+  }>({ emoji: "", word: "", correctLetter: "", options: [], qType: "word", titleText: "What is this?" });
   const [spellingEnFeedback, setSpellingEnFeedback] = useState<"idle" | "correct" | "wrong">("idle");
   const [spellingEnSelected, setSpellingEnSelected] = useState<string | null>(null);
 
-  const spellingEnBank = [
-    { emoji: "🍎", word: "APPLE", correctLetter: "A" },
-    { emoji: "🐱", word: "CAT", correctLetter: "C" },
-    { emoji: "🚗", word: "CAR", correctLetter: "C" },
-    { emoji: "🐟", word: "FISH", correctLetter: "F" },
-    { emoji: "🦁", word: "LION", correctLetter: "L" },
-    { emoji: "🏠", word: "HOUSE", correctLetter: "H" },
-    { emoji: "🍌", word: "BANANA", correctLetter: "B" },
-    { emoji: "🦆", word: "DUCK", correctLetter: "D" },
-    { emoji: "🐘", word: "ELEPHANT", correctLetter: "E" },
-    { emoji: "🐒", word: "MONKEY", correctLetter: "M" },
-    { emoji: "🍇", word: "GRAPES", correctLetter: "G" },
-    { emoji: "🚀", word: "ROCKET", correctLetter: "R" },
+  const spellingEnBankLevel1 = [
+    { emoji: "🐱", word: "CAT", firstLetter: "C", lastLetter: "T" },
+    { emoji: "🐶", word: "DOG", firstLetter: "D", lastLetter: "G" },
+    { emoji: "☀️", word: "SUN", firstLetter: "S", lastLetter: "N" },
+    { emoji: "🚗", word: "CAR", firstLetter: "C", lastLetter: "R" },
+    { emoji: "🚌", word: "BUS", firstLetter: "B", lastLetter: "S" },
+    { emoji: "✏️", word: "PEN", firstLetter: "P", lastLetter: "N" },
+    { emoji: "☕", word: "CUP", firstLetter: "C", lastLetter: "P" },
+    { emoji: "🎩", word: "HAT", firstLetter: "H", lastLetter: "T" },
+    { emoji: "🐷", word: "PIG", firstLetter: "P", lastLetter: "G" },
+    { emoji: "🐮", word: "COW", firstLetter: "C", lastLetter: "W" },
+    { emoji: "📦", word: "BOX", firstLetter: "B", lastLetter: "X" },
+    { emoji: "🦊", word: "FOX", firstLetter: "F", lastLetter: "X" },
+    { emoji: "🦇", word: "BAT", firstLetter: "B", lastLetter: "T" },
+    { emoji: "🐀", word: "RAT", firstLetter: "R", lastLetter: "T" },
+    { emoji: "🛏️", word: "BED", firstLetter: "B", lastLetter: "D" },
+    { emoji: "🔴", word: "RED", firstLetter: "R", lastLetter: "D" },
+    { emoji: "🔟", word: "TEN", firstLetter: "T", lastLetter: "N" },
+    { emoji: "🥜", word: "NUT", firstLetter: "N", lastLetter: "T" },
+    { emoji: "🏺", word: "JAM", firstLetter: "J", lastLetter: "M" },
+    { emoji: "🧊", word: "ICE", firstLetter: "I", lastLetter: "E" },
+    { emoji: "🗺️", word: "MAP", firstLetter: "M", lastLetter: "P" },
+    { emoji: "🎒", word: "BAG", firstLetter: "B", lastLetter: "G" },
+    { emoji: "🧸", word: "TOY", firstLetter: "T", lastLetter: "Y" },
+    { emoji: "👦", word: "BOY", firstLetter: "B", lastLetter: "Y" },
+    { emoji: "🪭", word: "FAN", firstLetter: "F", lastLetter: "N" },
+    { emoji: "🔑", word: "KEY", firstLetter: "K", lastLetter: "Y" },
+    { emoji: "🫙", word: "JAR", firstLetter: "J", lastLetter: "R" },
+    { emoji: "🥚", word: "EGG", firstLetter: "E", lastLetter: "G" },
+    { emoji: "🐜", word: "ANT", firstLetter: "A", lastLetter: "T" },
+    { emoji: "🐝", word: "BEE", firstLetter: "B", lastLetter: "E" },
+    { emoji: "🦉", word: "OWL", firstLetter: "O", lastLetter: "L" },
+    { emoji: "🫛", word: "PEA", firstLetter: "P", lastLetter: "A" },
+    { emoji: "🥧", word: "PIE", firstLetter: "P", lastLetter: "E" },
+    { emoji: "🪰", word: "FLY", firstLetter: "F", lastLetter: "Y" },
+    { emoji: "🌌", word: "SKY", firstLetter: "S", lastLetter: "Y" },
+    { emoji: "🦁", word: "ZOO", firstLetter: "Z", lastLetter: "O" },
+    { emoji: "🕸️", word: "WEB", firstLetter: "W", lastLetter: "B" },
+    { emoji: "🪵", word: "LOG", firstLetter: "L", lastLetter: "G" },
+    { emoji: "🧱", word: "MUD", firstLetter: "M", lastLetter: "D" },
+    { emoji: "🌊", word: "SEA", firstLetter: "S", lastLetter: "A" },
+    { emoji: "📍", word: "PIN", firstLetter: "P", lastLetter: "N" },
+    { emoji: "🪀", word: "TOP", firstLetter: "T", lastLetter: "P" },
+    { emoji: "🏃", word: "RUN", firstLetter: "R", lastLetter: "N" },
+    { emoji: "🫂", word: "HUG", firstLetter: "H", lastLetter: "G" },
+    { emoji: "🪑", word: "SIT", firstLetter: "S", lastLetter: "T" },
+    { emoji: "🥤", word: "POP", firstLetter: "P", lastLetter: "P" },
+    { emoji: "🥛", word: "MUG", firstLetter: "M", lastLetter: "G" },
+    { emoji: "🚰", word: "TAP", firstLetter: "T", lastLetter: "P" },
+    { emoji: "🛁", word: "TUB", firstLetter: "T", lastLetter: "B" },
+    { emoji: "🦊", word: "FOX", firstLetter: "F", lastLetter: "X" }
+  ];
+
+  const spellingEnBankLevel2 = [
+    { emoji: "🍎", word: "APPLE", firstLetter: "A", lastLetter: "E" },
+    { emoji: "🍌", word: "BANANA", firstLetter: "B", lastLetter: "A" },
+    { emoji: "🐰", word: "RABBIT", firstLetter: "R", lastLetter: "T" },
+    { emoji: "🐒", word: "MONKEY", firstLetter: "M", lastLetter: "Y" },
+    { emoji: "🐅", word: "TIGER", firstLetter: "T", lastLetter: "R" },
+    { emoji: "🚀", word: "ROCKET", firstLetter: "R", lastLetter: "T" },
+    { emoji: "🏠", word: "HOUSE", firstLetter: "H", lastLetter: "E" },
+    { emoji: "🍊", word: "ORANGE", firstLetter: "O", lastLetter: "E" },
+    { emoji: "🕷️", word: "SPIDER", firstLetter: "S", lastLetter: "R" },
+    { emoji: "🦆", word: "DUCK", firstLetter: "D", lastLetter: "K" },
+    { emoji: "🐸", word: "FROG", firstLetter: "F", lastLetter: "G" },
+    { emoji: "🦁", word: "LION", firstLetter: "L", lastLetter: "N" },
+    { emoji: "🐻", word: "BEAR", firstLetter: "B", lastLetter: "R" },
+    { emoji: "🐦", word: "BIRD", firstLetter: "B", lastLetter: "D" },
+    { emoji: "🐟", word: "FISH", firstLetter: "F", lastLetter: "H" },
+    { emoji: "⭐", word: "STAR", firstLetter: "S", lastLetter: "R" },
+    { emoji: "🌳", word: "TREE", firstLetter: "T", lastLetter: "E" }
   ];
 
   const generateSpellingEnQuestion = () => {
     setSpellingEnFeedback("idle");
     setSpellingEnSelected(null);
 
-    const questionItem = spellingEnBank[Math.floor(Math.random() * spellingEnBank.length)];
-    let qType: "letter" | "word" = "letter";
-    const mode = Math.random();
-    
-    if (childLevel === "level1") {
-      qType = "letter";
-    } else if (childLevel === "level2") {
-      qType = mode < 0.5 ? "letter" : "word";
-    } else if (childLevel === "level3") {
-      qType = mode < 0.1 ? "letter" : "word";
-    } else if (childLevel === "level4") {
+    const levelStr = activeDifficulty || propChildLevel || "level1";
+    let pool = spellingEnBankLevel1;
+    if (levelStr === "level2" || levelStr === "level3" || levelStr === "level4") {
+      pool = [...spellingEnBankLevel1, ...spellingEnBankLevel2];
+    }
+
+    // Unique unvisited item selection
+    let availableIdxs = pool.map((_, i) => i).filter((i) => !usedSpellingEnIndexes.includes(i));
+    if (availableIdxs.length === 0) {
+      availableIdxs = pool.map((_, i) => i);
+      setUsedSpellingEnIndexes([]);
+    }
+    const chosenIdx = availableIdxs[Math.floor(Math.random() * availableIdxs.length)];
+    setUsedSpellingEnIndexes((prev) => [...prev, chosenIdx]);
+
+    const questionItem = pool[chosenIdx];
+    let qType: "letter" | "word" | "first_letter" | "last_letter" = "word";
+    let titleText = "What is this?";
+
+    if (levelStr === "level1") {
       qType = "word";
+      titleText = "What is this?";
+    } else if (levelStr === "level2") {
+      qType = "word";
+      titleText = "What is this item?";
+    } else if (levelStr === "level3" || levelStr === "level4") {
+      const mode = Math.random();
+      if (mode < 0.35) {
+        qType = "first_letter";
+        titleText = "What is the FIRST letter?";
+      } else if (mode < 0.7) {
+        qType = "last_letter";
+        titleText = "What is the LAST letter?";
+      } else {
+        qType = "word";
+        titleText = "What is this item?";
+      }
     }
 
     let options: string[] = [];
     let correctLetter = "";
 
-    if (qType === "letter") {
-      correctLetter = questionItem.correctLetter;
-      const distractorLetters = ["A", "B", "C", "D", "E", "F", "G", "H", "L", "M", "P", "R", "S", "T", "W", "Y"];
+    if (qType === "first_letter") {
+      correctLetter = questionItem.firstLetter;
+      const distractorLetters = ["A", "B", "C", "D", "E", "F", "G", "H", "L", "M", "P", "R", "S", "T", "W", "Y", "Z"];
+      options.push(correctLetter);
+      while (options.length < 4) {
+        const rand = distractorLetters[Math.floor(Math.random() * distractorLetters.length)];
+        if (!options.includes(rand)) options.push(rand);
+      }
+    } else if (qType === "last_letter") {
+      correctLetter = questionItem.lastLetter;
+      const distractorLetters = ["E", "T", "G", "R", "N", "P", "S", "K", "D", "Y", "X", "L", "M"];
       options.push(correctLetter);
       while (options.length < 4) {
         const rand = distractorLetters[Math.floor(Math.random() * distractorLetters.length)];
@@ -3780,7 +3874,7 @@ const startSpaceGame = () => {
       correctLetter = questionItem.word;
       options.push(correctLetter);
       while (options.length < 4) {
-        const randItem = spellingEnBank[Math.floor(Math.random() * spellingEnBank.length)];
+        const randItem = pool[Math.floor(Math.random() * pool.length)];
         if (!options.includes(randItem.word)) options.push(randItem.word);
       }
     }
@@ -3791,7 +3885,8 @@ const startSpaceGame = () => {
       word: questionItem.word,
       correctLetter,
       options,
-      qType
+      qType,
+      titleText
     });
   };
 
@@ -3820,6 +3915,7 @@ const startSpaceGame = () => {
 
   const startSpellingEnGame = () => {
     setSpellingEnRound(1);
+    setUsedSpellingEnIndexes([]);
     setStarsEarnedThisSession(0);
     setActiveGame("spellingEn");
     setTimeout(() => generateSpellingEnQuestion(), 50);
@@ -4957,7 +5053,7 @@ const startSpaceGame = () => {
 
           {/* Question Text */}
           <h3 className="text-xl sm:text-2xl font-extrabold text-[#4D2B82] text-center mb-2 font-sans">
-            {spellingEnQuestion.qType === "letter" ? "What is the first letter of this picture? 🤔" : "What is the name of this picture? 🤔"}
+            {spellingEnQuestion.titleText || "What is this? 🤔"}
           </h3>
           <p className="text-xs font-bold text-[#6B4E9E] text-center mb-6">
             {spellingEnQuestion.qType === "letter" ? "ما هو الحرف الأول لهذه الصورة باللغة الإنجليزية؟" : "ما اسم هذه الصورة باللغة الإنجليزية؟"}
@@ -7152,6 +7248,11 @@ const startSpaceGame = () => {
       )}
       {activeGame === "drawingNeonArt" && !showLevelMap && (
         <DrawingNeonArt onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
+      )}
+      {activeGame === "englishWordSafari" && !showLevelMap && (
+        <EnglishWordSafari
+          level={parseInt((propChildLevel || 'level1').replace('level', '')) || 1}
+          onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
       )}
 
 </section>

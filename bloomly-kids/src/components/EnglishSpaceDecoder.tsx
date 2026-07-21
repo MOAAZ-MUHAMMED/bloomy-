@@ -128,15 +128,32 @@ export default function EnglishSpaceDecoder({ onComplete, onBack }: EnglishSpace
     startLevel(level);
   }, [level]);
 
+  useEffect(() => {
+    if (targetLetters.length === 0 || collectedLetters.length >= targetLetters.length) return;
+    const nextExpected = targetLetters[collectedLetters.length];
+    const hasNextLetter = meteorites.some(m => m.letter === nextExpected);
+
+    if (!hasNextLetter) {
+      const newMeteor = {
+        id: `${nextExpected}-${Date.now()}-${Math.random()}`,
+        letter: nextExpected,
+        x: 15 + Math.random() * 70,
+        y: 25 + Math.random() * 45
+      };
+      setMeteorites(prev => [...prev, newMeteor]);
+    }
+  }, [collectedLetters, targetLetters, meteorites]);
+
   const handleMeteoriteClick = (met: { id: string, letter: string }) => {
     const nextExpectedLetter = targetLetters[collectedLetters.length];
     
     if (met.letter === nextExpectedLetter) {
       playSound('click');
-      setCollectedLetters([...collectedLetters, met.letter]);
-      setMeteorites(meteorites.filter(m => m.id !== met.id));
+      const newCollected = [...collectedLetters, met.letter];
+      setCollectedLetters(newCollected);
+      setMeteorites(prev => prev.filter(m => m.id !== met.id));
       
-      if (collectedLetters.length + 1 === targetLetters.length) {
+      if (newCollected.length === targetLetters.length) {
         // Level complete!
         playSound('win');
         setShowConfetti(true);

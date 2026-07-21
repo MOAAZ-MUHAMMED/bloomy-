@@ -68,7 +68,7 @@ export const categoriesData: CategoryData[] = [
     bgGradient: "from-[#ff9a9e]/90 to-[#fecfef]/90",
     textColor: "text-pink-700",
     borderColor: "border-pink-300",
-    games: ["spellingEn", "sorting", "spaceCatcher", "englishLetterTracing", "englishColorCloud", "englishSpaceDecoder"]
+    games: ["spellingEn", "englishSpaceDecoder", "spaceCatcher", "englishWordSafari"]
   },
   {
     id: "coloring",
