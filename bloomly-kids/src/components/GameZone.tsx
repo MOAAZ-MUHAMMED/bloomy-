@@ -1491,13 +1491,46 @@ export function GameZone({
     generateConnectDotsRound(1);
   };
 
-  const generateConnectDotsRound = (roundNum: number = 1) => {
+  const generateConnectDotsRound = () => {
     setDotsFeedback("idle");
     setDotsRevealed(false);
     setDotsLines([]);
     setDotsNextNum(1);
-    const shape = connectShapesBank[(roundNum - 1) % connectShapesBank.length];
-    setDotsShape(shape);
+
+    const levelStr = activeDifficulty || propChildLevel || "level1";
+    let totalDots = 5;
+    if (levelStr === "level2") totalDots = 10;
+    else if (levelStr === "level3") totalDots = 20;
+    else if (levelStr === "level4") totalDots = 30;
+
+    const points: DotPoint[] = [];
+    const centerX = 200;
+    const centerY = 160;
+    const radius = 100;
+
+    for (let i = 1; i <= totalDots; i++) {
+      const angle = ((i - 1) / totalDots) * 2 * Math.PI - Math.PI / 2;
+      const r = radius + (i % 2 === 0 ? 15 : -15);
+      const x = Math.round(centerX + r * Math.cos(angle));
+      const y = Math.round(centerY + r * Math.sin(angle));
+      points.push({ num: i, x, y });
+    }
+
+    const shapeNames = [
+      { name: "شكل سحري", emoji: "⭐", color: "#FFD700" },
+      { name: "زهرة سحرية", emoji: "🌸", color: "#FF5A92" },
+      { name: "جوهرة مضيئة", emoji: "💎", color: "#5BC0F8" },
+      { name: "قلب جميل", emoji: "❤️", color: "#EC4899" }
+    ];
+    const choice = shapeNames[Math.floor(Math.random() * shapeNames.length)];
+
+    setDotsShape({
+      id: `shape_${totalDots}`,
+      name: choice.name,
+      emoji: choice.emoji,
+      color: choice.color,
+      points
+    });
   };
 
   const handleDotClick = (point: DotPoint) => {
@@ -1533,14 +1566,8 @@ export function GameZone({
         addStars(1);
 
         setTimeout(() => {
-          if (dotsRound < 5) {
-            const nextR = dotsRound + 1;
-            setDotsRound(nextR);
-            generateConnectDotsRound(nextR);
-          } else {
-            triggerVictory();
-          }
-        }, 2000);
+          triggerVictory();
+        }, 1800);
       } else {
         setDotsNextNum((prev) => prev + 1);
       }
@@ -1549,13 +1576,7 @@ export function GameZone({
       sfx.playWrong();
       setDotsRevealed(true);
       setTimeout(() => {
-        if (dotsRound < 5) {
-          const nextR = dotsRound + 1;
-          setDotsRound(nextR);
-          generateConnectDotsRound(nextR);
-        } else {
-          triggerVictory();
-        }
+        triggerVictory();
       }, 1800);
     }
   };
@@ -3033,36 +3054,31 @@ const startSpaceGame = () => {
     setMathFeedback("idle");
     setMathSelectedOption(null);
 
-    let maxNum = 5;
-    let allowSubtraction = false;
-    let allowMultiplication = false;
+    const lvlNum = selectedLevelIndex || 1;
+    const levelStr = activeDifficulty || propChildLevel || "level1";
 
-    if (childLevel === "level2") {
-      maxNum = 10;
-      allowSubtraction = true;
-    } else if (childLevel === "level3") {
-      maxNum = 20;
-      allowSubtraction = true;
-    } else if (childLevel === "level4") {
-      maxNum = 12; // for multiplication
-      allowSubtraction = true;
-      allowMultiplication = true;
-    }
+    const emojiList = ["🍎", "🍊", "⭐", "🐞", "🌸", "🐝", "🎈", "🍦"];
+    const emoji = emojiList[Math.floor(Math.random() * emojiList.length)];
 
-    const mode = Math.random();
-    
-    // Level 1 mostly counts emojis
-    if (childLevel === "level1" && mode > 0.3) {
-      const count = 2 + Math.floor(Math.random() * maxNum); // 2 to 6
-      const emojiList = ["🐞", "🌸", "⭐", "🍎", "🐝"];
-      const emoji = emojiList[Math.floor(Math.random() * emojiList.length)];
-      const text = `كم عدد الـ (${emoji}) في المستطيل أدناه؟`;
+    // LEVEL 1: Emoji counting ONLY for all levels (1-25: 1..5, 25-50: 1..7, 50-100: 1..10)
+    if (levelStr === "level1") {
+      let maxCount = 5;
+      if (lvlNum > 50) {
+        maxCount = 10;
+      } else if (lvlNum > 25) {
+        maxCount = 7;
+      } else {
+        maxCount = 5;
+      }
+
+      const count = 1 + Math.floor(Math.random() * maxCount);
+      const text = `كم عدد الـ (${emoji}) في الشكل؟`;
       const emojis = Array.from({ length: count }).map(() => emoji).join(" ");
-      
+
       const options = [count];
       while (options.length < 4) {
-        const rand = 1 + Math.floor(Math.random() * (maxNum + 2));
-        if (!options.includes(rand) && rand > 0) options.push(rand);
+        const rand = 1 + Math.floor(Math.random() * maxCount);
+        if (!options.includes(rand)) options.push(rand);
       }
       options.sort(() => Math.random() - 0.5);
 
@@ -3070,36 +3086,130 @@ const startSpaceGame = () => {
       return;
     }
 
-    // Arithmetic
-    let a = 1 + Math.floor(Math.random() * maxNum);
-    let b = 1 + Math.floor(Math.random() * maxNum);
-    let operation = "+";
-    let ans = a + b;
-
-    if (allowMultiplication && mode > 0.6) {
-      operation = "×";
-      ans = a * b;
-    } else if (allowSubtraction && mode > 0.3) {
-      operation = "-";
-      if (b > a) { const temp = a; a = b; b = temp; }
-      ans = a - b;
+    // LEVEL 2:
+    if (levelStr === "level2") {
+      if (lvlNum <= 25) {
+        // Counting 1 to 10
+        const count = 1 + Math.floor(Math.random() * 10);
+        const text = `كم عدد الـ (${emoji}) أدناه؟`;
+        const emojis = Array.from({ length: count }).map(() => emoji).join(" ");
+        const options = [count];
+        while (options.length < 4) {
+          const rand = 1 + Math.floor(Math.random() * 10);
+          if (!options.includes(rand)) options.push(rand);
+        }
+        options.sort(() => Math.random() - 0.5);
+        setMathQuestion({ text, emojis, correct: count, options });
+        return;
+      } else if (lvlNum <= 50) {
+        // Addition only (1 to 10)
+        let a = 1 + Math.floor(Math.random() * 5);
+        let b = 1 + Math.floor(Math.random() * 5);
+        let ans = a + b;
+        const text = `كم يساوي: ${a} + ${b} ؟`;
+        const emojis = Array.from({ length: a }).map(() => emoji).join(" ") + "   +   " + Array.from({ length: b }).map(() => emoji).join(" ");
+        const options = [ans];
+        while (options.length < 4) {
+          const rand = 1 + Math.floor(Math.random() * 10);
+          if (!options.includes(rand)) options.push(rand);
+        }
+        options.sort(() => Math.random() - 0.5);
+        setMathQuestion({ text, emojis, correct: ans, options });
+        return;
+      } else {
+        // Addition and Subtraction (1 to 10)
+        const isSub = Math.random() > 0.5;
+        let a = 1 + Math.floor(Math.random() * 10);
+        let b = 1 + Math.floor(Math.random() * 10);
+        let op = "+";
+        let ans = a + b;
+        if (isSub) {
+          op = "-";
+          if (b > a) { const t = a; a = b; b = t; }
+          ans = a - b;
+        } else {
+          if (ans > 10) { a = Math.floor(a / 2) || 1; b = Math.floor(b / 2) || 1; ans = a + b; }
+        }
+        const text = `كم يساوي: ${a} ${op} ${b} ؟`;
+        const options = [ans];
+        while (options.length < 4) {
+          const offset = Math.floor(Math.random() * 3) + 1;
+          const rand = Math.random() > 0.5 ? ans + offset : Math.max(0, ans - offset);
+          if (!options.includes(rand)) options.push(rand);
+        }
+        options.sort(() => Math.random() - 0.5);
+        setMathQuestion({ text, correct: ans, options });
+        return;
+      }
     }
 
-    const text = `كم يساوي: ${a} ${operation} ${b} ؟`;
-    const emojis = operation === "+" && ans <= 10 
-      ? Array.from({ length: a }).map(() => "🍊").join(" ") + "   +   " + Array.from({ length: b }).map(() => "🍊").join(" ") 
-      : undefined;
+    // LEVEL 3:
+    if (levelStr === "level3") {
+      if (lvlNum <= 50) {
+        // Numbers 1 to 20, addition light
+        let a = 1 + Math.floor(Math.random() * 10);
+        let b = 1 + Math.floor(Math.random() * 10);
+        let ans = a + b;
+        const text = `كم يساوي: ${a} + ${b} ؟`;
+        const options = [ans];
+        while (options.length < 4) {
+          const offset = Math.floor(Math.random() * 4) + 1;
+          const rand = Math.random() > 0.5 ? ans + offset : Math.max(1, ans - offset);
+          if (!options.includes(rand)) options.push(rand);
+        }
+        options.sort(() => Math.random() - 0.5);
+        setMathQuestion({ text, correct: ans, options });
+        return;
+      } else {
+        // Numbers 1 to 25, + and - light
+        const isSub = Math.random() > 0.5;
+        let a = 1 + Math.floor(Math.random() * 20);
+        let b = 1 + Math.floor(Math.random() * 12);
+        let op = "+";
+        let ans = a + b;
+        if (isSub) {
+          op = "-";
+          if (b > a) { const t = a; a = b; b = t; }
+          ans = a - b;
+        } else {
+          if (ans > 25) { a = Math.min(a, 12); b = Math.min(b, 12); ans = a + b; }
+        }
+        const text = `كم يساوي: ${a} ${op} ${b} ؟`;
+        const options = [ans];
+        while (options.length < 4) {
+          const offset = Math.floor(Math.random() * 4) + 1;
+          const rand = Math.random() > 0.5 ? ans + offset : Math.max(0, ans - offset);
+          if (!options.includes(rand)) options.push(rand);
+        }
+        options.sort(() => Math.random() - 0.5);
+        setMathQuestion({ text, correct: ans, options });
+        return;
+      }
+    }
 
+    // LEVEL 4 (Genius / Last):
+    // Numbers 1 to 40, + and - easy
+    const isSub = Math.random() > 0.5;
+    let a = 1 + Math.floor(Math.random() * 30);
+    let b = 1 + Math.floor(Math.random() * 15);
+    let op = "+";
+    let ans = a + b;
+    if (isSub) {
+      op = "-";
+      if (b > a) { const t = a; a = b; b = t; }
+      ans = a - b;
+    } else {
+      if (ans > 40) { a = Math.min(a, 20); b = Math.min(b, 20); ans = a + b; }
+    }
+    const text = `كم يساوي: ${a} ${op} ${b} ؟`;
     const options = [ans];
     while (options.length < 4) {
-      let offset = Math.floor(Math.random() * 5) + 1;
-      let rand = Math.random() > 0.5 ? ans + offset : ans - offset;
-      if (rand < 0 && operation !== "-") rand = ans + offset + 2;
+      const offset = Math.floor(Math.random() * 5) + 1;
+      const rand = Math.random() > 0.5 ? ans + offset : Math.max(0, ans - offset);
       if (!options.includes(rand)) options.push(rand);
     }
     options.sort(() => Math.random() - 0.5);
-
-    setMathQuestion({ text, emojis, correct: ans, options });
+    setMathQuestion({ text, correct: ans, options });
   };
 
   const handleMathAnswer = (option: number) => {
@@ -6901,10 +7011,14 @@ const startSpaceGame = () => {
         <ArabicShadowMatch onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
       )}
       {activeGame === "mathNumberTrain" && !showLevelMap && (
-        <MathNumberTrain onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
+        <MathNumberTrain
+          level={parseInt((propChildLevel || 'level1').replace('level', '')) || 1}
+          onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
       )}
       {activeGame === "mathSpaceTower" && !showLevelMap && (
-        <MathSpaceTower onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
+        <MathSpaceTower
+          level={parseInt((propChildLevel || 'level1').replace('level', '')) || 1}
+          onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
       )}
       {activeGame === "englishLetterTracing" && !showLevelMap && (
         <EnglishLetterTracing onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
@@ -6933,7 +7047,9 @@ const startSpaceGame = () => {
         <KitchenMarketList onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
       )}
       {activeGame === "mathHungryCrocodile" && !showLevelMap && (
-        <MathHungryCrocodile onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
+        <MathHungryCrocodile
+          level={parseInt((propChildLevel || 'level1').replace('level', '')) || 1}
+          onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
       )}
       {activeGame === "englishSpaceDecoder" && !showLevelMap && (
         <EnglishSpaceDecoder onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
