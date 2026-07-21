@@ -1,0 +1,9 @@
+GameZone.tsx:3625: // 6. GAME: ART COLORING STUDIO (ورشة الفنان للتلوين)
+GameZone.tsx:4836: 🎨 ورشة الفنان للتلوين السحري
+LearningPathMap.tsx:63: gameName: "ورشة الفنان للتلوين",
+LearningPathMap.tsx:388: gameName: "رسم النصف الآخر",
+LearningPathMap.tsx:389: quest: "الفراشة ينقصها جناح! ارسم النصف المماثل تماماً لكي تطير بسلام.",
+DrawingNeonArt.tsx:191: ✨ لوحة النيون السحرية ✨
+LearningPathMap.tsx:462: title: "لوحة النيون 🎨",
+LearningPathMap.tsx:466: gameName: "رسم النيون السحري",
+LearningPathMap.tsx:467: quest: "ارسم أشكالاً رائعة باستخدام خطوط النيون المضيئة وأطلق العنان لإبداعك!",

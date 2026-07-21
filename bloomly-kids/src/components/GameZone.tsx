@@ -3625,6 +3625,16 @@ const startSpaceGame = () => {
   // 6. GAME: ART COLORING STUDIO (ورشة الفنان للتلوين)
   // ==========================================
   const [activeTemplate, setActiveTemplate] = useState<"apple" | "orange" | "cat" | "monkey" | "dove" | "rocket" | "free">("apple");
+  // Auto-select template based on level for Coloring Game
+  useEffect(() => {
+    if (activeGame === 'coloring') {
+      const levelNum = parseInt(propChildLevel.replace('level', '')) || 1;
+      const templates = ['apple', 'orange', 'rocket', 'cat', 'monkey', 'dove', 'free'];
+      const index = (levelNum - 1) % templates.length;
+      setActiveTemplate(templates[index] as any);
+    }
+  }, [activeGame, propChildLevel]);
+
   const [currentColor, setCurrentColor] = useState("#FF5A92");
   const [brushSize, setBrushSize] = useState(8);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -4844,30 +4854,6 @@ const startSpaceGame = () => {
             {/* Sidebar Tools - 4 cols */}
             <div className="md:col-span-4 flex flex-col gap-4">
               
-              {/* Template Picker */}
-              <div className="bg-[#FAF7FD] border-2 border-purple-100 rounded-2xl p-3">
-                <span className="text-xs font-extrabold text-[#4D2B82] block mb-2 text-right">اختر شكلاً لتلوينه:</span>
-                <div className="grid grid-cols-2 gap-2">
-                  {coloringTemplates.map((t) => (
-                    <button
-                      key={t.id}
-                      onClick={() => {
-                        playBubbleSound();
-                        setActiveTemplate(t.id as any);
-                      }}
-                      className={`p-2 rounded-xl text-xs font-bold border-2 flex flex-col items-center gap-1 cursor-pointer ${
-                        activeTemplate === t.id
-                          ? "border-[#A855F7] bg-purple-50 text-[#A855F7]"
-                          : "border-gray-200 bg-white text-gray-400 hover:bg-gray-50"
-                      }`}
-                    >
-                      <span className="text-2xl">{t.emoji}</span>
-                      <span className="text-[10px]">{t.name}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
               {/* Color Palette */}
               <div className="bg-[#FAF7FD] border-2 border-purple-100 rounded-2xl p-3">
                 <span className="text-xs font-extrabold text-[#4D2B82] block mb-2 text-right">اختر لون الفرشاة:</span>
@@ -6933,7 +6919,9 @@ const startSpaceGame = () => {
         <KitchenBakingCake onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
       )}
       {activeGame === "drawingSymmetry" && !showLevelMap && (
-        <DrawingSymmetry onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
+        <DrawingSymmetry
+          level={parseInt(propChildLevel.replace('level', '')) || 1}
+          onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
       )}
       {activeGame === "funWhackAMole" && !showLevelMap && (
         <FunWhackAMole onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
