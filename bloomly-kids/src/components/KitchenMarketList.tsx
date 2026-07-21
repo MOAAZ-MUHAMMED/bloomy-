@@ -163,12 +163,11 @@ export default function KitchenMarketList({ onComplete, onBack }: KitchenMarketL
       if (nextStep < targetList.length) {
         setTimeout(() => {
           speak(`رائع! الآن أحتاجُ إلى ${targetList[nextStep].word}`);
-        }, 1200);
+        }, 1000);
       } else {
+        speak("أحسنت! القائمة مكتملة، هيا إلى السوق!");
         setTimeout(() => {
-          speak("أحسنت! القائمة مكتملة، هيا إلى السوق!", () => {
-            setPhase('market_intro');
-          });
+          setPhase('market_intro');
         }, 1200);
       }
     } else {
@@ -294,7 +293,7 @@ export default function KitchenMarketList({ onComplete, onBack }: KitchenMarketL
             className="absolute inset-0 flex flex-col items-center justify-start pt-16 p-4 z-10"
           >
             {/* The Notebook */}
-            <div className="bg-white border-2 border-gray-300 w-full max-w-sm rounded-r-3xl rounded-l-md shadow-xl relative overflow-hidden mb-8 h-[350px] flex flex-col">
+            <div className="bg-white border-4 border-amber-200 w-full max-w-md md:max-w-lg rounded-r-3xl rounded-l-md shadow-2xl relative overflow-hidden mb-6 h-[400px] sm:h-[440px] flex flex-col">
               {/* Binder rings */}
               <div className="absolute right-0 top-0 bottom-0 w-8 bg-gray-100 border-l border-gray-300 flex flex-col justify-evenly items-center z-20">
                 {[...Array(6)].map((_, i) => (
@@ -302,8 +301,8 @@ export default function KitchenMarketList({ onComplete, onBack }: KitchenMarketL
                 ))}
               </div>
               
-              <div className="mr-8 p-6 flex-1 flex flex-col">
-                <h3 className="text-center font-black text-2xl text-[#FF9800] mb-4 border-b-4 border-dashed border-[#FFCC80] pb-2">
+              <div className="mr-8 p-4 sm:p-6 flex-1 flex flex-col">
+                <h3 className="text-center font-black text-2xl md:text-3xl text-[#FF9800] mb-4 border-b-4 border-dashed border-[#FFCC80] pb-2">
                   قائمة المشتريات 📝
                 </h3>
                 
@@ -314,7 +313,7 @@ export default function KitchenMarketList({ onComplete, onBack }: KitchenMarketL
                     return (
                       <div 
                         key={index} 
-                        className={`w-full h-12 rounded-xl flex items-center justify-between px-4 font-extrabold text-xl transition-all duration-300 relative overflow-hidden
+                        className={`w-full h-14 rounded-xl flex items-center justify-between px-4 font-extrabold text-xl md:text-2xl transition-all duration-300 relative overflow-hidden
                           ${isCompleted ? 'bg-green-100 text-green-700 border-2 border-green-300 shadow-sm' : 
                             isActive ? 'bg-[#FFF3E0] border-4 border-[#FF9800] shadow-md scale-105' : 
                             'bg-gray-50 border-2 border-dashed border-gray-300 text-gray-400'}`}
@@ -331,11 +330,10 @@ export default function KitchenMarketList({ onComplete, onBack }: KitchenMarketL
                         )}
                         {isActive && (
                           <div className="flex items-center w-full justify-between animate-pulse">
-                            <span className="text-[#FF9800]">اسحب الكلمة هنا...</span>
+                            <span className="text-[#FF9800]">اضغط أو اسحب الكلمة هنا...</span>
                             <span>👈</span>
                           </div>
                         )}
-                        {/* Drop Target logic implemented via distance in dragEnd */}
                       </div>
                     );
                   })}
@@ -343,8 +341,8 @@ export default function KitchenMarketList({ onComplete, onBack }: KitchenMarketL
               </div>
             </div>
 
-            {/* Draggable Words */}
-            <div className="w-full max-w-xl flex flex-wrap gap-4 justify-center">
+            {/* Draggable & Tappable Words */}
+            <div className="w-full max-w-xl flex flex-wrap gap-3 sm:gap-4 justify-center">
               <AnimatePresence>
                 {availableWords.map((word) => (
                   <motion.div
@@ -354,13 +352,13 @@ export default function KitchenMarketList({ onComplete, onBack }: KitchenMarketL
                     exit={{ scale: 0 }}
                     drag
                     dragSnapToOrigin={true}
+                    onClick={() => checkListWord(word)}
                     onDragEnd={(event, info) => {
-                      // Simple drop detection based on moving it up generally towards the notebook
                       if (info.offset.y < -50) {
                         checkListWord(word);
                       }
                     }}
-                    className="bg-white px-6 py-3 rounded-2xl shadow-[0_4px_0_0_#E0E0E0] border-2 border-gray-200 text-2xl font-black text-[#5C3A21] cursor-grab active:cursor-grabbing hover:bg-[#FFFCE6] hover:border-[#FFCA28] transition-colors z-20"
+                    className="bg-white px-6 py-3 rounded-2xl shadow-[0_4px_0_0_#E0E0E0] border-2 border-gray-200 text-2xl font-black text-[#5C3A21] cursor-pointer hover:bg-[#FFFCE6] hover:border-[#FFCA28] transition-colors z-20"
                     whileHover={{ scale: 1.05 }}
                     whileDrag={{ scale: 1.1, zIndex: 50, boxShadow: "0 10px 20px rgba(0,0,0,0.2)" }}
                   >

@@ -3250,55 +3250,147 @@ const startSpaceGame = () => {
   // 2. GAME: LETTER ADVENTURE (مغامرة الحروف)
   // ==========================================
   const [spellingRound, setSpellingRound] = useState(1);
+  const [usedSpellingIndexes, setUsedSpellingIndexes] = useState<number[]>([]);
   const [spellingQuestion, setSpellingQuestion] = useState<{
     emoji: string;
     word: string;
     correctLetter: string;
     options: string[];
-    qType: "letter" | "word";
-  }>({ emoji: "", word: "", correctLetter: "", options: [], qType: "letter" });
+    qType: "letter" | "word" | "first_letter" | "last_letter";
+    titleText: string;
+  }>({ emoji: "", word: "", correctLetter: "", options: [], qType: "word", titleText: "ما اسم هذا؟" });
   const [spellingFeedback, setSpellingFeedback] = useState<"idle" | "correct" | "wrong">("idle");
   const [spellingSelected, setSpellingSelected] = useState<string | null>(null);
 
-  const spellingBank = [
-    { emoji: "🍎", word: "تُفَّاحَة", correctLetter: "ت" },
-    { emoji: "🐰", word: "أَرْنَب", correctLetter: "أ" },
-    { emoji: "🐱", word: "قِطَّة", correctLetter: "ق" },
-    { emoji: "🚗", word: "سَيَّارَة", correctLetter: "س" },
-    { emoji: "🐟", word: "سَمَكَة", correctLetter: "س" },
-    { emoji: "🐒", word: "قِرْد", correctLetter: "ق" },
-    { emoji: "🏠", word: "بَيْت", correctLetter: "ب" },
-    { emoji: "🍌", word: "مَوْز", correctLetter: "م" },
-    { emoji: "🦆", word: "بَطَّة", correctLetter: "ب" },
-    { emoji: "🌴", word: "نَخْلَة", correctLetter: "ن" },
-    { emoji: "🦁", word: "أَسَد", correctLetter: "أ" },
-    { emoji: "🐪", word: "جَمَل", correctLetter: "ج" },
+  const spellingBankLevel1 = [
+    { emoji: "🦁", word: "أَسَد", firstLetter: "أ", lastLetter: "د" },
+    { emoji: "🦆", word: "بَطَّة", firstLetter: "ب", lastLetter: "ة" },
+    { emoji: "🐱", word: "قِطَّة", firstLetter: "ق", lastLetter: "ة" },
+    { emoji: "🐅", word: "نَمِر", firstLetter: "ن", lastLetter: "ر" },
+    { emoji: "🐪", word: "جَمَل", firstLetter: "ج", lastLetter: "ل" },
+    { emoji: "🐦", word: "طَيْر", firstLetter: "ط", lastLetter: "ر" },
+    { emoji: "🐒", word: "قِرْد", firstLetter: "ق", lastLetter: "د" },
+    { emoji: "👔", word: "ثَوْب", firstLetter: "ث", lastLetter: "ب" },
+    { emoji: "✏️", word: "قَلَم", firstLetter: "ق", lastLetter: "م" },
+    { emoji: "🍌", word: "مَوْز", firstLetter: "م", lastLetter: "ز" },
+    { emoji: "🧄", word: "ثَوْم", firstLetter: "ث", lastLetter: "م" },
+    { emoji: "🌴", word: "تَمْر", firstLetter: "ت", lastLetter: "ر" },
+    { emoji: "🪢", word: "حَبْل", firstLetter: "ح", lastLetter: "ل" },
+    { emoji: "☀️", word: "شَمْس", firstLetter: "ش", lastLetter: "س" },
+    { emoji: "⭐", word: "نَجْم", firstLetter: "ن", lastLetter: "م" },
+    { emoji: "🌊", word: "بَحْر", firstLetter: "ب", lastLetter: "ر" },
+    { emoji: "🏞️", word: "نَهْر", firstLetter: "ن", lastLetter: "ر" },
+    { emoji: "🐻", word: "دُبّ", firstLetter: "د", lastLetter: "ب" },
+    { emoji: "🐟", word: "سَمَك", firstLetter: "س", lastLetter: "ك" },
+    { emoji: "🍞", word: "خُبْز", firstLetter: "خ", lastLetter: "ز" },
+    { emoji: "🍯", word: "عَسَل", firstLetter: "ع", lastLetter: "ل" },
+    { emoji: "🥛", word: "لَبَن", firstLetter: "ل", lastLetter: "ن" },
+    { emoji: "🌸", word: "زَهْر", firstLetter: "ز", lastLetter: "ر" },
+    { emoji: "👦", word: "وَلَد", firstLetter: "و", lastLetter: "د" },
+    { emoji: "👧", word: "بِنْت", firstLetter: "ب", lastLetter: "ت" },
+    { emoji: "👂", word: "أُذُن", firstLetter: "أ", lastLetter: "ن" },
+    { emoji: "👁️", word: "عَيْن", firstLetter: "ع", lastLetter: "ن" },
+    { emoji: "👄", word: "فَمّ", firstLetter: "ف", lastLetter: "م" },
+    { emoji: "✋", word: "يَدّ", firstLetter: "ي", lastLetter: "د" },
+    { emoji: "🦶", word: "رِجْل", firstLetter: "ر", lastLetter: "ل" },
+    { emoji: "🏠", word: "بَيْت", firstLetter: "ب", lastLetter: "ت" },
+    { emoji: "🚪", word: "بَاب", firstLetter: "ب", lastLetter: "ب" },
+    { emoji: "❄️", word: "ثَلْج", firstLetter: "ث", lastLetter: "ج" },
+    { emoji: "🌧️", word: "مَطَر", firstLetter: "م", lastLetter: "ر" },
+    { emoji: "🪵", word: "خَشَب", firstLetter: "خ", lastLetter: "ب" },
+    { emoji: "🪨", word: "حَجَر", firstLetter: "ح", lastLetter: "ر" },
+    { emoji: "🥇", word: "ذَهَب", firstLetter: "ذ", lastLetter: "ب" },
+    { emoji: "🏜️", word: "رَمْل", firstLetter: "ر", lastLetter: "ل" },
+    { emoji: "⛰️", word: "جَبَل", firstLetter: "ج", lastLetter: "ل" },
+    { emoji: "🌙", word: "قَمَر", firstLetter: "ق", lastLetter: "ر" },
+    { emoji: "🌍", word: "أَرْض", firstLetter: "أ", lastLetter: "ض" },
+    { emoji: "📄", word: "وَرَق", firstLetter: "و", lastLetter: "ق" },
+    { emoji: "🚩", word: "عَلَم", firstLetter: "ع", lastLetter: "م" },
+    { emoji: "👑", word: "مَلِك", firstLetter: "م", lastLetter: "ك" },
+    { emoji: "🌉", word: "جِسْر", firstLetter: "ج", lastLetter: "ر" },
+    { emoji: "🧂", word: "مِلْح", firstLetter: "م", lastLetter: "ح" },
+    { emoji: "🫒", word: "زَيْت", firstLetter: "ز", lastLetter: "ت" },
+    { emoji: "🦅", word: "صَقْر", firstLetter: "ص", lastLetter: "ر" },
+    { emoji: "🐜", word: "نَمْل", firstLetter: "ن", lastLetter: "ل" },
+    { emoji: "🍎", word: "تُفَّاح", firstLetter: "ت", lastLetter: "ح" }
+  ];
+
+  const spellingBankLevel2 = [
+    { emoji: "🚗", word: "سَيَّارَة", firstLetter: "س", lastLetter: "ة" },
+    { emoji: "🍎", word: "تُفَّاحَة", firstLetter: "ت", lastLetter: "ة" },
+    { emoji: "🦒", word: "زَرَافَة", firstLetter: "ز", lastLetter: "ة" },
+    { emoji: "✈️", word: "طَائِرَة", firstLetter: "ط", lastLetter: "ة" },
+    { emoji: "🥒", word: "خِيَار", firstLetter: "خ", lastLetter: "ر" },
+    { emoji: "🐴", word: "حِصَان", firstLetter: "ح", lastLetter: "ن" },
+    { emoji: "🌳", word: "شَجَرَة", firstLetter: "ش", lastLetter: "ة" },
+    { emoji: "🦊", word: "ثَعْلَب", firstLetter: "ث", lastLetter: "ب" },
+    { emoji: "🕊️", word: "عُصْفُور", firstLetter: "ع", lastLetter: "ر" },
+    { emoji: "🐔", word: "دَجَاجَة", firstLetter: "د", lastLetter: "ة" },
+    { emoji: "🍊", word: "بُرْتُقَال", firstLetter: "ب", lastLetter: "ل" },
+    { emoji: "🕷️", word: "عَنْكَبُوت", firstLetter: "ع", lastLetter: "ت" },
+    { emoji: "🛸", word: "صَارُوخ", firstLetter: "ص", lastLetter: "خ" },
+    { emoji: "🏫", word: "مَدْرَسَة", firstLetter: "م", lastLetter: "ة" }
   ];
 
   const generateSpellingQuestion = () => {
     setSpellingFeedback("idle");
     setSpellingSelected(null);
 
-    const questionItem = spellingBank[Math.floor(Math.random() * spellingBank.length)];
-    let qType: "letter" | "word" = "letter";
-    const mode = Math.random();
-    
-    if (childLevel === "level1") {
-      qType = "letter";
-    } else if (childLevel === "level2") {
-      qType = mode < 0.5 ? "letter" : "word";
-    } else if (childLevel === "level3") {
-      qType = mode < 0.1 ? "letter" : "word";
-    } else if (childLevel === "level4") {
+    const levelStr = activeDifficulty || propChildLevel || "level1";
+    let pool = spellingBankLevel1;
+    if (levelStr === "level2") {
+      pool = [...spellingBankLevel1, ...spellingBankLevel2];
+    } else if (levelStr === "level3" || levelStr === "level4") {
+      pool = [...spellingBankLevel1, ...spellingBankLevel2];
+    }
+
+    // Pick unique unvisited item index
+    let availableIdxs = pool.map((_, i) => i).filter((i) => !usedSpellingIndexes.includes(i));
+    if (availableIdxs.length === 0) {
+      availableIdxs = pool.map((_, i) => i);
+      setUsedSpellingIndexes([]);
+    }
+    const chosenIdx = availableIdxs[Math.floor(Math.random() * availableIdxs.length)];
+    setUsedSpellingIndexes((prev) => [...prev, chosenIdx]);
+
+    const questionItem = pool[chosenIdx];
+    let qType: "letter" | "word" | "first_letter" | "last_letter" = "word";
+    let titleText = "ما اسم هذا؟";
+
+    if (levelStr === "level1") {
       qType = "word";
+      titleText = "ما اسم هذا؟";
+    } else if (levelStr === "level2") {
+      qType = "word";
+      titleText = "ما اسم هذا الشكل؟";
+    } else if (levelStr === "level3" || levelStr === "level4") {
+      const mode = Math.random();
+      if (mode < 0.35) {
+        qType = "first_letter";
+        titleText = "ما هو أول حرف من هذا الشكل؟";
+      } else if (mode < 0.7) {
+        qType = "last_letter";
+        titleText = "ما هو آخر حرف من هذا الشكل؟";
+      } else {
+        qType = "word";
+        titleText = "ما اسم هذا الشكل؟";
+      }
     }
 
     let options: string[] = [];
     let correctLetter = "";
 
-    if (qType === "letter") {
-      correctLetter = questionItem.correctLetter;
-      const distractorLetters = ["أ", "ب", "ت", "ج", "س", "ق", "م", "ن", "ح", "خ", "د", "ل"];
+    if (qType === "first_letter") {
+      correctLetter = questionItem.firstLetter;
+      const distractorLetters = ["أ", "ب", "ت", "ج", "س", "ق", "م", "ن", "ح", "خ", "د", "ل", "ث", "ر", "ز"];
+      options.push(correctLetter);
+      while (options.length < 4) {
+        const rand = distractorLetters[Math.floor(Math.random() * distractorLetters.length)];
+        if (!options.includes(rand)) options.push(rand);
+      }
+    } else if (qType === "last_letter") {
+      correctLetter = questionItem.lastLetter;
+      const distractorLetters = ["ة", "د", "ر", "ل", "م", "ب", "ت", "ن", "ك", "س", "ج", "ق"];
       options.push(correctLetter);
       while (options.length < 4) {
         const rand = distractorLetters[Math.floor(Math.random() * distractorLetters.length)];
@@ -3308,7 +3400,7 @@ const startSpaceGame = () => {
       correctLetter = questionItem.word;
       options.push(correctLetter);
       while (options.length < 4) {
-        const randItem = spellingBank[Math.floor(Math.random() * spellingBank.length)];
+        const randItem = pool[Math.floor(Math.random() * pool.length)];
         if (!options.includes(randItem.word)) options.push(randItem.word);
       }
     }
@@ -3319,7 +3411,8 @@ const startSpaceGame = () => {
       word: questionItem.word,
       correctLetter,
       options,
-      qType
+      qType,
+      titleText
     });
   };
 
@@ -3350,6 +3443,7 @@ const startSpaceGame = () => {
 
   const startSpellingGame = () => {
     setSpellingRound(1);
+    setUsedSpellingIndexes([]);
     setStarsEarnedThisSession(0);
     setActiveGame("spelling");
     sfx.speakArabic("أهلاً بك في مغامرة الحروف! اختر الحرف الصحيح أو الكلمة المطابقة للصورة!", "welcome");
@@ -4615,7 +4709,7 @@ const startSpaceGame = () => {
           </div>
 
           <h3 className="text-xl sm:text-2xl font-extrabold text-[#4D2B82] text-center mb-6">
-            {spellingQuestion.qType === "letter" ? "ما هو الحرف الأول لاسم الشكل التالي؟" : "ما اسم الشكل التالي؟"}
+            {spellingQuestion.titleText || "ما اسم هذا؟"}
           </h3>
 
           {/* Emoji/Word Area */}
@@ -7008,7 +7102,9 @@ const startSpaceGame = () => {
         <ArabicLetterTracing onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
       )}
       {activeGame === "arabicShadowMatch" && !showLevelMap && (
-        <ArabicShadowMatch onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
+        <ArabicShadowMatch
+          level={parseInt((propChildLevel || 'level1').replace('level', '')) || 1}
+          onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
       )}
       {activeGame === "mathNumberTrain" && !showLevelMap && (
         <MathNumberTrain

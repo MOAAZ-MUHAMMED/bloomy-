@@ -28,7 +28,7 @@ export const categoriesData: CategoryData[] = [
     bgGradient: "from-[#a1c4fd]/90 to-[#c2e9fb]/90",
     textColor: "text-blue-700",
     borderColor: "border-blue-300",
-    games: ["spelling", "sorting", "arabicLetterTracing", "arabicShadowMatch", "kitchenMarketList"]
+    games: ["kitchenMarketList", "spelling", "sorting", "arabicLetterTracing", "arabicShadowMatch"]
   },
   {
     id: "math",
