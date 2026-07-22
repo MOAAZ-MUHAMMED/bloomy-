@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // --- Confetti / Sparkle Effect Component ---
@@ -53,6 +53,7 @@ export default function EnglishSpaceDecoder({ onComplete, onBack }: EnglishSpace
   const [meteorites, setMeteorites] = useState<{ id: string, letter: string, x: number, y: number }[]>([]);
   const [showConfetti, setShowConfetti] = useState(false);
   const [wrongId, setWrongId] = useState<string | null>(null);
+  const hasCompletedRef = useRef(false);
 
   // Text-to-Speech Helper
   const speak = (text: string) => {
@@ -164,7 +165,10 @@ export default function EnglishSpaceDecoder({ onComplete, onBack }: EnglishSpace
             setLevel(level + 1);
           } else {
             speak("You are a space spelling master!");
-            onComplete();
+            if (!hasCompletedRef.current) {
+              hasCompletedRef.current = true;
+              onComplete();
+            }
           }
         }, 2500);
       }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Props {
@@ -52,6 +52,7 @@ export default function EnglishWordSafari({ level = 1, onComplete, onBack }: Pro
   const [options, setOptions] = useState<SafariWord[]>([]);
   const [feedback, setFeedback] = useState<'idle' | 'correct' | 'wrong'>('idle');
   const [selectedWord, setSelectedWord] = useState<string | null>(null);
+  const hasCompletedRef = useRef(false);
 
   const getWordPool = (lvl: number) => {
     if (lvl <= 1) return SAFARI_WORDS_LEVEL1;
@@ -139,7 +140,10 @@ export default function EnglishWordSafari({ level = 1, onComplete, onBack }: Pro
         if (round < 5) {
           setRound((r) => r + 1);
         } else {
-          onComplete();
+          if (!hasCompletedRef.current) {
+            hasCompletedRef.current = true;
+            onComplete();
+          }
         }
       }, 1800);
     } else {

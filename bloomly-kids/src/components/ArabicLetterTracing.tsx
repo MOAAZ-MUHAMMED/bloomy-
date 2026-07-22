@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Props {
@@ -24,9 +24,10 @@ export default function ArabicLetterTracing({ onComplete, onBack }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [traced, setTraced] = useState(false);
   const [showSparkles, setShowSparkles] = useState(false);
+  const hasCompletedRef = useRef(false);
 
   useEffect(() => {
-    // Select 5 random letters for this round
+    hasCompletedRef.current = false;
     const shuffled = [...LETTERS_POOL].sort(() => 0.5 - Math.random());
     setSessionLetters(shuffled.slice(0, 5));
     setCurrentIndex(0);
@@ -53,7 +54,7 @@ export default function ArabicLetterTracing({ onComplete, onBack }: Props) {
   };
 
   const handleTraceComplete = () => {
-    if (traced) return;
+    if (traced || hasCompletedRef.current) return;
     setTraced(true);
     setShowSparkles(true);
     playPopSound();
@@ -64,7 +65,10 @@ export default function ArabicLetterTracing({ onComplete, onBack }: Props) {
         setCurrentIndex((prev) => prev + 1);
         setTraced(false);
       } else {
-        onComplete();
+        if (!hasCompletedRef.current) {
+          hasCompletedRef.current = true;
+          onComplete();
+        }
       }
     }, 1400);
   };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Props {
@@ -15,6 +15,7 @@ export default function MathNumberTrain({ level = 1, onComplete, onBack }: Props
   const [missingValue, setMissingValue] = useState<number>(3);
   const [options, setOptions] = useState<number[]>([]);
   const [feedback, setFeedback] = useState<'idle' | 'correct' | 'wrong'>('idle');
+  const hasCompletedRef = useRef(false);
 
   // Max number based on level
   const getMaxNum = (lvl: number) => {
@@ -55,11 +56,12 @@ export default function MathNumberTrain({ level = 1, onComplete, onBack }: Props
   };
 
   useEffect(() => {
+    hasCompletedRef.current = false;
     generateTrainRound();
   }, [level, round]);
 
   const handleOptionClick = (num: number) => {
-    if (placed || feedback !== 'idle') return;
+    if (placed || feedback !== 'idle' || hasCompletedRef.current) return;
 
     if (num === missingValue) {
       setPlaced(true);
@@ -69,7 +71,10 @@ export default function MathNumberTrain({ level = 1, onComplete, onBack }: Props
         if (round < 5) {
           setRound((prev) => prev + 1);
         } else {
-          onComplete();
+          if (!hasCompletedRef.current) {
+            hasCompletedRef.current = true;
+            onComplete();
+          }
         }
       }, 1500);
     } else {

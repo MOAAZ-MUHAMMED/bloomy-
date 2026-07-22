@@ -2817,6 +2817,8 @@ const startSpaceGame = () => {
         }, 800);
       }, i * 150);
     }
+  };
+
   // Update global stars helper
   const addStars = (amount: number, sourceElementId?: string) => {
     triggerStarFlight(sourceElementId);

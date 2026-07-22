@@ -141,6 +141,8 @@ export default function DrawingSymmetry({ level = 1, onComplete, onBack }: Props
     draw(e);
   };
 
+  const hasCompletedRef = useRef(false);
+
   const stopDrawing = () => {
     setIsDrawing(false);
     const canvas = canvasRef.current;
@@ -149,7 +151,8 @@ export default function DrawingSymmetry({ level = 1, onComplete, onBack }: Props
     if (!ctx) return;
     ctx.beginPath();
     
-    if (progress > 30 && !done) {
+    if (progress > 30 && !done && !hasCompletedRef.current) {
+      hasCompletedRef.current = true;
       setDone(true);
       setTimeout(onComplete, 1500);
     }

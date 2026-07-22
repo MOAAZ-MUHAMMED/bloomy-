@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 
 interface Props {
@@ -13,6 +13,7 @@ export default function MathSpaceTower({ level = 1, onComplete, onBack }: Props)
   const [available, setAvailable] = useState<number[]>([]);
   const [wobble, setWobble] = useState<number | null>(null);
   const [won, setWon] = useState(false);
+  const hasCompletedRef = useRef(false);
 
   const getMaxNum = (lvl: number) => {
     if (lvl <= 1) return 5;
@@ -22,6 +23,7 @@ export default function MathSpaceTower({ level = 1, onComplete, onBack }: Props)
   };
 
   useEffect(() => {
+    hasCompletedRef.current = false;
     const maxN = getMaxNum(level);
     // Pick 4 unique random numbers in range [1..maxN]
     const numsSet = new Set<number>();
@@ -38,7 +40,7 @@ export default function MathSpaceTower({ level = 1, onComplete, onBack }: Props)
   }, [level]);
 
   const handleBlockClick = (num: number) => {
-    if (stack.includes(num) || won) return;
+    if (stack.includes(num) || won || hasCompletedRef.current) return;
     
     const expected = targetOrder[stack.length];
     if (num === expected) {
@@ -46,7 +48,12 @@ export default function MathSpaceTower({ level = 1, onComplete, onBack }: Props)
       setStack(newStack);
       if (newStack.length === 4) {
         setWon(true);
-        setTimeout(onComplete, 2200);
+        setTimeout(() => {
+          if (!hasCompletedRef.current) {
+            hasCompletedRef.current = true;
+            onComplete();
+          }
+        }, 2200);
       }
     } else {
       setWobble(num);

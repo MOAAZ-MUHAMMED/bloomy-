@@ -50,6 +50,7 @@ export default function DrawingNeonArt({ onComplete, onBack }: DrawingNeonArtPro
   const [isDrawing, setIsDrawing] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [hasDrawn, setHasDrawn] = useState(false);
+  const hasCompletedRef = useRef(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -146,13 +147,12 @@ export default function DrawingNeonArt({ onComplete, onBack }: DrawingNeonArtPro
     ctx.shadowBlur = 0;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     setHasDrawn(false);
+    hasCompletedRef.current = false;
   };
 
-  const handleFinish = () => {
-    if (!hasDrawn) {
-      // maybe vibrate or show message "ارسم شيئاً أولاً"
-      return;
-    }
+  const handleFinishDrawing = () => {
+    if (!hasDrawn || hasCompletedRef.current) return;
+    hasCompletedRef.current = true;
     
     try {
       const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
@@ -248,7 +248,7 @@ export default function DrawingNeonArt({ onComplete, onBack }: DrawingNeonArtPro
             🗑️ مسح
           </button>
           <button 
-            onClick={handleFinish}
+            onClick={handleFinishDrawing}
             disabled={!hasDrawn}
             className={`px-6 py-3 rounded-xl font-black text-white shadow-lg transition-all border-2 border-white/20
               ${hasDrawn 
