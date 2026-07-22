@@ -36,8 +36,7 @@ const WORDS = [
   { word: 'DOG', image: '🐶' },
   { word: 'SUN', image: '☀️' },
   { word: 'STAR', image: '⭐' },
-  { word: 'FISH', image: '🐟' },
-  { word: 'BIRD', image: '🐦' }
+  { word: 'FISH', image: '🐟' }
 ];
 
 interface EnglishSpaceDecoderProps {
@@ -101,6 +100,19 @@ export default function EnglishSpaceDecoder({ onComplete, onBack }: EnglishSpace
     } catch (e) {}
   };
 
+  const generateMeteoritesForWord = (letters: string[]) => {
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const distractors = Array.from({ length: 3 }).map(() => alphabet[Math.floor(Math.random() * alphabet.length)]);
+    const allLetters = [...letters, ...distractors].sort(() => 0.5 - Math.random());
+
+    return allLetters.map((l, i) => ({
+      id: `${l}-${i}-${Math.random()}`,
+      letter: l,
+      x: 12 + Math.random() * 76,
+      y: 20 + Math.random() * 45
+    }));
+  };
+
   const startLevel = (lvlIndex: number) => {
     const wordObj = WORDS[lvlIndex % WORDS.length];
     setCurrentWord(wordObj);
@@ -108,42 +120,14 @@ export default function EnglishSpaceDecoder({ onComplete, onBack }: EnglishSpace
     setTargetLetters(letters);
     setCollectedLetters([]);
 
-    // Create meteorites: target letters + 2-3 distractors
-    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const distractors = Array.from({ length: 3 }).map(() => alphabet[Math.floor(Math.random() * alphabet.length)]);
-    
-    const allLetters = [...letters, ...distractors].sort(() => 0.5 - Math.random());
-    
-    const mets = allLetters.map((l, i) => ({
-      id: `${l}-${i}-${Math.random()}`,
-      letter: l,
-      x: 10 + Math.random() * 80, // percentage
-      y: 20 + Math.random() * 50  // percentage
-    }));
-    
-    setMeteorites(mets);
-    setTimeout(() => speak(wordObj.word), 1000);
+    setMeteorites(generateMeteoritesForWord(letters));
+    setTimeout(() => speak(wordObj.word), 600);
   };
 
   useEffect(() => {
+    hasCompletedRef.current = false;
     startLevel(level);
   }, [level]);
-
-  useEffect(() => {
-    if (targetLetters.length === 0 || collectedLetters.length >= targetLetters.length) return;
-    const nextExpected = targetLetters[collectedLetters.length];
-    const hasNextLetter = meteorites.some(m => m.letter === nextExpected);
-
-    if (!hasNextLetter) {
-      const newMeteor = {
-        id: `${nextExpected}-${Date.now()}-${Math.random()}`,
-        letter: nextExpected,
-        x: 15 + Math.random() * 70,
-        y: 25 + Math.random() * 45
-      };
-      setMeteorites(prev => [...prev, newMeteor]);
-    }
-  }, [collectedLetters, targetLetters, meteorites]);
 
   const handleMeteoriteClick = (met: { id: string, letter: string }) => {
     const nextExpectedLetter = targetLetters[collectedLetters.length];
@@ -152,17 +136,19 @@ export default function EnglishSpaceDecoder({ onComplete, onBack }: EnglishSpace
       playSound('click');
       const newCollected = [...collectedLetters, met.letter];
       setCollectedLetters(newCollected);
-      setMeteorites(prev => prev.filter(m => m.id !== met.id));
+      
+      const remainingMets = meteorites.filter(m => m.id !== met.id);
       
       if (newCollected.length === targetLetters.length) {
         // Level complete!
+        setMeteorites([]);
         playSound('win');
         setShowConfetti(true);
         speak(`Great! ${currentWord.word}`);
         
         setTimeout(() => {
-          if (level < 2) {
-            setLevel(level + 1);
+          if (level < 4) {
+            setLevel(prev => prev + 1);
           } else {
             speak("You are a space spelling master!");
             if (!hasCompletedRef.current) {
@@ -170,7 +156,23 @@ export default function EnglishSpaceDecoder({ onComplete, onBack }: EnglishSpace
               onComplete();
             }
           }
-        }, 2500);
+        }, 2200);
+      } else {
+        // Check if the next required letter is on screen. If not, spawn it immediately!
+        const nextNextExpected = targetLetters[newCollected.length];
+        const existsOnScreen = remainingMets.some(m => m.letter === nextNextExpected);
+        
+        if (!existsOnScreen && nextNextExpected) {
+          const freshMeteor = {
+            id: `${nextNextExpected}-${Date.now()}-${Math.random()}`,
+            letter: nextNextExpected,
+            x: 15 + Math.random() * 70,
+            y: 20 + Math.random() * 45
+          };
+          setMeteorites([...remainingMets, freshMeteor]);
+        } else {
+          setMeteorites(remainingMets);
+        }
       }
     } else {
       playSound('error');
@@ -205,14 +207,14 @@ export default function EnglishSpaceDecoder({ onComplete, onBack }: EnglishSpace
         {onBack && (
           <button 
             onClick={onBack}
-            className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-full shadow-lg border border-white/30 flex items-center justify-center text-xl hover:bg-red-500/50 text-white hover:scale-105 active:scale-95 transition-all"
+            className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-full shadow-lg border border-white/30 flex items-center justify-center text-xl hover:bg-red-500/50 text-white hover:scale-105 active:scale-95 transition-all cursor-pointer"
           >
             ✖
           </button>
         )}
         <button
           onClick={() => speak(currentWord.word)}
-          className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-full shadow-lg border border-white/30 flex items-center justify-center text-xl hover:bg-blue-500/50 text-white hover:scale-105 active:scale-95 transition-all"
+          className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-full shadow-lg border border-white/30 flex items-center justify-center text-xl hover:bg-blue-500/50 text-white hover:scale-105 active:scale-95 transition-all cursor-pointer"
         >
           🔊
         </button>
@@ -220,8 +222,8 @@ export default function EnglishSpaceDecoder({ onComplete, onBack }: EnglishSpace
 
       {/* Progress Bar */}
       <div className="absolute top-6 right-1/2 translate-x-1/2 flex gap-2 z-20" dir="rtl">
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className={`w-10 h-3 rounded-full border border-white/50 transition-all duration-300 ${i <= level ? 'bg-cyan-400 shadow-[0_0_10px_#22d3ee]' : 'bg-black/40'}`} />
+        {[...Array(5)].map((_, i) => (
+          <div key={i} className={`w-8 h-3 rounded-full border border-white/50 transition-all duration-300 ${i <= level ? 'bg-cyan-400 shadow-[0_0_10px_#22d3ee]' : 'bg-black/40'}`} />
         ))}
       </div>
 
@@ -247,45 +249,38 @@ export default function EnglishSpaceDecoder({ onComplete, onBack }: EnglishSpace
                 className={`w-14 h-14 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center text-3xl sm:text-4xl font-black transition-all duration-300
                   ${isFilled ? 'bg-cyan-400 text-slate-900 shadow-[0_0_15px_#22d3ee] scale-105' : 
                     isCurrent ? 'bg-white/20 border-2 border-cyan-400 border-dashed text-cyan-200 animate-pulse' : 
-                    'bg-black/30 border border-white/20 text-transparent'}
-                `}
+                    'bg-black/30 border border-white/20 text-transparent'}`}
               >
-                {isFilled ? letter : letter}
+                {isFilled ? letter : isCurrent ? '?' : ''}
               </div>
             );
           })}
         </div>
       </div>
 
-      {/* Floating Meteorites */}
-      <div className="absolute inset-0 top-40 z-10">
+      {/* Floating Meteorites Area */}
+      <div className="absolute inset-0 top-64 z-30">
         <AnimatePresence>
           {meteorites.map((met) => (
             <motion.button
               key={met.id}
               initial={{ scale: 0, opacity: 0 }}
-              animate={wrongId === met.id 
-                ? { x: [0, -10, 10, -10, 10, 0], scale: 1, opacity: 1 } 
-                : { 
-                  scale: 1, 
-                  opacity: 1, 
-                  y: [0, -20, 0], 
-                  rotate: [0, 10, -10, 0] 
-                }}
-              transition={wrongId === met.id 
-                ? { duration: 0.4 } 
-                : { repeat: Infinity, duration: 3 + Math.random() * 2 }}
+              animate={{ 
+                scale: 1, 
+                opacity: 1,
+                x: wrongId === met.id ? [-10, 10, -10, 10, 0] : 0
+              }}
               exit={{ scale: 0, opacity: 0 }}
               onClick={() => handleMeteoriteClick(met)}
-              className="absolute w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-slate-600 to-slate-800 rounded-full flex items-center justify-center text-2xl sm:text-3xl font-black text-cyan-300 border-[3px] border-slate-500 shadow-[0_10px_20px_rgba(0,0,0,0.5),inset_0_-5px_15px_rgba(0,0,0,0.5)] hover:scale-110 active:scale-95 cursor-pointer"
               style={{ left: `${met.x}%`, top: `${met.y}%` }}
+              className={`absolute w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center font-black text-2xl sm:text-3xl text-white shadow-xl cursor-pointer transition-transform hover:scale-110 active:scale-95 border-2 ${
+                wrongId === met.id 
+                  ? 'bg-red-600 border-red-400 shadow-[0_0_20px_rgba(239,68,68,0.8)]' 
+                  : 'bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 border-cyan-300/60 shadow-[0_0_15px_rgba(168,85,247,0.5)]'
+              }`}
             >
-              {/* Craters */}
-              <div className="absolute w-3 h-3 bg-black/30 rounded-full top-2 left-3 shadow-inner" />
-              <div className="absolute w-4 h-4 bg-black/30 rounded-full bottom-3 right-4 shadow-inner" />
-              <div className="absolute w-2 h-2 bg-black/30 rounded-full bottom-4 left-4 shadow-inner" />
-              
-              <span className="relative z-10 filter drop-shadow-[0_0_5px_rgba(34,211,238,0.8)]">{met.letter}</span>
+              <div className="absolute inset-0 bg-white/10 rounded-2xl pointer-events-none" />
+              {met.letter}
             </motion.button>
           ))}
         </AnimatePresence>

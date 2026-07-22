@@ -68,7 +68,7 @@ export const categoriesData: CategoryData[] = [
     bgGradient: "from-[#ff9a9e]/90 to-[#fecfef]/90",
     textColor: "text-pink-700",
     borderColor: "border-pink-300",
-    games: ["spellingEn", "englishSpaceDecoder", "spaceCatcher", "englishWordSafari"]
+    games: ["spellingEn", "englishSpaceDecoder", "englishWordSafari"]
   },
   {
     id: "coloring",
@@ -108,6 +108,6 @@ export const categoriesData: CategoryData[] = [
     bgGradient: "from-[#fbc2eb]/90 to-[#a6c1ee]/90",
     textColor: "text-indigo-700",
     borderColor: "border-indigo-300",
-    games: ["memory", "iqOddOneOut", "iqMissingPiece", "iqSpotDifferences"]
+    games: ["spaceCatcher", "memory", "iqOddOneOut", "iqMissingPiece", "iqSpotDifferences"]
   }
 ];
