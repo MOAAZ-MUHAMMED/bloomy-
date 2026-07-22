@@ -8,6 +8,7 @@ interface Props {
 }
 
 export default function MathSpaceTower({ level = 1, onComplete, onBack }: Props) {
+  const [round, setRound] = useState(1);
   const [stack, setStack] = useState<number[]>([]);
   const [targetOrder, setTargetOrder] = useState<number[]>([]);
   const [available, setAvailable] = useState<number[]>([]);
@@ -19,13 +20,11 @@ export default function MathSpaceTower({ level = 1, onComplete, onBack }: Props)
     if (lvl <= 1) return 5;
     if (lvl === 2) return 10;
     if (lvl === 3) return 20;
-    return 30; // Level 4+
+    return 25; // Level 4+ (1-25)
   };
 
-  useEffect(() => {
-    hasCompletedRef.current = false;
+  const generateTowerRound = () => {
     const maxN = getMaxNum(level);
-    // Pick 4 unique random numbers in range [1..maxN]
     const numsSet = new Set<number>();
     while (numsSet.size < 4) {
       const rand = Math.floor(Math.random() * maxN) + 1;
@@ -37,7 +36,12 @@ export default function MathSpaceTower({ level = 1, onComplete, onBack }: Props)
     setAvailable(shuffled);
     setStack([]);
     setWon(false);
-  }, [level]);
+  };
+
+  useEffect(() => {
+    hasCompletedRef.current = false;
+    generateTowerRound();
+  }, [level, round]);
 
   const handleBlockClick = (num: number) => {
     if (stack.includes(num) || won || hasCompletedRef.current) return;
@@ -49,11 +53,15 @@ export default function MathSpaceTower({ level = 1, onComplete, onBack }: Props)
       if (newStack.length === 4) {
         setWon(true);
         setTimeout(() => {
-          if (!hasCompletedRef.current) {
-            hasCompletedRef.current = true;
-            onComplete();
+          if (round < 5) {
+            setRound((r) => r + 1);
+          } else {
+            if (!hasCompletedRef.current) {
+              hasCompletedRef.current = true;
+              onComplete();
+            }
           }
-        }, 2200);
+        }, 1800);
       }
     } else {
       setWobble(num);
@@ -72,9 +80,11 @@ export default function MathSpaceTower({ level = 1, onComplete, onBack }: Props)
       <div className="text-center mb-6">
         <h1 className="text-3xl md:text-5xl font-black text-amber-300 mb-2 drop-shadow-md">برج الفضاء 🚀</h1>
         <p className="text-base md:text-lg font-bold text-indigo-200">ابنِ برج الصاروخ برص الأرقام من الأصغر إلى الأكبر!</p>
-        <span className="inline-block mt-3 bg-indigo-800/80 backdrop-blur border border-indigo-500/50 text-indigo-100 px-4 py-1.5 rounded-full font-bold text-sm">
-          المستوى: {level}
-        </span>
+        <div className="inline-flex gap-4 mt-3 bg-indigo-800/80 backdrop-blur border border-indigo-500/50 text-indigo-100 px-5 py-1.5 rounded-full font-bold text-sm">
+          <span>المستوى: {level}</span>
+          <span>•</span>
+          <span>الصاروخ: {round} / 5</span>
+        </div>
       </div>
       
       <div className="flex-1 flex w-full max-w-2xl px-4 gap-6 items-center justify-center">
@@ -121,7 +131,7 @@ export default function MathSpaceTower({ level = 1, onComplete, onBack }: Props)
         <motion.div
           initial={{ y: 200, opacity: 1 }}
           animate={{ y: -600, opacity: 0 }}
-          transition={{ duration: 2.2, ease: "easeIn" }}
+          transition={{ duration: 1.8, ease: "easeIn" }}
           className="fixed bottom-10 text-9xl z-50 pointer-events-none"
         >
           🚀✨

@@ -1502,23 +1502,23 @@ export function GameZone({
     let totalDots = 5;
     if (levelStr === "level2") totalDots = 10;
     else if (levelStr === "level3") totalDots = 20;
-    else if (levelStr === "level4") totalDots = 30;
+    else if (levelStr === "level4") totalDots = 25;
 
     const points: DotPoint[] = [];
-    const centerX = 200;
-    const centerY = 160;
-    const radius = 100;
+    const centerX = 250;
+    const centerY = 180;
 
     for (let i = 1; i <= totalDots; i++) {
       const angle = ((i - 1) / totalDots) * 2 * Math.PI - Math.PI / 2;
-      const r = radius + (i % 2 === 0 ? 15 : -15);
+      // Staggered outer & inner radii so points form clean spacious star/flower shapes without crowding
+      const r = (i % 2 === 1) ? 145 : 95;
       const x = Math.round(centerX + r * Math.cos(angle));
       const y = Math.round(centerY + r * Math.sin(angle));
       points.push({ num: i, x, y });
     }
 
     const shapeNames = [
-      { name: "شكل سحري", emoji: "⭐", color: "#FFD700" },
+      { name: "نجمة سحرية", emoji: "⭐", color: "#FFD700" },
       { name: "زهرة سحرية", emoji: "🌸", color: "#FF5A92" },
       { name: "جوهرة مضيئة", emoji: "💎", color: "#5BC0F8" },
       { name: "قلب جميل", emoji: "❤️", color: "#EC4899" }
@@ -3074,30 +3074,19 @@ const startSpaceGame = () => {
     setMathFeedback("idle");
     setMathSelectedOption(null);
 
-    const lvlNum = selectedLevelIndex || 1;
     const levelStr = activeDifficulty || propChildLevel || "level1";
-
     const emojiList = ["🍎", "🍊", "⭐", "🐞", "🌸", "🐝", "🎈", "🍦"];
     const emoji = emojiList[Math.floor(Math.random() * emojiList.length)];
 
-    // LEVEL 1: Emoji counting ONLY for all levels (1-25: 1..5, 25-50: 1..7, 50-100: 1..10)
+    // LEVEL 1: Emoji counting 1..5 ONLY (No operations)
     if (levelStr === "level1") {
-      let maxCount = 5;
-      if (lvlNum > 50) {
-        maxCount = 10;
-      } else if (lvlNum > 25) {
-        maxCount = 7;
-      } else {
-        maxCount = 5;
-      }
-
-      const count = 1 + Math.floor(Math.random() * maxCount);
+      const count = 1 + Math.floor(Math.random() * 5);
       const text = `كم عدد الـ (${emoji}) في الشكل؟`;
       const emojis = Array.from({ length: count }).map(() => emoji).join(" ");
 
       const options = [count];
       while (options.length < 4) {
-        const rand = 1 + Math.floor(Math.random() * maxCount);
+        const rand = 1 + Math.floor(Math.random() * 5);
         if (!options.includes(rand)) options.push(rand);
       }
       options.sort(() => Math.random() - 0.5);
@@ -3106,112 +3095,47 @@ const startSpaceGame = () => {
       return;
     }
 
-    // LEVEL 2:
+    // LEVEL 2: Emoji counting 1..10 ONLY (No operations)
     if (levelStr === "level2") {
-      if (lvlNum <= 25) {
-        // Counting 1 to 10
-        const count = 1 + Math.floor(Math.random() * 10);
-        const text = `كم عدد الـ (${emoji}) أدناه؟`;
-        const emojis = Array.from({ length: count }).map(() => emoji).join(" ");
-        const options = [count];
-        while (options.length < 4) {
-          const rand = 1 + Math.floor(Math.random() * 10);
-          if (!options.includes(rand)) options.push(rand);
-        }
-        options.sort(() => Math.random() - 0.5);
-        setMathQuestion({ text, emojis, correct: count, options });
-        return;
-      } else if (lvlNum <= 50) {
-        // Addition only (1 to 10)
-        let a = 1 + Math.floor(Math.random() * 5);
-        let b = 1 + Math.floor(Math.random() * 5);
-        let ans = a + b;
-        const text = `كم يساوي: ${a} + ${b} ؟`;
-        const emojis = Array.from({ length: a }).map(() => emoji).join(" ") + "   +   " + Array.from({ length: b }).map(() => emoji).join(" ");
-        const options = [ans];
-        while (options.length < 4) {
-          const rand = 1 + Math.floor(Math.random() * 10);
-          if (!options.includes(rand)) options.push(rand);
-        }
-        options.sort(() => Math.random() - 0.5);
-        setMathQuestion({ text, emojis, correct: ans, options });
-        return;
-      } else {
-        // Addition and Subtraction (1 to 10)
-        const isSub = Math.random() > 0.5;
-        let a = 1 + Math.floor(Math.random() * 10);
-        let b = 1 + Math.floor(Math.random() * 10);
-        let op = "+";
-        let ans = a + b;
-        if (isSub) {
-          op = "-";
-          if (b > a) { const t = a; a = b; b = t; }
-          ans = a - b;
-        } else {
-          if (ans > 10) { a = Math.floor(a / 2) || 1; b = Math.floor(b / 2) || 1; ans = a + b; }
-        }
-        const text = `كم يساوي: ${a} ${op} ${b} ؟`;
-        const options = [ans];
-        while (options.length < 4) {
-          const offset = Math.floor(Math.random() * 3) + 1;
-          const rand = Math.random() > 0.5 ? ans + offset : Math.max(0, ans - offset);
-          if (!options.includes(rand)) options.push(rand);
-        }
-        options.sort(() => Math.random() - 0.5);
-        setMathQuestion({ text, correct: ans, options });
-        return;
+      const count = 1 + Math.floor(Math.random() * 10);
+      const text = `كم عدد الـ (${emoji}) أدناه؟`;
+      const emojis = Array.from({ length: count }).map(() => emoji).join(" ");
+
+      const options = [count];
+      while (options.length < 4) {
+        const rand = 1 + Math.floor(Math.random() * 10);
+        if (!options.includes(rand)) options.push(rand);
       }
+      options.sort(() => Math.random() - 0.5);
+
+      setMathQuestion({ text, emojis, correct: count, options });
+      return;
     }
 
-    // LEVEL 3:
+    // LEVEL 3: Numbers 1..20, Addition ONLY
     if (levelStr === "level3") {
-      if (lvlNum <= 50) {
-        // Numbers 1 to 20, addition light
-        let a = 1 + Math.floor(Math.random() * 10);
-        let b = 1 + Math.floor(Math.random() * 10);
-        let ans = a + b;
-        const text = `كم يساوي: ${a} + ${b} ؟`;
-        const options = [ans];
-        while (options.length < 4) {
-          const offset = Math.floor(Math.random() * 4) + 1;
-          const rand = Math.random() > 0.5 ? ans + offset : Math.max(1, ans - offset);
-          if (!options.includes(rand)) options.push(rand);
-        }
-        options.sort(() => Math.random() - 0.5);
-        setMathQuestion({ text, correct: ans, options });
-        return;
-      } else {
-        // Numbers 1 to 25, + and - light
-        const isSub = Math.random() > 0.5;
-        let a = 1 + Math.floor(Math.random() * 20);
-        let b = 1 + Math.floor(Math.random() * 12);
-        let op = "+";
-        let ans = a + b;
-        if (isSub) {
-          op = "-";
-          if (b > a) { const t = a; a = b; b = t; }
-          ans = a - b;
-        } else {
-          if (ans > 25) { a = Math.min(a, 12); b = Math.min(b, 12); ans = a + b; }
-        }
-        const text = `كم يساوي: ${a} ${op} ${b} ؟`;
-        const options = [ans];
-        while (options.length < 4) {
-          const offset = Math.floor(Math.random() * 4) + 1;
-          const rand = Math.random() > 0.5 ? ans + offset : Math.max(0, ans - offset);
-          if (!options.includes(rand)) options.push(rand);
-        }
-        options.sort(() => Math.random() - 0.5);
-        setMathQuestion({ text, correct: ans, options });
-        return;
+      let a = 1 + Math.floor(Math.random() * 10);
+      let b = 1 + Math.floor(Math.random() * 10);
+      let ans = a + b;
+      const text = `كم يساوي: ${a} + ${b} ؟`;
+      const emojis = Array.from({ length: Math.min(a, 10) }).map(() => emoji).join(" ") + "   +   " + Array.from({ length: Math.min(b, 10) }).map(() => emoji).join(" ");
+
+      const options = [ans];
+      while (options.length < 4) {
+        const offset = Math.floor(Math.random() * 4) + 1;
+        const rand = Math.random() > 0.5 ? Math.min(20, ans + offset) : Math.max(1, ans - offset);
+        if (!options.includes(rand)) options.push(rand);
       }
+      options.sort(() => Math.random() - 0.5);
+
+      setMathQuestion({ text, emojis, correct: ans, options });
+      return;
     }
 
-    // LEVEL 4 (Genius / Last):
-    // Numbers 1 to 40, + and - easy
+    // LEVEL 4 (Genius): Numbers 1..25, Addition and Light Subtraction
     const isSub = Math.random() > 0.5;
-    let a = 1 + Math.floor(Math.random() * 30);
-    let b = 1 + Math.floor(Math.random() * 15);
+    let a = 1 + Math.floor(Math.random() * 15);
+    let b = 1 + Math.floor(Math.random() * 10);
     let op = "+";
     let ans = a + b;
     if (isSub) {
@@ -3219,13 +3143,13 @@ const startSpaceGame = () => {
       if (b > a) { const t = a; a = b; b = t; }
       ans = a - b;
     } else {
-      if (ans > 40) { a = Math.min(a, 20); b = Math.min(b, 20); ans = a + b; }
+      if (ans > 25) { a = Math.min(a, 12); b = Math.min(b, 12); ans = a + b; }
     }
     const text = `كم يساوي: ${a} ${op} ${b} ؟`;
     const options = [ans];
     while (options.length < 4) {
-      const offset = Math.floor(Math.random() * 5) + 1;
-      const rand = Math.random() > 0.5 ? ans + offset : Math.max(0, ans - offset);
+      const offset = Math.floor(Math.random() * 4) + 1;
+      const rand = Math.random() > 0.5 ? Math.min(25, ans + offset) : Math.max(0, ans - offset);
       if (!options.includes(rand)) options.push(rand);
     }
     options.sort(() => Math.random() - 0.5);
@@ -5616,7 +5540,7 @@ const startSpaceGame = () => {
             
             {/* SVG Connecting Lines */}
             <svg 
-              viewBox="0 0 400 300" 
+              viewBox="0 0 500 360" 
               className="w-full h-full absolute inset-0 pointer-events-none z-10"
             >
               {dotsLines.map((line, idx) => (
@@ -5636,7 +5560,7 @@ const startSpaceGame = () => {
             {/* Dotted outlines to guide children */}
             {!dotsRevealed && (
               <svg 
-                viewBox="0 0 400 300" 
+                viewBox="0 0 500 360" 
                 className="w-full h-full absolute inset-0 pointer-events-none z-0 opacity-20"
               >
                 {/* Draw dotted outline of all points in order */}
@@ -5668,7 +5592,7 @@ const startSpaceGame = () => {
                 <button
                   key={p.num}
                   onClick={() => handleDotClick(p)}
-                  className={`absolute -translate-x-1/2 -translate-y-1/2 w-10 h-10 rounded-full border-3 flex items-center justify-center font-extrabold text-sm transition-all z-20 cursor-pointer shadow-md select-none ${
+                  className={`absolute -translate-x-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full border-2 sm:border-3 flex items-center justify-center font-black text-xs sm:text-sm transition-all z-20 cursor-pointer shadow-md select-none ${
                     isClicked
                       ? "bg-green-400 border-[#198754] text-white shadow-inner"
                       : isNext
@@ -5676,8 +5600,8 @@ const startSpaceGame = () => {
                       : "bg-white border-[#4D2B82] text-[#4D2B82] hover:bg-purple-50"
                   }`}
                   style={{
-                    left: `${(p.x / 400) * 100}%`,
-                    top: `${(p.y / 300) * 100}%`,
+                    left: `${(p.x / 500) * 100}%`,
+                    top: `${(p.y / 360) * 100}%`,
                   }}
                 >
                   {p.num}

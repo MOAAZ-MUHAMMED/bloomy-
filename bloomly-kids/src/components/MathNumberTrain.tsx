@@ -22,7 +22,7 @@ export default function MathNumberTrain({ level = 1, onComplete, onBack }: Props
     if (lvl <= 1) return 5;
     if (lvl === 2) return 10;
     if (lvl === 3) return 20;
-    return 30; // Level 4+
+    return 25; // Level 4+ (1-25)
   };
 
   const generateTrainRound = () => {
