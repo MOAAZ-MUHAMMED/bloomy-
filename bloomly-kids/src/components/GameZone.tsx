@@ -3281,10 +3281,8 @@ const startSpaceGame = () => {
     setSpellingSelected(null);
 
     const levelStr = activeDifficulty || propChildLevel || "level1";
-    let pool = spellingBankLevel1;
-    if (levelStr === "level2") {
-      pool = [...spellingBankLevel1, ...spellingBankLevel2];
-    } else if (levelStr === "level3" || levelStr === "level4") {
+    let pool = spellingBankLevel1; // 3-letter words by default for Level 1
+    if (levelStr === "level2" || levelStr === "level3" || levelStr === "level4") {
       pool = [...spellingBankLevel1, ...spellingBankLevel2];
     }
 
@@ -3306,18 +3304,28 @@ const startSpaceGame = () => {
       titleText = "ما اسم هذا؟";
     } else if (levelStr === "level2") {
       qType = "word";
-      titleText = "ما اسم هذا الشكل؟";
-    } else if (levelStr === "level3" || levelStr === "level4") {
-      const mode = Math.random();
-      if (mode < 0.35) {
+      titleText = "ما اسم هذا؟";
+    } else if (levelStr === "level3") {
+      const isFirst = Math.random() < 0.5;
+      if (isFirst) {
         qType = "first_letter";
         titleText = "ما هو أول حرف من هذا الشكل؟";
-      } else if (mode < 0.7) {
+      } else {
+        qType = "word";
+        titleText = "ما اسم هذا؟";
+      }
+    } else {
+      // Level 4 (Genius): first_letter, last_letter, or full word
+      const mode = Math.random();
+      if (mode < 0.4) {
+        qType = "first_letter";
+        titleText = "ما هو أول حرف من هذا الشكل؟";
+      } else if (mode < 0.8) {
         qType = "last_letter";
         titleText = "ما هو آخر حرف من هذا الشكل؟";
       } else {
         qType = "word";
-        titleText = "ما اسم هذا الشكل؟";
+        titleText = "ما اسم هذا؟";
       }
     }
 
@@ -4758,18 +4766,24 @@ const startSpaceGame = () => {
             <span className="text-7xl mb-2 animate-bounce-slow">{spellingQuestion.emoji}</span>
             {spellingSelected !== null ? (
               <motion.span 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="text-2xl font-extrabold text-purple-600"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1.1 }}
+                className="text-3xl font-black text-purple-700 bg-purple-100 px-6 py-2 rounded-full border-2 border-purple-300 shadow-sm"
               >
                 {spellingQuestion.word}
               </motion.span>
             ) : (
-              spellingQuestion.qType === "word" ? (
-                <span className="text-2xl font-extrabold text-purple-300 tracking-widest select-none">
-                  {spellingQuestion.word.split("").map(() => "❓").join(" ")}
-                </span>
-              ) : null
+              <span className="text-2xl font-black text-purple-600 tracking-wider bg-white px-6 py-2 rounded-full border-2 border-purple-200 shadow-inner">
+                {spellingQuestion.qType === "word" ? (
+                  spellingQuestion.word.split("").map(() => "❓").join(" ")
+                ) : spellingQuestion.qType === "first_letter" ? (
+                  `_ ${spellingQuestion.word.slice(1)}`
+                ) : spellingQuestion.qType === "last_letter" ? (
+                  `${spellingQuestion.word.slice(0, -1)} _`
+                ) : (
+                  spellingQuestion.word
+                )}
+              </span>
             )}
           </div>
 

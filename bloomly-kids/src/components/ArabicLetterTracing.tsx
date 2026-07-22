@@ -24,6 +24,9 @@ export default function ArabicLetterTracing({ onComplete, onBack }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [traced, setTraced] = useState(false);
   const [showSparkles, setShowSparkles] = useState(false);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const strokePointsRef = useRef<number>(0);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const hasCompletedRef = useRef(false);
 
   useEffect(() => {
@@ -35,6 +38,39 @@ export default function ArabicLetterTracing({ onComplete, onBack }: Props) {
   }, []);
 
   const currentItem = sessionLetters[currentIndex] || LETTERS_POOL[0];
+
+  // Draw initial background guide letter on Canvas
+  const drawGuideLetter = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Background card color
+    ctx.fillStyle = '#FFF5F5';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    // Guide Letter Outline
+    ctx.font = '900 190px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#FCE7F3';
+    ctx.strokeStyle = '#F472B6';
+    ctx.lineWidth = 4;
+    ctx.setLineDash([8, 8]);
+    
+    ctx.fillText(currentItem.letter, canvas.width / 2, canvas.height / 2 + 10);
+    ctx.strokeText(currentItem.letter, canvas.width / 2, canvas.height / 2 + 10);
+    ctx.setLineDash([]);
+  };
+
+  useEffect(() => {
+    strokePointsRef.current = 0;
+    setTraced(false);
+    drawGuideLetter();
+  }, [currentIndex, sessionLetters]);
 
   const playPopSound = () => {
     try {
@@ -53,7 +89,65 @@ export default function ArabicLetterTracing({ onComplete, onBack }: Props) {
     } catch (e) {}
   };
 
-  const handleTraceComplete = () => {
+  const startPenDraw = (e: React.MouseEvent | React.TouchEvent) => {
+    if (traced || hasCompletedRef.current) return;
+    setIsDrawing(true);
+    drawPenStroke(e);
+  };
+
+  const stopPenDraw = () => {
+    setIsDrawing(false);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (ctx) ctx.beginPath();
+  };
+
+  const drawPenStroke = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!isDrawing && e.type !== 'mousedown' && e.type !== 'touchstart') return;
+    if (traced || hasCompletedRef.current) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const rect = canvas.getBoundingClientRect();
+    let clientX = 0;
+    let clientY = 0;
+
+    if ('touches' in e) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    } else {
+      clientX = (e as React.MouseEvent).clientX;
+      clientY = (e as React.MouseEvent).clientY;
+    }
+
+    const x = ((clientX - rect.left) / rect.width) * canvas.width;
+    const y = ((clientY - rect.top) / rect.height) * canvas.height;
+
+    ctx.lineWidth = 26;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = currentItem.color;
+    ctx.shadowColor = currentItem.color;
+    ctx.shadowBlur = 10;
+
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+
+    strokePointsRef.current += 1;
+
+    // Check if user traced enough of the letter (20+ stroke points)
+    if (strokePointsRef.current >= 20 && !traced) {
+      finishLetterTracing();
+    }
+  };
+
+  const finishLetterTracing = () => {
     if (traced || hasCompletedRef.current) return;
     setTraced(true);
     setShowSparkles(true);
@@ -63,14 +157,13 @@ export default function ArabicLetterTracing({ onComplete, onBack }: Props) {
       setShowSparkles(false);
       if (currentIndex + 1 < 5) {
         setCurrentIndex((prev) => prev + 1);
-        setTraced(false);
       } else {
         if (!hasCompletedRef.current) {
           hasCompletedRef.current = true;
           onComplete();
         }
       }
-    }, 1400);
+    }, 1500);
   };
 
   return (
@@ -86,10 +179,10 @@ export default function ArabicLetterTracing({ onComplete, onBack }: Props) {
         </button>
       )}
 
-      {/* Progress Dots Bar (5 Letters) */}
+      {/* Progress Bar (5 Letters) */}
       <div className="pt-6 z-10 flex flex-col items-center">
-        <h1 className="text-3xl sm:text-5xl font-black text-rose-700 mb-2 drop-shadow-sm">تتبع الحروف العربية ✍️</h1>
-        <p className="text-base sm:text-lg font-bold text-rose-600 mb-3">حرك القلم السحري لتتبع الحرف كاملًا!</p>
+        <h1 className="text-3xl sm:text-5xl font-black text-rose-700 mb-2 drop-shadow-sm">تتبع الحروف بالمرسام السحري ✏️</h1>
+        <p className="text-base sm:text-lg font-bold text-rose-600 mb-3">امسك القلم وارسم الحرف كاملاً على الشاشة!</p>
         <div className="flex items-center gap-2 bg-white/80 backdrop-blur px-6 py-2 rounded-full border-2 border-pink-300 shadow">
           {[0, 1, 2, 3, 4].map((idx) => (
             <div 
@@ -109,46 +202,54 @@ export default function ArabicLetterTracing({ onComplete, onBack }: Props) {
         </div>
       </div>
 
-      {/* Letter Tracing Card */}
-      <div className="relative w-full max-w-sm sm:max-w-md bg-white/90 backdrop-blur-xl border-4 border-white shadow-2xl rounded-[3rem] p-8 flex flex-col items-center my-4 z-10">
-        <div className="text-xl font-black text-slate-700 bg-rose-50 border-2 border-rose-200 px-6 py-1.5 rounded-full mb-6 shadow-sm">
+      {/* Real Canvas Letter Tracing Board */}
+      <div className="relative w-full max-w-sm sm:max-w-md bg-white/90 backdrop-blur-xl border-4 border-white shadow-2xl rounded-[3rem] p-6 flex flex-col items-center my-4 z-10">
+        <div className="text-xl font-black text-slate-700 bg-rose-50 border-2 border-rose-200 px-6 py-1.5 rounded-full mb-4 shadow-sm">
           حرف {currentItem.name} - {currentItem.word}
         </div>
 
-        <div className="relative text-[10rem] sm:text-[12rem] font-black text-rose-200 leading-none my-4 select-none flex items-center justify-center w-64 h-64 border-4 border-dashed border-rose-300 rounded-3xl bg-rose-50/50">
-          <span style={{ color: traced ? currentItem.color : '#FCA5A5' }} className="transition-colors duration-500">
-            {currentItem.letter}
-          </span>
-
-          {!traced && (
-            <motion.div
-              drag
-              dragConstraints={{ top: -80, bottom: 80, left: -80, right: 80 }}
-              onDragEnd={handleTraceComplete}
-              onClick={handleTraceComplete}
-              className="absolute w-16 h-16 bg-gradient-to-tr from-rose-500 to-pink-500 rounded-full cursor-grab active:cursor-grabbing shadow-xl border-4 border-white flex items-center justify-center text-2xl text-white hover:scale-110 active:scale-95 transition-transform"
-            >
-              ✏️
-            </motion.div>
-          )}
+        {/* The Interactive Drawing Canvas */}
+        <div className="relative w-72 h-72 border-4 border-dashed border-rose-300 rounded-3xl overflow-hidden shadow-inner flex items-center justify-center bg-rose-50/50 cursor-crosshair">
+          <canvas
+            ref={canvasRef}
+            width={300}
+            height={300}
+            onMouseDown={startPenDraw}
+            onMouseMove={drawPenStroke}
+            onMouseUp={stopPenDraw}
+            onMouseLeave={stopPenDraw}
+            onTouchStart={startPenDraw}
+            onTouchMove={drawPenStroke}
+            onTouchEnd={stopPenDraw}
+            className="w-full h-full touch-none select-none"
+          />
 
           {showSparkles && (
             <motion.div
               initial={{ scale: 0, rotate: -45 }}
-              animate={{ scale: 1.5, rotate: 0 }}
-              className="absolute text-6xl"
+              animate={{ scale: 1.6, rotate: 0 }}
+              className="absolute text-7xl pointer-events-none"
             >
               ✨🌟
             </motion.div>
           )}
         </div>
 
-        <button
-          onClick={handleTraceComplete}
-          className="mt-4 px-8 py-3 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-black text-lg rounded-full shadow-lg hover:shadow-xl active:translate-y-0.5 transition-all cursor-pointer border-2 border-white"
-        >
-          {traced ? 'تم التتبع! ✅' : 'تتبع الحرف ✨'}
-        </button>
+        <div className="flex gap-3 mt-4 w-full justify-center">
+          <button
+            onClick={drawGuideLetter}
+            className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold text-sm rounded-full border border-slate-300 transition-all cursor-pointer"
+          >
+            🧹 مسح وإعادة
+          </button>
+          
+          <button
+            onClick={finishLetterTracing}
+            className="px-6 py-2.5 bg-gradient-to-r from-rose-500 to-pink-500 text-white font-black text-sm rounded-full shadow-lg hover:scale-105 active:scale-95 transition-all cursor-pointer border border-white"
+          >
+            {traced ? 'تم التتبع! ✅' : 'أكملت الرسمة ✨'}
+          </button>
+        </div>
       </div>
 
     </div>
