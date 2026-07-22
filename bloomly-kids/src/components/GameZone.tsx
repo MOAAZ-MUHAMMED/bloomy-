@@ -3052,6 +3052,9 @@ const startSpaceGame = () => {
       else if (activeGame === "train") startTrainGame();
       else if (activeGame === "arrowRacer") startRunnerGame();
       else if (activeGame === "tapRacer") startTapRacerGame();
+      else if (activeGame === "kitchenMarketList" || activeGame === "arabicShadowMatch" || activeGame === "arabicLetterTracing" || activeGame === "englishWordSafari" || activeGame === "englishSpaceDecoder") {
+        setShowLevelMap(false);
+      }
     } else {
       setActiveGame("menu");
     }

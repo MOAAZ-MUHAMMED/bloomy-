@@ -458,6 +458,19 @@ export const islandsData = [
     y: 105
   },
   {
+    id: "englishWordSafari",
+    title: "سفاري الكلمات 🦁",
+    character: "🦁 الأسد سيمبا (مستكشف السفاري)",
+    characterEmoji: "🦁",
+    emoji: "🦁",
+    gameName: "سفاري الكلمات الإنجليزية",
+    quest: "انطلق في رحلة سفاري ممتعة واستمع للكلمات الإنجليزية واختر الصورة والحيوان الصحيح!",
+    superpower: "حفظ المفردات والنطق الإنجليزي الصحيح! 🌍",
+    badge: "إنجليزي",
+    x: 45,
+    y: 105
+  },
+  {
     id: "drawingNeonArt",
     title: "لوحة النيون 🎨",
     character: "✨ الرسام السحري",
