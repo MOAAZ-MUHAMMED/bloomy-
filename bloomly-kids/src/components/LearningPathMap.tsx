@@ -621,6 +621,10 @@ export default function LearningPathMap({
   const [selectedIslandIndex, setSelectedIslandIndex] = useState<number | null>(null);
   const mapConstraintsRef = useRef(null);
 
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  }, []);
+
   const playBubbleSound = () => {
     try {
       const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();

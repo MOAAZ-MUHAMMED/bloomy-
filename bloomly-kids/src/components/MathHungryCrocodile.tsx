@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // --- Confetti / Sparkle Effect Component ---
@@ -45,6 +45,7 @@ export default function MathHungryCrocodile({ level = 1, onComplete, onBack }: M
   const [showConfetti, setShowConfetti] = useState(false);
   const [isWrong, setIsWrong] = useState(false);
   const [crocState, setCrocState] = useState<'idle' | 'eatingLeft' | 'eatingRight' | 'confused'>('idle');
+  const hasCompletedRef = useRef(false);
 
   const getMaxNum = (lvl: number) => {
     if (lvl <= 1) return 5;
@@ -78,6 +79,7 @@ export default function MathHungryCrocodile({ level = 1, onComplete, onBack }: M
   };
 
   useEffect(() => {
+    hasCompletedRef.current = false;
     generateLevel();
   }, [level, round]);
 
@@ -114,6 +116,8 @@ export default function MathHungryCrocodile({ level = 1, onComplete, onBack }: M
   };
 
   const handleAnswer = (answer: '>' | '<' | '=') => {
+    if (hasCompletedRef.current || crocState !== 'idle') return;
+
     if (answer === correctAnswer) {
       if (answer === '>') {
         setCrocState('eatingLeft');
@@ -131,9 +135,12 @@ export default function MathHungryCrocodile({ level = 1, onComplete, onBack }: M
         if (round < 4) {
           setRound(r => r + 1);
         } else {
-          onComplete();
+          if (!hasCompletedRef.current) {
+            hasCompletedRef.current = true;
+            onComplete();
+          }
         }
-      }, 2000);
+      }, 1800);
     } else {
       setIsWrong(true);
       playSound('error');

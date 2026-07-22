@@ -67,6 +67,10 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
 }) => {
   const [clickedId, setClickedId] = useState<string | null>(null);
 
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+  }, [activeCategory]);
+
   const speakArabic = (text: string) => {
     if (!window.speechSynthesis) return;
     window.speechSynthesis.cancel();

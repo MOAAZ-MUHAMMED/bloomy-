@@ -2817,8 +2817,6 @@ const startSpaceGame = () => {
         }, 800);
       }, i * 150);
     }
-  };
-
   // Update global stars helper
   const addStars = (amount: number, sourceElementId?: string) => {
     triggerStarFlight(sourceElementId);
@@ -2837,21 +2835,36 @@ const startSpaceGame = () => {
     setStarsEarnedThisSession((prev) => prev + amount);
   };
 
+  const victoryLockRef = useRef(false);
+
+  // Scroll to top automatically when game or map changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    if (mapScrollRef.current) {
+      mapScrollRef.current.scrollLeft = 0;
+    }
+  }, [activeGame, showLevelMap, showDifficultySelect]);
+
   // Launch Victory Fanfare & Confetti
   const triggerVictory = () => {
+    if (victoryLockRef.current || showVictoryModal) return;
+    victoryLockRef.current = true;
+
     setShowVictoryModal(true);
     sfx.playVictory();
     
-    // Save level stars to map progress (includes difficulty in key)
-    let calculatedStars = 3;
-    if (selectedLevelIndex !== null) {
-      const starKey = `bloomly_stars_${activeGame}_${activeDifficulty}_level_${selectedLevelIndex}`;
-      calculatedStars = starsEarnedThisSession >= 5 ? 3 : starsEarnedThisSession >= 3 ? 2 : 1;
-      const currentSaved = parseInt(localStorage.getItem(starKey) || "0", 10);
-      if (calculatedStars > currentSaved) {
-        localStorage.setItem(starKey, String(calculatedStars));
-      }
-    }
+    // Save level stars under BOTH unified key and difficulty key
+    const currentLvl = selectedLevelIndex || 1;
+    const calculatedStars = Math.max(1, Math.min(3, starsEarnedThisSession >= 5 ? 3 : starsEarnedThisSession >= 3 ? 2 : 1));
+    
+    const starKey1 = `bloomly_stars_${activeGame}_level_${currentLvl}`;
+    const starKey2 = `bloomly_stars_${activeGame}_${activeDifficulty}_level_${currentLvl}`;
+    
+    const saved1 = parseInt(localStorage.getItem(starKey1) || "0", 10);
+    if (calculatedStars > saved1) localStorage.setItem(starKey1, String(calculatedStars));
+
+    const saved2 = parseInt(localStorage.getItem(starKey2) || "0", 10);
+    if (calculatedStars > saved2) localStorage.setItem(starKey2, String(calculatedStars));
     
     if (onActivityComplete) {
       onActivityComplete(activeGame, activeCategory || 'general', Math.max(3, starsEarnedThisSession));
@@ -2981,6 +2994,8 @@ const startSpaceGame = () => {
   }, [showVictoryModal]);
 
   const quitGame = () => {
+    victoryLockRef.current = false;
+    setShowVictoryModal(false);
     setShowLevelMap(true);
     setStarsEarnedThisSession(0);
     setRunnerActive(false);
@@ -2994,12 +3009,14 @@ const startSpaceGame = () => {
     try {
       if ('speechSynthesis' in window) window.speechSynthesis.cancel();
     } catch (e) {}
+    victoryLockRef.current = false;
     setShowVictoryModal(false);
     setVictoryBalloons([]);
     setConfetti([]);
 
-    if (selectedLevelIndex !== null && selectedLevelIndex < 100) {
-      const nextLvl = selectedLevelIndex + 1;
+    const currentLvl = selectedLevelIndex || 1;
+    if (currentLvl < 100) {
+      const nextLvl = currentLvl + 1;
       setSelectedLevelIndex(nextLvl);
       
       const profile = JSON.parse(localStorage.getItem("childProfile") || "null");
@@ -4466,9 +4483,11 @@ const startSpaceGame = () => {
                 
                 // Progressive lock: Level 1 open, rest need previous level stars
                 const isLocked = lvlNum === 1 ? false : (() => {
-                  const prevStarKey = `bloomly_stars_${activeGame}_${difficulty}_level_${lvlNum - 1}`;
-                  const prevStars = parseInt(localStorage.getItem(prevStarKey) || "0", 10);
-                  return prevStars === 0;
+                  const key1 = `bloomly_stars_${activeGame}_level_${lvlNum - 1}`;
+                  const key2 = `bloomly_stars_${activeGame}_${difficulty}_level_${lvlNum - 1}`;
+                  const s1 = parseInt(localStorage.getItem(key1) || "0", 10);
+                  const s2 = parseInt(localStorage.getItem(key2) || "0", 10);
+                  return Math.max(s1, s2) === 0;
                 })();
 
                 return { x, y, label: `المستوى ${lvlNum}`, difficulty, lvlNum, isLocked };
