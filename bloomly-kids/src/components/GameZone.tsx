@@ -1057,7 +1057,7 @@ export function GameZone({
             "mathNumberTrain", "mathSpaceTower", "englishLetterTracing", 
             "englishColorCloud", "kitchenSandwichMaker", "kitchenBakingCake", 
             "drawingSymmetry", "funWhackAMole", "funHiddenCup", "kitchenMarketList", "mathHungryCrocodile",
-            "englishSpaceDecoder", "drawingNeonArt"
+            "englishSpaceDecoder", "drawingNeonArt", "coloring"
           ];
           
           if (!directLaunchGames.includes(gameName)) {
@@ -3052,7 +3052,7 @@ const startSpaceGame = () => {
       else if (activeGame === "train") startTrainGame();
       else if (activeGame === "arrowRacer") startRunnerGame();
       else if (activeGame === "tapRacer") startTapRacerGame();
-      else if (activeGame === "kitchenMarketList" || activeGame === "arabicShadowMatch" || activeGame === "arabicLetterTracing" || activeGame === "englishWordSafari" || activeGame === "englishSpaceDecoder") {
+      else if (activeGame === "kitchenMarketList" || activeGame === "arabicShadowMatch" || activeGame === "arabicLetterTracing" || activeGame === "englishWordSafari" || activeGame === "englishSpaceDecoder" || activeGame === "drawingSymmetry" || activeGame === "drawingNeonArt") {
         setShowLevelMap(false);
       }
     } else {
@@ -3892,12 +3892,12 @@ const startSpaceGame = () => {
   // Auto-select template based on level for Coloring Game
   useEffect(() => {
     if (activeGame === 'coloring') {
-      const levelNum = parseInt((propChildLevel || 'level1').replace('level', '')) || 1;
-      const templates = ['apple', 'orange', 'rocket', 'cat', 'monkey', 'dove', 'free'];
-      const index = (levelNum - 1) % templates.length;
-      setActiveTemplate(templates[index] as any);
+      const lvlNum = selectedLevelIndex || 1;
+      const templates: Array<"apple" | "orange" | "rocket" | "cat" | "monkey" | "dove" | "free"> = ['apple', 'orange', 'rocket', 'cat', 'monkey', 'dove', 'free'];
+      const index = (lvlNum - 1) % templates.length;
+      setActiveTemplate(templates[index]);
     }
-  }, [activeGame, propChildLevel]);
+  }, [activeGame, selectedLevelIndex]);
 
   const [currentColor, setCurrentColor] = useState("#FF5A92");
   const [brushSize, setBrushSize] = useState(8);
@@ -4045,7 +4045,10 @@ const startSpaceGame = () => {
 
   const startColoringGame = () => {
     setStarsEarnedThisSession(0);
-    setActiveTemplate("apple");
+    const lvlNum = selectedLevelIndex || 1;
+    const templates: Array<"apple" | "orange" | "rocket" | "cat" | "monkey" | "dove" | "free"> = ['apple', 'orange', 'rocket', 'cat', 'monkey', 'dove', 'free'];
+    const index = (lvlNum - 1) % templates.length;
+    setActiveTemplate(templates[index]);
     setCurrentColor("#FF5A92");
     setBrushSize(8);
     setActiveGame("coloring");
@@ -7210,7 +7213,7 @@ const startSpaceGame = () => {
       )}
       {activeGame === "drawingSymmetry" && !showLevelMap && (
         <DrawingSymmetry
-          level={parseInt((propChildLevel || 'level1').replace('level', '')) || 1}
+          level={selectedLevelIndex || 1}
           onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
       )}
       {activeGame === "funWhackAMole" && !showLevelMap && (
