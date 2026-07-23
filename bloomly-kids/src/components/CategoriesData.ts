@@ -48,7 +48,7 @@ export const categoriesData: CategoryData[] = [
     bgGradient: "from-[#fccb90]/90 to-[#d57eeb]/90",
     textColor: "text-purple-700",
     borderColor: "border-purple-300",
-    games: ["chef", "kitchenSandwichMaker", "kitchenBakingCake", "kitchenMarketList"]
+    games: ["chef", "kitchenPizzaMaker", "kitchenJuiceBar", "kitchenMarketList"]
   },
   {
     id: "stories",

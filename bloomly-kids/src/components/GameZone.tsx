@@ -20,8 +20,8 @@ import MathNumberTrain from "./MathNumberTrain";
 import MathSpaceTower from "./MathSpaceTower";
 import EnglishLetterTracing from "./EnglishLetterTracing";
 import EnglishColorCloud from "./EnglishColorCloud";
-import KitchenSandwichMaker from "./KitchenSandwichMaker";
-import KitchenBakingCake from "./KitchenBakingCake";
+import KitchenPizzaMaker from "./KitchenPizzaMaker";
+import KitchenJuiceBar from "./KitchenJuiceBar";
 import DrawingSymmetry from "./DrawingSymmetry";
 import FunWhackAMole from "./FunWhackAMole";
 import FunHiddenCup from "./FunHiddenCup";
@@ -1055,7 +1055,7 @@ export function GameZone({
           const directLaunchGames = [
             "quran", "stories", "arabicLetterTracing", "arabicShadowMatch", 
             "mathNumberTrain", "mathSpaceTower", "englishLetterTracing", 
-            "englishColorCloud", "kitchenSandwichMaker", "kitchenBakingCake", 
+            "englishColorCloud", "kitchenPizzaMaker", "kitchenJuiceBar", 
             "drawingSymmetry", "funWhackAMole", "funHiddenCup", "kitchenMarketList", "mathHungryCrocodile",
             "englishSpaceDecoder", "drawingNeonArt", "coloring"
           ];
@@ -1874,20 +1874,73 @@ export function GameZone({
   }
 
   const chefRecipesBank: Recipe[] = [
-    { name: "آيس كريم الفراولة اللذيذ 🍧", ingredients: ["🥛", "🍓", "🍦"], yieldEmoji: "🍨", yieldName: "آيس كريم فراولة سحري!" },
-    { name: "كعكة الشوكولاتة اللامعة 🎂", ingredients: ["🥚", "🍫", "🧁"], yieldEmoji: "🎂", yieldName: "كعكة شوكولاتة سحرية!" },
-    { name: "عصير كوكتيل بلومي 🍹", ingredients: ["🍊", "🍌", "🧊"], yieldEmoji: "🍹", yieldName: "عصير كوكتيل سحري!" },
-    { name: "دوناتس العسل والسمسم 🍩", ingredients: ["🌾", "🍯", "🍩"], yieldEmoji: "🍩", yieldName: "دوناتس العسل السحرية!" },
-    { name: "سلطة فواكه قوس قزح 🥗", ingredients: ["🍎", "🍇", "🍉"], yieldEmoji: "🥗", yieldName: "سلطة فواكه سحرية!" }
+    { name: "آيس كريم الفراولة اللذيذ 🍧", ingredients: ["🥛", "🍓", "🍦", "🍫", "🍯", "🧁", "🍒"], yieldEmoji: "🍨", yieldName: "آيس كريم فراولة سحري!" },
+    { name: "كعكة الشوكولاتة اللامعة 🎂", ingredients: ["🥚", "🍫", "🧁", "🥛", "🍯", "🍓", "🍒"], yieldEmoji: "🎂", yieldName: "كعكة شوكولاتة سحرية!" },
+    { name: "عصير كوكتيل بلومي 🍹", ingredients: ["🍊", "🍌", "🧊", "🍍", "🥭", "🍎", "🥝"], yieldEmoji: "🍹", yieldName: "عصير كوكتيل سحري!" },
+    { name: "دوناتس العسل والسمسم 🍩", ingredients: ["🌾", "🍯", "🍩", "🥛", "🍫", "🧁", "🍒"], yieldEmoji: "🍩", yieldName: "دوناتس العسل السحرية!" },
+    { name: "سلطة فواكه قوس قزح 🥗", ingredients: ["🍎", "🍇", "🍉", "🍓", "🍍", "🥝", "🥭"], yieldEmoji: "🥗", yieldName: "سلطة فواكه سحرية!" },
+    { name: "بيتزا الفواكه السحرية 🍕", ingredients: ["🌾", "🍎", "🍓", "🍍", "🍇", "🍯", "🧀"], yieldEmoji: "🍕", yieldName: "بيتزا فواكه سحرية!" },
+    { name: "تورتة المانجو الذهبية 🍰", ingredients: ["🥭", "🥚", "🥛", "🧁", "🍯", "🍌", "🍒"], yieldEmoji: "🍰", yieldName: "تورتة مانجو ذهبية!" },
+    { name: "ميلك شيك التوت الأزرق 🥤", ingredients: ["🥛", "🫐", "🍦", "🧊", "🍯", "🍓", "🧁"], yieldEmoji: "🥤", yieldName: "ميلك شيك التوت!" },
+    { name: "فطيرة الأناناس المقرمشة 🥧", ingredients: ["🌾", "🍍", "🥚", "🍯", "🥛", "🍎", "🧈"], yieldEmoji: "🥧", yieldName: "فطيرة الأناناس!" },
+    { name: "كب كيك القزحي اللذيذ 🧁", ingredients: ["🧁", "🥛", "🥚", "🍓", "🍫", "🍯", "✨"], yieldEmoji: "🧁", yieldName: "كب كيك القزحي!" },
+    { name: "سموذي الموز والكرز 🥤", ingredients: ["🍌", "🍒", "🥛", "🧊", "🍯", "🍓", "🍍"], yieldEmoji: "🥤", yieldName: "سموذي الموز والكرز!" },
+    { name: "كوكيز الشوكولاتة الذائبة 🍪", ingredients: ["🌾", "🍫", "🥚", "🥛", "🍯", "🧈", "🧁"], yieldEmoji: "🍪", yieldName: "كوكيز الشوكولاتة!" },
+    { name: "وافل العسل والفاكهة 🧇", ingredients: ["🌾", "🍯", "🍓", "🍌", "🥚", "🥛", "🧈"], yieldEmoji: "🧇", yieldName: "وافل العسل السحري!" },
+    { name: "بان كيك التوت الذهبي 🥞", ingredients: ["🌾", "🥛", "🥚", "🫐", "🍯", "🧈", "🍓"], yieldEmoji: "🥞", yieldName: "بان كيك التوت!" },
+    { name: "مشروب الشوكولاتة الساخنة ☕", ingredients: ["🥛", "🍫", "🍯", "🧁", "🧊", "🌾", "✨"], yieldEmoji: "☕", yieldName: "شوكولاتة ساخنة!" },
+    { name: "جليد البطيخ المنعش 🍉", ingredients: ["🍉", "🧊", "🍋", "🍯", "🍓", "🍍", "🥝"], yieldEmoji: "🍧", yieldName: "جليد البطيخ المنعش!" },
+    { name: "تورتة الفراولة والكرز 🎂", ingredients: ["🍓", "🍒", "🥚", "🥛", "🧁", "🍯", "🍫"], yieldEmoji: "🎂", yieldName: "تورتة الفراولة!" },
+    { name: "كرات الطاقة بالتمر والحليب 🧆", ingredients: ["🥛", "🍯", "🌾", "🍌", "🍫", "🥥", "✨"], yieldEmoji: "🧆", yieldName: "كرات الطاقة السحرية!" },
+    { name: "عصير البرتقال والليمون 🍊", ingredients: ["🍊", "🍋", "🧊", "🍯", "🍎", "🍍", "🥭"], yieldEmoji: "🍹", yieldName: "عصير البرتقال والليمون!" },
+    { name: "بودينج الموز والشوكولاتة 🍮", ingredients: ["🍌", "🍫", "🥛", "🥚", "🍯", "🧁", "✨"], yieldEmoji: "🍮", yieldName: "بودينج الموز السحري!" },
+    { name: "جليد الكيوي والتفاح 🥝", ingredients: ["🥝", "🍎", "🧊", "🍯", "🍋", "🍏", "🍇"], yieldEmoji: "🍧", yieldName: "جليد الكيوي السحري!" },
+    { name: "تورتة الليمون المنعشة 🍋", ingredients: ["🍋", "🥚", "🥛", "🌾", "🍯", "🧁", "🧈"], yieldEmoji: "🍰", yieldName: "تورتة الليمون!" },
+    { name: "آيس كريم الفانيليا الملكي 🍨", ingredients: ["🥛", "🍦", "🍯", "🥚", "🧁", "🍫", "🍒"], yieldEmoji: "🍨", yieldName: "آيس كريم فانيليا!" },
+    { name: "كعكة التفاح والقرفة 🥧", ingredients: ["🍎", "🌾", "🥚", "🍯", "🥛", "🧈", "✨"], yieldEmoji: "🥧", yieldName: "كعكة التفاح والقرفة!" },
+    { name: "سموذي المانجو والأناناس 🥭", ingredients: ["🥭", "🍍", "🥛", "🧊", "🍯", "🍌", "🍊"], yieldEmoji: "🍹", yieldName: "سموذي المانجو والأناناس!" },
+    { name: "دوناتس الشوكولاتة والتوت 🍩", ingredients: ["🌾", "🍫", "🫐", "🥛", "🥚", "🍯", "🍩"], yieldEmoji: "🍩", yieldName: "دوناتس الشوكولاتة والتوت!" },
+    { name: "كعكة الكرز الملكية 🍒", ingredients: ["🍒", "🥚", "🥛", "🧁", "🍫", "🍯", "🌾"], yieldEmoji: "🎂", yieldName: "كعكة الكرز الملكية!" },
+    { name: "كوكتيل الفواكه الاستوائية 🥥", ingredients: ["🥥", "🍍", "🥭", "🍌", "🧊", "🍯", "🍊"], yieldEmoji: "🍹", yieldName: "كوكتيل الفواكه الاستوائية!" },
+    { name: "كرواسون العسل المقرمش 🥐", ingredients: ["🌾", "🧈", "🍯", "🥛", "🥚", "🍫", "✨"], yieldEmoji: "🥐", yieldName: "كرواسون العسل السحري!" },
+    { name: "بان كيك الشوكولاتة والموز 🥞", ingredients: ["🌾", "🍫", "🍌", "🥛", "🥚", "🍯", "🧈"], yieldEmoji: "🥞", yieldName: "بان كيك الشوكولاتة!" },
+    { name: "آيس كريم البطيخ والفراولة 🍧", ingredients: ["🍉", "🍓", "🍦", "🥛", "🧊", "🍯", "🍒"], yieldEmoji: "🍧", yieldName: "آيس كريم البطيخ والفراولة!" },
+    { name: "كعكة البندق والشوكولاتة 🎂", ingredients: ["🍫", "🌾", "🥚", "🥛", "🍯", "🧁", "🧈"], yieldEmoji: "🎂", yieldName: "كعكة البندق السحرية!" },
+    { name: "سلطة الحمضيات المنعشة 🍊", ingredients: ["🍊", "🍋", "🍎", "🥝", "🍯", "🧊", "🍇"], yieldEmoji: "🥗", yieldName: "سلطة الحمضيات!" },
+    { name: "سموذي التوت المشكل 🫐", ingredients: ["🫐", "🍓", "🍇", "🥛", "🧊", "🍯", "🍦"], yieldEmoji: "🥤", yieldName: "سموذي التوت المشكل!" },
+    { name: "تورتة الجبن والتوت 🍰", ingredients: ["🫐", "🥛", "🥚", "🌾", "🍯", "🧈", "🧁"], yieldEmoji: "🍰", yieldName: "تورتة الجبن والتوت!" },
+    { name: "جليد المانجو والبرتقال 🥭", ingredients: ["🥭", "🍊", "🧊", "🍯", "🍍", "🍌", "🍋"], yieldEmoji: "🍧", yieldName: "جليد المانجو والبرتقال!" },
+    { name: "كوكيز الشوفان والعسل 🍪", ingredients: ["🌾", "🍯", "🥛", "🥚", "🧈", "🍎", "🍌"], yieldEmoji: "🍪", yieldName: "كوكيز الشوفان والعسل!" },
+    { name: "وافل شوكولاتة الفراولة 🧇", ingredients: ["🌾", "🍫", "🍓", "🥛", "🥚", "🍯", "🧈"], yieldEmoji: "🧇", yieldName: "وافل شوكولاتة الفراولة!" },
+    { name: "عصير التفاح والعنب 🍎", ingredients: ["🍎", "🍇", "🧊", "🍯", "🍋", "🍊", "🍍"], yieldEmoji: "🍹", yieldName: "عصير التفاح والعنب!" },
+    { name: "تورتة الفستق والعسل 🍰", ingredients: ["🌾", "🍯", "🥛", "🥚", "🧁", "🧈", "✨"], yieldEmoji: "🍰", yieldName: "تورتة الفستق والعسل!" },
+    { name: "آيس كريم المانجو والكيوي 🍨", ingredients: ["🥭", "🥝", "🍦", "🥛", "🧊", "🍯", "🍍"], yieldEmoji: "🍨", yieldName: "آيس كريم المانجو والكيوي!" },
+    { name: "دوناتس الفراولة الملونة 🍩", ingredients: ["🌾", "🍓", "🍩", "🥛", "🥚", "🍯", "🧁"], yieldEmoji: "🍩", yieldName: "دوناتس الفراولة الملونة!" },
+    { name: "سموذي الأناناس والنعناع 🍍", ingredients: ["🍍", "🧊", "🥛", "🍯", "🍏", "🍋", "🥝"], yieldEmoji: "🥤", yieldName: "سموذي الأناناس المنعش!" },
+    { name: "كعكة الزبيب والتمر 🥧", ingredients: ["🌾", "🍇", "🍯", "🥛", "🥚", "🧈", "🍎"], yieldEmoji: "🥧", yieldName: "كعكة الزبيب والتمر!" },
+    { name: "كوكتيل التوت والبطيخ 🍹", ingredients: ["🫐", "🍉", "🧊", "🍯", "🍓", "🍊", "🍋"], yieldEmoji: "🍹", yieldName: "كوكتيل التوت والبطيخ!" },
+    { name: "كب كيك الشوكولاتة بالفانيليا 🧁", ingredients: ["🧁", "🍫", "🍦", "🥛", "🥚", "🍯", "🍒"], yieldEmoji: "🧁", yieldName: "كب كيك الشوكولاتة بالفانيليا!" },
+    { name: "ميلك شيك المانجو والكرز 🥤", ingredients: ["🥭", "🍒", "🥛", "🍦", "🧊", "🍯", "🍓"], yieldEmoji: "🥤", yieldName: "ميلك شيك المانجو والكرز!" },
+    { name: "فطيرة التوت الذهبية 🥧", ingredients: ["🌾", "🫐", "🥚", "🥛", "🍯", "🧈", "🧁"], yieldEmoji: "🥧", yieldName: "فطيرة التوت الذهبية!" },
+    { name: "جليد الفراولة والليمون 🍓", ingredients: ["🍓", "🍋", "🧊", "🍯", "🍎", "🍉", "🍇"], yieldEmoji: "🍧", yieldName: "جليد الفراولة والليمون!" },
+    { name: "تورتة الفواكه الملونة 🎂", ingredients: ["🍎", "🍓", "🥭", "🍇", "🥚", "🥛", "🧁"], yieldEmoji: "🎂", yieldName: "تورتة الفواكه الملونة الملكية!" }
   ];
 
-  const chefAllIngredients = ["🥛", "🍓", "🍦", "🍫", "🥚", "🧁", "🍊", "🍌", "🧊", "🌾", "🍯", "🍩", "🍎", "🍇", "🍉"];
+  const chefAllIngredients = ["🥛", "🍓", "🍦", "🍫", "🥚", "🧁", "🍊", "🍌", "🧊", "🌾", "🍯", "🍩", "🍎", "🍇", "🍉", "🍍", "🥭", "🥝", "🫐", "🍋", "🍏", "🥥", "🧈", "🧀", "🍒"];
 
   const [chefRound, setChefRound] = useState(1);
   const [chefRecipe, setChefRecipe] = useState<Recipe | null>(null);
   const [chefIngredientsList, setChefIngredientsList] = useState<string[]>([]);
   const [chefProgress, setChefProgress] = useState<string[]>([]);
   const [chefFeedback, setChefFeedback] = useState<"mixing" | "success" | "wrong" | "idle">("idle");
+
+  const getChefRequiredCount = () => {
+    const levelStr = activeDifficulty || propChildLevel || "level1";
+    if (levelStr === "level1") return 3;
+    if (levelStr === "level2") return 4;
+    if (levelStr === "level3") return 5;
+    return 7;
+  };
 
   const startChefGame = () => {
     setChefRound(1);
@@ -1903,12 +1956,18 @@ export function GameZone({
     setChefProgress([]);
 
     const recipe = chefRecipesBank[(roundNum - 1) % chefRecipesBank.length];
-    setChefRecipe(recipe);
+    const reqCount = getChefRequiredCount();
+    const activeIngredients = recipe.ingredients.slice(0, reqCount);
 
-    const nonRecipeItems = chefAllIngredients.filter(item => !recipe.ingredients.includes(item));
+    setChefRecipe({
+      ...recipe,
+      ingredients: activeIngredients
+    });
+
+    const nonRecipeItems = chefAllIngredients.filter(item => !activeIngredients.includes(item));
     const uniqueBaits = Array.from(new Set(nonRecipeItems)).sort(() => 0.5 - Math.random()).slice(0, 3);
 
-    const options = [...recipe.ingredients, ...uniqueBaits];
+    const options = [...activeIngredients, ...uniqueBaits];
     setChefIngredientsList(options.sort(() => 0.5 - Math.random()));
   };
 
@@ -1917,13 +1976,14 @@ export function GameZone({
 
     const nextIndex = chefProgress.length;
     const correctIngredient = chefRecipe.ingredients[nextIndex];
+    const reqCount = getChefRequiredCount();
 
     if (item === correctIngredient) {
       sfx.playPop();
       const newProgress = [...chefProgress, item];
       setChefProgress(newProgress);
 
-      if (newProgress.length === 3) {
+      if (newProgress.length === reqCount) {
         setChefFeedback("mixing");
         
         setTimeout(() => {
@@ -1932,14 +1992,14 @@ export function GameZone({
           addStars(1);
           
           setTimeout(() => {
-            if (chefRound < 5) {
+            if (chefRound < 3) {
               const nextR = chefRound + 1;
               setChefRound(nextR);
               generateChefRound(nextR);
             } else {
               triggerVictory();
             }
-          }, 2500);
+          }, 2200);
         }, 1200);
       }
     } else {
@@ -1947,7 +2007,7 @@ export function GameZone({
       sfx.playWrong();
 
       setTimeout(() => {
-        if (chefRound < 5) {
+        if (chefRound < 3) {
           const nextR = chefRound + 1;
           setChefRound(nextR);
           generateChefRound(nextR);
@@ -5933,7 +5993,7 @@ const startSpaceGame = () => {
               <span>خروج</span>
             </button>
             <div className="font-extrabold text-[#4D2B82]">
-              الجولة {chefRound} من 5
+              الجولة {chefRound} من 3
             </div>
             <div className="text-sm font-bold text-green-500">
               ⭐ كسبت: {starsEarnedThisSession}
@@ -7205,11 +7265,11 @@ const startSpaceGame = () => {
       {activeGame === "englishColorCloud" && !showLevelMap && (
         <EnglishColorCloud onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
       )}
-      {activeGame === "kitchenSandwichMaker" && !showLevelMap && (
-        <KitchenSandwichMaker onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
+      {activeGame === "kitchenPizzaMaker" && !showLevelMap && (
+        <KitchenPizzaMaker onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
       )}
-      {activeGame === "kitchenBakingCake" && !showLevelMap && (
-        <KitchenBakingCake onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
+      {activeGame === "kitchenJuiceBar" && !showLevelMap && (
+        <KitchenJuiceBar onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
       )}
       {activeGame === "drawingSymmetry" && !showLevelMap && (
         <DrawingSymmetry
