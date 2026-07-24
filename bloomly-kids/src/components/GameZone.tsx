@@ -6583,7 +6583,7 @@ const startSpaceGame = () => {
                 </div>
               ))}
 
-              {/* Lane 4: Player */}
+              {/* Player Lane */}
               <div className="relative h-20 flex items-center mt-2 z-10">
                 <div className="w-20 text-right font-black text-lg text-yellow-300 pl-2 drop-shadow-[0_0_8px_rgba(253,224,71,0.8)]">أنت 🌟</div>
                 <div className="flex-grow h-12 bg-indigo-900/80 border-4 border-yellow-400 rounded-full relative overflow-visible shadow-[0_0_15px_rgba(250,204,21,0.5)]">
@@ -6594,13 +6594,67 @@ const startSpaceGame = () => {
                     style={{ transform: "translateY(-50%)" }}
                   >
                     <div className="relative flex flex-col items-center">
-                        <MascotCharacter pose="victory" className="w-10 h-10 animate-bounce" />
-                      </div>}
+                      <MascotCharacter pose="victory" className="w-10 h-10 animate-bounce" />
+                    </div>
+                  </motion.div>
+                </div>
+              </div>
+            </div>
+
+            {/* Countdown Overlay */}
+            {tapRacerState === "countdown" && (
+              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center">
+                <motion.div
+                  key={tapRacerCountdown}
+                  initial={{ scale: 0.2, opacity: 0 }}
+                  animate={{ scale: 1.5, opacity: 1 }}
+                  className="text-8xl font-black text-yellow-400 drop-shadow-[0_0_30px_rgba(250,204,21,0.8)]"
+                >
+                  {tapRacerCountdown}
+                </motion.div>
+              </div>
+            )}
+
+            {/* Winner Overlay */}
+            {tapRacerState === "finished" && (
+              <div className="absolute inset-0 bg-black/70 backdrop-blur-md z-50 flex flex-col items-center justify-center gap-4">
+                <h3 className="text-4xl font-black text-yellow-300 drop-shadow-lg animate-bounce">
+                  {winnerId === "player" ? "🏆 أنت الفائز بالمركز الأول! 🏆" : "انتهى السباق! 🏁"}
+                </h3>
+                {tapRacerRound < 3 ? (
+                  <button
+                    onClick={() => initTapRacerRound(tapRacerRound + 1)}
+                    className="btn-bubbly-primary px-8 py-3 text-xl font-black"
+                  >
+                    الجولة التالية 🚀
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => { addStars(tapRacerStars); triggerVictory(); }}
+                    className="btn-bubbly-primary px-8 py-3 text-xl font-black"
+                  >
+                    استلم المكافأة 🎁
+                  </button>
+                )}
+              </div>
+            )}
           </div>
-          
-          <p className="text-[10px] font-bold text-blue-700/60 text-center mt-4">
-            💡 اضغط على الأشكال الموجودة بالأسفل لتثبيتها في الأماكن الفارغة بالقطار.
-          </p>
+
+          {/* TAP BUTTON */}
+          <div className="flex justify-center">
+            <motion.button
+              onClick={handleTap}
+              disabled={tapRacerState !== "racing" || winnerId !== null}
+              whileTap={{ scale: 0.9 }}
+              className={`w-64 h-24 rounded-full font-black text-3xl text-white shadow-2xl transition-all border-4 ${
+                tapRacerState === "racing"
+                  ? "bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 border-yellow-300 shadow-[0_10px_30px_rgba(239,68,68,0.6)] cursor-pointer hover:scale-105"
+                  : "bg-gray-400 border-gray-300 cursor-not-allowed opacity-60"
+              }`}
+            >
+              اضغط بأسرع ما يمكن! ⚡
+            </motion.button>
+          </div>
         </div>
       )}
 
