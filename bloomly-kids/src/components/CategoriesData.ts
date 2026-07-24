@@ -11,14 +11,24 @@ export interface CategoryData {
 
 export const categoriesData: CategoryData[] = [
   {
-    id: "fun_games",
-    title: "ألعاب ممتعة",
-    englishTitle: "LET'S PLAY",
+    id: "fun_games_1",
+    title: "ألعاب ومرح (1)",
+    englishTitle: "FUN GAMES 1",
     icon: "🕹️",
     bgGradient: "from-[#ff9a9e]/90 to-[#fecfef]/90",
     textColor: "text-pink-700",
     borderColor: "border-pink-300",
-    games: ["arrowRacer", "tapRacer", "safari", "catcher", "spaceCatcher", "maze", "ninja", "space", "train", "funWhackAMole", "funHiddenCup"]
+    games: ["catcher", "spaceCatcher", "maze", "safari", "train", "tapRacer"]
+  },
+  {
+    id: "fun_games_2",
+    title: "ألعاب ومرح (2)",
+    englishTitle: "FUN GAMES 2",
+    icon: "🎈",
+    bgGradient: "from-[#a18cd1]/90 to-[#fbc2eb]/90",
+    textColor: "text-purple-700",
+    borderColor: "border-purple-300",
+    games: ["arrowRacer", "ninja", "space", "funWhackAMole", "funHiddenCup"]
   },
   {
     id: "arabic",
