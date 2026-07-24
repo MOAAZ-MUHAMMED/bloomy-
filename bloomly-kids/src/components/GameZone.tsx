@@ -657,7 +657,7 @@ interface CatchItem {
   id: number;
   x: number;
   y: number;
-  type: "star" | "balloon" | "cloud";
+  type: "star" | "cloud";
   color: string;
   emoji: string;
   speed: number;
@@ -1309,6 +1309,7 @@ export function GameZone({
   };
 
   const generateSpaceCatcherRound = () => {
+    const levelStr = activeDifficulty || propChildLevel || 'level1';
     setSpaceFeedback("idle");
     setSpaceExplodedId(null);
     
@@ -1335,11 +1336,16 @@ export function GameZone({
     const colors = ["#FF5A92", "#5BC0F8", "#2ECC71", "#FFD700", "#A855F7", "#FF9F29"];
     
     const newMeteors = shuffledRoundValues.map((val, idx) => {
+      let speed = 5 + Math.random() * 4;
+      if (levelStr === 'level2') speed = 4 + Math.random() * 3;
+      if (levelStr === 'level3') speed = 3 + Math.random() * 2.5;
+      if (levelStr === 'level4') speed = 2 + Math.random() * 1.5;
+
       return {
         id: Date.now() + idx,
         x: 10 + idx * 17 + Math.random() * 5,
         value: val,
-        speed: 3 + Math.random() * 4.5,
+        speed,
         delay: Math.random() * 3.5,
         color: colors[Math.floor(Math.random() * colors.length)]
       };
@@ -1691,6 +1697,9 @@ export function GameZone({
   ];
 
   const [mazeRound, setMazeRound] = useState(1);
+  const [mazeGrid, setMazeGrid] = useState<number[][]>([]);
+  const [mazeStarPositions, setMazeStarPositions] = useState<{x: number; y: number}[]>([]);
+  const [mazeGridSize, setMazeGridSize] = useState(6);
   const [playerPosition, setPlayerPosition] = useState({ x: 0, y: 0 });
   const [collectedStars, setCollectedStars] = useState<string[]>([]);
   const [mazeFeedback, setMazeFeedback] = useState<"success" | "idle">("idle");
@@ -1707,6 +1716,51 @@ export function GameZone({
     setMazeFeedback("idle");
     setPlayerPosition({ x: 0, y: 0 });
     setCollectedStars([]);
+    
+    const levelStr = activeDifficulty || propChildLevel || "level1";
+    let size = 6;
+    if (levelStr === "level2") size = 9;
+    else if (levelStr === "level3") size = 11;
+    else if (levelStr === "level4") size = 13;
+
+    const newGrid = Array.from({ length: size }, () => Array(size).fill(1));
+    const stack = [{ x: 0, y: 0 }];
+    newGrid[0][0] = 0;
+    while (stack.length > 0) {
+      const current = stack[stack.length - 1];
+      const dirs = [[0, -2], [0, 2], [-2, 0], [2, 0]];
+      const neighbors = [];
+      for (const [dx, dy] of dirs) {
+        const nx = current.x + dx, ny = current.y + dy;
+        if (nx >= 0 && nx < size && ny >= 0 && ny < size && newGrid[ny][nx] === 1) {
+          neighbors.push({ x: nx, y: ny, dx: dx / 2, dy: dy / 2 });
+        }
+      }
+      if (neighbors.length > 0) {
+        const next = neighbors[Math.floor(Math.random() * neighbors.length)];
+        newGrid[current.y + next.dy][current.x + next.dx] = 0;
+        newGrid[next.y][next.x] = 0;
+        stack.push({ x: next.x, y: next.y });
+      } else {
+        stack.pop();
+      }
+    }
+    newGrid[size - 1][size - 1] = 0;
+    if (newGrid[size - 2] && newGrid[size - 2][size - 1] === 1 && newGrid[size - 1] && newGrid[size - 1][size - 2] === 1) {
+      newGrid[size - 2][size - 1] = 0;
+    }
+    setMazeGrid(newGrid);
+    setMazeGridSize(size);
+
+    const stars: {x: number; y: number}[] = [];
+    for (let i = 0; i < 3; i++) {
+       let sx = Math.floor(Math.random() * size);
+       let sy = Math.floor(Math.random() * size);
+       if (newGrid[sy] && newGrid[sy][sx] === 0 && !(sx===0 && sy===0) && !(sx===size-1 && sy===size-1)) {
+         stars.push({x: sx, y: sy});
+       }
+    }
+    setMazeStarPositions(stars);
   };
 
   const movePlayer = (dx: number, dy: number) => {
@@ -1792,7 +1846,27 @@ export function GameZone({
     { id: "bell", emoji: "🔔", name: "جرس يرن", soundId: "bell" },
     { id: "cat", emoji: "🐱", name: "قطة تموء", soundId: "cat" },
     { id: "monkey", emoji: "🐒", name: "قرد يصرخ", soundId: "monkey" },
-    { id: "duck", emoji: "🦆", name: "بطة تقوق", soundId: "duck" }
+    { id: "duck", emoji: "🦆", name: "بطة تقوق", soundId: "duck" },
+    { id: "penguin", emoji: "🐧", name: "بطريق يصيح", soundId: "penguin" },
+    { id: "parrot", emoji: "🦜", name: "ببغاء يقلد", soundId: "parrot" },
+    { id: "whale", emoji: "🐋", name: "حوت يغني", soundId: "whale" },
+    { id: "dolphin", emoji: "🐬", name: "دلفين يصفر", soundId: "dolphin" },
+    { id: "wolf", emoji: "🐺", name: "ذئب يعوي", soundId: "wolf" },
+    { id: "bear", emoji: "🐻", name: "دب يزمجر", soundId: "bear" },
+    { id: "tiger", emoji: "🐅", name: "نمر يزأر", soundId: "tiger" },
+    { id: "panda", emoji: "🐼", name: "باندا يمضغ", soundId: "panda" },
+    { id: "koala", emoji: "🐨", name: "كوالا يصيح", soundId: "koala" },
+    { id: "giraffe", emoji: "🦒", name: "زرافة تمضغ", soundId: "giraffe" },
+    { id: "zebra", emoji: "🦓", name: "حمار وحشي ينهق", soundId: "zebra" },
+    { id: "kangaroo", emoji: "🦘", name: "كنغر يقفز", soundId: "kangaroo" },
+    { id: "octopus", emoji: "🐙", name: "أخطبوط يسبح", soundId: "octopus" },
+    { id: "butterfly", emoji: "🦋", name: "فراشة ترفرف", soundId: "butterfly" },
+    { id: "ladybug", emoji: "🐞", name: "دعسوقة تطير", soundId: "ladybug" },
+    { id: "turtle", emoji: "🐢", name: "سلحفاة تزحف", soundId: "turtle" },
+    { id: "snail", emoji: "🐌", name: "حلزون ينزلق", soundId: "snail" },
+    { id: "flamingo", emoji: "🦩", name: "فلامنغو يغرد", soundId: "flamingo" },
+    { id: "peacock", emoji: "🦚", name: "طاووس يصيح", soundId: "peacock" },
+    { id: "crocodile", emoji: "🐊", name: "تمساح يزمجر", soundId: "crocodile" }
   ];
 
   const [safariRound, setSafariRound] = useState(1);
@@ -2625,12 +2699,13 @@ const startSpaceGame = () => {
     setTrainDeparting(false);
     setTrainActiveTarget(null);
     
+    const levelStr = activeDifficulty || propChildLevel || 'level1';
     let numWagons = 3;
     let numDistractors = 5;
     
-    if (childLevel === "level2") { numWagons = 4; numDistractors = 6; }
-    if (childLevel === "level3") { numWagons = 5; numDistractors = 6; }
-    if (childLevel === "level4") { numWagons = 5; numDistractors = 7; }
+    if (levelStr === "level2") { numWagons = 5; numDistractors = 6; }
+    if (levelStr === "level3") { numWagons = 6; numDistractors = 6; }
+    if (levelStr === "level4") { numWagons = 8; numDistractors = 7; }
 
     // Select random required shapes
     const shuffled = [...allShapesData].sort(() => Math.random() - 0.5);
@@ -2707,8 +2782,7 @@ const startSpaceGame = () => {
   }
 
   const [tapRacerRound, setTapRacerRound] = useState(1);
-  const [tapRacerTheme, setTapRacerTheme] = useState<TapRacerTheme>("run");
-  const [playerProgress, setPlayerProgress] = useState(0);
+    const [playerProgress, setPlayerProgress] = useState(0);
   const [opponents, setOpponents] = useState<Opponent[]>([]);
   const [tapRacerState, setTapRacerState] = useState<"idle" | "countdown" | "racing" | "finished">("idle");
   const [tapRacerCountdown, setTapRacerCountdown] = useState(3);
@@ -2732,21 +2806,15 @@ const startSpaceGame = () => {
     setTapRacerCountdown(3);
     setTapRacerFeedback("");
 
-    let theme: TapRacerTheme = "run";
-    if (roundNum === 1) theme = "run";
-    else if (roundNum === 2) theme = "cycle";
-    else {
-      theme = Math.random() > 0.5 ? "swim" : "fly";
-    }
-    setTapRacerTheme(theme);
+    
 
     const currentLevel = selectedLevelIndex || 1;
     const difficultyMultiplier = 0.7 + (currentLevel / 100) * 1.5;
 
     const opponentData = [
-      { id: 1, name: "الباندا بوبو 🐼", emoji: "🐼", progress: 0, speed: (1.2 + Math.random() * 0.5) * difficultyMultiplier, color: "#FF85A2" },
-      { id: 2, name: "الأرنب سمسم 🐰", emoji: "🐰", progress: 0, speed: (1.4 + Math.random() * 0.4) * difficultyMultiplier, color: "#85FFD3" },
-      { id: 3, name: "الثعلب فوفو 🦊", emoji: "🦊", progress: 0, speed: (1.3 + Math.random() * 0.5) * difficultyMultiplier, color: "#FFE885" }
+      { id: 1, name: "بلومي أحمر 🔴", emoji: "🔴", progress: 0, speed: (1.2 + Math.random() * 0.5) * difficultyMultiplier, color: "#FF3B30" },
+      { id: 2, name: "بلومي أصفر 🟡", emoji: "🟡", progress: 0, speed: (1.4 + Math.random() * 0.4) * difficultyMultiplier, color: "#FFCC00" },
+      { id: 3, name: "بلومي أزرق 🔵", emoji: "🔵", progress: 0, speed: (1.3 + Math.random() * 0.5) * difficultyMultiplier, color: "#007AFF" }
     ];
     setOpponents(opponentData);
     setTapRacerState("countdown");
@@ -3568,7 +3636,7 @@ const startSpaceGame = () => {
   };
 
   // ==========================================
-  // 4. GAME: BALLOON & STAR CATCHER (صيد البالونات)
+  // 4. GAME: STAR CATCHER (صائد النجوم)
   // ==========================================
   const [catchScore, setCatchScore] = useState(0);
   const [catchTimeLeft, setCatchTimeLeft] = useState(20);
@@ -3633,30 +3701,47 @@ const startSpaceGame = () => {
 
     // Spawn loop
     let itemIdCounter = 0;
+    const levelStr = activeDifficulty || propChildLevel || 'level1';
+    
+    let spawnInterval = 1300;
+    let cloudProb = 0.15;
+    let minSpeed = 0.6;
+    let maxSpeedRange = 0.6; // 0.6-1.2
+
+    if (levelStr === 'level2') {
+      spawnInterval = 1200;
+      cloudProb = 0.25;
+    } else if (levelStr === 'level3') {
+      spawnInterval = 1100;
+      cloudProb = 0.30;
+      minSpeed = 0.9;
+      maxSpeedRange = 0.6; // 0.9-1.5
+    } else if (levelStr === 'level4') {
+      spawnInterval = 1000;
+      cloudProb = 0.35;
+      minSpeed = 1.2;
+      maxSpeedRange = 0.6; // 1.2-1.8
+    }
+
     if (gameLoopIntervalRef.current) clearInterval(gameLoopIntervalRef.current);
     gameLoopIntervalRef.current = setInterval(() => {
       const rand = Math.random();
-      let type: "star" | "balloon" | "cloud" = "balloon";
-      let emoji = "🎈";
-      let color = "#FF5A92";
+      let type: "star" | "balloon" | "cloud" = "star";
+      let emoji = "⭐";
+      let color = "#FFD700";
       
-      if (rand < 0.35) {
-        type = "star";
-        emoji = "⭐";
-        color = "#FFD700";
-      } else if (rand > 0.82) {
+      if (rand < cloudProb) {
         type = "cloud";
         emoji = "⛈️";
         color = "#4D2B82";
       } else {
-        const ballEmojis = ["🎈", "🎈", "🎈", "🎈"];
-        const ballColors = ["#FF5A92", "#5BC0F8", "#A855F7", "#FF9F29"];
-        const randIndex = Math.floor(Math.random() * ballColors.length);
-        emoji = ballEmojis[randIndex];
-        color = ballColors[randIndex];
+        type = "star";
+        const starEmojis = ["⭐", "🌟", "✨", "💫"];
+        emoji = starEmojis[Math.floor(Math.random() * starEmojis.length)];
+        color = "#FFD700";
       }
 
-      const speed = 0.6 + Math.random() * 0.6;
+      const speed = minSpeed + Math.random() * maxSpeedRange;
       // Calculate smooth CSS animation duration (5 to 10 seconds based on speed)
       const duration = parseFloat((6.0 / speed).toFixed(2));
 
@@ -3672,7 +3757,7 @@ const startSpaceGame = () => {
       };
 
       setCatchItems((prev) => [...prev, newItem]);
-    }, 1300); // Slower spawn rate (every 1.3 seconds)
+    }, spawnInterval);
   };
 
   const handleItemAnimationEnd = (id: number) => {
@@ -5016,7 +5101,7 @@ const startSpaceGame = () => {
                   {catcherCountdown === "GO" ? "انطلق! 🚀" : catcherCountdown}
                 </motion.div>
                 <div className="text-yellow-200 font-extrabold text-base sm:text-lg mt-6 animate-pulse select-none">
-                  صِد البالونات والنجوم! وتجنب السحب الرعدية! ⛈️
+                  صِد النجوم اللامعة! وتجنب السحب الرعدية! ⛈️
                 </div>
               </div>
             )}
@@ -5515,7 +5600,7 @@ const startSpaceGame = () => {
                 <>اصطد نيزك الحرف العربي: <span className="text-3xl text-[#5BC0F8] ml-2">{spaceTarget}</span></>
               )}
               {spaceTargetType === "letterEn" && (
-                <span className="font-sans">Catch English Letter: <span className="text-3xl text-[#5BC0F8] ml-2">{spaceTarget}</span></span>
+                <span className="font-sans">اصطد نيزك الحرف الإنجليزي: <span className="text-3xl text-[#5BC0F8] ml-2">{spaceTarget}</span></span>
               )}
               {spaceTargetType === "number" && (
                 <>اصطد نيزك الرقم: <span className="text-3xl text-[#5BC0F8] ml-2">{spaceTarget}</span></>
@@ -5745,9 +5830,7 @@ const startSpaceGame = () => {
               <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
               <span>خروج</span>
             </button>
-            <div className="font-extrabold text-[#4D2B82]">
-              الجولة {mazeRound} من 5
-            </div>
+            <div className="font-extrabold text-[#4D2B82]">المتاهة السحرية</div>
             <div className="text-sm font-bold text-green-500">
               ⭐ كسبت: {starsEarnedThisSession}
             </div>
@@ -5775,15 +5858,15 @@ const startSpaceGame = () => {
           </AnimatePresence>
 
           {/* Maze Grid Board */}
-          <div className={`relative w-full aspect-square max-w-[360px] mx-auto border-4 border-[#4D2B82] rounded-3xl overflow-hidden p-2 grid grid-cols-6 grid-rows-6 gap-1 shadow-md bg-white select-none ${mazeLevelsBank[(mazeRound - 1) % mazeLevelsBank.length].obstacleBg}`}>
+          <div className={`relative w-full aspect-square max-w-[360px] mx-auto border-4 border-[#4D2B82] rounded-3xl overflow-hidden p-2 grid gap-1 shadow-md bg-white select-none ${mazeLevelsBank[(mazeRound - 1) % mazeLevelsBank.length].obstacleBg}`} style={{ gridTemplateColumns: `repeat(${mazeGridSize}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${mazeGridSize}, minmax(0, 1fr))` }}>
             
-            {mazeLevelsBank[(mazeRound - 1) % mazeLevelsBank.length].grid.map((row, y) => 
+            {(mazeGrid && mazeGrid.length > 0 ? mazeGrid : mazeLevelsBank[(mazeRound - 1) % mazeLevelsBank.length].grid).map((row, y) => 
               row.map((cell, x) => {
                 const isObstacle = cell === 1;
                 const isPlayer = playerPosition.x === x && playerPosition.y === y;
-                const isTarget = x === 5 && y === 5;
+                const isTarget = x === mazeGridSize - 1 && y === mazeGridSize - 1;
                 const starStr = `${x},${y}`;
-                const hasStar = mazeLevelsBank[(mazeRound - 1) % mazeLevelsBank.length].starPositions.some(sp => sp.x === x && sp.y === y);
+                const hasStar = mazeStarPositions.some(sp => sp.x === x && sp.y === y);
                 const isStarCollected = collectedStars.includes(starStr);
                 const currentLevel = mazeLevelsBank[(mazeRound - 1) % mazeLevelsBank.length];
 
@@ -6445,12 +6528,7 @@ const startSpaceGame = () => {
 
       {/* --- FAST TAPPING RACER PLAY VIEW --- */}
       {activeGame === "tapRacer" && !showLevelMap && (
-        <div className={`card-bubbly max-w-5xl mx-auto p-8 relative overflow-hidden border-8 border-[#4D2B82] shadow-2xl ${
-          tapRacerTheme === "swim" ? "bg-gradient-to-b from-[#E0F2FE] to-[#7DD3FC]" :
-          tapRacerTheme === "cycle" ? "bg-gradient-to-b from-[#F1F5F9] to-[#CBD5E1]" :
-          tapRacerTheme === "run" ? "bg-gradient-to-b from-[#FEF3C7] to-[#FCD34D]" :
-          "bg-gradient-to-b from-[#ECFDF5] to-[#6EE7B7]"
-        }`}>
+        <div className="card-bubbly max-w-5xl mx-auto p-8 relative overflow-hidden border-8 border-[#4D2B82] shadow-2xl bg-gradient-to-b from-[#FEF3C7] to-[#FCD34D]">
           {/* Header */}
           <div className="flex items-center justify-between border-b-2 border-purple-200 pb-4 mb-4 relative z-20">
             <button
@@ -6471,10 +6549,7 @@ const startSpaceGame = () => {
           {/* Theme Banner */}
           <div className="text-center mb-4">
             <h3 className="text-2xl font-black text-[#4D2B82] flex items-center justify-center gap-2">
-              {tapRacerTheme === "swim" && "🏊 سباق السباحة في البحر"}
-              {tapRacerTheme === "cycle" && "🚴 سباق الدراجات الهوائية"}
-              {tapRacerTheme === "run" && "🏃 سباق الجري السريع"}
-              {tapRacerTheme === "fly" && "🎈 سباق التحليق بالبالونات"}
+              سباق الضغط السريع 🏁
             </h3>
             <p className="text-xs font-bold text-[#4d2b82]/70 mt-1">
               اضغط بأسرع ما يمكن لتصل لخط النهاية قبل الجميع!
@@ -6500,9 +6575,9 @@ const startSpaceGame = () => {
                     <motion.div
                       animate={{ left: `${(o.progress / 200) * 80}%` }}
                       transition={{ type: "spring", stiffness: 100, damping: 15 }}
-                      className="absolute top-1/2 -translate-y-1/2 text-5xl select-none drop-shadow-lg"
+                      className="absolute top-1/2 -translate-y-1/2 text-5xl select-none drop-shadow-lg animate-bounce"
                     >
-                      {tapRacerTheme === "swim" ? "🏊" : tapRacerTheme === "cycle" ? "🚴" : tapRacerTheme === "run" ? "🏃" : "🎈"}{o.emoji}
+                      {o.emoji}
                     </motion.div>
                   </div>
                 </div>
@@ -6518,407 +6593,9 @@ const startSpaceGame = () => {
                     className="absolute top-1/2 -translate-y-1/2 select-none z-20 flex items-center justify-center scale-150"
                     style={{ transform: "translateY(-50%)" }}
                   >
-                    {tapRacerTheme === "swim" && (
-                      <div className="relative flex flex-col items-center">
-                        <div className="absolute inset-x-[-12px] bottom-[-2px] h-3 bg-blue-500/80 rounded-b-md z-10 animate-pulse border-t border-blue-400" />
-                        <MascotCharacter pose="talking" className="w-10 h-10 relative z-0 translate-y-1.5" />
-                        <span className="text-lg absolute top-[-10px] right-[-10px]">🏊</span>
-                      </div>
-                    )}
-                    {tapRacerTheme === "cycle" && (
-                      <div className="relative flex flex-col items-center">
-                        <MascotCharacter pose="thinking" className="w-10 h-10" />
-                        <span className="text-xl mt-[-10px]">🚴</span>
-                      </div>
-                    )}
-                    {tapRacerTheme === "run" && (
-                      <div className="relative flex flex-col items-center">
+                    <div className="relative flex flex-col items-center">
                         <MascotCharacter pose="victory" className="w-10 h-10 animate-bounce" />
-                        <span className="text-sm absolute bottom-[-4px] right-[-6px]">🏃</span>
-                      </div>
-                    )}
-                    {tapRacerTheme === "fly" && (
-                      <div className="relative flex flex-col items-center">
-                        <span className="text-xl mb-[-4px] animate-pulse">🎈</span>
-                        <MascotCharacter pose="talking" className="w-10 h-10" />
-                      </div>
-                    )}
-                  </motion.div>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Countdown Overlay */}
-            {tapRacerState === "countdown" && (
-              <div className="absolute inset-0 bg-purple-900/40 backdrop-blur-xs flex flex-col items-center justify-center z-30">
-                <motion.div
-                  key={tapRacerCountdown}
-                  initial={{ scale: 0.3, opacity: 0 }}
-                  animate={{ scale: [0.5, 1.2, 1], opacity: 1 }}
-                  transition={{ duration: 0.8 }}
-                  className="text-7xl font-black text-white drop-shadow-[0_4px_8px_rgba(0,0,0,0.4)]"
-                >
-                  {tapRacerCountdown}
-                </motion.div>
-              </div>
-            )}
-
-            {/* Start signal overlay */}
-            {tapRacerFeedback && (
-              <div className="absolute inset-0 flex items-center justify-center z-30 pointer-events-none">
-                <motion.div
-                  initial={{ scale: 0.5, opacity: 0 }}
-                  animate={{ scale: [0.5, 1.5, 1], opacity: 1 }}
-                  className="text-6xl font-black text-yellow-400 drop-shadow-[0_4px_12px_rgba(0,0,0,0.6)]"
-                >
-                  {tapRacerFeedback}
-                </motion.div>
-              </div>
-            )}
-
-            {/* Winner Overlay */}
-            {tapRacerState === "finished" && (
-              <div className="absolute inset-0 bg-white/95 backdrop-blur-xs flex flex-col items-center justify-center z-30 p-4 text-center">
-                <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}>
-                  {winnerId === 0 ? (
-                    <>
-                      <span className="text-6xl select-none block mb-2">🏆</span>
-                      <h4 className="text-xl font-black text-green-600 mb-1">المركز الأول! 🥇</h4>
-                      <p className="text-sm font-bold text-green-700">لقد فزت ببراعة يا بطل! (+{tapRacerRound === 3 ? 1 : 2}⭐)</p>
-                    </>
-                  ) : (
-                    <>
-                      <span className="text-6xl select-none block mb-2">
-                        {opponents.find(o => o.id === winnerId)?.progress && opponents.filter(o => o.progress > playerProgress).length === 1 ? "🥈" : "💪"}
-                      </span>
-                      <h4 className="text-xl font-black text-purple-600 mb-1">انتهى السباق!</h4>
-                      <p className="text-sm font-bold text-purple-700">
-                        {opponents.find(o => o.id === winnerId)?.name} وصل أولاً!
-                      </p>
-                      <p className="text-xs font-semibold text-purple-500 mt-1">
-                        لقد حققت المركز {opponents.filter(o => o.progress > playerProgress).length + 1}!
-                        {opponents.filter(o => o.progress > playerProgress).length === 1 ? " حصلت على (+1⭐)" : ""}
-                      </p>
-                    </>
-                  )}
-
-                  <div className="mt-4 flex gap-3 justify-center">
-                    {tapRacerRound < 3 ? (
-                      <button
-                        onClick={() => {
-                          sfx.playPop();
-                          setTapRacerRound(prev => prev + 1);
-                          initTapRacerRound(tapRacerRound + 1);
-                        }}
-                        className="btn-bubbly-primary px-6 py-2.5 text-sm"
-                      >
-                        الجولة التالية ➡️
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => {
-                          sfx.playPop();
-                          addStars(tapRacerStars);
-                          triggerVictory();
-                        }}
-                        className="btn-bubbly-purple px-6 py-2.5 text-sm"
-                      >
-                        عرض النتيجة النهائية 🎉
-                      </button>
-                    )}
-                  </div>
-                </motion.div>
-              </div>
-            )}
-
-          </div>
-
-          {/* Large Click Button */}
-          <div className="flex flex-col items-center gap-2 mb-2 relative z-20">
-            <motion.button
-              disabled={tapRacerState !== "racing" || winnerId !== null}
-              onClick={handleTapRacerClick}
-              whileTap={{ scale: 0.95 }}
-              animate={tapRacerState === "racing" ? { scale: [1, 1.03, 1] } : {}}
-              transition={{ repeat: Infinity, duration: 1.2 }}
-              className={`w-full max-w-sm py-5 text-xl font-black rounded-3xl border-b-8 shadow-xl transition-all flex items-center justify-center gap-2 active:border-b-2 active:translate-y-1 ${
-                tapRacerState === "racing" 
-                  ? "bg-[#FF5A92] hover:bg-[#FF4081] text-white border-[#C2185B]"
-                  : "bg-gray-300 text-gray-500 border-gray-400 cursor-not-allowed"
-              }`}
-            >
-              <span>⚡</span>
-              <span>اضغط هنا بسرعة!</span>
-              <span>👆</span>
-            </motion.button>
-          </div>
-
-          <p className="text-[10px] font-bold text-[#4D2B82]/60 text-center mt-3">
-            💡 كل ضغطة تمنح شخصيتك دفعة قوية للأمام! تسابق واعبر خط النهاية لتفوز بالنجوم!
-          </p>
-        </div>
-      )}
-
-      {/* --- HUNGRY ANIMALS FARM PLAY VIEW --- */}
-      {activeGame === "farm" && !showLevelMap && activeAnimal && (
-        <div className="card-bubbly bg-[#E8F5E9] max-w-2xl mx-auto p-6 relative overflow-hidden">
-          {/* Header */}
-          <div className="flex items-center justify-between border-b-2 border-green-200 pb-4 mb-4 relative z-20">
-            <button
-              onClick={quitGame}
-              className="flex items-center gap-1 font-bold text-sm text-[#E01E5A] hover:underline"
-            >
-              <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
-              <span>خروج</span>
-            </button>
-            <div className="font-extrabold text-green-800">
-              الجولة {farmRound} من 5
-            </div>
-            <div className="text-sm font-bold text-[#D97706]">
-              ⭐ كسبت: {starsEarnedThisSession}
-            </div>
-          </div>
-
-          <h3 className="text-2xl font-extrabold text-green-800 text-center mb-6">
-            ماذا يأكل هذا الحيوان اللطيف؟ 🐾
-          </h3>
-
-          <div className="relative w-full h-48 bg-white/50 border-3 border-green-400 rounded-3xl mb-8 flex flex-col items-center justify-end pb-4 shadow-sm">
-            {/* Animal */}
-            <motion.div
-              animate={
-                farmFeedback === "correct"
-                  ? { y: [0, -30, 0, -30, 0] }
-                  : farmFeedback === "wrong"
-                  ? { x: [0, -10, 10, -10, 0] }
-                  : { scale: [1, 1.05, 1] }
-              }
-              transition={
-                farmFeedback === "correct"
-                  ? { duration: 1 }
-                  : { repeat: Infinity, duration: 2 }
-              }
-              className="text-8xl z-10 select-none relative"
-            >
-              {activeAnimal.emoji}
-              
-              {/* Thought Bubble */}
-              {farmFeedback === "idle" && (
-                <motion.div
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  className="absolute -top-12 -right-8 w-16 h-12 bg-white rounded-[50%] border-2 border-gray-300 flex items-center justify-center text-2xl shadow-sm"
-                >
-                  ❓
-                  <div className="absolute -bottom-2 -left-2 w-3 h-3 rounded-full bg-white border border-gray-300" />
-                  <div className="absolute -bottom-5 -left-4 w-2 h-2 rounded-full bg-white border border-gray-300" />
-                </motion.div>
-              )}
-            </motion.div>
-
-            {/* Selected Food dropping in */}
-            <AnimatePresence>
-              {farmSelectedFood && farmFeedback === "correct" && (
-                <motion.div
-                  initial={{ y: -100, x: 20, opacity: 0, scale: 0.5 }}
-                  animate={{ y: -40, x: 20, opacity: 1, scale: 1.5 }}
-                  exit={{ opacity: 0 }}
-                  className="absolute text-5xl z-20 pointer-events-none"
-                >
-                  {foodData.find(f => f.id === farmSelectedFood)?.emoji}
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Name label */}
-            <div className="mt-2 text-green-700 font-bold bg-white/80 px-3 py-1 rounded-full shadow-sm text-sm border border-green-200">
-              {activeAnimal.name}
-            </div>
-
-            {/* Feedback overlay inside animal box */}
-            <AnimatePresence>
-              {farmFeedback !== "idle" && (
-                <motion.div
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.8, opacity: 0 }}
-                  className="absolute inset-x-0 top-4 mx-auto w-48 py-2 rounded-full text-center font-extrabold text-sm border-2 z-30 shadow-sm bg-white"
-                  style={{
-                    borderColor: farmFeedback === "correct" ? "#2ECC71" : "#EF4444",
-                    color: farmFeedback === "correct" ? "#198754" : "#EF4444",
-                  }}
-                >
-                  {farmFeedback === "correct" ? "😋 يم يم! شكراً لك!" : "🤢 لا أحب هذا الطعام!"}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Food Options */}
-          <div className="grid grid-cols-4 gap-3 mb-2">
-            {farmCurrentFoods.map((food) => (
-              <motion.button
-                key={food.id}
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => handleFoodClick(food.id as FoodType)}
-                disabled={farmFeedback !== "idle"}
-                className={`aspect-square rounded-2xl flex flex-col items-center justify-center shadow-md border-3 transition-colors ${
-                  farmSelectedFood === food.id
-                    ? (farmFeedback === "correct" ? "bg-green-100 border-green-400" : "bg-red-100 border-red-400")
-                    : "bg-white border-[#4D2B82]/10 hover:border-green-300 hover:bg-green-50"
-                }`}
-              >
-                <span className="text-4xl mb-1">{food.emoji}</span>
-                <span className="text-xs font-bold text-gray-600">{food.name}</span>
-              </motion.button>
-            ))}
-          </div>
-          
-          <p className="text-[10px] font-bold text-green-700/60 text-center mt-4">
-            💡 اختر الطعام المناسب لكل حيوان واسحبه (أو اضغط عليه) لإطعامه!
-          </p>
-        </div>
-      )}
-
-      {/* --- MAGICAL SHAPES TRAIN PLAY VIEW --- */}
-      {activeGame === "train" && !showLevelMap && trainParts.length > 0 && (
-        <div className="card-bubbly bg-[#F8FAFC] max-w-2xl mx-auto p-6 relative overflow-hidden">
-          {/* Header */}
-          <div className="flex items-center justify-between border-b-2 border-blue-100 pb-4 mb-4 relative z-20">
-            <button
-              onClick={quitGame}
-              className="flex items-center gap-1 font-bold text-sm text-[#E01E5A] hover:underline"
-            >
-              <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
-              <span>خروج</span>
-            </button>
-            <div className="font-extrabold text-blue-900">
-              الجولة {trainRound} من 5
-            </div>
-            <div className="text-sm font-bold text-[#D97706]">
-              ⭐ كسبت: {starsEarnedThisSession}
-            </div>
-          </div>
-
-          <h3 className="text-2xl font-extrabold text-blue-900 text-center mb-6">
-            أكمل أجزاء القطار ليتحرك! 🚂
-          </h3>
-
-          <div className="relative w-full h-56 bg-sky-100 border-3 border-sky-300 rounded-3xl mb-8 flex items-end justify-center overflow-hidden pb-4">
-            {/* Tracks */}
-            <div className="absolute bottom-4 left-0 w-full border-b-4 border-dashed border-sky-800 opacity-30" />
-
-            {/* Train Container */}
-            <motion.div
-              animate={trainDeparting ? { x: -800 } : { x: 0 }}
-              transition={{ duration: 2, ease: "easeIn" }}
-              className="relative flex items-end z-10"
-            >
-              {/* Locomotive Base */}
-              <div className="w-[300px] sm:w-[380px] h-36 bg-gradient-to-b from-blue-400 to-blue-600 rounded-t-3xl rounded-br-3xl border-4 border-blue-800 relative shadow-lg flex items-center justify-center">
-                
-                {/* Driver Window */}
-                <div className="absolute top-4 right-4 w-12 h-12 bg-sky-200 border-2 border-blue-800 rounded-lg shadow-inner flex items-end overflow-hidden">
-                  <div className="w-full h-4 bg-sky-300 opacity-50" />
-                </div>
-                
-                {/* Train Details / Stripes */}
-                <div className="absolute top-1/2 left-0 right-20 h-2 bg-yellow-400 border-y border-yellow-500 shadow-sm z-10" />
-                
-                {/* Chimney */}
-                <div className="absolute -top-14 left-6 w-10 h-14 bg-gradient-to-t from-gray-700 to-gray-500 rounded-t-lg border-2 border-gray-800 shadow-md">
-                   <div className="absolute -top-2 -left-1 -right-1 h-3 bg-gray-800 rounded-sm" />
-                </div>
-                {trainDeparting && (
-                  <motion.div
-                    animate={{ y: [-10, -50], x: [0, -20], opacity: [1, 0], scale: [1, 2.5] }}
-                    transition={{ repeat: Infinity, duration: 0.8 }}
-                    className="absolute -top-20 left-2 text-4xl text-gray-400/80 pointer-events-none"
-                  >
-                    ☁️
-                  </motion.div>
-                )}
-                
-                {/* Front grill / Cowcatcher */}
-                <div className="absolute -left-6 bottom-0 w-8 h-12 bg-gray-600 border-t-2 border-l-2 border-gray-800 rounded-tl-full transform -skew-x-12 z-0 shadow-md" />
-
-                {/* Train Parts Slots (Cargo Area) */}
-                <div className="absolute bottom-6 left-6 right-20 flex justify-around px-1 z-20 gap-1 sm:gap-2">
-                  {trainParts.map((part) => (
-                    <div
-                      key={part.id}
-                      className={`${trainParts.length > 3 ? 'w-10 h-10' : 'w-12 h-12'} border-2 border-dashed border-white/50 rounded-lg flex items-center justify-center bg-black/10 shadow-inner overflow-hidden relative`}
-                    >
-                      {!part.filled && (
-                        <div className="absolute inset-0 flex items-center justify-center opacity-30 select-none pointer-events-none">
-                           <span className={`${trainParts.length > 3 ? 'text-xl' : 'text-2xl'} grayscale`}>{allShapesData.find(s => s.type === part.shape)?.emoji}</span>
-                        </div>
-                      )}
-                      
-                      {part.filled && (
-                        <motion.div
-                          initial={{ scale: 0, rotate: 90 }}
-                          animate={{ scale: 1, rotate: 0 }}
-                          className="absolute inset-0 flex items-center justify-center rounded-md shadow-md z-10"
-                          style={{ backgroundColor: part.color }}
-                        >
-                          <span className="text-2xl">{allShapesData.find(s => s.type === part.shape)?.emoji}</span>
-                        </motion.div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-
-                {/* Wheels */}
-                <div className="absolute -bottom-6 left-2 w-12 h-12 bg-gray-800 rounded-full border-4 border-gray-400 shadow-md flex items-center justify-center z-30">
-                  <div className="w-4 h-4 bg-gray-400 rounded-full animate-[spin_3s_linear_infinite]" />
-                </div>
-                <div className="absolute -bottom-6 right-8 w-12 h-12 bg-gray-800 rounded-full border-4 border-gray-400 shadow-md flex items-center justify-center z-30">
-                  <div className="w-4 h-4 bg-gray-400 rounded-full animate-[spin_3s_linear_infinite]" />
-                </div>
-                
-                {/* Connecting rod for wheels */}
-                <div className="absolute -bottom-1 left-6 w-36 h-2 bg-yellow-500 border border-yellow-600 rounded-full z-40" />
-
-              </div>
-            </motion.div>
-
-            {/* Feedback */}
-            <AnimatePresence>
-              {trainFeedback === "wrong" && (
-                <motion.div
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.8, opacity: 0 }}
-                  className="absolute inset-x-0 top-10 mx-auto w-48 py-2 rounded-full text-center font-extrabold text-sm border-2 z-30 shadow-sm bg-red-50 border-red-400 text-red-500"
-                >
-                  ❌ شكل غير مناسب!
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Shapes Toolbox */}
-          <div className="grid grid-cols-4 gap-3 mb-2">
-            {trainCurrentOptions.map((shape) => {
-              const isNeededAndUnfilled = trainParts.some(p => p.shape === shape.type && !p.filled);
-              
-              return (
-                <motion.button
-                  key={shape.type}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  onClick={() => handleShapeClick(shape.type as ShapeType)}
-                  disabled={trainFeedback === "success" || trainDeparting}
-                  className="aspect-square rounded-2xl bg-white border-3 border-blue-200 flex flex-col items-center justify-center shadow-sm hover:border-blue-400 hover:bg-blue-50 transition-colors cursor-pointer"
-                >
-                  <span className="text-4xl mb-1">{shape.emoji}</span>
-                  <span className="text-xs font-bold text-gray-600">{shape.name}</span>
-                </motion.button>
-              );
-            })}
+                      </div>}
           </div>
           
           <p className="text-[10px] font-bold text-blue-700/60 text-center mt-4">
