@@ -344,6 +344,8 @@ class SoundEffects {
             }
           }, 40);
         }, 1200);
+      } else {
+        this.playSynthesizedSafari(soundId);
       }
     } catch (e) {
       console.warn("playSafariSound error:", e);
@@ -1766,42 +1768,31 @@ export function GameZone({
   const movePlayer = (dx: number, dy: number) => {
     if (mazeFeedback !== "idle" || activeGame !== "maze") return;
 
-    const currentLevel = mazeLevelsBank[(mazeRound - 1) % mazeLevelsBank.length];
+    const size = mazeGridSize || 6;
     const newX = playerPosition.x + dx;
     const newY = playerPosition.y + dy;
 
-    if (newX < 0 || newX > 5 || newY < 0 || newY > 5) return;
-    if (currentLevel.grid[newY][newX] === 1) return;
+    if (newX < 0 || newX >= size || newY < 0 || newY >= size) return;
+    if (mazeGrid[newY] && mazeGrid[newY][newX] === 1) return;
 
     setPlayerPosition({ x: newX, y: newY });
     sfx.playPop();
 
     const starStr = `${newX},${newY}`;
-    const hasStar = currentLevel.starPositions.some(sp => sp.x === newX && sp.y === newY);
+    const hasStar = mazeStarPositions.some(sp => sp.x === newX && sp.y === newY);
     if (hasStar && !collectedStars.includes(starStr)) {
       setCollectedStars(prev => [...prev, starStr]);
       sfx.playSuccess();
     }
 
-    if (newX === 5 && newY === 5) {
+    if (newX === size - 1 && newY === size - 1) {
       setMazeFeedback("success");
       sfx.playSuccess();
-      addStars(1);
+      addStars(3);
 
       setTimeout(() => {
-        setMazeRound(r => {
-          if (r < 5) {
-            const nextR = r + 1;
-            setPlayerPosition({ x: 0, y: 0 });
-            setCollectedStars([]);
-            setMazeFeedback("idle");
-            return nextR;
-          } else {
-            triggerVictory();
-            return r;
-          }
-        });
-      }, 2000);
+        triggerVictory();
+      }, 1200);
     }
   };
 
@@ -2722,7 +2713,7 @@ const startSpaceGame = () => {
     // Create options tray
     const requiredTypes = requiredShapes.map(s => s.type);
     const remainingShapes = allShapesData.filter(s => !requiredTypes.includes(s.type));
-    const wrongShapes = [...remainingShapes].sort(() => Math.random() - 0.5).slice(0, numDistractors);
+    const wrongShapes = [...remainingShapes].sort(() => Math.random() - 0.5).slice(0, Math.min(numDistractors, remainingShapes.length));
     
     const options = [...requiredShapes, ...wrongShapes].sort(() => Math.random() - 0.5);
     setTrainCurrentOptions(options);
@@ -3639,6 +3630,7 @@ const startSpaceGame = () => {
   // 4. GAME: STAR CATCHER (صائد النجوم)
   // ==========================================
   const [catchScore, setCatchScore] = useState(0);
+  const catchScoreRef = useRef(0);
   const [catchTimeLeft, setCatchTimeLeft] = useState(20);
   const [catchItems, setCatchItems] = useState<CatchItem[]>([]);
   const [floatingScores, setFloatingScores] = useState<FloatingScore[]>([]);
@@ -3650,6 +3642,7 @@ const startSpaceGame = () => {
 
   const startCatcherGame = () => {
     setCatchScore(0);
+    catchScoreRef.current = 0;
     setCatchTimeLeft(20);
     setStarsEarnedThisSession(0);
     setCatchItems([]);
@@ -3689,7 +3682,7 @@ const startSpaceGame = () => {
           // Finish game
           setTimeout(() => {
             // Earn 1 star for every 3 points, minimum 2 stars
-            const earned = Math.max(2, Math.floor(catchScore / 3));
+            const earned = Math.max(2, Math.floor(catchScoreRef.current / 3));
             addStars(earned);
             triggerVictory();
           }, 500);
@@ -3802,7 +3795,11 @@ const startSpaceGame = () => {
       text = "-2 ⛈️";
     }
 
-    setCatchScore((prev) => Math.max(0, prev + points));
+    setCatchScore((prev) => {
+      const next = Math.max(0, prev + points);
+      catchScoreRef.current = next;
+      return next;
+    });
 
     // Floating text indicator
     const newFloat: FloatingScore = {
@@ -5069,7 +5066,7 @@ const startSpaceGame = () => {
             </div>
 
             <div className="bg-yellow-50 border border-yellow-200 text-[#D97706] font-extrabold px-4 py-1 rounded-full text-sm">
-              🎈 النتيجة: {catchScore}
+              ⭐ النتيجة: {catchScore}
             </div>
           </div>
 
