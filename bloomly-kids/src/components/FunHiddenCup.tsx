@@ -156,7 +156,7 @@ export default function FunHiddenCup({ onComplete, onBack, level = "level1" }: P
               </motion.div>
 
               {/* Realistic Glowing 3D Magical Glass Orb / Sphere */}
-              {hasBall && (
+              {hasBall && isThisCupRevealed && (
                 <div className="absolute bottom-2 left-1/2 -translate-x-1/2 z-0 flex flex-col items-center">
                   <motion.div 
                     animate={{ scale: [1, 1.12, 1], filter: ["hue-rotate(0deg)", "hue-rotate(30deg)", "hue-rotate(0deg)"] }}

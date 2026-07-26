@@ -34,6 +34,7 @@ import EnglishWordSafari from "./EnglishWordSafari";
 // New IQ Games
 import IqOddOneOut from "./IqOddOneOut";
 import IqMissingPiece from "./IqMissingPiece";
+import IqMastermind from "./IqMastermind";
 import IqSpotDifferences from "./IqSpotDifferences";
 
 export function SproutMascot({ className = "w-24 h-24", state = "idle" }: { className?: string; state?: "idle" | "happy" | "sad" | "talking" }) {
@@ -2785,6 +2786,15 @@ const startNinjaGame = () => {
     setActiveGame("train");
     generateTrainRound(1);
   };
+
+  useEffect(() => {
+    if (activeGame === "train" && trainParts.length === 0) {
+      generateTrainRound(1);
+    }
+    if (activeGame === "tapRacer" && (!opponents || opponents.length === 0)) {
+      initTapRacerRound(1);
+    }
+  }, [activeGame]);
 
   const generateTrainRound = (round: number) => {
     setTrainFeedback("idle");
@@ -6861,11 +6871,11 @@ const startNinjaGame = () => {
       )}
 
       {activeGame === "iqOddOneOut" && (
-        <IqOddOneOut onWin={(stars) => { addStars(stars); triggerVictory(); }} />
+        <IqMastermind onWin={(stars) => { addStars(stars); triggerVictory(); }} />
       )}
 
       {activeGame === "iqMissingPiece" && (
-        <IqMissingPiece onWin={(stars) => { addStars(stars); triggerVictory(); }} />
+        <IqMastermind onWin={(stars) => { addStars(stars); triggerVictory(); }} />
       )}
 
       {activeGame === "iqSpotDifferences" && (

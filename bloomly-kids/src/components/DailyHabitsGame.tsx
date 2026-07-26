@@ -467,15 +467,32 @@ export default function DailyHabitsGame({ onClose, globalStars, setGlobalStars }
                         <div className="scale-[2.5] pointer-events-none mt-16">
                           <SproutMascot state="idle" />
                         </div>
-                        {faceSpots.map(spot => (
-                          <div key={spot} onMouseMove={() => handleWashFace(spot)} onTouchMove={() => handleWashFace(spot)}
-                            className="absolute w-12 h-12 bg-amber-900/90 rounded-full blur-[3px]"
-                            style={{ 
-                              top: `${20 + (spot * 10)}%`, 
-                              left: `${20 + ((spot * 37) % 60)}%` 
-                            }}
-                          />
-                        ))}
+                        {faceSpots.map(spot => {
+                          // Fixed coordinates well inside face bounds (20% to 65%)
+                          const spotCoords = [
+                            { top: '22%', left: '30%' },
+                            { top: '25%', left: '60%' },
+                            { top: '40%', left: '22%' },
+                            { top: '42%', left: '68%' },
+                            { top: '55%', left: '32%' },
+                            { top: '58%', left: '58%' },
+                            { top: '65%', left: '42%' },
+                            { top: '35%', left: '48%' },
+                          ];
+                          const pos = spotCoords[(spot - 1) % spotCoords.length];
+                          return (
+                            <div 
+                              key={spot} 
+                              onClick={() => handleWashFace(spot)}
+                              onPointerEnter={() => handleWashFace(spot)}
+                              onPointerMove={() => handleWashFace(spot)}
+                              onTouchStart={() => handleWashFace(spot)}
+                              onTouchMove={() => handleWashFace(spot)}
+                              className="absolute w-16 h-16 bg-amber-900/90 rounded-full blur-[2px] cursor-pointer z-30"
+                              style={pos}
+                            />
+                          );
+                        })}
                       </motion.div>
                     ) : (
                       <motion.div key="hands" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}

@@ -169,9 +169,9 @@ export default function NinjaGame({ onQuit, onWin }: NinjaGameProps) {
     }
 
     // Check Win
-    if (scoreRef.current >= 30 && gameState === "playing") {
+    if (scoreRef.current >= 15 && gameState === "playing") {
       setGameState("won");
-      setTimeout(() => onWin(3), 1500);
+      setTimeout(() => onWin(3), 1200);
     }
   };
 
