@@ -2505,7 +2505,12 @@ const startNinjaGame = () => {
   };
 
 
-const startSpaceGame = () => {
+  const [spaceBoss, setSpaceBoss] = useState<{ x: number; y: number; hp: number; maxHp: number; dir: number; emoji: string } | null>(null);
+  const [bossProjectiles, setBossProjectiles] = useState<{ id: number; x: number; y: number }[]>([]);
+  const spaceBossShootTimerRef = useRef(0);
+
+  const startSpaceGame = () => {
+    setShowLevelMap(false);
     requireProfile(() => {
       setSpacePlayerX(50);
       setSpaceLasers([]);
@@ -2514,9 +2519,29 @@ const startSpaceGame = () => {
       setSpaceScore(0);
       setSpaceActive(true);
       setSpaceGameOver(false);
+      setSpaceBoss(null);
+      setBossProjectiles([]);
       setStarsEarnedThisSession(0);
       setActiveGame("space");
-      sfx.speakArabic("اقضِ على الغزاة الفضائيين وتفادى النيازك!", "welcome");
+      
+      const currentLevel = selectedLevelIndex || 1;
+      const isBossLevel = currentLevel % 10 === 0 || currentLevel === 10;
+      
+      if (isBossLevel) {
+        const bossHp = 30 + Math.floor(currentLevel / 10 - 1) * 10;
+        setSpaceBoss({
+          x: 50,
+          y: 15,
+          hp: bossHp,
+          maxHp: bossHp,
+          dir: 1,
+          emoji: '👾👑'
+        });
+        sfx.speakArabic("تحذير! ظهر الوحش الكبير العملاق (البيج بوس)! ارمِ عليه 30 طلقة!", "welcome");
+      } else {
+        sfx.speakArabic("اقضِ على الغزاة الفضائيين وتفادى النيازك!", "welcome");
+      }
+
       spaceLastTimeRef.current = performance.now();
       spaceRequestRef.current = requestAnimationFrame(updateSpace);
     });
@@ -2524,13 +2549,13 @@ const startSpaceGame = () => {
 
   const createSpaceParticles = (x: number, y: number, color: string) => {
     const newParticles: any[] = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 12; i++) {
       newParticles.push({
         id: Math.random(),
         x, y,
         color,
-        vx: (Math.random() - 0.5) * 200,
-        vy: (Math.random() - 0.5) * 200,
+        vx: (Math.random() - 0.5) * 220,
+        vy: (Math.random() - 0.5) * 220,
         life: 1
       });
     }
@@ -2546,47 +2571,117 @@ const startSpaceGame = () => {
 
     // Fire laser automatically
     spaceFireTimerRef.current += deltaTime;
-    if (spaceFireTimerRef.current > 0.3) {
+    if (spaceFireTimerRef.current > 0.22) {
       spaceFireTimerRef.current = 0;
-      setSpaceLasers(prev => [...prev, { id: Math.random(), x: spacePlayerX, y: 90 }]); // Player is at y=90
+      setSpaceLasers(prev => [...prev, { id: Math.random(), x: spacePlayerX, y: 88 }]); // Player ship at y=88
     }
 
-    // Spawn enemies
+    // Boss mechanics if active
+    setSpaceBoss(boss => {
+      if (!boss) return null;
+      let newX = boss.x + boss.dir * 25 * deltaTime;
+      let newDir = boss.dir;
+      if (newX > 85) { newX = 85; newDir = -1; }
+      if (newX < 15) { newX = 15; newDir = 1; }
+
+      // Boss shoots fireball projectiles at player
+      spaceBossShootTimerRef.current += deltaTime;
+      if (spaceBossShootTimerRef.current > 1.2) {
+        spaceBossShootTimerRef.current = 0;
+        setBossProjectiles(prev => [...prev, { id: Math.random(), x: newX, y: boss.y + 8 }]);
+      }
+
+      return { ...boss, x: newX, dir: newDir };
+    });
+
+    // Move boss projectiles down
+    setBossProjectiles(prev => {
+      const moved = prev.map(p => ({ ...p, y: p.y + 60 * deltaTime }));
+      const hitPlayer = moved.some(p => p.y > 82 && p.y < 94 && Math.abs(p.x - spacePlayerX) < 10);
+      if (hitPlayer) {
+        setSpaceGameOver(true);
+        setSpaceActive(false);
+        sfx.playWrong();
+      }
+      return moved.filter(p => p.y < 110);
+    });
+
+    // Spawn regular enemies
     spaceSpawnTimerRef.current += deltaTime;
-    if (spaceSpawnTimerRef.current > Math.max(0.5, 2.0 - spaceScore / 200)) {
+    if (spaceSpawnTimerRef.current > Math.max(0.6, 2.0 - spaceScore / 200)) {
       spaceSpawnTimerRef.current = 0;
+      
+      const enemyConfig = [
+        { type: '👾', maxHp: 1, color: '#A855F7' },
+        { type: '🤖', maxHp: 2, color: '#3B82F6' },
+        { type: '🛸', maxHp: 3, color: '#2ECC71' },
+        { type: '👹', maxHp: 5, color: '#EF4444' }
+      ];
+
+      const selectedEnemy = enemyConfig[Math.floor(Math.random() * enemyConfig.length)];
+
       setSpaceEnemies(prev => [
         ...prev,
         {
           id: Math.random(),
           x: 10 + Math.random() * 80,
           y: -10,
-          type: spaceEnemyTypes[Math.floor(Math.random() * spaceEnemyTypes.length)],
-          hp: 1
+          type: selectedEnemy.type,
+          hp: selectedEnemy.maxHp,
+          maxHp: selectedEnemy.maxHp,
+          color: selectedEnemy.color
         }
       ]);
     }
 
     // Move lasers
-    setSpaceLasers(prev => prev.map(l => ({ ...l, y: l.y - 100 * deltaTime })).filter(l => l.y > -10));
+    setSpaceLasers(prev => prev.map(l => ({ ...l, y: l.y - 120 * deltaTime })).filter(l => l.y > -10));
 
-    // Move enemies and check collision with player
+    // Move regular enemies & check player collision
     setSpaceEnemies(prev => {
-      const moved = prev.map(e => ({ ...e, y: e.y + (20 + spaceScore/10) * deltaTime }));
-      
-      const hitPlayer = moved.some(e => e.y > 85 && e.y < 95 && Math.abs(e.x - spacePlayerX) < 10);
+      const moved = prev.map(e => ({ ...e, y: e.y + (18 + spaceScore / 12) * deltaTime }));
+      const hitPlayer = moved.some(e => e.y > 82 && e.y < 94 && Math.abs(e.x - spacePlayerX) < 10);
       if (hitPlayer) {
         setSpaceGameOver(true);
         setSpaceActive(false);
         sfx.playWrong();
       }
-
       return moved.filter(e => e.y < 110);
     });
 
-    // Check laser-enemy collisions
+    // Check Laser-Enemy & Laser-Boss Collisions
     setSpaceLasers(lasers => {
       let currentLasers = [...lasers];
+
+      // Laser vs Boss
+      setSpaceBoss(boss => {
+        if (!boss) return null;
+        let currentBossHp = boss.hp;
+
+        for (let i = currentLasers.length - 1; i >= 0; i--) {
+          const l = currentLasers[i];
+          if (Math.abs(l.x - boss.x) < 14 && Math.abs(l.y - boss.y) < 12) {
+            createSpaceParticles(boss.x, boss.y, '#F59E0B');
+            sfx.playSuccess();
+            currentBossHp -= 1;
+            currentLasers.splice(i, 1);
+
+            if (currentBossHp <= 0) {
+              createSpaceParticles(boss.x, boss.y, '#EF4444');
+              addStars(5);
+              setSpaceScore(s => s + 200);
+              sfx.playVictory();
+              setTimeout(() => {
+                triggerVictory();
+              }, 1000);
+              return null;
+            }
+          }
+        }
+        return { ...boss, hp: currentBossHp };
+      });
+
+      // Laser vs Regular Enemies
       setSpaceEnemies(enemies => {
         let currentEnemies = [...enemies];
         let scoreGained = 0;
@@ -2596,13 +2691,17 @@ const startSpaceGame = () => {
           for (let j = currentEnemies.length - 1; j >= 0; j--) {
             const e = currentEnemies[j];
             if (Math.abs(l.x - e.x) < 8 && Math.abs(l.y - e.y) < 8) {
-              // Hit!
-              createSpaceParticles(e.x, e.y, '#38BDF8');
-              scoreGained += 10;
-              sfx.playSuccess();
+              createSpaceParticles(e.x, e.y, e.color || '#38BDF8');
+              sfx.playPop();
+              e.hp -= 1;
               currentLasers.splice(i, 1);
-              currentEnemies.splice(j, 1);
-              break; // laser consumed
+
+              if (e.hp <= 0) {
+                scoreGained += (e.maxHp || 1) * 10;
+                sfx.playSuccess();
+                currentEnemies.splice(j, 1);
+              }
+              break;
             }
           }
         }
@@ -2616,6 +2715,7 @@ const startSpaceGame = () => {
         }
         return currentEnemies;
       });
+
       return currentLasers;
     });
 
@@ -2679,6 +2779,7 @@ const startSpaceGame = () => {
   const [trainCurrentOptions, setTrainCurrentOptions] = useState<typeof allShapesData[number][]>([]);
 
   const startTrainGame = () => {
+    setShowLevelMap(false);
     setTrainRound(1);
     setStarsEarnedThisSession(0);
     setActiveGame("train");
@@ -2782,6 +2883,7 @@ const startSpaceGame = () => {
   const [tapRacerStars, setTapRacerStars] = useState(0);
 
   const startTapRacerGame = () => {
+    setShowLevelMap(false);
     setTapRacerRound(1);
     setStarsEarnedThisSession(0);
     setTapRacerStars(0);
@@ -6462,6 +6564,22 @@ const startSpaceGame = () => {
             </div>
           )}
 
+          {/* Boss HUD Health Bar */}
+          {spaceBoss && (
+            <div className="absolute top-16 left-1/2 -translate-x-1/2 z-30 w-72 bg-black/70 backdrop-blur-md p-3 rounded-2xl border-2 border-red-500 shadow-[0_0_20px_rgba(239,68,68,0.6)] text-center">
+              <div className="flex justify-between items-center text-xs font-black text-red-400 mb-1 px-1">
+                <span>👾👑 البيج بوس (BIG BOSS)</span>
+                <span>{spaceBoss.hp} / {spaceBoss.maxHp} HP</span>
+              </div>
+              <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden border border-red-900">
+                <div 
+                  className="h-full bg-gradient-to-r from-red-600 via-orange-500 to-yellow-400 transition-all duration-200"
+                  style={{ width: `${(spaceBoss.hp / spaceBoss.maxHp) * 100}%` }}
+                />
+              </div>
+            </div>
+          )}
+
           {/* Play Area */}
           <div className="absolute inset-0 z-10 pointer-events-none overflow-hidden">
             
@@ -6469,13 +6587,13 @@ const startSpaceGame = () => {
             {spaceParticles.map(p => (
               <div 
                 key={p.id} 
-                className="absolute w-2 h-2 rounded-full"
+                className="absolute w-2.5 h-2.5 rounded-full"
                 style={{ 
                   left: `${p.x}%`, 
                   top: `${p.y}%`, 
                   backgroundColor: p.color,
                   opacity: p.life,
-                  boxShadow: `0 0 8px ${p.color}`
+                  boxShadow: `0 0 10px ${p.color}`
                 }} 
               />
             ))}
@@ -6484,40 +6602,103 @@ const startSpaceGame = () => {
             {spaceLasers.map(l => (
               <div 
                 key={l.id}
-                className="absolute w-1 h-6 bg-cyan-400 rounded-full"
+                className="absolute w-1.5 h-7 bg-cyan-300 rounded-full"
                 style={{ 
                   left: `${l.x}%`, 
                   top: `${l.y}%`,
                   transform: 'translate(-50%, -50%)',
-                  boxShadow: '0 0 10px #22d3ee'
+                  boxShadow: '0 0 12px #22d3ee'
                 }}
               />
             ))}
 
-            {/* Enemies */}
+            {/* Boss Fireball Projectiles */}
+            {bossProjectiles.map(p => (
+              <div 
+                key={p.id}
+                className="absolute w-5 h-5 bg-gradient-to-br from-amber-400 to-red-600 rounded-full animate-spin"
+                style={{ 
+                  left: `${p.x}%`, 
+                  top: `${p.y}%`,
+                  transform: 'translate(-50%, -50%)',
+                  boxShadow: '0 0 15px #ef4444'
+                }}
+              />
+            ))}
+
+            {/* Big Boss Entity */}
+            {spaceBoss && (
+              <div 
+                className="absolute text-7xl filter drop-shadow-[0_0_20px_rgba(239,68,68,0.9)] animate-pulse"
+                style={{ 
+                  left: `${spaceBoss.x}%`, 
+                  top: `${spaceBoss.y}%`,
+                  transform: 'translate(-50%, -50%)'
+                }}
+              >
+                {spaceBoss.emoji}
+              </div>
+            )}
+
+            {/* Regular Multi-Hit Enemies */}
             {spaceEnemies.map(e => (
               <div 
                 key={e.id}
-                className="absolute text-5xl drop-shadow-[0_0_10px_rgba(255,0,0,0.5)]"
+                className="absolute flex flex-col items-center select-none"
                 style={{ 
                   left: `${e.x}%`, 
                   top: `${e.y}%`,
                   transform: 'translate(-50%, -50%)'
                 }}
               >
-                {e.type}
+                {/* Mini HP bar if maxHp > 1 */}
+                {e.maxHp > 1 && (
+                  <div className="w-8 h-1.5 bg-slate-900/90 rounded-full mb-1 border border-slate-700 overflow-hidden">
+                    <div 
+                      className="h-full bg-emerald-400"
+                      style={{ width: `${(e.hp / e.maxHp) * 100}%` }}
+                    />
+                  </div>
+                )}
+                <span className="text-5xl filter drop-shadow-[0_0_10px_rgba(168,85,247,0.7)]">{e.type}</span>
               </div>
             ))}
 
-            {/* Player */}
+            {/* Sci-Fi Spaceship Player Graphic */}
             <div 
-              className="absolute bottom-[5%] text-6xl drop-shadow-[0_0_15px_rgba(99,102,241,0.8)] transition-transform duration-75"
+              className="absolute bottom-[5%] transition-transform duration-75"
               style={{
                 left: `${spacePlayerX}%`,
                 transform: 'translateX(-50%)'
               }}
             >
-              🚀
+              <div className="relative w-16 h-16 flex items-center justify-center">
+                {/* Thruster Flame */}
+                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-4 h-8 bg-gradient-to-t from-transparent via-cyan-400 to-blue-500 rounded-full blur-[2px] animate-pulse" />
+                <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-2 h-5 bg-white rounded-full blur-[1px]" />
+                
+                {/* Sci-Fi Spaceship SVG */}
+                <svg viewBox="0 0 64 64" className="w-full h-full filter drop-shadow-[0_0_12px_rgba(34,211,238,0.8)]">
+                  <path d="M32 4 L48 54 L32 46 L16 54 Z" fill="url(#shipBodyGrad)" stroke="#38BDF8" strokeWidth="2" />
+                  <rect x="10" y="32" width="4" height="16" rx="2" fill="#0EA5E9" />
+                  <rect x="50" y="32" width="4" height="16" rx="2" fill="#0EA5E9" />
+                  <ellipse cx="32" cy="24" rx="6" ry="12" fill="url(#cockpitGrad)" stroke="#E0F2FE" strokeWidth="1.5" />
+                  <circle cx="24" cy="46" r="3" fill="#38BDF8" />
+                  <circle cx="40" cy="46" r="3" fill="#38BDF8" />
+                  <defs>
+                    <linearGradient id="shipBodyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stopColor="#38BDF8" />
+                      <stop offset="50%" stopColor="#0284C7" />
+                      <stop offset="100%" stopColor="#0369A1" />
+                    </linearGradient>
+                    <linearGradient id="cockpitGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#F0F9FF" />
+                      <stop offset="50%" stopColor="#7DD3FC" />
+                      <stop offset="100%" stopColor="#0284C7" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
             </div>
           </div>
         </div>
@@ -6565,7 +6746,7 @@ const startSpaceGame = () => {
               <div className="absolute right-[8%] top-1/2 -translate-y-1/2 text-6xl z-10 select-none drop-shadow-2xl">🏁</div>
 
               {/* Lane 1: Opponents */}
-              {opponents.map((o) => (
+              {(opponents || []).map((o) => (
                 <div key={o.id} className="relative h-16 flex items-center border-b-2 border-slate-600 pb-2 last:border-0 z-10">
                   <div className="w-20 text-right font-black text-xs text-white truncate pl-2 drop-shadow-md">{o.name}</div>
                   <div className="flex-grow h-8 bg-slate-800/80 rounded-full relative overflow-visible shadow-inner">
