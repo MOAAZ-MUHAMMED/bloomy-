@@ -1177,7 +1177,7 @@ export function GameZone({
   // NEW GAME: SPACE SHOOTER (حرب الفضاء)
   const [spacePlayerX, setSpacePlayerX] = useState(50);
   const [spaceLasers, setSpaceLasers] = useState<{id: number, x: number, y: number}[]>([]);
-  const [spaceEnemies, setSpaceEnemies] = useState<{id: number, x: number, y: number, type: string, hp: number}[]>([]);
+  const [spaceEnemies, setSpaceEnemies] = useState<{id: number, x: number, y: number, type: string, hp: number, maxHp?: number, color?: string}[]>([]);
   const [spaceParticles, setSpaceParticles] = useState<{id: number, x: number, y: number, color: string, vx: number, vy: number, life: number}[]>([]);
   const [spaceScore, setSpaceScore] = useState(0);
   const [spaceActive, setSpaceActive] = useState(false);
@@ -6662,7 +6662,7 @@ const startNinjaGame = () => {
                 }}
               >
                 {/* Mini HP bar if maxHp > 1 */}
-                {e.maxHp > 1 && (
+                {e.maxHp !== undefined && e.maxHp > 1 && (
                   <div className="w-8 h-1.5 bg-slate-900/90 rounded-full mb-1 border border-slate-700 overflow-hidden">
                     <div 
                       className="h-full bg-emerald-400"
@@ -6807,7 +6807,7 @@ const startNinjaGame = () => {
             {tapRacerState === "finished" && (
               <div className="absolute inset-0 bg-black/70 backdrop-blur-md z-50 flex flex-col items-center justify-center gap-4">
                 <h3 className="text-4xl font-black text-yellow-300 drop-shadow-lg animate-bounce">
-                  {winnerId === "player" ? "🏆 أنت الفائز بالمركز الأول! 🏆" : "انتهى السباق! 🏁"}
+                  {winnerId === 0 ? "🏆 أنت الفائز بالمركز الأول! 🏆" : "انتهى السباق! 🏁"}
                 </h3>
                 {tapRacerRound < 3 ? (
                   <button
@@ -6831,7 +6831,7 @@ const startNinjaGame = () => {
           {/* TAP BUTTON */}
           <div className="flex justify-center">
             <motion.button
-              onClick={handleTap}
+              onClick={handleTapRacerClick}
               disabled={tapRacerState !== "racing" || winnerId !== null}
               whileTap={{ scale: 0.9 }}
               className={`w-64 h-24 rounded-full font-black text-3xl text-white shadow-2xl transition-all border-4 ${

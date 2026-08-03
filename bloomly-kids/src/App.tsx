@@ -114,8 +114,8 @@ export default function App() {
 
   // Firebase Realtime Sync for All Profiles
   useEffect(() => {
-    const unsub = onSnapshot(collection(db, "profiles"), (snapshot) => {
-      const profiles = snapshot.docs.map(doc => doc.data());
+    const unsub = onSnapshot(collection(db, "profiles"), (snapshot: any) => {
+      const profiles = snapshot.docs.map((doc: any) => doc.data());
       setAllProfiles(profiles);
       localStorage.setItem("bloomly_all_profiles", JSON.stringify(profiles));
     });
