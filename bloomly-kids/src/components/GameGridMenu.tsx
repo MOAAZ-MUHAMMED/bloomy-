@@ -20,107 +20,184 @@ const render3DIcon = (id: string) => {
   switch (id) {
     case 'farm':
       return (
-        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md">
-          <rect x="15" y="45" width="70" height="40" rx="10" fill="#E879F9" stroke="#fff" strokeWidth="4" />
-          <polygon points="10,45 50,15 90,45" fill="#EF4444" stroke="#fff" strokeWidth="4" strokeLinejoin="round" />
-          <rect x="40" y="55" width="20" height="30" fill="#FCD34D" stroke="#fff" strokeWidth="3" />
-          <circle cx="30" cy="30" r="6" fill="#FBBF24" />
-          <rect x="70" y="60" width="10" height="15" fill="#3B82F6" rx="2" />
+        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float-slow">
+          {/* Tractor body */}
+          <rect x="25" y="40" width="40" height="30" rx="6" fill="#10B981" stroke="#fff" strokeWidth="4" />
+          <rect x="45" y="25" width="20" height="20" rx="4" fill="#60A5FA" stroke="#fff" strokeWidth="4" />
+          {/* Chimney */}
+          <rect x="30" y="20" width="6" height="20" fill="#374151" stroke="#fff" strokeWidth="2" />
+          {/* Wheels */}
+          <circle cx="32" cy="70" r="14" fill="#1F2937" stroke="#fff" strokeWidth="4" className="animate-spin-wheel" />
+          <circle cx="32" cy="70" r="6" fill="#FBBF24" />
+          <circle cx="62" cy="70" r="10" fill="#1F2937" stroke="#fff" strokeWidth="4" className="animate-spin-wheel" />
+          <circle cx="62" cy="70" r="4" fill="#FBBF24" />
         </svg>
       );
     case 'island_map':
       return (
-        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md">
-          <path d="M10 80 Q 20 20, 50 10 T 90 80 Z" fill="#60A5FA" stroke="#fff" strokeWidth="4" />
-          <circle cx="30" cy="50" r="12" fill="#34D399" stroke="#fff" strokeWidth="3" />
-          <circle cx="70" cy="60" r="8" fill="#FBBF24" stroke="#fff" strokeWidth="3" />
-          <path d="M40 75 Q 50 65, 60 75" fill="none" stroke="#EF4444" strokeWidth="4" strokeDasharray="4,4" />
+        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float">
+          {/* Map outline */}
+          <rect x="15" y="20" width="70" height="60" rx="12" fill="#FDE047" stroke="#fff" strokeWidth="4" />
+          {/* Island path */}
+          <path d="M25 50 Q 50 30, 75 50" fill="none" stroke="#EF4444" strokeWidth="4" strokeDasharray="6,6" strokeLinecap="round" />
+          {/* Flag marker */}
+          <polygon points="70,30 85,37 70,44" fill="#EF4444" stroke="#fff" strokeWidth="2" />
+          <line x1="70" y1="30" x2="70" y2="55" stroke="#374151" strokeWidth="4" strokeLinecap="round" />
+          <circle cx="25" cy="50" r="6" fill="#3B82F6" stroke="#fff" strokeWidth="2" />
         </svg>
       );
     case 'stories':
       return (
-        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md">
-          <rect x="15" y="15" width="70" height="70" rx="10" fill="#3B82F6" stroke="#fff" strokeWidth="4" />
-          <rect x="25" y="15" width="50" height="70" fill="#60A5FA" />
-          <line x1="35" y1="30" x2="65" y2="30" stroke="#fff" strokeWidth="4" strokeLinecap="round" />
-          <line x1="35" y1="45" x2="65" y2="45" stroke="#fff" strokeWidth="4" strokeLinecap="round" />
-          <line x1="35" y1="60" x2="55" y2="60" stroke="#fff" strokeWidth="4" strokeLinecap="round" />
+        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float-slow">
+          <rect x="15" y="20" width="70" height="64" rx="10" fill="#6366F1" stroke="#fff" strokeWidth="4" />
+          <path d="M50 20 V84" stroke="#fff" strokeWidth="4" />
+          {/* Story lines */}
+          <line x1="25" y1="35" x2="42" y2="35" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" />
+          <line x1="25" y1="50" x2="42" y2="50" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" />
+          <line x1="58" y1="35" x2="75" y2="35" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" />
+          <line x1="58" y1="50" x2="75" y2="50" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" />
+          <circle cx="33" cy="65" r="4" fill="#FBBF24" />
+          <circle cx="67" cy="65" r="4" fill="#FBBF24" />
         </svg>
       );
     case 'math':
       return (
         <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md">
-          <rect x="15" y="15" width="30" height="30" rx="6" fill="#F87171" stroke="#fff" strokeWidth="3" />
-          <text x="30" y="38" fontSize="24" fontWeight="bold" fill="#fff" textAnchor="middle">1</text>
-          <rect x="55" y="15" width="30" height="30" rx="6" fill="#60A5FA" stroke="#fff" strokeWidth="3" />
-          <text x="70" y="38" fontSize="24" fontWeight="bold" fill="#fff" textAnchor="middle">+</text>
-          <rect x="35" y="55" width="30" height="30" rx="6" fill="#34D399" stroke="#fff" strokeWidth="3" />
-          <text x="50" y="78" fontSize="24" fontWeight="bold" fill="#fff" textAnchor="middle">2</text>
+          <g className="animate-float">
+            <rect x="12" y="30" width="30" height="30" rx="8" fill="#EF4444" stroke="#fff" strokeWidth="4" />
+            <text x="27" y="52" fontSize="24" fontWeight="bold" fill="#fff" textAnchor="middle" fontFamily="sans-serif">1</text>
+          </g>
+          <g className="animate-float" style={{ animationDelay: '0.5s' }}>
+            <rect x="58" y="30" width="30" height="30" rx="8" fill="#3B82F6" stroke="#fff" strokeWidth="4" />
+            <text x="73" y="52" fontSize="24" fontWeight="bold" fill="#fff" textAnchor="middle" fontFamily="sans-serif">+</text>
+          </g>
+          <g className="animate-float" style={{ animationDelay: '1s' }}>
+            <rect x="35" y="58" width="30" height="30" rx="8" fill="#10B981" stroke="#fff" strokeWidth="4" />
+            <text x="50" y="80" fontSize="24" fontWeight="bold" fill="#fff" textAnchor="middle" fontFamily="sans-serif">2</text>
+          </g>
         </svg>
       );
     case 'arabic':
       return (
         <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md">
-          <circle cx="50" cy="50" r="35" fill="#F59E0B" stroke="#fff" strokeWidth="4" />
-          <text x="50" y="65" fontSize="48" fontWeight="900" fill="#fff" textAnchor="middle" fontFamily="sans-serif">أ</text>
+          {/* Book */}
+          <rect x="15" y="35" width="70" height="50" rx="8" fill="#F59E0B" stroke="#fff" strokeWidth="4" />
+          <path d="M50 35 V85" stroke="#fff" strokeWidth="3" />
+          {/* Arabic Letter */}
+          <text x="32" y="70" fontSize="32" fontWeight="bold" fill="#fff" textAnchor="middle" fontFamily="sans-serif">أ</text>
+          {/* Animated Writing Pencil */}
+          <g className="animate-write" style={{ transformOrigin: '70px 30px' }}>
+            <path d="M60 45 L78 20 L84 26 L66 51 Z" fill="#EF4444" stroke="#fff" strokeWidth="3" />
+            <polygon points="60,45 56,49 61,51" fill="#FCD34D" stroke="#fff" strokeWidth="1.5" />
+          </g>
         </svg>
       );
     case 'quran':
       return (
-        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md">
-          <rect x="20" y="25" width="60" height="60" rx="10" fill="#111827" stroke="#fff" strokeWidth="4" />
-          <rect x="20" y="40" width="60" height="10" fill="#FBBF24" />
-          <line x1="50" y1="50" x2="50" y2="85" stroke="#FBBF24" strokeWidth="6" />
+        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-glow">
+          {/* Kaaba base */}
+          <rect x="22" y="25" width="56" height="56" rx="10" fill="#111827" stroke="#fff" strokeWidth="4.5" />
+          {/* Kiswah gold band */}
+          <rect x="22" y="40" width="56" height="10" fill="#FBBF24" />
+          {/* Golden Gate */}
+          <rect x="42" y="55" width="16" height="26" fill="#FBBF24" stroke="#fff" strokeWidth="2.5" rx="3" />
+          <line x1="50" y1="55" x2="50" y2="81" stroke="#fff" strokeWidth="1.5" />
         </svg>
       );
     case 'english':
       return (
         <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md">
-          <circle cx="50" cy="50" r="35" fill="#EC4899" stroke="#fff" strokeWidth="4" />
-          <text x="50" y="62" fontSize="36" fontWeight="900" fill="#fff" textAnchor="middle" fontFamily="sans-serif">ABC</text>
+          <g className="animate-float">
+            <circle cx="32" cy="40" r="16" fill="#EC4899" stroke="#fff" strokeWidth="3.5" />
+            <text x="32" y="49" fontSize="20" fontWeight="900" fill="#fff" textAnchor="middle" fontFamily="sans-serif">A</text>
+          </g>
+          <g className="animate-float" style={{ animationDelay: '0.4s' }}>
+            <circle cx="68" cy="40" r="16" fill="#8B5CF6" stroke="#fff" strokeWidth="3.5" />
+            <text x="68" y="49" fontSize="20" fontWeight="900" fill="#fff" textAnchor="middle" fontFamily="sans-serif">B</text>
+          </g>
+          <g className="animate-float" style={{ animationDelay: '0.8s' }}>
+            <circle cx="50" cy="72" r="16" fill="#06B6D4" stroke="#fff" strokeWidth="3.5" />
+            <text x="50" y="81" fontSize="20" fontWeight="900" fill="#fff" textAnchor="middle" fontFamily="sans-serif">C</text>
+          </g>
         </svg>
       );
     case 'fun_games':
       return (
         <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md">
-          <rect x="20" y="30" width="60" height="45" rx="10" fill="#EF4444" stroke="#fff" strokeWidth="4" />
-          <circle cx="35" cy="52" r="8" fill="#FDE047" stroke="#fff" strokeWidth="3" />
-          <circle cx="65" cy="52" r="8" fill="#60A5FA" stroke="#fff" strokeWidth="3" />
-          <rect x="42" y="45" width="16" height="16" rx="2" fill="#fff" />
+          {/* Balloon 1 */}
+          <g className="animate-float" style={{ animationDelay: '0.2s' }}>
+            <circle cx="35" cy="42" r="15" fill="#EF4444" stroke="#fff" strokeWidth="3" />
+            <path d="M35 57 L35 75" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+          </g>
+          {/* Balloon 2 */}
+          <g className="animate-float" style={{ animationDelay: '0.7s' }}>
+            <circle cx="65" cy="38" r="15" fill="#10B981" stroke="#fff" strokeWidth="3" />
+            <path d="M65 53 L65 75" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+          </g>
+          {/* Star symbol */}
+          <polygon points="50,15 53,24 62,24 55,29 57,38 50,32 43,38 45,29 38,24 47,24" fill="#FBBF24" className="animate-glow" />
         </svg>
       );
     case 'kitchen':
       return (
-        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md">
-          <circle cx="50" cy="55" r="30" fill="#10B981" stroke="#fff" strokeWidth="4" />
-          <path d="M30 40 Q 50 10, 70 40 Z" fill="#EF4444" stroke="#fff" strokeWidth="4" />
-          <rect x="25" y="36" width="50" height="8" rx="4" fill="#FCD34D" stroke="#fff" strokeWidth="2" />
+        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float-slow">
+          {/* Steam rising */}
+          <path d="M42 22 Q45 15, 42 8" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" className="animate-steam-1" />
+          <path d="M58 22 Q61 15, 58 8" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" className="animate-steam-2" />
+          {/* Pot body */}
+          <rect x="25" y="42" width="50" height="32" rx="8" fill="#F43F5E" stroke="#fff" strokeWidth="4" />
+          {/* Pot handles */}
+          <rect x="17" y="48" width="8" height="12" rx="4" fill="#9F1239" stroke="#fff" strokeWidth="2" />
+          <rect x="75" y="48" width="8" height="12" rx="4" fill="#9F1239" stroke="#fff" strokeWidth="2" />
+          {/* Pot lid */}
+          <path d="M22 42 H78 L70 30 H30 Z" fill="#FDA4AF" stroke="#fff" strokeWidth="4" />
+          <circle cx="50" cy="26" r="6" fill="#F43F5E" stroke="#fff" strokeWidth="2" />
         </svg>
       );
     case 'coloring':
       return (
         <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md">
-          <path d="M20 70 C 10 50, 20 20, 50 20 C 70 20, 85 40, 80 65 C 75 80, 40 90, 20 70 Z" fill="#FCD34D" stroke="#fff" strokeWidth="4" />
-          <circle cx="35" cy="40" r="6" fill="#EF4444" />
-          <circle cx="55" cy="35" r="6" fill="#3B82F6" />
-          <circle cx="65" cy="52" r="6" fill="#10B981" />
-          <circle cx="45" cy="65" r="6" fill="#A855F7" />
+          {/* Paint palette */}
+          <path d="M20 70 C 10 50, 15 20, 48 20 C 68 20, 85 35, 82 62 C 79 78, 45 88, 20 70 Z" fill="#F59E0B" stroke="#fff" strokeWidth="4.5" className="animate-float-slow" />
+          {/* Paint spots */}
+          <circle cx="34" cy="38" r="6" fill="#EF4444" />
+          <circle cx="52" cy="32" r="6" fill="#3B82F6" />
+          <circle cx="66" cy="46" r="6" fill="#10B981" />
+          <circle cx="48" cy="62" r="6" fill="#EC4899" />
+          {/* Animated Brush */}
+          <g className="animate-brush">
+            <path d="M20 80 L35 55 L45 65 Z" fill="#FDE047" stroke="#fff" strokeWidth="3" />
+            <path d="M15 85 L22 78 L25 82 Z" fill="#6B7280" />
+          </g>
         </svg>
       );
     case 'habits':
       return (
         <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md">
-          <circle cx="50" cy="50" r="35" fill="#38BDF8" stroke="#fff" strokeWidth="4" />
-          <circle cx="38" cy="45" r="10" fill="#E2E8F0" />
-          <circle cx="62" cy="45" r="10" fill="#E2E8F0" />
-          <path d="M40 65 Q 50 75, 60 65" fill="none" stroke="#fff" strokeWidth="4" strokeLinecap="round" />
+          {/* Tooth */}
+          <path d="M30 45 C 30 25, 70 25, 70 45 C 70 65, 60 75, 60 85 H 40 C 40 75, 30 65, 30 45 Z" fill="#E2E8F0" stroke="#fff" strokeWidth="4.5" className="animate-float" />
+          <circle cx="44" cy="45" r="4" fill="#4B5563" />
+          <circle cx="56" cy="45" r="4" fill="#4B5563" />
+          <path d="M44 60 Q50 66, 56 60" fill="none" stroke="#4B5563" strokeWidth="3.5" strokeLinecap="round" />
+          {/* Animated Toothbrush scrubbing */}
+          <g className="animate-scrub" style={{ transformOrigin: '70px 50px' }}>
+            <rect x="25" y="32" width="50" height="8" rx="3" fill="#38BDF8" stroke="#fff" strokeWidth="3" />
+            <rect x="25" y="24" width="16" height="8" rx="2" fill="#fff" />
+          </g>
         </svg>
       );
     case 'iq':
       return (
         <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md">
-          <path d="M30 40 C 25 15, 75 15, 70 40 C 65 55, 55 60, 55 70 H 45 C 45 60, 35 55, 30 40 Z" fill="#A855F7" stroke="#fff" strokeWidth="4" />
-          <rect x="42" y="75" width="16" height="10" rx="3" fill="#FCD34D" stroke="#fff" strokeWidth="2" />
+          {/* Bohr atom center */}
+          <circle cx="50" cy="50" r="14" fill="#EF4444" stroke="#fff" strokeWidth="4.5" className="animate-float" />
+          {/* Electron orbit rings */}
+          <ellipse cx="50" cy="50" rx="36" ry="12" fill="none" stroke="#3B82F6" strokeWidth="3.5" className="animate-orbit" />
+          <ellipse cx="50" cy="50" rx="36" ry="12" fill="none" stroke="#10B981" strokeWidth="3.5" className="animate-orbit-rev" transform="rotate(60 50 50)" />
+          <ellipse cx="50" cy="50" rx="36" ry="12" fill="none" stroke="#F59E0B" strokeWidth="3.5" className="animate-orbit" transform="rotate(-60 50 50)" />
+          {/* Electron particles */}
+          <circle cx="14" cy="50" r="5" fill="#FBBF24" stroke="#fff" strokeWidth="2.5" />
+          <circle cx="86" cy="50" r="5" fill="#FBBF24" stroke="#fff" strokeWidth="2.5" />
         </svg>
       );
     default:
@@ -153,7 +230,6 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
     window.speechSynthesis.speak(utterance);
   };
 
-  // 12 Premium 3D clay items to match the mockup completely
   const clayItems = [
     { id: 'farm', title: 'مزرعتي السحرية', englishTitle: 'MY FARM', action: () => onSelectCategory?.('farm'), bgGradient: 'from-[#A7F3D0] to-[#047857]', color: 'text-emerald-950', shadowColor: '#065f46' },
     { id: 'island_map', title: 'خريطة المغامرة', englishTitle: 'ADVENTURE MAP', action: onOpenMap, bgGradient: 'from-[#BAE6FD] to-[#0369A1]', color: 'text-sky-950', shadowColor: '#075985' },
@@ -173,9 +249,60 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
     return (
       <div className="flex flex-col w-full min-h-screen relative z-10 select-none overflow-x-hidden justify-start items-center bg-transparent">
         
+        {/* Dynamic CSS Keyframe Animations Injected directly */}
+        <style dangerouslySetInnerHTML={{__html: `
+          @keyframes write {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(8px, -4px) rotate(-15deg); }
+          }
+          @keyframes orbit {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+          @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-6px) scale(1.05); }
+          }
+          @keyframes floatSlow {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-4px) rotate(3deg); }
+          }
+          @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(251, 191, 36, 0.6)); }
+            50% { filter: drop-shadow(0 0 15px rgba(251, 191, 36, 0.95)); }
+          }
+          @keyframes scrub {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-8px, 4px) rotate(-12deg); }
+          }
+          @keyframes spinWheel {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+          @keyframes brushStroke {
+            0%, 100% { transform: rotate(0deg) translate(0, 0); }
+            50% { transform: rotate(15deg) translate(4px, -4px); }
+          }
+          @keyframes steamRise {
+            0% { transform: translateY(4px) scale(0.9); opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { transform: translateY(-12px) scale(1.1); opacity: 0; }
+          }
+          .animate-write { animation: write 2s ease-in-out infinite; }
+          .animate-orbit { animation: orbit 5s linear infinite; transform-origin: 50px 50px; }
+          .animate-orbit-rev { animation: orbit 7s linear infinite reverse; transform-origin: 50px 50px; }
+          .animate-float { animation: float 2.5s ease-in-out infinite; }
+          .animate-float-slow { animation: floatSlow 3s ease-in-out infinite; }
+          .animate-glow { animation: pulseGlow 2s ease-in-out infinite; }
+          .animate-scrub { animation: scrub 1.6s ease-in-out infinite; }
+          .animate-spin-wheel { animation: spinWheel 4s linear infinite; transform-origin: center; }
+          .animate-brush { animation: brushStroke 1.8s ease-in-out infinite; transform-origin: 25px 75px; }
+          .animate-steam-1 { animation: steamRise 2s infinite; }
+          .animate-steam-2 { animation: steamRise 2s infinite 0.7s; }
+        `}} />
+
         {/* Top Header Navigation Panel */}
         <div className="flex justify-between items-center mb-6 mt-6 w-full max-w-6xl mx-auto px-4 z-50">
-          {/* Left: Coins / Stars Counter */}
           <div className="flex items-center gap-3 bg-white/95 backdrop-blur-md p-2.5 pr-5 rounded-[32px] border-[5px] border-white shadow-lg">
             <div className="w-14 h-14 rounded-full overflow-hidden border-[3px] border-white bg-white shadow-inner relative flex items-center justify-center text-4xl">
               🦁
@@ -194,7 +321,6 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
             </div>
           </div>
 
-          {/* Right: Premium Separated Header Buttons */}
           <div className="flex gap-4">
             <button
               onClick={onOpenParents}
@@ -211,7 +337,7 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
           </div>
         </div>
 
-        {/* Mascot Character Sprout (برعم) Header Section */}
+        {/* Mascot Sprout Header */}
         <div className="flex flex-col sm:flex-row items-center gap-6 mb-12 mt-2 max-w-2xl px-6 text-center sm:text-right relative z-30">
           <div className="w-36 h-36 bg-white/80 rounded-full border-[5px] border-white shadow-xl flex items-center justify-center overflow-hidden">
             <SproutMascot className="w-[120px] h-[120px]" state="talking" />
@@ -220,12 +346,11 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
             <span className="text-[#4D2B82] font-black text-lg block leading-snug">
               أهلاً بك يا بطل في مغامرات بلومي! اختر بوابة لتبدأ اللعب والمرح! 🌟🦁
             </span>
-            {/* Spech bubble arrow */}
             <div className="hidden sm:block absolute top-1/2 -left-3 -translate-y-1/2 w-0 h-0 border-t-[10px] border-t-transparent border-b-[10px] border-b-transparent border-r-[12px] border-r-[#4D2B82]" />
           </div>
         </div>
 
-        {/* Crisp Symmetrical 3D Toy-Style Grid */}
+        {/* Categories Grid */}
         <div className="w-full max-w-6xl mx-auto px-4 pb-24 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 md:gap-10 auto-rows-fr relative">
           {clayItems.map((item) => {
             return (
@@ -241,12 +366,10 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
                   if (item.action) item.action();
                 }}
               >
-                {/* 3D Inline SVG Icon */}
                 <div className="relative mb-6 z-10 flex flex-col items-center justify-center">
                   {render3DIcon(item.id)}
                 </div>
                 
-                {/* Bottom Text Badge */}
                 <div className="mt-auto flex flex-col items-center w-full z-10 relative">
                   <span className="text-[10px] font-black uppercase tracking-widest text-white/80 mb-1 drop-shadow-sm">
                     {item.englishTitle}
@@ -267,7 +390,6 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
     );
   }
 
-  // View 2: Games inside the selected Category
   const currentCategory = categoriesData.find(c => c.id === activeCategory);
   const categoryGames = islandsData.filter(game => currentCategory?.games.includes(game.id));
   const activeClay = clayItems.find(c => c.id === activeCategory);
@@ -275,7 +397,6 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
   return (
     <div className="flex flex-col gap-8 w-full max-w-6xl mx-auto px-4 py-8 relative z-10 min-h-screen bg-transparent justify-start">
       
-      {/* Category Header */}
       <div 
         className="relative rounded-[40px] p-6 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 border-[6px] border-white/60 overflow-hidden shadow-xl"
         style={{ 
@@ -304,7 +425,6 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
         </div>
       </div>
 
-      {/* Grid of Games for this category - Zero Lag */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6 pb-16">
         {categoryGames.map((game) => {
           return (
