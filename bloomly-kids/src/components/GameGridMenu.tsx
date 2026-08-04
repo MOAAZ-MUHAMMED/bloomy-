@@ -1,5 +1,5 @@
 import React from 'react';
-import { Play, ArrowRight, Shield, Info } from 'lucide-react';
+import { Play, ArrowRight, Shield, Info, Home, Menu } from 'lucide-react';
 import { islandsData } from './LearningPathMap';
 import { SproutMascot } from './GameZone';
 import { categoriesData } from './CategoriesData';
@@ -21,12 +21,10 @@ const render3DIcon = (id: string) => {
     case 'farm':
       return (
         <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float-slow">
-          {/* Tractor body */}
-          <rect x="25" y="40" width="40" height="30" rx="6" fill="#10B981" stroke="#fff" strokeWidth="4" />
-          <rect x="45" y="25" width="20" height="20" rx="4" fill="#60A5FA" stroke="#fff" strokeWidth="4" />
-          {/* Chimney */}
-          <rect x="30" y="20" width="6" height="20" fill="#374151" stroke="#fff" strokeWidth="2" />
-          {/* Wheels */}
+          <rect x="15" y="45" width="70" height="40" rx="10" fill="#10B981" stroke="#fff" strokeWidth="4" />
+          <polygon points="10,45 50,15 90,45" fill="#EF4444" stroke="#fff" strokeWidth="4" strokeLinejoin="round" />
+          <rect x="40" y="55" width="20" height="30" fill="#FCD34D" stroke="#fff" strokeWidth="3" />
+          <circle cx="30" cy="30" r="6" fill="#FBBF24" />
           <circle cx="32" cy="70" r="14" fill="#1F2937" stroke="#fff" strokeWidth="4" className="animate-spin-wheel" />
           <circle cx="32" cy="70" r="6" fill="#FBBF24" />
           <circle cx="62" cy="70" r="10" fill="#1F2937" stroke="#fff" strokeWidth="4" className="animate-spin-wheel" />
@@ -36,11 +34,8 @@ const render3DIcon = (id: string) => {
     case 'island_map':
       return (
         <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float">
-          {/* Map outline */}
           <rect x="15" y="20" width="70" height="60" rx="12" fill="#FDE047" stroke="#fff" strokeWidth="4" />
-          {/* Island path */}
           <path d="M25 50 Q 50 30, 75 50" fill="none" stroke="#EF4444" strokeWidth="4" strokeDasharray="6,6" strokeLinecap="round" />
-          {/* Flag marker */}
           <polygon points="70,30 85,37 70,44" fill="#EF4444" stroke="#fff" strokeWidth="2" />
           <line x1="70" y1="30" x2="70" y2="55" stroke="#374151" strokeWidth="4" strokeLinecap="round" />
           <circle cx="25" cy="50" r="6" fill="#3B82F6" stroke="#fff" strokeWidth="2" />
@@ -51,7 +46,6 @@ const render3DIcon = (id: string) => {
         <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float-slow">
           <rect x="15" y="20" width="70" height="64" rx="10" fill="#6366F1" stroke="#fff" strokeWidth="4" />
           <path d="M50 20 V84" stroke="#fff" strokeWidth="4" />
-          {/* Story lines */}
           <line x1="25" y1="35" x2="42" y2="35" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" />
           <line x1="25" y1="50" x2="42" y2="50" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" />
           <line x1="58" y1="35" x2="75" y2="35" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" />
@@ -80,12 +74,9 @@ const render3DIcon = (id: string) => {
     case 'arabic':
       return (
         <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md">
-          {/* Book */}
           <rect x="15" y="35" width="70" height="50" rx="8" fill="#F59E0B" stroke="#fff" strokeWidth="4" />
           <path d="M50 35 V85" stroke="#fff" strokeWidth="3" />
-          {/* Arabic Letter */}
           <text x="32" y="70" fontSize="32" fontWeight="bold" fill="#fff" textAnchor="middle" fontFamily="sans-serif">أ</text>
-          {/* Animated Writing Pencil */}
           <g className="animate-write" style={{ transformOrigin: '70px 30px' }}>
             <path d="M60 45 L78 20 L84 26 L66 51 Z" fill="#EF4444" stroke="#fff" strokeWidth="3" />
             <polygon points="60,45 56,49 61,51" fill="#FCD34D" stroke="#fff" strokeWidth="1.5" />
@@ -95,11 +86,8 @@ const render3DIcon = (id: string) => {
     case 'quran':
       return (
         <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-glow">
-          {/* Kaaba base */}
           <rect x="22" y="25" width="56" height="56" rx="10" fill="#111827" stroke="#fff" strokeWidth="4.5" />
-          {/* Kiswah gold band */}
           <rect x="22" y="40" width="56" height="10" fill="#FBBF24" />
-          {/* Golden Gate */}
           <rect x="42" y="55" width="16" height="26" fill="#FBBF24" stroke="#fff" strokeWidth="2.5" rx="3" />
           <line x1="50" y1="55" x2="50" y2="81" stroke="#fff" strokeWidth="1.5" />
         </svg>
@@ -124,32 +112,25 @@ const render3DIcon = (id: string) => {
     case 'fun_games':
       return (
         <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md">
-          {/* Balloon 1 */}
           <g className="animate-float" style={{ animationDelay: '0.2s' }}>
             <circle cx="35" cy="42" r="15" fill="#EF4444" stroke="#fff" strokeWidth="3" />
             <path d="M35 57 L35 75" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
           </g>
-          {/* Balloon 2 */}
           <g className="animate-float" style={{ animationDelay: '0.7s' }}>
             <circle cx="65" cy="38" r="15" fill="#10B981" stroke="#fff" strokeWidth="3" />
             <path d="M65 53 L65 75" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
           </g>
-          {/* Star symbol */}
           <polygon points="50,15 53,24 62,24 55,29 57,38 50,32 43,38 45,29 38,24 47,24" fill="#FBBF24" className="animate-glow" />
         </svg>
       );
     case 'kitchen':
       return (
         <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float-slow">
-          {/* Steam rising */}
           <path d="M42 22 Q45 15, 42 8" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" className="animate-steam-1" />
           <path d="M58 22 Q61 15, 58 8" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" className="animate-steam-2" />
-          {/* Pot body */}
           <rect x="25" y="42" width="50" height="32" rx="8" fill="#F43F5E" stroke="#fff" strokeWidth="4" />
-          {/* Pot handles */}
           <rect x="17" y="48" width="8" height="12" rx="4" fill="#9F1239" stroke="#fff" strokeWidth="2" />
           <rect x="75" y="48" width="8" height="12" rx="4" fill="#9F1239" stroke="#fff" strokeWidth="2" />
-          {/* Pot lid */}
           <path d="M22 42 H78 L70 30 H30 Z" fill="#FDA4AF" stroke="#fff" strokeWidth="4" />
           <circle cx="50" cy="26" r="6" fill="#F43F5E" stroke="#fff" strokeWidth="2" />
         </svg>
@@ -157,14 +138,11 @@ const render3DIcon = (id: string) => {
     case 'coloring':
       return (
         <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md">
-          {/* Paint palette */}
           <path d="M20 70 C 10 50, 15 20, 48 20 C 68 20, 85 35, 82 62 C 79 78, 45 88, 20 70 Z" fill="#F59E0B" stroke="#fff" strokeWidth="4.5" className="animate-float-slow" />
-          {/* Paint spots */}
           <circle cx="34" cy="38" r="6" fill="#EF4444" />
           <circle cx="52" cy="32" r="6" fill="#3B82F6" />
           <circle cx="66" cy="46" r="6" fill="#10B981" />
           <circle cx="48" cy="62" r="6" fill="#EC4899" />
-          {/* Animated Brush */}
           <g className="animate-brush">
             <path d="M20 80 L35 55 L45 65 Z" fill="#FDE047" stroke="#fff" strokeWidth="3" />
             <path d="M15 85 L22 78 L25 82 Z" fill="#6B7280" />
@@ -174,12 +152,10 @@ const render3DIcon = (id: string) => {
     case 'habits':
       return (
         <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md">
-          {/* Tooth */}
-          <path d="M30 45 C 30 25, 70 25, 70 45 C 70 65, 60 75, 60 85 H 40 C 40 75, 30 65, 30 45 Z" fill="#E2E8F0" stroke="#fff" strokeWidth="4.5" className="animate-float" />
-          <circle cx="44" cy="45" r="4" fill="#4B5563" />
-          <circle cx="56" cy="45" r="4" fill="#4B5563" />
-          <path d="M44 60 Q50 66, 56 60" fill="none" stroke="#4B5563" strokeWidth="3.5" strokeLinecap="round" />
-          {/* Animated Toothbrush scrubbing */}
+          <circle cx="50" cy="50" r="35" fill="#38BDF8" stroke="#fff" strokeWidth="4.5" className="animate-float" />
+          <circle cx="38" cy="45" r="10" fill="#E2E8F0" />
+          <circle cx="62" cy="45" r="10" fill="#E2E8F0" />
+          <path d="M40 65 Q50 75, 60 65" fill="none" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" />
           <g className="animate-scrub" style={{ transformOrigin: '70px 50px' }}>
             <rect x="25" y="32" width="50" height="8" rx="3" fill="#38BDF8" stroke="#fff" strokeWidth="3" />
             <rect x="25" y="24" width="16" height="8" rx="2" fill="#fff" />
@@ -189,13 +165,10 @@ const render3DIcon = (id: string) => {
     case 'iq':
       return (
         <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md">
-          {/* Bohr atom center */}
           <circle cx="50" cy="50" r="14" fill="#EF4444" stroke="#fff" strokeWidth="4.5" className="animate-float" />
-          {/* Electron orbit rings */}
           <ellipse cx="50" cy="50" rx="36" ry="12" fill="none" stroke="#3B82F6" strokeWidth="3.5" className="animate-orbit" />
           <ellipse cx="50" cy="50" rx="36" ry="12" fill="none" stroke="#10B981" strokeWidth="3.5" className="animate-orbit-rev" transform="rotate(60 50 50)" />
           <ellipse cx="50" cy="50" rx="36" ry="12" fill="none" stroke="#F59E0B" strokeWidth="3.5" className="animate-orbit" transform="rotate(-60 50 50)" />
-          {/* Electron particles */}
           <circle cx="14" cy="50" r="5" fill="#FBBF24" stroke="#fff" strokeWidth="2.5" />
           <circle cx="86" cy="50" r="5" fill="#FBBF24" stroke="#fff" strokeWidth="2.5" />
         </svg>
@@ -216,6 +189,31 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
   childProfile,
   globalStars = 0
 }) => {
+  // Capacitor landscape orientation lock/unlock logic
+  React.useEffect(() => {
+    if (activeCategory) {
+      try {
+        if ((window as any).Capacitor && (window as any).Capacitor.Plugins && (window as any).Capacitor.Plugins.ScreenOrientation) {
+          (window as any).Capacitor.Plugins.ScreenOrientation.lock({ orientation: 'landscape' });
+        } else if (screen.orientation && (screen.orientation as any).lock) {
+          (screen.orientation as any).lock('landscape').catch(() => {});
+        }
+      } catch (e) {
+        console.log("Capacitor lock failed:", e);
+      }
+    } else {
+      try {
+        if ((window as any).Capacitor && (window as any).Capacitor.Plugins && (window as any).Capacitor.Plugins.ScreenOrientation) {
+          (window as any).Capacitor.Plugins.ScreenOrientation.lock({ orientation: 'portrait' });
+        } else if (screen.orientation && (screen.orientation as any).unlock) {
+          screen.orientation.unlock();
+        }
+      } catch (e) {
+        console.log("Capacitor unlock failed:", e);
+      }
+    }
+  }, [activeCategory]);
+
   React.useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
   }, [activeCategory]);
@@ -245,6 +243,54 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
     { id: 'iq', title: 'ألعاب الذكاء', englishTitle: 'IQ GAMES', action: () => onSelectCategory?.('iq'), bgGradient: 'from-[#FBCFE8] to-[#7C3AED]', color: 'text-purple-950', shadowColor: '#6d28d9' }
   ];
 
+  const getSubcategories = (catId: string) => {
+    switch (catId) {
+      case 'arabic':
+        return [
+          { title: 'Phonemic Awareness (الوعي الفونيمي)', gameIds: ['arabicLetterTracing', 'arabicShadowMatch'] },
+          { title: 'Knowledge of Books (معرفة المطبوعات)', gameIds: ['sorting', 'spelling'] }
+        ];
+      case 'math':
+        return [
+          { title: 'Numbers & Counting (الأرقام والعد السحري)', gameIds: ['mathNumberTrain', 'mathSpaceTower'] },
+          { title: 'Math Operations (العمليات الحسابية والجمع)', gameIds: ['math', 'connectDots', 'mathHungryCrocodile'] }
+        ];
+      case 'fun_games':
+        return [
+          { title: 'Speed & Action (السرعة والنشاط اللانهائي)', gameIds: ['arrowRacer', 'tapRacer', 'ninja'] },
+          { title: 'Safari & Catching (صيد النجوم والتركيز)', gameIds: ['safari', 'catcher', 'spaceCatcher', 'maze'] },
+          { title: 'Fun & Adventure (المرح والمحاكاة)', gameIds: ['train', 'funWhackAMole', 'funHiddenCup'] }
+        ];
+      case 'kitchen':
+        return [
+          { title: 'Bloomly Chef (شيف بلومي الصغير)', gameIds: ['chef', 'kitchenPizzaMaker'] },
+          { title: 'Market & Juices (العصائر والتسوق)', gameIds: ['kitchenJuiceBar', 'kitchenMarketList'] }
+        ];
+      case 'coloring':
+        return [
+          { title: 'Paint Workshop (ورشة الألوان السحرية)', gameIds: ['coloring', 'drawingSymmetry'] },
+          { title: 'Neon Art (رسم النيون المضيء)', gameIds: ['drawingNeonArt'] }
+        ];
+      case 'iq':
+        return [
+          { title: 'Spot Differences (ألعاب الفروق والتفكير)', gameIds: ['iqSpotDifferences', 'spaceCatcher'] },
+          { title: 'Logic Puzzles (الذكاء والمنطق)', gameIds: ['memory', 'iqOddOneOut', 'iqMissingPiece'] }
+        ];
+      default:
+        const cat = categoriesData.find(c => c.id === catId);
+        const games = cat ? cat.games : [];
+        if (games.length <= 2) {
+          return [{ title: 'Level 1 (المستوى الأول)', gameIds: games }];
+        }
+        const mid = Math.ceil(games.length / 2);
+        return [
+          { title: 'Level 1 (المستوى الأول)', gameIds: games.slice(0, mid) },
+          { title: 'Level 2 (المستوى الثاني)', gameIds: games.slice(mid) }
+        ];
+    }
+  };
+
+  // View 1: 3D Category Selection Menu
   if (!activeCategory) {
     return (
       <div className="flex flex-col w-full min-h-screen relative z-10 select-none overflow-x-hidden justify-start items-center bg-transparent">
@@ -390,81 +436,135 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
     );
   }
 
+  // View 2: Highly Polished Landscape Lamsa-Style Subcategories
   const currentCategory = categoriesData.find(c => c.id === activeCategory);
-  const categoryGames = islandsData.filter(game => currentCategory?.games.includes(game.id));
   const activeClay = clayItems.find(c => c.id === activeCategory);
+  const subcategories = getSubcategories(activeCategory);
 
   return (
-    <div className="flex flex-col gap-8 w-full max-w-6xl mx-auto px-4 py-8 relative z-10 min-h-screen bg-transparent justify-start">
+    <div className="fixed inset-0 z-50 bg-[#163824] flex flex-col text-white font-sans select-none overflow-hidden">
       
-      <div 
-        className="relative rounded-[40px] p-6 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-6 border-[6px] border-white/60 overflow-hidden shadow-xl"
-        style={{ 
-          background: activeClay ? `linear-gradient(to bottom, ${activeClay.bgGradient.split(' ')[1]}, ${activeClay.bgGradient.split(' ')[3]})` : 'linear-gradient(135deg, #e0c3fc, #8ec5fc)'
-        }}
-      >
-        <div className="relative flex flex-col sm:flex-row items-center sm:items-start gap-4 z-10 w-full">
+      {/* Decorative Faint Outlines Chalk Background */}
+      <svg className="absolute inset-0 w-full h-full opacity-[0.07] pointer-events-none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <pattern id="chalk-pattern" width="160" height="160" patternUnits="userSpaceOnUse">
+            <path d="M30 40 L30 25 H45 L45 40 L25 65 H55 Z" fill="none" stroke="#fff" strokeWidth="3" />
+            <path d="M90 30 V45 M82 37 H98" stroke="#fff" strokeWidth="3" />
+            <polygon points="20,110 24,118 34,120 28,126 30,135 20,130 10,135 12,126 6,120 16,118" fill="none" stroke="#fff" strokeWidth="3" />
+            <path d="M120 120 L130 130 L134 146 L124 142 Z" fill="none" stroke="#fff" strokeWidth="3" />
+            <circle cx="70" cy="110" r="8" fill="none" stroke="#fff" strokeWidth="3" />
+            <path d="M78 80 V110" stroke="#fff" strokeWidth="3" />
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#chalk-pattern)" />
+      </svg>
+
+      {/* Transparent Header */}
+      <div className="h-20 shrink-0 w-full px-6 flex items-center justify-between bg-transparent relative z-30">
+        
+        {/* Left Header items: Home / Back button + Star Capsule badge */}
+        <div className="flex items-center gap-4">
           <button 
             onClick={onBackToCategories}
-            className="w-14 h-14 rounded-full bg-white border-[4px] border-white shadow-md flex items-center justify-center text-gray-600 hover:scale-110 active:scale-95 transition-transform self-start sm:self-center shrink-0 cursor-pointer"
+            className="w-14 h-14 rounded-full bg-[#10B981] border-[4px] border-white shadow-lg flex items-center justify-center text-white hover:scale-110 active:scale-95 transition-transform shrink-0 cursor-pointer"
           >
-            <ArrowRight className="w-8 h-8" />
+            <Home className="w-7 h-7" />
           </button>
           
-          <div className="text-center sm:text-right flex-1">
-            <span className={`inline-block text-xs font-black bg-white/80 backdrop-blur-md px-4 py-1.5 rounded-full mb-3 shadow-inner ${activeClay?.color}`}>
-              {activeClay?.englishTitle}
-            </span>
-            <h2 className={`text-4xl sm:text-5xl font-black mb-3 drop-shadow-md ${activeClay?.color}`}>
-              <span>{activeClay ? render3DIcon(activeClay.id) : null}</span> {' '} {activeClay?.title}
-            </h2>
-            <p className="text-gray-800 font-bold text-sm sm:text-lg max-w-2xl bg-white/85 backdrop-blur-md rounded-[20px] p-3 inline-block shadow-sm border-2 border-white">
-              اختر لعبة من هذه المجموعة للبدء في المغامرة!
-            </p>
+          <div className="bg-gradient-to-r from-yellow-400 to-amber-500 text-white font-black text-sm px-5 py-2.5 rounded-full flex items-center gap-1.5 border-[3px] border-white shadow-md relative overflow-hidden">
+            <span className="text-lg drop-shadow-md">⭐</span>
+            <span className="pl-1 drop-shadow-sm font-black">{globalStars}</span>
           </div>
         </div>
+
+        {/* Center Header: Category Title + Icon */}
+        <div className="flex items-center gap-3">
+          <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center border-2 border-white/40 shadow-inner">
+            {activeClay ? render3DIcon(activeClay.id) : null}
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-black drop-shadow-md tracking-wide">
+            {activeClay?.title}
+          </h2>
+        </div>
+
+        {/* Right Header: Burger Options button */}
+        <button 
+          onClick={onOpenParents}
+          className="w-14 h-14 rounded-full bg-white/20 border-[4px] border-white/50 shadow-md flex items-center justify-center text-white hover:scale-110 active:scale-95 transition-transform shrink-0 cursor-pointer"
+        >
+          <Menu className="w-7 h-7" />
+        </button>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6 pb-16">
-        {categoryGames.map((game) => {
+      {/* Scrollable Main Area (Multiple horizontal rows scroll vertically) */}
+      <div className="flex-1 w-full overflow-y-auto px-6 py-4 flex flex-col gap-8 pb-10 relative z-20 scrollbar-thin">
+        {subcategories.map((sub, rowIdx) => {
+          const matchedGames = islandsData.filter(game => sub.gameIds.includes(game.id));
+          if (matchedGames.length === 0) return null;
+
           return (
-            <div
-              key={game.id}
-              className="relative flex flex-col items-center text-center p-5 bg-white/95 backdrop-blur-md rounded-[40px] border-[5px] border-white cursor-pointer transition-transform hover:scale-105 active:scale-95 shadow-lg"
-              onClick={() => onSelectGame(game.id)}
-            >
-              <div className="relative z-10 w-20 h-20 bg-gray-50 rounded-full border-[4px] border-white shadow-inner flex items-center justify-center text-5xl mb-4">
-                <div style={{ filter: 'drop-shadow(0px 5px 5px rgba(0,0,0,0.15))' }}>
-                  {game.emoji}
-                </div>
-                <div className="absolute -bottom-2 -right-2 w-9 h-9 bg-white rounded-full border-[3px] border-white flex items-center justify-center text-xl shadow-md">
-                  {game.characterEmoji}
-                </div>
-              </div>
+            <div key={rowIdx} className="flex flex-col gap-3">
+              {/* Row title */}
+              <h3 className="text-xl font-black text-white/90 drop-shadow-sm tracking-wide px-1">
+                {sub.title}
+              </h3>
 
-              <div className="relative z-10 flex flex-col flex-1 w-full items-center">
-                <span className="bg-gray-100 px-3 py-1 rounded-full text-[10px] font-black text-gray-500 shadow-inner mb-3 border border-white">
-                  {game.badge}
-                </span>
-                
-                <h3 className="text-lg sm:text-xl font-black text-gray-800 mb-2 drop-shadow-sm leading-tight">
-                  {game.gameName}
-                </h3>
-                
-                <p className="text-gray-500 font-bold text-[10px] sm:text-xs leading-relaxed mb-5 px-1 line-clamp-2">
-                  {game.quest}
-                </p>
+              {/* Horizontal scroll grid */}
+              <div className="w-full overflow-x-auto flex gap-6 pb-4 scrollbar-none scroll-smooth">
+                {matchedGames.map((game, idx) => {
+                  // Lock/Unlock Logic: Unlock first game in each row, lock others
+                  const isLocked = idx > 0;
 
-                <div
-                  className="mt-auto w-full py-2.5 rounded-[20px] text-sm font-black shadow-md flex items-center justify-center gap-1.5 transition-transform"
-                  style={{
-                    background: activeClay ? `linear-gradient(to bottom, ${activeClay.bgGradient.split(' ')[1]}, ${activeClay.bgGradient.split(' ')[3]})` : '#f0f0f0',
-                    color: activeClay?.color || '#333'
-                  }}
-                >
-                  <Play className="w-5 h-5 fill-current relative z-10" />
-                  <span className="relative z-10">{game.id === 'quran' ? 'احفظ الآن!' : 'ابدأ اللعب!'}</span>
-                </div>
+                  return (
+                    <div
+                      key={game.id}
+                      className="w-[280px] sm:w-[320px] aspect-[16/10] shrink-0 rounded-[28px] border-[5px] border-white/95 relative overflow-hidden shadow-xl cursor-pointer hover:scale-103 active:scale-97 transition-all flex flex-col justify-end"
+                      style={{
+                        background: activeClay 
+                          ? `linear-gradient(135deg, ${activeClay.bgGradient.split(' ')[1]}, ${activeClay.bgGradient.split(' ')[3]})`
+                          : 'linear-gradient(135deg, #10B981, #059669)'
+                      }}
+                      onClick={() => {
+                        if (isLocked) {
+                          speakArabic("تعلّم المزيد لتفتح هذه اللعبة السحرية!");
+                          alert("تعلّم المزيد لتفتح هذه اللعبة السحرية! 🌟");
+                        } else {
+                          onSelectGame(game.id);
+                        }
+                      }}
+                    >
+                      {/* Playful Illustration overlay inside the card */}
+                      <div className="absolute inset-0 flex items-center justify-center pb-8 opacity-80">
+                        <span className="text-7xl filter drop-shadow-lg transform rotate-6">{game.emoji}</span>
+                      </div>
+
+                      {/* Top Left Tag Indicator */}
+                      <div className="absolute top-4 left-4 w-9 h-9 rounded-full bg-[#10B981] border-2 border-white flex items-center justify-center text-white shadow-md">
+                        ✓
+                      </div>
+
+                      {/* Locked Overlay if game is locked */}
+                      {isLocked && (
+                        <div className="absolute inset-0 bg-black/45 backdrop-blur-[2px] flex items-center justify-center z-20 transition-all">
+                          <div className="w-14 h-14 rounded-full bg-yellow-400 border-[3.5px] border-white shadow-lg flex items-center justify-center text-2xl animate-pulse">
+                            🔒
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Bottom Banner overlay containing play and title */}
+                      <div className="w-full bg-black/40 backdrop-blur-md py-3 px-4 border-t border-white/20 flex items-center justify-between z-10">
+                        <span className="text-sm font-black text-white truncate pr-2">
+                          {game.gameName}
+                        </span>
+                        
+                        <div className="w-9 h-9 rounded-full bg-red-500 border-2 border-white flex items-center justify-center shadow-md">
+                          <Play className="w-4 h-4 fill-white text-white ml-0.5" />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           );
