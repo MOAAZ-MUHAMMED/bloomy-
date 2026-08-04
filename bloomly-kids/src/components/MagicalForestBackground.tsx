@@ -2,17 +2,18 @@ import React from 'react';
 
 export const MagicalForestBackground: React.FC = () => {
   return (
-    <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10 bg-gradient-to-b from-[#FEF08A] via-[#FDE047] to-[#EAB308] select-none">
-      {/* Soft Playroom Ambient Background Texture */}
+    <div className="fixed inset-0 pointer-events-none overflow-hidden -z-10 bg-gradient-to-br from-[#FFFBEB] via-[#FDE047] to-[#F59E0B] select-none">
+      {/* Premium playroom dot grid pattern */}
       <div 
-        className="absolute inset-0 opacity-20"
+        className="absolute inset-0 opacity-15"
         style={{
-          backgroundImage: `radial-gradient(#CA8A04 1.5px, transparent 1.5px)`,
-          backgroundSize: '24px 24px'
+          backgroundImage: `radial-gradient(#B45309 2px, transparent 2px)`,
+          backgroundSize: '32px 32px'
         }}
       />
-      {/* Subtle Warm Playroom Center Highlight */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] h-[90vh] bg-white/20 rounded-full blur-3xl" />
+      {/* Decorative soft glowing playroom light rays */}
+      <div className="absolute -top-40 -left-40 w-96 h-96 bg-white/40 rounded-full blur-[100px]" />
+      <div className="absolute bottom-10 right-10 w-80 h-80 bg-amber-300/30 rounded-full blur-[80px]" />
     </div>
   );
 };
