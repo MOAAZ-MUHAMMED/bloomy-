@@ -92,6 +92,7 @@ export default function App() {
   const [showDailyReward, setShowDailyReward] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [showAdminDashboard, setShowAdminDashboard] = useState(false);
+  const [isInnerActive, setIsInnerActive] = useState(false);
   // بيانات الأدمين - غيّرها زي ما تحب
   const ADMIN_PHONE = "00000";
   const ADMIN_NAME = "admin";
@@ -895,154 +896,156 @@ export default function App() {
       <div className="bg-blob bg-blob-pink bottom-[15%] left-[20%]" />
 
       {/* 1. Capsule Header */}
-      <header className="container mx-auto px-4 pt-6 relative z-50">
-        <div className="bg-white border-4 border-[#4D2B82] rounded-full px-6 py-4 flex items-center justify-between shadow-[0_8px_0_0_#4D2B82]">
-          
-          {/* Logo */}
-          <div className="flex items-center gap-2 cursor-pointer select-none">
-            {/* Sprout Icon */}
-            <div className="w-8 h-8 bg-[#2ECC71] rounded-full border-2 border-[#4D2B82] flex items-center justify-center">
-              <span className="text-white text-xs">🌱</span>
+      {!isInnerActive && (
+        <header className="container mx-auto px-4 pt-6 relative z-50">
+          <div className="bg-white border-4 border-[#4D2B82] rounded-full px-6 py-4 flex items-center justify-between shadow-[0_8px_0_0_#4D2B82]">
+            
+            {/* Logo */}
+            <div className="flex items-center gap-2 cursor-pointer select-none">
+              {/* Sprout Icon */}
+              <div className="w-8 h-8 bg-[#2ECC71] rounded-full border-2 border-[#4D2B82] flex items-center justify-center">
+                <span className="text-white text-xs">🌱</span>
+              </div>
+              <span className="font-extrabold text-2xl tracking-tight text-[#4D2B82]">بلومي</span>
             </div>
-            <span className="font-extrabold text-2xl tracking-tight text-[#4D2B82]">بلومي</span>
-          </div>
 
-          {/* Desktop Nav Links */}
-          <nav className="hidden lg:flex items-center gap-4 xl:gap-6 font-bold text-xs xl:text-sm text-[#4D2B82]">
-            <a href="#game-zone" onClick={(e) => { e.preventDefault(); scrollToGames(); }} className="hover:text-[#E01E5A] transition-colors">الألعاب السحرية 🎮</a>
-            <button onClick={() => { playBubbleSound(); startLoadingGarden(); }} className="hover:text-[#E01E5A] transition-colors cursor-pointer font-bold bg-transparent border-none">الحديقة السحرية 🌿</button>
-            <button onClick={() => { playBubbleSound(); setForcedGame("quran"); }} className="hover:text-[#E01E5A] transition-colors cursor-pointer font-bold bg-transparent border-none">جزيرة القرآن 🕋</button>
-            <button onClick={() => { playBubbleSound(); setForcedGame("stories"); }} className="hover:text-[#E01E5A] transition-colors cursor-pointer font-bold bg-transparent border-none">قصص بلومي 📚</button>
-            <a href="#characters" onClick={(e) => { e.preventDefault(); setShowCharactersView(true); playBubbleSound(); }} className="hover:text-[#E01E5A] transition-colors">شخصيات بلومي 🦉</a>
-            <a href="#what-we-teach" className="hover:text-[#E01E5A] transition-colors">ماذا نتعلّم؟</a>
-            <a href="#how-it-works" className="hover:text-[#E01E5A] transition-colors">كيف نعمل؟</a>
-            <button onClick={() => { setCurrentView('parents'); playBubbleSound(); }} className="hover:text-[#E01E5A] transition-colors cursor-pointer font-bold bg-transparent border-none">أولياء الأمور</button>
-          </nav>
+            {/* Desktop Nav Links */}
+            <nav className="hidden lg:flex items-center gap-4 xl:gap-6 font-bold text-xs xl:text-sm text-[#4D2B82]">
+              <a href="#game-zone" onClick={(e) => { e.preventDefault(); scrollToGames(); }} className="hover:text-[#E01E5A] transition-colors">الألعاب السحرية 🎮</a>
+              <button onClick={() => { playBubbleSound(); startLoadingGarden(); }} className="hover:text-[#E01E5A] transition-colors cursor-pointer font-bold bg-transparent border-none">الحديقة السحرية 🌿</button>
+              <button onClick={() => { playBubbleSound(); setForcedGame("quran"); }} className="hover:text-[#E01E5A] transition-colors cursor-pointer font-bold bg-transparent border-none">جزيرة القرآن 🕋</button>
+              <button onClick={() => { playBubbleSound(); setForcedGame("stories"); }} className="hover:text-[#E01E5A] transition-colors cursor-pointer font-bold bg-transparent border-none">قصص بلومي 📚</button>
+              <a href="#characters" onClick={(e) => { e.preventDefault(); setShowCharactersView(true); playBubbleSound(); }} className="hover:text-[#E01E5A] transition-colors">شخصيات بلومي 🦉</a>
+              <a href="#what-we-teach" className="hover:text-[#E01E5A] transition-colors">ماذا نتعلّم؟</a>
+              <a href="#how-it-works" className="hover:text-[#E01E5A] transition-colors">كيف نعمل؟</a>
+              <button onClick={() => { setCurrentView('parents'); playBubbleSound(); }} className="hover:text-[#E01E5A] transition-colors cursor-pointer font-bold bg-transparent border-none">أولياء الأمور</button>
+            </nav>
 
-          {/* Start Free Button & Profile Tag */}
-          <div className="flex items-center gap-2 sm:gap-4">
-            {/* Global Music Toggle Button */}
-            <button
-              onClick={toggleGlobalBgMusic}
-              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center cursor-pointer border-2 transition-all active:scale-95 shadow-md ${
-                bgMusicPlaying 
-                  ? 'bg-[#2ECC71] border-[#27AE60] text-white shadow-[0_2px_0_0_#27AE60]' 
-                  : 'bg-white border-[#4D2B82] text-gray-500 hover:bg-slate-50'
-              }`}
-              title="موسيقى الخلفية 🎵"
-            >
-              {bgMusicPlaying ? (
-                <Volume2 className="w-4 h-4 sm:w-5 sm:h-5 text-white stroke-[2.5px]" />
-              ) : (
-                <VolumeX className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 stroke-[2.5px]" />
-              )}
-            </button>
+            {/* Start Free Button & Profile Tag */}
+            <div className="flex items-center gap-2 sm:gap-4">
+              {/* Global Music Toggle Button */}
+              <button
+                onClick={toggleGlobalBgMusic}
+                className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center cursor-pointer border-2 transition-all active:scale-95 shadow-md ${
+                  bgMusicPlaying 
+                    ? 'bg-[#2ECC71] border-[#27AE60] text-white shadow-[0_2px_0_0_#27AE60]' 
+                    : 'bg-white border-[#4D2B82] text-gray-500 hover:bg-slate-50'
+                }`}
+                title="موسيقى الخلفية 🎵"
+              >
+                {bgMusicPlaying ? (
+                  <Volume2 className="w-4 h-4 sm:w-5 sm:h-5 text-white stroke-[2.5px]" />
+                ) : (
+                  <VolumeX className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500 stroke-[2.5px]" />
+                )}
+              </button>
 
-            {childProfile && (
-              <div className="flex items-center gap-2">
-                <div 
-                  className="bg-[#FFECA1] border-3 border-[#4D2B82] text-[#4D2B82] text-xs sm:text-sm py-1.5 px-3 flex items-center gap-2 rounded-full shadow-[0_4px_0_0_#4D2B82] font-black select-none"
-                >
-                  <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden border-2 border-[#4D2B82] bg-white flex items-center justify-center">
-                    {childProfile.gender === "boy" ? (
-                      <BoyAvatar className="w-full h-full scale-110" />
-                    ) : (
-                      <GirlAvatar className="w-full h-full scale-110" />
-                    )}
+              {childProfile && (
+                <div className="flex items-center gap-2">
+                  <div 
+                    className="bg-[#FFECA1] border-3 border-[#4D2B82] text-[#4D2B82] text-xs sm:text-sm py-1.5 px-3 flex items-center gap-2 rounded-full shadow-[0_4px_0_0_#4D2B82] font-black select-none"
+                  >
+                    <div className="w-6 h-6 sm:w-7 sm:h-7 rounded-full overflow-hidden border-2 border-[#4D2B82] bg-white flex items-center justify-center">
+                      {childProfile.gender === "boy" ? (
+                        <BoyAvatar className="w-full h-full scale-110" />
+                      ) : (
+                        <GirlAvatar className="w-full h-full scale-110" />
+                      )}
+                    </div>
+                    <span>مرحبا {childProfile.name}</span>
                   </div>
-                  <span>مرحبا {childProfile.name}</span>
+                  <button
+                    onClick={() => {
+                      setShowProfileModal(true);
+                      playBubbleSound();
+                    }}
+                    className="btn-bubbly-purple text-xs py-1.5 px-3.5 flex items-center gap-1 cursor-pointer shadow-[0_4px_0_0_#4D2B82] hover:translate-y-[-1px] hover:shadow-[0_5px_0_0_#4D2B82] active:translate-y-[2px] active:shadow-[0_1px_0_0_#4D2B82]"
+                  >
+                    <span>تعديل الملف الشخصي ⚙️</span>
+                  </button>
                 </div>
-                <button
-                  onClick={() => {
-                    setShowProfileModal(true);
-                    playBubbleSound();
-                  }}
-                  className="btn-bubbly-purple text-xs py-1.5 px-3.5 flex items-center gap-1 cursor-pointer shadow-[0_4px_0_0_#4D2B82] hover:translate-y-[-1px] hover:shadow-[0_5px_0_0_#4D2B82] active:translate-y-[2px] active:shadow-[0_1px_0_0_#4D2B82]"
-                >
-                  <span>تعديل الملف الشخصي ⚙️</span>
-                </button>
-              </div>
-            )}
-            <button 
-              onClick={() => { setShowCharactersView(true); playBubbleSound(); }}
-              className="lg:hidden btn-bubbly-purple text-xs py-1.5 px-3 flex items-center justify-center gap-1 cursor-pointer"
-            >
-              <span>الشخصيات 🦉</span>
-            </button>
-            {!childProfile && (
-              <div className="hidden sm:flex items-center gap-2">
-                <button
-                  onClick={() => { setShowLogin(true); playBubbleSound(); }}
-                  className="btn-bubbly-secondary text-sm py-2 px-4 border-2 border-[#4D2B82] text-[#4D2B82] bg-white rounded-full font-black hover:bg-purple-50 transition-colors shadow-[0_3px_0_0_#4D2B82] cursor-pointer"
-                >
-                  تسجيل الدخول 🔑
-                </button>
-                <button
-                  onClick={() => { setShowRegister(true); playBubbleSound(); }}
-                  className="btn-bubbly-purple text-sm py-2.5 px-5 cursor-pointer"
-                >
-                  انشئ حساب والعب دلوقتي 🚀
-                </button>
-              </div>
-            )}
-            <button 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-full border-2 border-[#4D2B82] hover:bg-purple-50 cursor-pointer"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+              )}
+              <button 
+                onClick={() => { setShowCharactersView(true); playBubbleSound(); }}
+                className="lg:hidden btn-bubbly-purple text-xs py-1.5 px-3 flex items-center justify-center gap-1 cursor-pointer"
+              >
+                <span>الشخصيات 🦉</span>
+              </button>
+              {!childProfile && (
+                <div className="hidden sm:flex items-center gap-2">
+                  <button
+                    onClick={() => { setShowLogin(true); playBubbleSound(); }}
+                    className="btn-bubbly-secondary text-sm py-2 px-4 border-2 border-[#4D2B82] text-[#4D2B82] bg-white rounded-full font-black hover:bg-purple-50 transition-colors shadow-[0_3px_0_0_#4D2B82] cursor-pointer"
+                  >
+                    تسجيل الدخول 🔑
+                  </button>
+                  <button
+                    onClick={() => { setShowRegister(true); playBubbleSound(); }}
+                    className="btn-bubbly-purple text-sm py-2.5 px-5 cursor-pointer"
+                  >
+                    انشئ حساب والعب دلوقتي 🚀
+                  </button>
+                </div>
+              )}
+              <button 
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="lg:hidden p-2 rounded-full border-2 border-[#4D2B82] hover:bg-purple-50 cursor-pointer"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
-        </div>
 
-        {/* Mobile Menu Dropdown */}
-        {mobileMenuOpen && (
-          <div className="absolute top-[85px] left-4 right-4 bg-white border-3 border-[#4D2B82] rounded-[24px] p-6 shadow-[0_6px_0_0_#4D2B82] flex flex-col gap-4 text-center font-bold text-lg lg:hidden z-50">
-            {!childProfile && (
-              <div className="flex flex-col gap-3 pb-3 border-b-2 border-purple-100">
-                <button
-                  onClick={() => { setMobileMenuOpen(false); setShowLogin(true); playBubbleSound(); }}
-                  className="btn-bubbly-secondary text-base py-3 px-4 border-2 border-[#4D2B82] text-[#4D2B82] bg-white rounded-2xl font-black hover:bg-purple-50 transition-colors shadow-[0_3px_0_0_#4D2B82] cursor-pointer"
-                >
-                  تسجيل الدخول 🔑
-                </button>
-                <button
-                  onClick={() => { setMobileMenuOpen(false); setShowRegister(true); playBubbleSound(); }}
-                  className="btn-bubbly-purple text-base py-3 px-5 cursor-pointer rounded-2xl"
-                >
-                  انشئ حساب والعب دلوقتي 🚀
-                </button>
-              </div>
-            )}
-            <a href="#game-zone" onClick={(e) => { e.preventDefault(); scrollToGames(); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">الألعاب السحرية 🎮</a>
-            <button onClick={() => { playBubbleSound(); startLoadingGarden(); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A] cursor-pointer text-right w-full font-bold bg-transparent border-none">الحديقة السحرية 🌿</button>
-            <button onClick={() => { playBubbleSound(); setMobileMenuOpen(false); setForcedGame("quran"); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A] cursor-pointer text-right w-full font-bold bg-transparent border-none">جزيرة القرآن 🕋</button>
-            <button onClick={() => { playBubbleSound(); setMobileMenuOpen(false); setForcedGame("stories"); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A] cursor-pointer text-right w-full font-bold bg-transparent border-none">قصص بلومي 📚</button>
-            <a href="#characters" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); setShowCharactersView(true); playBubbleSound(); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">شخصيات بلومي 🦉</a>
-            <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">كيف نعمل؟</a>
-            <button onClick={() => { setMobileMenuOpen(false); setCurrentView('parents'); playBubbleSound(); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A] cursor-pointer text-right w-full font-bold bg-transparent border-none">أولياء الأمور</button>
+          {/* Mobile Menu Dropdown */}
+          {mobileMenuOpen && (
+            <div className="absolute top-[85px] left-4 right-4 bg-white border-3 border-[#4D2B82] rounded-[24px] p-6 shadow-[0_6px_0_0_#4D2B82] flex flex-col gap-4 text-center font-bold text-lg lg:hidden z-50">
+              {!childProfile && (
+                <div className="flex flex-col gap-3 pb-3 border-b-2 border-purple-100">
+                  <button
+                    onClick={() => { setMobileMenuOpen(false); setShowLogin(true); playBubbleSound(); }}
+                    className="btn-bubbly-secondary text-base py-3 px-4 border-2 border-[#4D2B82] text-[#4D2B82] bg-white rounded-2xl font-black hover:bg-purple-50 transition-colors shadow-[0_3px_0_0_#4D2B82] cursor-pointer"
+                  >
+                    تسجيل الدخول 🔑
+                  </button>
+                  <button
+                    onClick={() => { setMobileMenuOpen(false); setShowRegister(true); playBubbleSound(); }}
+                    className="btn-bubbly-purple text-base py-3 px-5 cursor-pointer rounded-2xl"
+                  >
+                    انشئ حساب والعب دلوقتي 🚀
+                  </button>
+                </div>
+              )}
+              <a href="#game-zone" onClick={(e) => { e.preventDefault(); scrollToGames(); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">الألعاب السحرية 🎮</a>
+              <button onClick={() => { playBubbleSound(); startLoadingGarden(); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A] cursor-pointer text-right w-full font-bold bg-transparent border-none">الحديقة السحرية 🌿</button>
+              <button onClick={() => { playBubbleSound(); setMobileMenuOpen(false); setForcedGame("quran"); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A] cursor-pointer text-right w-full font-bold bg-transparent border-none">جزيرة القرآن 🕋</button>
+              <button onClick={() => { playBubbleSound(); setMobileMenuOpen(false); setForcedGame("stories"); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A] cursor-pointer text-right w-full font-bold bg-transparent border-none">قصص بلومي 📚</button>
+              <a href="#characters" onClick={(e) => { e.preventDefault(); setMobileMenuOpen(false); setShowCharactersView(true); playBubbleSound(); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">شخصيات بلومي 🦉</a>
+              <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-purple-100 hover:text-[#E01E5A]">كيف نعمل؟</a>
+              <button onClick={() => { setMobileMenuOpen(false); setCurrentView('parents'); playBubbleSound(); }} className="py-2 border-b border-purple-100 hover:text-[#E01E5A] cursor-pointer text-right w-full font-bold bg-transparent border-none">أولياء الأمور</button>
 
-            <button 
-              onClick={scrollToGames}
-              className="btn-bubbly-primary w-full py-3 mt-2"
-            >
-              ابدأ اللعب مجاناً 🎮
-            </button>
-          </div>
-        )}
-      </header>
+              <button 
+                onClick={scrollToGames}
+                className="btn-bubbly-primary w-full py-3 mt-2"
+              >
+                ابدأ اللعب مجاناً 🎮
+              </button>
+            </div>
+          )}
+        </header>
+      )}
 
       {/* 2. Farm Interactive Section (At the top now) */}
-      <section className="container mx-auto px-4 pt-12 md:pt-20 pb-8 relative z-10 flex flex-col items-center justify-center">
-        <div className="flex flex-col items-center justify-center gap-6 relative max-w-2xl w-full">
-          {/* Little background decor */}
-          <div className="absolute -top-6 -right-6 text-yellow-300 text-4xl animate-pulse">✨</div>
-          <div className="absolute -bottom-6 -left-6 text-purple-300 text-4xl animate-float">🌸</div>
-          
-          <InteractiveGarden />
-
-          
-        </div>
-      </section>
+      {!isInnerActive && (
+        <section className="container mx-auto px-4 pt-12 md:pt-20 pb-8 relative z-10 flex flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center gap-6 relative max-w-2xl w-full">
+            {/* Little background decor */}
+            <div className="absolute -top-6 -right-6 text-yellow-300 text-4xl animate-pulse">✨</div>
+            <div className="absolute -bottom-6 -left-6 text-purple-300 text-4xl animate-float">🌸</div>
+            
+            <InteractiveGarden />
+          </div>
+        </section>
+      )}
 
       {/* 3. Game Zone Section */}
       <GameZone 
@@ -1062,6 +1065,7 @@ export default function App() {
         }}
         onOpenMagicGarden={() => startLoadingGarden()}
         onActivityComplete={handleActivityComplete}
+        onViewStateChange={(isInner) => setIsInnerActive(isInner)}
       />
         </>
       )}
@@ -1069,31 +1073,28 @@ export default function App() {
       {/* 4. Hero Text Section (Moved below Games) */}
       
 
-
-
       {/* 6. Parent Dashboard/Testimonial Section */}
       
 
 
-
       {/* 7. Footer Section */}
 
-      <footer className="container mx-auto px-4 mt-12 pt-12 border-t-3 border-[#4D2B82]/10 text-center">
-
-
-        <div className="flex flex-col items-center justify-center space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-[#2ECC71] rounded-full flex items-center justify-center text-[10px]">🌱</div>
-            <span className="font-extrabold text-xl text-[#4D2B82]">بلومي للأطفال</span>
+      {!isInnerActive && (
+        <footer className="container mx-auto px-4 mt-12 pt-12 border-t-3 border-[#4D2B82]/10 text-center">
+          <div className="flex flex-col items-center justify-center space-y-4">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-[#2ECC71] rounded-full flex items-center justify-center text-[10px]">🌱</div>
+              <span className="font-extrabold text-xl text-[#4D2B82]">بلومي للأطفال</span>
+            </div>
+            <p className="text-sm font-bold text-purple-400">
+              تأسيس ممتع، عقول تزهر، ومستقبل مشرق.
+            </p>
+            <p className="text-xs text-purple-300 font-bold select-none">
+              © ٢٠٢٦ بلومي. جميع الحقوق محفوظة.
+            </p>
           </div>
-          <p className="text-sm font-bold text-purple-400">
-            تأسيس ممتع، عقول تزهر، ومستقبل مشرق.
-          </p>
-          <p className="text-xs text-purple-300 font-bold select-none">
-            © ٢٠٢٦ بلومي. جميع الحقوق محفوظة.
-          </p>
-        </div>
-      </footer>
+        </footer>
+      )}
 
       {/* Profile Details Modal */}
       <AnimatePresence>

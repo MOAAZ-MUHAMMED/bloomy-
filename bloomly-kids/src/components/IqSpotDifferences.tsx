@@ -66,12 +66,13 @@ export default function IqSpotDifferences({ onWin, difficulty = "level1" }: IqSp
   const [currentSceneIndex, setCurrentSceneIndex] = useState(0);
   const [foundDiffIds, setFoundDiffIds] = useState<string[]>([]);
   const [gameState, setGameState] = useState<"playing" | "won">("playing");
+  const hasCompletedRef = useRef(false);
 
   const currentScene = SCENES_BANK[currentSceneIndex % SCENES_BANK.length];
   const activeDiffs = currentScene.differences.slice(0, targetRequiredCount);
 
   const handleDiffClick = (diffId: string) => {
-    if (foundDiffIds.includes(diffId) || gameState !== "playing") return;
+    if (foundDiffIds.includes(diffId) || gameState !== "playing" || hasCompletedRef.current) return;
 
     const newFound = [...foundDiffIds, diffId];
     setFoundDiffIds(newFound);
@@ -79,6 +80,7 @@ export default function IqSpotDifferences({ onWin, difficulty = "level1" }: IqSp
     if ((window as any).sfx) (window as any).sfx.playPop();
 
     if (newFound.length === activeDiffs.length) {
+      hasCompletedRef.current = true;
       setGameState("won");
       confetti({
         particleCount: 80,
@@ -94,13 +96,14 @@ export default function IqSpotDifferences({ onWin, difficulty = "level1" }: IqSp
   };
 
   const nextScene = () => {
+    hasCompletedRef.current = false;
     setFoundDiffIds([]);
     setGameState("playing");
     setCurrentSceneIndex((prev) => (prev + 1) % SCENES_BANK.length);
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] w-full px-4 py-4 font-sans select-none" dir="rtl">
+    <div className="fixed inset-0 w-full h-full p-6 bg-slate-950 overflow-y-auto select-none flex flex-col items-center justify-center font-sans text-white" dir="rtl">
       {/* HUD Bar */}
       <div className="bg-slate-900/90 backdrop-blur-md px-6 py-3 rounded-full border-2 border-indigo-500/50 shadow-md mb-4 flex items-center justify-between gap-6 max-w-2xl w-full">
         <div className="flex items-center gap-2 text-indigo-300 font-extrabold text-base">
@@ -120,10 +123,10 @@ export default function IqSpotDifferences({ onWin, difficulty = "level1" }: IqSp
         💡 قارن الصورة العلوية بالصورة السفلية واضغط على الاختلافات في الصورة السفلية!
       </p>
 
-      {/* Two Images Stack */}
-      <div className="flex flex-col gap-4 w-full max-w-md items-center">
+      {/* Two Images Stack - Side-by-side in landscape/medium screens */}
+      <div className="flex flex-col md:flex-row gap-6 w-full max-w-4xl justify-center items-center">
         {/* Top Image (Original) */}
-        <div className="relative w-full">
+        <div className="relative w-full max-w-[380px]">
           <div className="absolute top-2 right-2 bg-indigo-600/90 backdrop-blur-sm text-white font-black text-xs px-3 py-1 rounded-full z-10 border border-indigo-400/40 shadow">
             الصورة الأصلية 🖼️
           </div>
@@ -144,7 +147,7 @@ export default function IqSpotDifferences({ onWin, difficulty = "level1" }: IqSp
         </div>
 
         {/* Bottom Image (Modified - Interactive) */}
-        <div className="relative w-full">
+        <div className="relative w-full max-w-[380px]">
           <div className="absolute top-2 right-2 bg-rose-600/90 backdrop-blur-sm text-white font-black text-xs px-3 py-1 rounded-full z-10 border border-rose-400/40 shadow">
             أوجد الاختلاف هنا 🔍
           </div>

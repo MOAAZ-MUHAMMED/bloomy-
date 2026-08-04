@@ -58,6 +58,7 @@ export default function KitchenMarketList({ onComplete, onBack }: KitchenMarketL
   const [shoppingStep, setShoppingStep] = useState(0); // 0 to 4
   const [showConfetti, setShowConfetti] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const hasCompletedRef = useRef(false);
 
   // Initialize Game Data
   useEffect(() => {
@@ -193,7 +194,10 @@ export default function KitchenMarketList({ onComplete, onBack }: KitchenMarketL
       } else {
         setTimeout(() => {
           speak("رائع يا بطل! لقد جمعنا كل الطلبات، المطبخ بانتظارنا!");
-          setTimeout(onComplete, 2500);
+          if (!hasCompletedRef.current) {
+            hasCompletedRef.current = true;
+            setTimeout(onComplete, 2500);
+          }
         }, 1000);
       }
     } else {
@@ -203,7 +207,7 @@ export default function KitchenMarketList({ onComplete, onBack }: KitchenMarketL
   };
 
   return (
-    <div className="w-full h-[100vh] sm:h-auto sm:aspect-[4/3] max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-2xl relative select-none" dir="rtl">
+    <div className="fixed inset-0 w-full h-full rounded-none overflow-hidden relative select-none" dir="rtl">
       
       {/* Dynamic Backgrounds */}
       <div className={`absolute inset-0 transition-colors duration-1000 ${phase.includes('list') ? 'bg-gradient-to-br from-[#FFFCE6] to-[#FFE0B2]' : 'bg-gradient-to-br from-[#E0F7FA] to-[#B2EBF2]'}`} />

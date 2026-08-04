@@ -8,6 +8,7 @@ interface Props {
 
 export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
   const [traced, setTraced] = useState(false);
+  const hasCompletedRef = React.useRef(false);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-yellow-100 to-orange-200 p-4 font-sans">
@@ -25,7 +26,13 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
             <motion.div
               drag
               dragConstraints={{ top: -50, bottom: 50, left: -50, right: 50 }}
-              onDragEnd={() => { setTraced(true); setTimeout(onComplete, 1500); }}
+              onDragEnd={() => {
+                if (!hasCompletedRef.current) {
+                  hasCompletedRef.current = true;
+                  setTraced(true);
+                  setTimeout(onComplete, 1500);
+                }
+              }}
               className="absolute top-1/4 left-1/2 -translate-x-1/2 w-12 h-12 bg-white rounded-full cursor-grab active:cursor-grabbing shadow-lg border-4 border-orange-300 flex items-center justify-center text-2xl"
             >
               🍎

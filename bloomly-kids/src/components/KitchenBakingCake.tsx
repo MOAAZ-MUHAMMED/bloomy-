@@ -10,6 +10,7 @@ export default function KitchenBakingCake({ onComplete, onBack }: Props) {
   const [stirCount, setStirCount] = useState(0);
   const [step, setStep] = useState<'stir' | 'bake' | 'decorate'>('stir');
   const [decorations, setDecorations] = useState<{x: number, y: number, emoji: string}[]>([]);
+  const hasCompletedRef = React.useRef(false);
 
   const handleStir = () => {
     if (step === 'stir') {
@@ -28,20 +29,23 @@ export default function KitchenBakingCake({ onComplete, onBack }: Props) {
   };
 
   const handleDecorate = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (step === 'decorate') {
+    if (step === 'decorate' && !hasCompletedRef.current) {
       const rect = e.currentTarget.getBoundingClientRect();
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
       const newDecs = [...decorations, { x, y, emoji: ['🍓', '🍒', '✨', '🍫'][Math.floor(Math.random() * 4)] }];
       setDecorations(newDecs);
       if (newDecs.length >= 5) {
-        setTimeout(onComplete, 1000);
+        if (!hasCompletedRef.current) {
+          hasCompletedRef.current = true;
+          setTimeout(onComplete, 1000);
+        }
       }
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[400px] w-full p-6 bg-purple-100 rounded-3xl shadow-xl relative overflow-hidden">
+    <div className="fixed inset-0 w-full h-full p-6 bg-purple-100 overflow-y-auto select-none flex flex-col items-center justify-center font-sans">
       {onBack && (
         <button onClick={onBack} className="absolute top-4 left-4 bg-white/50 hover:bg-white text-purple-500 p-2 rounded-full shadow-md transition-colors font-bold z-10">
           ← Back

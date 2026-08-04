@@ -103,11 +103,12 @@ export default function IqMastermind({ onWin }: IqMastermindProps) {
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [feedback, setFeedback] = useState<"correct" | "wrong" | "idle">("idle");
   const [isCompleted, setIsCompleted] = useState(false);
+  const hasCompletedRef = React.useRef(false);
 
   const currentChallenge = IQ_CHALLENGES[currentIndex];
 
   const handleSelectOption = (index: number) => {
-    if (feedback !== "idle") return;
+    if (feedback !== "idle" || hasCompletedRef.current) return;
     setSelectedOption(index);
 
     if (index === currentChallenge.correctAnswerIndex) {
@@ -128,7 +129,10 @@ export default function IqMastermind({ onWin }: IqMastermindProps) {
           setFeedback("idle");
         } else {
           setIsCompleted(true);
-          setTimeout(() => onWin(30), 1800);
+          if (!hasCompletedRef.current) {
+            hasCompletedRef.current = true;
+            setTimeout(() => onWin(30), 1800);
+          }
         }
       }, 1400);
     } else {
@@ -144,7 +148,7 @@ export default function IqMastermind({ onWin }: IqMastermindProps) {
 
   if (isCompleted) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] p-6 text-center" dir="rtl">
+      <div className="fixed inset-0 w-full h-full p-6 bg-slate-950 select-none flex flex-col items-center justify-center font-sans text-center text-white" dir="rtl">
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 200 }} className="relative mb-6">
           <Brain className="w-28 h-28 text-yellow-400 animate-pulse filter drop-shadow-[0_0_20px_rgba(250,204,21,0.8)]" />
           <Sparkles className="w-12 h-12 text-cyan-300 absolute -top-2 -right-2 animate-bounce" />
@@ -156,7 +160,12 @@ export default function IqMastermind({ onWin }: IqMastermindProps) {
           حللت جميع مصفوفات وألغاز الذكاء المتقدمة ببراعة وسرعة فائقة!
         </p>
         <button
-          onClick={() => onWin(30)}
+          onClick={() => {
+            if (!hasCompletedRef.current) {
+              hasCompletedRef.current = true;
+              onWin(30);
+            }
+          }}
           className="bg-gradient-to-r from-yellow-400 to-amber-500 text-slate-950 font-black text-2xl px-10 py-4 rounded-full shadow-[0_0_30px_rgba(250,204,21,0.6)] hover:scale-105 active:scale-95 transition-all cursor-pointer"
         >
           استلم تاج العباقرة والنجوم 👑
@@ -166,7 +175,7 @@ export default function IqMastermind({ onWin }: IqMastermindProps) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[70vh] w-full px-4 py-6 font-sans select-none" dir="rtl">
+    <div className="fixed inset-0 w-full h-full p-6 bg-slate-950 overflow-y-auto select-none flex flex-col items-center justify-center font-sans text-white" dir="rtl">
       {/* Header Banner */}
       <div className="bg-slate-900/90 backdrop-blur-md px-8 py-3 rounded-full border-2 border-indigo-500/50 shadow-[0_0_20px_rgba(99,102,241,0.3)] mb-6 flex items-center gap-4">
         <Brain className="w-7 h-7 text-indigo-400" />

@@ -17,14 +17,18 @@ const INGREDIENTS = [
 export default function KitchenSandwichMaker({ onComplete, onBack }: Props) {
   const [stack, setStack] = useState<string[]>([]);
   const targetOrder = INGREDIENTS.map(i => i.id);
+  const hasCompletedRef = React.useRef(false);
 
   const handleAdd = (id: string) => {
-    if (stack.length < targetOrder.length) {
+    if (stack.length < targetOrder.length && !hasCompletedRef.current) {
       const newStack = [...stack, id];
       setStack(newStack);
       if (newStack.length === targetOrder.length) {
         if (newStack.every((val, index) => val === targetOrder[index])) {
-          setTimeout(() => onComplete(), 1000);
+          if (!hasCompletedRef.current) {
+            hasCompletedRef.current = true;
+            setTimeout(() => onComplete(), 1000);
+          }
         } else {
           // Reset if wrong
           setTimeout(() => setStack([]), 1000);
@@ -34,7 +38,7 @@ export default function KitchenSandwichMaker({ onComplete, onBack }: Props) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[400px] w-full p-6 bg-pink-100 rounded-3xl shadow-xl relative overflow-hidden">
+    <div className="fixed inset-0 w-full h-full p-6 bg-pink-100 overflow-y-auto select-none flex flex-col items-center justify-center font-sans">
       {onBack && (
         <button onClick={onBack} className="absolute top-4 left-4 bg-white/50 hover:bg-white text-pink-500 p-2 rounded-full shadow-md transition-colors font-bold z-10">
           ← Back

@@ -41,6 +41,8 @@ export default function ArabicShadowMatch({ level = 1, onComplete, onBack }: Pro
     return 5;
   };
 
+  const hasCompletedRef = React.useRef(false);
+
   useEffect(() => {
     const count = getItemCount(level);
     const shuffledPool = [...ITEMS_POOL].sort(() => 0.5 - Math.random());
@@ -51,6 +53,7 @@ export default function ArabicShadowMatch({ level = 1, onComplete, onBack }: Pro
     setMatchedIds([]);
     setSelectedId(null);
     setFeedback('idle');
+    hasCompletedRef.current = false;
   }, [level]);
 
   const playSound = (type: 'correct' | 'wrong' | 'pop') => {
@@ -105,7 +108,10 @@ export default function ArabicShadowMatch({ level = 1, onComplete, onBack }: Pro
       setSelectedId(null);
 
       if (newMatched.length === items.length) {
-        setTimeout(onComplete, 1800);
+        if (!hasCompletedRef.current) {
+          hasCompletedRef.current = true;
+          setTimeout(onComplete, 1800);
+        }
       } else {
         setTimeout(() => setFeedback('idle'), 800);
       }

@@ -8,6 +8,7 @@ interface Props {
 
 export default function EnglishColorCloud({ onComplete, onBack }: Props) {
   const [raining, setRaining] = useState(false);
+  const hasCompletedRef = React.useRef(false);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-cyan-100 to-blue-200 p-4 font-sans overflow-hidden">
@@ -27,7 +28,7 @@ export default function EnglishColorCloud({ onComplete, onBack }: Props) {
           >
             ☁️
           </motion.div>
-
+ 
           {raining && (
             <motion.div 
               initial={{ opacity: 0 }} 
@@ -39,14 +40,15 @@ export default function EnglishColorCloud({ onComplete, onBack }: Props) {
               <motion.span animate={{ y: [0, 150], opacity: [1, 0] }} transition={{ repeat: Infinity, duration: 0.9, delay: 0.4 }}>💧</motion.span>
             </motion.div>
           )}
-
+ 
           <div className="mt-auto pb-6 relative z-20">
             {!raining ? (
               <motion.div
                 drag
                 dragConstraints={{ top: -200, bottom: 0, left: -100, right: 100 }}
                 onDragEnd={(e, info) => {
-                  if (info.offset.y < -50) {
+                  if (info.offset.y < -50 && !hasCompletedRef.current) {
+                    hasCompletedRef.current = true;
                     setRaining(true);
                     setTimeout(onComplete, 2000);
                   }

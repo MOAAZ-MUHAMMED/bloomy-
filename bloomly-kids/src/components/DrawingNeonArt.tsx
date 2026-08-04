@@ -181,7 +181,7 @@ export default function DrawingNeonArt({ onComplete, onBack }: DrawingNeonArtPro
   };
 
   return (
-    <div className="w-full h-[100vh] sm:h-[80vh] max-w-5xl mx-auto rounded-3xl overflow-hidden shadow-2xl relative select-none flex flex-col bg-slate-900 border-4 border-slate-700" dir="rtl">
+    <div className="fixed inset-0 w-full h-full rounded-none overflow-hidden relative select-none flex flex-col bg-slate-900" dir="rtl">
       
       {showConfetti && <ConfettiExplosion onComplete={() => setShowConfetti(false)} />}
 

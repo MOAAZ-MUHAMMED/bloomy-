@@ -512,8 +512,8 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
               {/* Horizontal scroll grid */}
               <div className="w-full overflow-x-auto flex gap-6 pb-4 scrollbar-none scroll-smooth">
                 {matchedGames.map((game, idx) => {
-                  // Lock/Unlock Logic: Unlock first game in each row, lock others
-                  const isLocked = idx > 0;
+                  // All games are now unlocked per user request
+                  const isLocked = false;
 
                   return (
                     <div
@@ -525,12 +525,7 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
                           : 'linear-gradient(135deg, #10B981, #059669)'
                       }}
                       onClick={() => {
-                        if (isLocked) {
-                          speakArabic("تعلّم المزيد لتفتح هذه اللعبة السحرية!");
-                          alert("تعلّم المزيد لتفتح هذه اللعبة السحرية! 🌟");
-                        } else {
-                          onSelectGame(game.id);
-                        }
+                        onSelectGame(game.id);
                       }}
                     >
                       {/* Playful Illustration overlay inside the card */}
@@ -542,15 +537,6 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
                       <div className="absolute top-4 left-4 w-9 h-9 rounded-full bg-[#10B981] border-2 border-white flex items-center justify-center text-white shadow-md">
                         ✓
                       </div>
-
-                      {/* Locked Overlay if game is locked */}
-                      {isLocked && (
-                        <div className="absolute inset-0 bg-black/45 backdrop-blur-[2px] flex items-center justify-center z-20 transition-all">
-                          <div className="w-14 h-14 rounded-full bg-yellow-400 border-[3.5px] border-white shadow-lg flex items-center justify-center text-2xl animate-pulse">
-                            🔒
-                          </div>
-                        </div>
-                      )}
 
                       {/* Bottom Banner overlay containing play and title */}
                       <div className="w-full bg-black/40 backdrop-blur-md py-3 px-4 border-t border-white/20 flex items-center justify-between z-10">

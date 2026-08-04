@@ -867,6 +867,7 @@ interface GameZoneProps {
   onOpenAbout?: () => void;
   onOpenMagicGarden?: () => void;
   onActivityComplete?: (gameName: string, categoryId: string, starsEarned: number) => void;
+  onViewStateChange?: (isInner: boolean) => void;
 }
 
 export function GameZone({ 
@@ -879,11 +880,18 @@ export function GameZone({
   onOpenParents,
   onOpenAbout,
   onOpenMagicGarden,
-  onActivityComplete
+  onActivityComplete,
+  onViewStateChange
 }: GameZoneProps = {}) {
   const [activeGame, setActiveGame] = useState<any>("menu");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const gameZoneRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    if (onViewStateChange) {
+      onViewStateChange(activeCategory !== null || activeGame !== "menu");
+    }
+  }, [activeCategory, activeGame, onViewStateChange]);
 
   useEffect(() => {
     if (forcedGame && setForcedGame) {

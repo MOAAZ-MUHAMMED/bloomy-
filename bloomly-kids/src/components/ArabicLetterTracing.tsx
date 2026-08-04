@@ -167,27 +167,26 @@ export default function ArabicLetterTracing({ onComplete, onBack }: Props) {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-pink-100 via-rose-100 to-purple-200 flex flex-col items-center justify-between p-4 font-sans select-none relative overflow-hidden" dir="rtl">
+    <div className="fixed inset-0 w-full h-full bg-gradient-to-br from-pink-100 via-rose-100 to-purple-200 flex flex-col items-center justify-center p-3 font-sans select-none relative overflow-hidden" dir="rtl">
       
       {/* Back Button */}
       {onBack && (
         <button 
           onClick={onBack}
-          className="absolute top-6 right-6 w-12 h-12 bg-white rounded-full shadow-lg border-2 border-pink-200 flex items-center justify-center text-xl text-pink-600 hover:scale-105 active:scale-95 transition-all z-50 cursor-pointer"
+          className="absolute top-4 right-4 w-11 h-11 bg-white rounded-full shadow-lg border-2 border-pink-200 flex items-center justify-center text-xl text-pink-600 hover:scale-105 active:scale-95 transition-all z-50 cursor-pointer"
         >
           ✖
         </button>
       )}
 
       {/* Progress Bar (5 Letters) */}
-      <div className="pt-6 z-10 flex flex-col items-center">
-        <h1 className="text-3xl sm:text-5xl font-black text-rose-700 mb-2 drop-shadow-sm">تتبع الحروف بالمرسام السحري ✏️</h1>
-        <p className="text-base sm:text-lg font-bold text-rose-600 mb-3">امسك القلم وارسم الحرف كاملاً على الشاشة!</p>
-        <div className="flex items-center gap-2 bg-white/80 backdrop-blur px-6 py-2 rounded-full border-2 border-pink-300 shadow">
+      <div className="pt-2 z-10 flex flex-col items-center">
+        <h1 className="text-2xl sm:text-4xl font-black text-rose-700 mb-1 drop-shadow-sm">تتبع الحروف بالمرسام السحري ✏️</h1>
+        <div className="flex items-center gap-2 bg-white/80 backdrop-blur px-5 py-1 rounded-full border border-pink-300 shadow">
           {[0, 1, 2, 3, 4].map((idx) => (
             <div 
               key={idx}
-              className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-black transition-all ${
+              className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black transition-all ${
                 idx < currentIndex 
                   ? 'bg-green-500 text-white scale-110' 
                   : idx === currentIndex 
@@ -198,13 +197,13 @@ export default function ArabicLetterTracing({ onComplete, onBack }: Props) {
               {idx < currentIndex ? '✓' : idx + 1}
             </div>
           ))}
-          <span className="mr-3 font-extrabold text-sm text-rose-800">الحرف {currentIndex + 1} من 5</span>
+          <span className="mr-2 font-extrabold text-xs text-rose-800">الحرف {currentIndex + 1} من 5</span>
         </div>
       </div>
 
       {/* Real Canvas Letter Tracing Board */}
-      <div className="relative w-full max-w-sm sm:max-w-md bg-white/90 backdrop-blur-xl border-4 border-white shadow-2xl rounded-[3rem] p-6 flex flex-col items-center my-4 z-10">
-        <div className="text-xl font-black text-slate-700 bg-rose-50 border-2 border-rose-200 px-6 py-1.5 rounded-full mb-4 shadow-sm">
+      <div className="relative w-full max-w-sm bg-white/90 backdrop-blur-xl border-2 border-white shadow-xl rounded-[2rem] p-4 flex flex-col items-center my-2 z-10">
+        <div className="text-base font-black text-slate-700 bg-rose-50 border border-rose-200 px-5 py-1 rounded-full mb-2 shadow-sm">
           حرف {currentItem.name} - {currentItem.word}
         </div>
 

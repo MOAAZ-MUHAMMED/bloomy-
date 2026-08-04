@@ -83,7 +83,7 @@ export default function FunHiddenCup({ onComplete, onBack, level = "level1" }: P
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[460px] w-full p-6 bg-gradient-to-b from-indigo-900 via-purple-900 to-slate-900 rounded-3xl shadow-2xl relative overflow-hidden text-white font-sans" dir="rtl">
+    <div className="fixed inset-0 w-full h-full p-6 bg-gradient-to-b from-indigo-900 via-purple-900 to-slate-900 text-white font-sans select-none flex flex-col items-center justify-center" dir="rtl">
       {/* Background glow effects */}
       <div className="absolute top-0 inset-x-0 h-40 bg-purple-500/10 blur-3xl pointer-events-none" />
 

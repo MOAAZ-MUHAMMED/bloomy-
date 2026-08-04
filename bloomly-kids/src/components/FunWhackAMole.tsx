@@ -75,7 +75,7 @@ export default function FunWhackAMole({ onComplete, onBack }: Props) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[420px] w-full p-6 bg-gradient-to-b from-green-100 to-emerald-200 rounded-3xl shadow-xl relative overflow-hidden font-sans" dir="rtl">
+    <div className="fixed inset-0 w-full h-full p-6 bg-gradient-to-b from-green-100 to-emerald-200 text-white font-sans select-none flex flex-col items-center justify-center" dir="rtl">
       {onBack && (
         <button onClick={onBack} className="absolute top-4 right-4 bg-white/70 hover:bg-white text-green-700 px-4 py-2 rounded-full shadow-md transition-colors font-bold z-10 text-sm">
           ← خروج

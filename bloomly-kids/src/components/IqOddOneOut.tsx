@@ -72,7 +72,7 @@ export default function IqOddOneOut({ onWin }: IqOddOneOutProps) {
 
   if (gameOver) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh]">
+      <div className="fixed inset-0 w-full h-full p-6 bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 select-none flex flex-col items-center justify-center font-sans">
         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} className="text-8xl mb-6">🏆</motion.div>
         <h2 className="text-4xl font-black text-indigo-800 mb-4 drop-shadow-md">أنت عبقري!</h2>
         <p className="text-xl text-indigo-600 font-bold mb-8 text-center px-4">نجحت في اكتشاف جميع الأشياء المختلفة!</p>
@@ -81,7 +81,7 @@ export default function IqOddOneOut({ onWin }: IqOddOneOutProps) {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] w-full px-4">
+    <div className="fixed inset-0 w-full h-full p-6 bg-gradient-to-br from-indigo-100 via-purple-100 to-pink-100 overflow-y-auto select-none flex flex-col items-center justify-center font-sans">
       <div className="bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full border-2 border-indigo-200 shadow-md mb-8">
         <h2 className="text-2xl font-black text-indigo-700">اكتشف المختلف 🕵️‍♂️</h2>
         <div className="flex gap-1 justify-center mt-2">

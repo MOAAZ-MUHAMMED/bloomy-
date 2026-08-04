@@ -182,7 +182,7 @@ export default function EnglishSpaceDecoder({ onComplete, onBack }: EnglishSpace
   };
 
   return (
-    <div className="w-full h-[100vh] sm:h-auto sm:aspect-[4/3] max-w-4xl mx-auto rounded-3xl overflow-hidden shadow-2xl relative select-none bg-indigo-950 font-sans" dir="ltr">
+    <div className="fixed inset-0 w-full h-full rounded-none overflow-hidden relative select-none bg-indigo-950 font-sans" dir="ltr">
       
       {/* Dynamic Space Background */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-900 via-slate-900 to-black" />
