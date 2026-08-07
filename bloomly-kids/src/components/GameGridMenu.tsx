@@ -18,6 +18,47 @@ interface GameGridMenuProps {
 
 const render3DIcon = (id: string) => {
   switch (id) {
+    case 'math':
+      return (
+        <img 
+          src="/assets/images/logos/math_garden_logo_3d.jpg" 
+          alt="Math Garden" 
+          className="w-24 h-24 rounded-3xl border-4 border-white shadow-md animate-float-slow object-cover"
+        />
+      );
+    case 'quran':
+      return (
+        <img 
+          src="/assets/images/logos/din_quran_logo_3d.jpg" 
+          alt="Din & Quran" 
+          className="w-24 h-24 rounded-3xl border-4 border-white shadow-md animate-float object-cover"
+        />
+      );
+    case 'stories':
+      return (
+        <img 
+          src="/assets/images/logos/stories_logo_3d.jpg" 
+          alt="Stories" 
+          className="w-24 h-24 rounded-3xl border-4 border-white shadow-md animate-float-slow object-cover"
+        />
+      );
+    case 'coloring':
+      return (
+        <img 
+          src="/assets/images/logos/coloring_logo_3d.jpg" 
+          alt="Coloring" 
+          className="w-24 h-24 rounded-3xl border-4 border-white shadow-md animate-float object-cover"
+        />
+      );
+    case 'english':
+    case 'spellingEn':
+      return (
+        <img 
+          src="/assets/images/logos/spelling_logo_3d.jpg" 
+          alt="English Spelling" 
+          className="w-24 h-24 rounded-3xl border-4 border-white shadow-md animate-float object-cover"
+        />
+      );
     case 'farm':
       return (
         <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float-slow">
@@ -41,75 +82,9 @@ const render3DIcon = (id: string) => {
           <circle cx="25" cy="50" r="6" fill="#3B82F6" stroke="#fff" strokeWidth="2" />
         </svg>
       );
-    case 'stories':
-      return (
-        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float-slow">
-          <rect x="15" y="20" width="70" height="64" rx="10" fill="#6366F1" stroke="#fff" strokeWidth="4" />
-          <path d="M50 20 V84" stroke="#fff" strokeWidth="4" />
-          <line x1="25" y1="35" x2="42" y2="35" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" />
-          <line x1="25" y1="50" x2="42" y2="50" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" />
-          <line x1="58" y1="35" x2="75" y2="35" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" />
-          <line x1="58" y1="50" x2="75" y2="50" stroke="#fff" strokeWidth="3.5" strokeLinecap="round" />
-          <circle cx="33" cy="65" r="4" fill="#FBBF24" />
-          <circle cx="67" cy="65" r="4" fill="#FBBF24" />
-        </svg>
-      );
-    case 'math':
-      return (
-        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float-slow">
-          {/* Background circular glowing badge */}
-          <circle cx="50" cy="50" r="42" fill="url(#mathBadgeGrad)" stroke="#fff" strokeWidth="4.5" />
-          
-          {/* Wooden Basket at the bottom */}
-          <path d="M 28 65 L 34 85 C 34 87, 66 87, 66 85 L 72 65 Z" fill="#d97706" stroke="#451a03" strokeWidth="2.5" />
-          <ellipse cx="50" cy="65" rx="22" ry="4" fill="#a16207" stroke="#451a03" strokeWidth="2.5" />
-
-          {/* Little Apples inside the basket */}
-          <circle cx="42" cy="62" r="7" fill="#dc2626" stroke="#451a03" strokeWidth="2" />
-          <circle cx="50" cy="61" r="7" fill="#eab308" stroke="#451a03" strokeWidth="2" />
-          <circle cx="58" cy="62" r="7" fill="#dc2626" stroke="#451a03" strokeWidth="2" />
-
-          {/* Large Shiny Apple Mascot in the center-left */}
-          <g className="animate-float" style={{ animationDelay: '0.2s' }}>
-            {/* Apple Body with clay shader gradient */}
-            <circle cx="36" cy="42" r="16" fill="url(#appleMascotGrad)" stroke="#fff" strokeWidth="3" />
-            <path d="M 33 26 Q 30 18, 26 14 C 28 14, 34 16, 32 26" fill="#10B981" stroke="#fff" strokeWidth="1.5" />
-            {/* Mascot Eyes */}
-            <circle cx="31" cy="38" r="2.5" fill="#1e293b" />
-            <circle cx="41" cy="38" r="2.5" fill="#1e293b" />
-            <circle cx="30" cy="37" r="0.8" fill="#fff" />
-            <circle cx="40" cy="37" r="0.8" fill="#fff" />
-            {/* Mascot Smile */}
-            <path d="M 33 44 Q 36 47, 39 44" fill="none" stroke="#1e293b" strokeWidth="1.5" strokeLinecap="round" />
-          </g>
-
-          {/* Floating colorful 3D-like Numbers around */}
-          <g className="animate-float" style={{ animationDelay: '0.6s' }}>
-            <text x="68" y="32" fontSize="22" fontWeight="950" fill="#2563EB" stroke="#fff" strokeWidth="3" paintOrder="stroke" fontFamily="Outfit, Inter, sans-serif" textAnchor="middle" className="drop-shadow-sm">1</text>
-          </g>
-          <g className="animate-float" style={{ animationDelay: '1.2s' }}>
-            <text x="76" y="52" fontSize="22" fontWeight="950" fill="#16A34A" stroke="#fff" strokeWidth="3" paintOrder="stroke" fontFamily="Outfit, Inter, sans-serif" textAnchor="middle" className="drop-shadow-sm">2</text>
-          </g>
-          <g className="animate-float" style={{ animationDelay: '1.8s' }}>
-            <text x="62" y="50" fontSize="24" fontWeight="950" fill="#EA580C" stroke="#fff" strokeWidth="3.5" paintOrder="stroke" fontFamily="Outfit, Inter, sans-serif" textAnchor="middle" className="drop-shadow-sm">+</text>
-          </g>
-
-          <defs>
-            <linearGradient id="mathBadgeGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#fef08a" />
-              <stop offset="100%" stopColor="#fcd34d" />
-            </linearGradient>
-            <linearGradient id="appleMascotGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#f87171" />
-              <stop offset="100%" stopColor="#dc2626" />
-            </linearGradient>
-          </defs>
-        </svg>
-      );
     case 'arabic':
       return (
         <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float-slow">
-          {/* Background circular glowing badge */}
           <circle cx="50" cy="50" r="42" fill="url(#arabicBadgeGrad)" stroke="#fff" strokeWidth="4.5" />
           <path d="M 25 35 H 75 L 70 75 H 30 Z" fill="#F59E0B" stroke="#5c2e0b" strokeWidth="3" />
           <path d="M50 35 V75" stroke="#fff" strokeWidth="2.5" />
@@ -121,32 +96,6 @@ const render3DIcon = (id: string) => {
               <stop offset="100%" stopColor="#fed7aa" />
             </linearGradient>
           </defs>
-        </svg>
-      );
-    case 'quran':
-      return (
-        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-glow">
-          <rect x="22" y="25" width="56" height="56" rx="10" fill="#111827" stroke="#fff" strokeWidth="4.5" />
-          <rect x="22" y="40" width="56" height="10" fill="#FBBF24" />
-          <rect x="42" y="55" width="16" height="26" fill="#FBBF24" stroke="#fff" strokeWidth="2.5" rx="3" />
-          <line x1="50" y1="55" x2="50" y2="81" stroke="#fff" strokeWidth="1.5" />
-        </svg>
-      );
-    case 'english':
-      return (
-        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md">
-          <g className="animate-float">
-            <circle cx="32" cy="40" r="16" fill="#EC4899" stroke="#fff" strokeWidth="3.5" />
-            <text x="32" y="49" fontSize="20" fontWeight="900" fill="#fff" textAnchor="middle" fontFamily="sans-serif">A</text>
-          </g>
-          <g className="animate-float" style={{ animationDelay: '0.4s' }}>
-            <circle cx="68" cy="40" r="16" fill="#8B5CF6" stroke="#fff" strokeWidth="3.5" />
-            <text x="68" y="49" fontSize="20" fontWeight="900" fill="#fff" textAnchor="middle" fontFamily="sans-serif">B</text>
-          </g>
-          <g className="animate-float" style={{ animationDelay: '0.8s' }}>
-            <circle cx="50" cy="72" r="16" fill="#06B6D4" stroke="#fff" strokeWidth="3.5" />
-            <text x="50" y="81" fontSize="20" fontWeight="900" fill="#fff" textAnchor="middle" fontFamily="sans-serif">C</text>
-          </g>
         </svg>
       );
     case 'fun_games':
@@ -173,20 +122,6 @@ const render3DIcon = (id: string) => {
           <rect x="75" y="48" width="8" height="12" rx="4" fill="#9F1239" stroke="#fff" strokeWidth="2" />
           <path d="M22 42 H78 L70 30 H30 Z" fill="#FDA4AF" stroke="#fff" strokeWidth="4" />
           <circle cx="50" cy="26" r="6" fill="#F43F5E" stroke="#fff" strokeWidth="2" />
-        </svg>
-      );
-    case 'coloring':
-      return (
-        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md">
-          <path d="M20 70 C 10 50, 15 20, 48 20 C 68 20, 85 35, 82 62 C 79 78, 45 88, 20 70 Z" fill="#F59E0B" stroke="#fff" strokeWidth="4.5" className="animate-float-slow" />
-          <circle cx="34" cy="38" r="6" fill="#EF4444" />
-          <circle cx="52" cy="32" r="6" fill="#3B82F6" />
-          <circle cx="66" cy="46" r="6" fill="#10B981" />
-          <circle cx="48" cy="62" r="6" fill="#EC4899" />
-          <g className="animate-brush">
-            <path d="M20 80 L35 55 L45 65 Z" fill="#FDE047" stroke="#fff" strokeWidth="3" />
-            <path d="M15 85 L22 78 L25 82 Z" fill="#6B7280" />
-          </g>
         </svg>
       );
     case 'habits':
@@ -287,7 +222,7 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
     { id: 'stories', title: 'هيا نقرأ', englishTitle: 'LET\'S READ', action: () => onSelectGame('stories'), bgGradient: 'from-[#C7D2FE] to-[#4338CA]', color: 'text-indigo-950', shadowColor: '#3730a3' },
     { id: 'math', title: 'أرقام وحساب', englishTitle: 'MATH', action: () => onSelectCategory?.('math'), bgGradient: 'from-[#FDE68A] to-[#D97706]', color: 'text-amber-950', shadowColor: '#b45309' },
     { id: 'arabic', title: 'حروفي العربية', englishTitle: 'ARABIC', action: () => onSelectCategory?.('arabic'), bgGradient: 'from-[#FED7AA] to-[#C2410C]', color: 'text-orange-950', shadowColor: '#9a3412' },
-    { id: 'quran', title: 'جزيرة القرآن', englishTitle: 'QURAN', action: () => onSelectGame('quran'), bgGradient: 'from-[#D1FAE5] to-[#065F46]', color: 'text-emerald-900', shadowColor: '#064e3b' },
+    { id: 'quran', title: 'الدين القيم والقرآن', englishTitle: 'DIN & QURAN', action: () => onSelectGame('quran'), bgGradient: 'from-[#FFE4E6] to-[#BE123C]', color: 'text-rose-950', shadowColor: '#9f1239' },
     { id: 'english', title: 'حروفي الإنجليزية', englishTitle: 'ENGLISH', action: () => onSelectCategory?.('english'), bgGradient: 'from-[#FBCFE8] to-[#BE185D]', color: 'text-pink-950', shadowColor: '#9d174d' },
     { id: 'fun_games', title: 'ألعاب ومرح', englishTitle: 'FUN GAMES', action: () => onSelectCategory?.('fun_games'), bgGradient: 'from-[#DDD6FE] to-[#6D28D9]', color: 'text-violet-950', shadowColor: '#5b21b6' },
     { id: 'kitchen', title: 'المطبخ الصغير', englishTitle: 'KITCHEN', action: () => onSelectCategory?.('kitchen'), bgGradient: 'from-[#FECDD3] to-[#BE123C]', color: 'text-rose-950', shadowColor: '#9f1239' },

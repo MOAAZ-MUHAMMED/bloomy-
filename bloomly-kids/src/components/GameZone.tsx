@@ -1049,7 +1049,7 @@ export function GameZone({
     
     // Play a friendly intro voice-over
     if (gameName === "quran") {
-      sfx.speakArabic("استعد يا بطل! سنقوم الآن بفتح جزيرة القرآن الكريم!", "welcome");
+      sfx.speakArabic("استعد يا بطل! سنقوم الآن بفتح بوابة الدين القيم والقرآن الكريم!", "welcome");
     } else if (gameName === "stories") {
       sfx.speakArabic("استعد يا بطل! سنقوم الآن بفتح جزيرة القصص التفاعلية!", "welcome");
     } else {
