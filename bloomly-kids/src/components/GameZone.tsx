@@ -4956,48 +4956,62 @@ const startNinjaGame = () => {
 
       {/* --- MATH GAME PLAY VIEW --- */}
       {activeGame === "math" && !showLevelMap && (
-        <div className="card-bubbly bg-gradient-to-b from-[#E0F2FE] to-[#FAF7FD] max-w-2xl mx-auto p-6 relative overflow-hidden shadow-2xl rounded-3xl border-4 border-purple-200 min-h-[500px]">
+        <div className="absolute inset-0 w-full h-full bg-[#E0F2FE] flex flex-col p-4 relative overflow-hidden select-none">
           
+          {/* Sky background layers, clouds, sun */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[#7DD3FC] via-[#E0F2FE] to-[#F0FDF4] pointer-events-none" />
+          <div className="absolute top-2 right-4 text-4xl animate-pulse pointer-events-none select-none">☀️</div>
+          
+          <motion.div animate={{ x: [-100, 500] }} transition={{ duration: 45, repeat: Infinity, ease: "linear" }} className="absolute top-6 left-0 text-3xl opacity-20 pointer-events-none">☁️</motion.div>
+          <motion.div animate={{ x: [500, -100] }} transition={{ duration: 38, repeat: Infinity, ease: "linear" }} className="absolute top-12 right-0 text-2xl opacity-25 pointer-events-none">☁️</motion.div>
+
+          {/* Background Forest Trees (Layered parallax) */}
+          <div className="absolute left-[-25px] bottom-14 w-28 h-36 opacity-60 pointer-events-none">
+            <svg viewBox="0 0 100 120" className="w-full h-full">
+              <path d="M 45 120 L 55 120 L 50 80 Z" fill="#78350F" />
+              <circle cx="50" cy="60" r="30" fill="#047857" />
+              <circle cx="50" cy="45" r="22" fill="#059669" />
+            </svg>
+          </div>
+          <div className="absolute right-[-25px] bottom-14 w-28 h-36 opacity-60 pointer-events-none">
+            <svg viewBox="0 0 100 120" className="w-full h-full">
+              <path d="M 45 120 L 55 120 L 50 80 Z" fill="#78350F" />
+              <circle cx="50" cy="60" r="30" fill="#047857" />
+              <circle cx="50" cy="45" r="22" fill="#059669" />
+            </svg>
+          </div>
+
           {/* Header */}
-          <div className="flex items-center justify-between border-b-2 border-purple-100/55 pb-4 mb-5">
+          <div className="flex items-center justify-between border-b-2 border-sky-200/50 pb-2 mb-3 z-20">
             <button
               onClick={quitGame}
-              className="flex items-center gap-1 font-bold text-sm text-[#E01E5A] hover:underline"
+              className="flex items-center gap-1 font-bold text-sm text-[#E01E5A] hover:underline bg-white/90 px-3 py-1 rounded-full shadow-sm"
             >
               <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
               <span>خروج</span>
             </button>
             
-            <div className="font-extrabold text-[#4D2B82]">
+            <div className="font-extrabold text-[#4D2B82] bg-white/90 px-3 py-1 rounded-full shadow-sm">
               السؤال {mathRound} من 5
             </div>
             
-            <div className="text-sm font-bold text-green-500">
+            <div className="text-sm font-bold text-green-600 bg-white/90 px-3 py-1 rounded-full shadow-sm">
               ⭐ كسبت: {starsEarnedThisSession}
             </div>
           </div>
 
-          {/* Question Text in a Happy Cloud Bubble */}
-          <div className="relative bg-white border-3 border-purple-200 rounded-2xl p-4 text-center mb-6 shadow-sm">
-            <h3 className="text-xl font-extrabold text-[#4D2B82] leading-relaxed">
+          {/* Question Bubble */}
+          <div className="relative bg-white/95 border-3 border-sky-300 rounded-2xl p-3 text-center mb-4 shadow-md max-w-md mx-auto w-full z-20">
+            <h3 className="text-lg font-black text-[#4D2B82] leading-tight">
               {mathQuestion.text}
             </h3>
-            {/* Cloud pointer shapes */}
-            <div className="absolute bottom-[-10px] left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[10px] border-t-white z-10"></div>
-            <div className="absolute bottom-[-13px] left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[11px] border-l-transparent border-r-[11px] border-r-transparent border-t-[11px] border-t-purple-200"></div>
           </div>
 
-          {/* The Interactive Garden Stage */}
-          <div className="relative w-full h-[260px] bg-gradient-to-b from-[#BFDBFE] to-[#FCD34D]/25 rounded-2xl border-3 border-purple-200 overflow-hidden mb-6 select-none shadow-inner">
-            {/* Sun */}
-            <div className="absolute top-2 right-2 text-4xl animate-pulse">☀️</div>
+          {/* Central Play Stage */}
+          <div className="flex-grow relative w-full overflow-hidden select-none mb-4">
             
-            {/* Clouds */}
-            <motion.div animate={{ x: [-50, 400] }} transition={{ duration: 40, repeat: Infinity, ease: "linear" }} className="absolute top-4 left-0 text-3xl opacity-20">☁️</motion.div>
-            <motion.div animate={{ x: [400, -50] }} transition={{ duration: 35, repeat: Infinity, ease: "linear" }} className="absolute top-10 right-0 text-2xl opacity-25">☁️</motion.div>
-            
-            {/* Giant Tree SVG */}
-            <div className="absolute inset-x-0 bottom-6 mx-auto w-60 h-48 flex items-center justify-center pointer-events-none">
+            {/* The Main Apple Tree (Centered and large) */}
+            <div className="absolute inset-x-0 bottom-4 mx-auto w-72 h-56 flex items-center justify-center pointer-events-none">
               <svg viewBox="0 0 300 240" className="w-full h-full">
                 {/* Trunk */}
                 <path d="M 135 240 L 142 140 C 142 130, 158 130, 158 140 L 165 240 Z" fill="#78350F" />
@@ -5011,13 +5025,13 @@ const startNinjaGame = () => {
             <div className="absolute bottom-0 inset-x-0 h-10 bg-gradient-to-t from-[#10B981] to-[#34D399] z-10 border-t-2 border-emerald-600"></div>
 
             {/* Wooden Basket */}
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-16 h-10 bg-[#8B5CF6]/0 z-10 flex items-center justify-center">
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-16 h-10 z-10 flex items-center justify-center">
               <span className="text-4xl filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]">🧺</span>
             </div>
 
-            {/* Mascots standing on the grass */}
+            {/* Mascots standing on the grass (Large sizes w-28 h-28) */}
             {/* Left Mascot: Figma MP4 Video */}
-            <div className={`absolute bottom-3 left-12 z-20 flex flex-col items-center select-none ${isCelebrating ? "animate-bounce" : ""}`}>
+            <div className={`absolute bottom-3 left-6 z-20 flex flex-col items-center select-none ${isCelebrating ? "animate-bounce" : ""}`}>
               <video
                 src="/assets/mascots/apple_waving_user.mp4"
                 autoPlay
@@ -5025,19 +5039,19 @@ const startNinjaGame = () => {
                 muted
                 playsInline
                 style={{ mixBlendMode: 'multiply' }}
-                className="w-16 h-16 object-contain"
+                className="w-24 h-24 object-contain"
               />
-              <div className="w-10 h-1.5 bg-black/10 rounded-full blur-[1px] mt-0.5"></div>
+              <div className="w-16 h-1.5 bg-black/10 rounded-full blur-[1px] mt-0.5"></div>
             </div>
 
             {/* Right Mascot: CSS SVG Mascot */}
-            <div className={`absolute bottom-3 right-12 z-20 flex flex-col items-center select-none ${isCelebrating ? "animate-bounce" : ""}`}>
+            <div className={`absolute bottom-3 right-6 z-20 flex flex-col items-center select-none ${isCelebrating ? "animate-bounce" : ""}`}>
               <img
                 src="/assets/mascots/apple_mascot_css.svg"
                 alt="CSS Mascot"
-                className="w-16 h-16 object-contain"
+                className="w-24 h-24 object-contain"
               />
-              <div className="w-10 h-1.5 bg-black/10 rounded-full blur-[1px] mt-0.5"></div>
+              <div className="w-16 h-1.5 bg-black/10 rounded-full blur-[1px] mt-0.5"></div>
             </div>
 
             {/* Render the fruits on the tree / dropping */}
@@ -5179,17 +5193,17 @@ const startNinjaGame = () => {
             )}
           </AnimatePresence>
 
-          {/* Choices Grid */}
-          <div className="grid grid-cols-2 gap-4">
+          {/* Choices Grid - Placed as 4 columns in 1 row at bottom */}
+          <div className="grid grid-cols-4 gap-3 w-full max-w-md mx-auto z-20 pb-2">
             {mathQuestion.options.map((option, idx) => {
               const isSelected = mathSelectedOption === option;
               const isCorrect = option === mathQuestion.correct;
               
-              let btnClass = "btn-bubbly-secondary text-2xl py-6";
+              let btnClass = "btn-bubbly-secondary text-2xl py-4 shadow-[0_4px_0_0_#A78BFA]";
               if (isSelected) {
                 btnClass = isCorrect
-                  ? "w-full rounded-full border-3 border-[#2E7D32] bg-[#E8F5E9] text-[#2E7D32] py-6 font-extrabold text-2xl shadow-[0_4px_0_0_#2E7D32]"
-                  : "w-full rounded-full border-3 border-[#C62828] bg-[#FFEBEE] text-[#C62828] py-6 font-extrabold text-2xl shadow-[0_4px_0_0_#C62828] animate-shake";
+                  ? "w-full rounded-full border-3 border-[#2E7D32] bg-[#E8F5E9] text-[#2E7D32] py-4 font-extrabold text-2xl shadow-[0_4px_0_0_#2E7D32]"
+                  : "w-full rounded-full border-3 border-[#C62828] bg-[#FFEBEE] text-[#C62828] py-4 font-extrabold text-2xl shadow-[0_4px_0_0_#C62828] animate-shake";
               }
 
               return (
