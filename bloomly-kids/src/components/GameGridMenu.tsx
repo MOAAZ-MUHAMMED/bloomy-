@@ -20,44 +20,164 @@ const render3DIcon = (id: string) => {
   switch (id) {
     case 'math':
       return (
-        <img 
-          src="/assets/images/logos/math_garden_logo_3d.jpg" 
-          alt="Math Garden" 
-          className="w-24 h-24 rounded-3xl border-4 border-white shadow-md animate-float-slow object-cover"
-        />
+        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float-slow">
+          <circle cx="50" cy="50" r="42" fill="url(#mathGrad)" stroke="#fff" strokeWidth="4" />
+          <path d="M 12 36 A 42 42 0 0 1 88 36 A 42 32 0 0 0 12 36 Z" fill="url(#glassShine)" opacity="0.65" />
+          
+          <g className="animate-bounce" style={{ animationDuration: '2.5s' }}>
+            <circle cx="42" cy="56" r="15" fill="url(#appleRed)" stroke="#5c0606" strokeWidth="2" />
+            <path d="M 42 41 Q 45 35, 41 32" fill="none" stroke="#15803d" strokeWidth="2.5" strokeLinecap="round" />
+            <circle cx="37" cy="53" r="2.5" fill="#1e293b" />
+            <circle cx="47" cy="53" r="2.5" fill="#1e293b" />
+            <ellipse cx="33" cy="57" rx="3" ry="1.5" fill="#f43f5e" opacity="0.6" />
+            <ellipse cx="51" cy="57" rx="3" ry="1.5" fill="#f43f5e" opacity="0.6" />
+            <path d="M 39 59 Q 42 62, 45 59" fill="none" stroke="#1e293b" strokeWidth="1.5" strokeLinecap="round" />
+          </g>
+
+          <g className="animate-float" style={{ animationDelay: '0.4s' }}>
+            <text x="74" y="38" fontSize="22" fontWeight="950" fill="#2563eb" stroke="#fff" strokeWidth="3.5" paintOrder="stroke" fontFamily="sans-serif">1</text>
+          </g>
+          <g className="animate-float" style={{ animationDelay: '0.9s' }}>
+            <text x="78" y="68" fontSize="20" fontWeight="950" fill="#16a34a" stroke="#fff" strokeWidth="3.5" paintOrder="stroke" fontFamily="sans-serif">2</text>
+          </g>
+          <g className="animate-float" style={{ animationDelay: '1.4s' }}>
+            <text x="22" y="38" fontSize="24" fontWeight="950" fill="#ea580c" stroke="#fff" strokeWidth="3.5" paintOrder="stroke" fontFamily="sans-serif">+</text>
+          </g>
+
+          <defs>
+            <linearGradient id="mathGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#fef08a" />
+              <stop offset="100%" stopColor="#eab308" />
+            </linearGradient>
+            <linearGradient id="appleRed" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#f87171" />
+              <stop offset="100%" stopColor="#dc2626" />
+            </linearGradient>
+            <linearGradient id="glassShine" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#ffffff" stopOpacity="0.0" />
+            </linearGradient>
+          </defs>
+        </svg>
       );
     case 'quran':
       return (
-        <img 
-          src="/assets/images/logos/din_quran_logo_3d.jpg" 
-          alt="Din & Quran" 
-          className="w-24 h-24 rounded-3xl border-4 border-white shadow-md animate-float object-cover"
-        />
+        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-glow">
+          <circle cx="50" cy="50" r="42" fill="url(#quranGrad)" stroke="#fff" strokeWidth="4" />
+          <path d="M 12 36 A 42 42 0 0 1 88 36 A 42 32 0 0 0 12 36 Z" fill="url(#glassShine)" opacity="0.65" />
+
+          <g className="animate-float-slow">
+            <path d="M 68 18 A 12 12 0 1 0 74 38 A 15 15 0 1 1 68 18" fill="#fbbf24" stroke="#78350f" strokeWidth="1.5" />
+            <path d="M 28 64 L 72 64 L 64 74 L 36 74 Z" fill="#d97706" stroke="#451a03" strokeWidth="2.5" />
+            <path d="M 32 50 L 50 64 L 68 50 L 60 44 L 50 52 L 40 44 Z" fill="#b45309" stroke="#451a03" strokeWidth="2" />
+            <path d="M 33 48 C 42 48, 48 56, 50 56 C 52 56, 58 48, 67 48 L 65 38 C 58 38, 52 45, 50 45 C 48 45, 42 38, 35 38 Z" fill="#ffffff" stroke="#451a03" strokeWidth="2" />
+            <path d="M 38 42 H 45 M 39 45 H 44 M 56 42 H 63 M 55 45 H 61" stroke="#1e293b" strokeWidth="1.5" strokeLinecap="round" />
+          </g>
+          
+          <defs>
+            <linearGradient id="quranGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#6ee7b7" />
+              <stop offset="100%" stopColor="#047857" />
+            </linearGradient>
+            <linearGradient id="glassShine" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#ffffff" stopOpacity="0.0" />
+            </linearGradient>
+          </defs>
+        </svg>
       );
     case 'stories':
       return (
-        <img 
-          src="/assets/images/logos/stories_logo_3d.jpg" 
-          alt="Stories" 
-          className="w-24 h-24 rounded-3xl border-4 border-white shadow-md animate-float-slow object-cover"
-        />
+        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float-slow">
+          <circle cx="50" cy="50" r="42" fill="url(#storiesGrad)" stroke="#fff" strokeWidth="4" />
+          <path d="M 12 36 A 42 42 0 0 1 88 36 A 42 32 0 0 0 12 36 Z" fill="url(#glassShine)" opacity="0.65" />
+
+          <g className="animate-float">
+            <rect x="44" y="24" width="12" height="20" fill="#f472b6" stroke="#4c1d95" strokeWidth="2" />
+            <polygon points="40,24 50,10 60,24" fill="#818cf8" stroke="#4c1d95" strokeWidth="2" strokeLinejoin="round" />
+            <circle cx="50" cy="30" r="2.5" fill="#fef08a" />
+            
+            <path d="M 28 62 L 72 62 L 66 52 L 34 52 Z" fill="#93c5fd" stroke="#4c1d95" strokeWidth="2" />
+            <path d="M 24 52 Q 50 48, 76 52 L 72 42 Q 50 38, 28 42 Z" fill="#ffffff" stroke="#4c1d95" strokeWidth="2" />
+          </g>
+
+          <circle cx="32" cy="22" r="2" fill="#fff" className="animate-pulse" />
+          <circle cx="68" cy="20" r="1.5" fill="#fff" className="animate-pulse" style={{ animationDelay: '0.5s' }} />
+
+          <defs>
+            <linearGradient id="storiesGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#c7d2fe" />
+              <stop offset="100%" stopColor="#4338ca" />
+            </linearGradient>
+            <linearGradient id="glassShine" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#ffffff" stopOpacity="0.0" />
+            </linearGradient>
+          </defs>
+        </svg>
       );
     case 'coloring':
       return (
-        <img 
-          src="/assets/images/logos/coloring_logo_3d.jpg" 
-          alt="Coloring" 
-          className="w-24 h-24 rounded-3xl border-4 border-white shadow-md animate-float object-cover"
-        />
+        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float">
+          <circle cx="50" cy="50" r="42" fill="url(#coloringGrad)" stroke="#fff" strokeWidth="4" />
+          <path d="M 12 36 A 42 42 0 0 1 88 36 A 42 32 0 0 0 12 36 Z" fill="url(#glassShine)" opacity="0.65" />
+
+          <g className="animate-float-slow">
+            <path d="M 28 66 C 22 55, 26 36, 48 34 C 64 32, 76 42, 74 58 C 72 70, 52 76, 28 66 Z" fill="#fcd34d" stroke="#78350f" strokeWidth="2" />
+            <circle cx="36" cy="46" r="3.5" fill="#ef4444" />
+            <circle cx="48" cy="42" r="3.5" fill="#3b82f6" />
+            <circle cx="60" cy="48" r="3.5" fill="#2ecc71" />
+            <circle cx="58" cy="58" r="3.5" fill="#ec4899" />
+            
+            <ellipse cx="38" cy="58" rx="3" ry="4" fill="#ffffff" stroke="#78350f" strokeWidth="1.5" />
+
+            <g className="animate-brush">
+              <path d="M 72 30 L 32 70 L 38 76 L 78 36 Z" fill="#d97706" stroke="#78350f" strokeWidth="1.5" />
+              <rect x="67" y="30" width="8" height="6" fill="#cbd5e1" stroke="#78350f" strokeWidth="1.5" transform="rotate(-45 71 33)" />
+              <path d="M 74 24 C 74 24, 79 30, 77 33 C 75 36, 71 33, 71 33 Z" fill="#ef4444" stroke="#78350f" strokeWidth="1.5" />
+            </g>
+          </g>
+
+          <defs>
+            <linearGradient id="coloringGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#a7f3d0" />
+              <stop offset="100%" stopColor="#0d9488" />
+            </linearGradient>
+            <linearGradient id="glassShine" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#ffffff" stopOpacity="0.0" />
+            </linearGradient>
+          </defs>
+        </svg>
       );
     case 'english':
     case 'spellingEn':
       return (
-        <img 
-          src="/assets/images/logos/spelling_logo_3d.jpg" 
-          alt="English Spelling" 
-          className="w-24 h-24 rounded-3xl border-4 border-white shadow-md animate-float object-cover"
-        />
+        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float-slow">
+          <circle cx="50" cy="50" r="42" fill="url(#englishGrad)" stroke="#fff" strokeWidth="4" />
+          <path d="M 12 36 A 42 42 0 0 1 88 36 A 42 32 0 0 0 12 36 Z" fill="url(#glassShine)" opacity="0.65" />
+
+          <g className="animate-float">
+            <text x="32" y="44" fontSize="24" fontWeight="950" fill="#ec4899" stroke="#fff" strokeWidth="3.5" paintOrder="stroke" fontFamily="Outfit, Inter, sans-serif" textAnchor="middle">A</text>
+          </g>
+          <g className="animate-float" style={{ animationDelay: '0.4s' }}>
+            <text x="68" y="44" fontSize="24" fontWeight="950" fill="#8b5cf6" stroke="#fff" strokeWidth="3.5" paintOrder="stroke" fontFamily="Outfit, Inter, sans-serif" textAnchor="middle">B</text>
+          </g>
+          <g className="animate-float" style={{ animationDelay: '0.8s' }}>
+            <text x="50" y="74" fontSize="24" fontWeight="950" fill="#06b6d4" stroke="#fff" strokeWidth="3.5" paintOrder="stroke" fontFamily="Outfit, Inter, sans-serif" textAnchor="middle">C</text>
+          </g>
+
+          <defs>
+            <linearGradient id="englishGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#fbcfe8" />
+              <stop offset="100%" stopColor="#be185d" />
+            </linearGradient>
+            <linearGradient id="glassShine" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#ffffff" stopOpacity="0.0" />
+            </linearGradient>
+          </defs>
+        </svg>
       );
     case 'farm':
       return (
