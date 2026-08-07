@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bloomly Kids - شخصيات الفواكه</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { overflow: hidden; }
+    canvas { display: block; cursor: pointer; }
+    #info {
+      position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+      color: #555; font-size: 16px; text-align: center;
+      background: rgba(255,255,255,0.9); padding: 10px 28px; border-radius: 30px;
+      z-index: 10; direction: rtl; font-family: 'Segoe UI', Tahoma, sans-serif;
+      font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+  </style>
+</head>
+<body>
+  <div id="info">🍎 اضغط على التفاحة أو البرتقالة عشان يسلّمو عليك! 🍊</div>
+  <script type="importmap">
+  { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
+  </script>
+  <script type="module">
+    import * as THREE from 'three';
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xD4F1FF);
+
+    const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 1.8, 5.5);
+    camera.lookAt(0, 1.2, 0);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    document.body.appendChild(renderer.domElement);
+
+    // Lights
+    scene.add(new THREE.AmbientLight(0xffffff, 1.0));
+    const sun = new THREE.DirectionalLight(0xffffff, 1.0);
+    sun.position.set(3, 8, 5);
+    sun.castShadow = true;
+    scene.add(sun);
+    const fill = new THREE.DirectionalLight(0xfff0e0, 0.4);
+    fill.position.set(-3, 5, 3);
+    scene.add(fill);
+
+    // Ground
+    const ground = new THREE.Mesh(
+      new THREE.PlaneGeometry(30, 30),
+      new THREE.MeshStandardMaterial({ color: 0xA5D6A7, roughness: 0.9 })
+    );
+    ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true;
+    scene.add(ground);
+
+    // Clouds
+    function makeCloud(x, y, z) {
+      const g = new THREE.Group();
+      const m = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 1 });
+      const s1 = new THREE.Mesh(new THREE.SphereGeometry(0.45, 10, 10), m);
+      g.add(s1);
+      const s2 = new THREE.Mesh(new THREE.SphereGeometry(0.35, 10, 10), m);
+      s2.position.set(0.35, 0.1, 0);
+      g.add(s2);
+      const s3 = new THREE.Mesh(new THREE.SphereGeometry(0.3, 10, 10), m);
+      s3.position.set(-0.3, 0.08, 0);
+      g.add(s3);
+      g.position.set(x, y, z);
+      scene.add(g);
+      return g;
+    }
+    const cl1 = makeCloud(-4, 5, -5);
+    const cl2 = makeCloud(3.5, 4.8, -6);
+    const cl3 = makeCloud(0, 5.5, -8);
+
+    // ===== FRUIT CHARACTER =====
+    function makeFruit(bodyColor, cheekColor, leafColor, handColor, shoeColor) {
+      const root = new THREE.Group();
+      root.userData = { greeting: false, greetT: 0, blinkT: 0, blinking: false, phase: Math.random() * 6 };
+
+      // Body
+      const bodyMat = new THREE.MeshStandardMaterial({ color: bodyColor, roughness: 0.45 });
+      const body = new THREE.Mesh(new THREE.SphereGeometry(0.65, 32, 32), bodyMat);
+      body.position.y = 1.0;
+      body.scale.y = 0.92;
+      body.castShadow = true;
+      root.add(body);
+      root.userData.body = body;
+
+      // Shine
+      const shine = new THREE.Mesh(
+        new THREE.SphereGeometry(0.15, 12, 12),
+        new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.35 })
+      );
+      shine.position.set(-0.25, 1.3, 0.5);
+      root.add(shine);
+
+      // LEFT EYE
+      const lEW = new THREE.Mesh(new THREE.SphereGeometry(0.17, 20, 20), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+      lEW.position.set(-0.22, 1.15, 0.58);
+      root.add(lEW);
+
+      const lPP = new THREE.Mesh(new THREE.SphereGeometry(0.09, 14, 14), new THREE.MeshBasicMaterial({ color: 0x1a1a1a }));
+      lPP.position.set(-0.22, 1.15, 0.73);
+      root.add(lPP);
+
+      const lSP = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+      lSP.position.set(-0.18, 1.2, 0.78);
+      root.add(lSP);
+
+      // RIGHT EYE
+      const rEW = new THREE.Mesh(new THREE.SphereGeometry(0.17, 20, 20), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+      rEW.position.set(0.22, 1.15, 0.58);
+      root.add(rEW);
+
+      const rPP = new THREE.Mesh(new THREE.SphereGeometry(0.09, 14, 14), new THREE.MeshBasicMaterial({ color: 0x1a1a1a }));
+      rPP.position.set(0.22, 1.15, 0.73);
+      root.add(rPP);
+
+      const rSP = new THREE.Mesh(new THREE.SphereGeometry(0.035, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+      rSP.position.set(0.26, 1.2, 0.78);
+      root.add(rSP);
+
+      root.userData.eyeParts = [lEW, rEW, lPP, rPP, lSP, rSP];
+
+      // Cheeks
+      const chMat = new THREE.MeshBasicMaterial({ color: cheekColor, transparent: true, opacity: 0.45, side: THREE.DoubleSide });
+      const lCh = new THREE.Mesh(new THREE.CircleGeometry(0.1, 16), chMat);
+      lCh.position.set(-0.42, 0.95, 0.55);
+      lCh.rotation.y = 0;
+      root.add(lCh);
+      const rCh = new THREE.Mesh(new THREE.CircleGeometry(0.1, 16), chMat);
+      rCh.position.set(0.42, 0.95, 0.55);
+      rCh.rotation.y = 0;
+      root.add(rCh);
+
+      // Smile
+      const smilePts = [];
+      for (let i = 0; i <= 24; i++) {
+        const t = (i / 24) * Math.PI;
+        smilePts.push(new THREE.Vector3(Math.cos(t) * 0.22, 0.85 - Math.sin(t) * 0.1, 0.62));
+      }
+      const smileGeo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(smilePts), 20, 0.022, 6, false);
+      root.add(new THREE.Mesh(smileGeo, new THREE.MeshBasicMaterial({ color: 0xc62828 })));
+
+      // Stem
+      const stem = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.035, 0.04, 0.25, 6),
+        new THREE.MeshStandardMaterial({ color: 0x6D4C41 })
+      );
+      stem.position.y = 1.68;
+      root.add(stem);
+
+      // Leaf
+      const leafS = new THREE.Shape();
+      leafS.moveTo(0, 0);
+      leafS.quadraticCurveTo(0.12, 0.18, 0.28, 0.05);
+      leafS.quadraticCurveTo(0.12, -0.05, 0, 0);
+      const leaf = new THREE.Mesh(
+        new THREE.ShapeGeometry(leafS),
+        new THREE.MeshStandardMaterial({ color: leafColor, side: THREE.DoubleSide })
+      );
+      leaf.position.set(0.04, 1.78, 0);
+      leaf.rotation.z = -0.3;
+      root.add(leaf);
+      root.userData.leaf = leaf;
+
+      // Left Arm
+      const lAP = new THREE.Group();
+      lAP.position.set(-0.6, 1.05, 0);
+      const lArm = new THREE.Mesh(new THREE.CapsuleGeometry(0.065, 0.3, 6, 8), bodyMat);
+      lArm.position.y = -0.18;
+      lAP.add(lArm);
+      const lHand = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), new THREE.MeshStandardMaterial({ color: handColor }));
+      lHand.position.y = -0.38;
+      lAP.add(lHand);
+      root.add(lAP);
+      root.userData.lAP = lAP;
+
+      // Right Arm
+      const rAP = new THREE.Group();
+      rAP.position.set(0.6, 1.05, 0);
+      const rArm = new THREE.Mesh(new THREE.CapsuleGeometry(0.065, 0.3, 6, 8), bodyMat);
+      rArm.position.y = -0.18;
+      rAP.add(rArm);
+      const rHand = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), new THREE.MeshStandardMaterial({ color: handColor }));
+      rHand.position.y = -0.38;
+      rAP.add(rHand);
+      root.add(rAP);
+      root.userData.rAP = rAP;
+
+      // Left Leg
+      const lLP = new THREE.Group();
+      lLP.position.set(-0.18, 0.38, 0);
+      const lLeg = new THREE.Mesh(new THREE.CapsuleGeometry(0.07, 0.15, 6, 8), bodyMat);
+      lLeg.position.y = -0.1;
+      lLP.add(lLeg);
+      const lShoeGeo = new THREE.SphereGeometry(0.09, 8, 8);
+      const lShoe = new THREE.Mesh(lShoeGeo, new THREE.MeshStandardMaterial({ color: shoeColor }));
+      lShoe.position.set(0, -0.2, 0.03);
+      lShoe.scale.set(1.2, 0.5, 1.3);
+      lLP.add(lShoe);
+      root.add(lLP);
+      root.userData.lLP = lLP;
+
+      // Right Leg
+      const rLP = new THREE.Group();
+      rLP.position.set(0.18, 0.38, 0);
+      const rLeg = new THREE.Mesh(new THREE.CapsuleGeometry(0.07, 0.15, 6, 8), bodyMat);
+      rLeg.position.y = -0.1;
+      rLP.add(rLeg);
+      const rShoe = new THREE.Mesh(new THREE.SphereGeometry(0.09, 8, 8), new THREE.MeshStandardMaterial({ color: shoeColor }));
+      rShoe.position.set(0, -0.2, 0.03);
+      rShoe.scale.set(1.2, 0.5, 1.3);
+      rLP.add(rShoe);
+      root.add(rLP);
+      root.userData.rLP = rLP;
+
+      return root;
+    }
+
+    // Apple
+    const apple = makeFruit(0xFF6B6B, 0xFFABAB, 0x66BB6A, 0xFFE0E0, 0xFF8A80);
+    apple.position.x = -1.4;
+    scene.add(apple);
+
+    // Orange
+    const orange = makeFruit(0xFFAB40, 0xFFD180, 0x81C784, 0xFFF3E0, 0xFFCC80);
+    orange.position.x = 1.4;
+    scene.add(orange);
+
+    // Click
+    const rc = new THREE.Raycaster();
+    const ms = new THREE.Vector2();
+
+    function doClick(cx, cy) {
+      const r = renderer.domElement.getBoundingClientRect();
+      ms.x = ((cx - r.left) / r.width) * 2 - 1;
+      ms.y = -((cy - r.top) / r.height) * 2 + 1;
+      rc.setFromCamera(ms, camera);
+      for (const ch of [apple, orange]) {
+        if (rc.intersectObjects(ch.children, true).length > 0 && !ch.userData.greeting) {
+          ch.userData.greeting = true;
+          ch.userData.greetT = 0;
+        }
+      }
+    }
+    renderer.domElement.addEventListener('click', (e) => doClick(e.clientX, e.clientY));
+    renderer.domElement.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      if (e.touches[0]) doClick(e.touches[0].clientX, e.touches[0].clientY);
+    }, { passive: false });
+
+    // Animate
+    const clock = new THREE.Clock();
+
+    function updateChar(ch, t, dt) {
+      const u = ch.userData;
+
+      // Breathe
+      const b = Math.sin(t * 1.6 + u.phase) * 0.025;
+      u.body.scale.set(1 + b, 0.92 - b * 0.5, 1 + b);
+      ch.rotation.z = Math.sin(t * 0.7 + u.phase) * 0.025;
+      u.leaf.rotation.z = -0.3 + Math.sin(t * 1.8 + u.phase) * 0.1;
+
+      // Blink every 3s
+      u.blinkT += dt;
+      if (!u.blinking && u.blinkT >= 3.0) { u.blinking = true; u.blinkT = 0; }
+      if (u.blinking) {
+        const p = u.blinkT / 0.15;
+        let sy = 1;
+        if (p < 0.5) sy = Math.max(1 - p * 2.5, 0.05);
+        else if (p < 1.0) sy = Math.min((p - 0.5) * 2.5, 1);
+        else { sy = 1; u.blinking = false; u.blinkT = 0; }
+        for (const ep of u.eyeParts) ep.scale.y = sy;
+      }
+
+      // Idle arms
+      if (!u.greeting) {
+        u.lAP.rotation.z = 0.25 + Math.sin(t * 1.0 + u.phase) * 0.12;
+        u.rAP.rotation.z = -0.25 + Math.sin(t * 1.0 + u.phase + Math.PI) * 0.12;
+        u.lLP.rotation.x = 0; u.rLP.rotation.x = 0;
+        ch.position.y = 0;
+      }
+
+      // Greeting
+      if (u.greeting) {
+        u.greetT += dt;
+        const g = u.greetT;
+        u.rAP.rotation.z = -2.2 + Math.sin(g * 9) * 0.5;
+        u.lAP.rotation.z = 0.3;
+        ch.position.y = Math.abs(Math.sin(g * 5)) * 0.2;
+        u.body.rotation.z = Math.sin(g * 6) * 0.08;
+        u.lLP.rotation.x = Math.sin(g * 7) * 0.25;
+        u.rLP.rotation.x = Math.sin(g * 7 + Math.PI) * 0.25;
+        ch.rotation.y = Math.sin(g * 3) * 0.2;
+        if (g > 2.5) {
+          u.greeting = false; u.greetT = 0;
+          u.rAP.rotation.z = -0.25; u.lAP.rotation.z = 0.25;
+          u.body.rotation.z = 0; ch.position.y = 0; ch.rotation.y = 0;
+          u.lLP.rotation.x = 0; u.rLP.rotation.x = 0;
+        }
+      }
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const t = clock.getElapsedTime();
+      const dt = Math.min(clock.getDelta(), 0.05);
+      updateChar(apple, t, dt);
+      updateChar(orange, t, dt);
+      cl1.position.x = -4 + Math.sin(t * 0.08) * 0.5;
+      cl2.position.x = 3.5 + Math.sin(t * 0.06 + 1) * 0.4;
+      cl3.position.x = Math.sin(t * 0.1 + 2) * 0.3;
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>

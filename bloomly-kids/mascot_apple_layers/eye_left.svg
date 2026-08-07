@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="40" height="55" viewBox="0 0 40 55" xmlns="http://www.w3.org/2000/svg">
+  
+  <defs>
+    <radialGradient id="apple-grad" cx="42%" cy="28%" r="65%">
+      <stop offset="0%" stop-color="#FF6B6B" />
+      <stop offset="40%" stop-color="#FF3838" />
+      <stop offset="80%" stop-color="#D90000" />
+      <stop offset="100%" stop-color="#8F0000" />
+    </radialGradient>
+    <linearGradient id="apple-highlight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="leaf-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C5F942" />
+      <stop offset="100%" stop-color="#3F7A1E" />
+    </linearGradient>
+  </defs>
+
+  
+      <g transform="translate(20, 26)">
+        <ellipse cx="0" cy="0" rx="17" ry="24" fill="#FFF" stroke="#222" stroke-width="4"/>
+        <ellipse cx="2" cy="2" rx="10.5" ry="14" fill="#111"/>
+        <circle cx="0.5" cy="-4" r="5" fill="#FFF"/>
+        <circle cx="5" cy="5" r="2.5" fill="#FFF"/>
+      </g>
+    
+</svg>

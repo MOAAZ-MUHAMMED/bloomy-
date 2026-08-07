@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>بلومي للأطفال - استعراض شخصيات 3D احترافية (Three.js Premium)</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      overflow: hidden;
+      background: radial-gradient(circle, #FFECA1 0%, #FCD34D 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    canvas {
+      display: block;
+      cursor: pointer;
+    }
+    #info-panel {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.95);
+      border: 4px solid #4D2B82;
+      padding: 12px 30px;
+      border-radius: 30px;
+      color: #4D2B82;
+      font-size: 20px;
+      font-weight: 900;
+      box-shadow: 0 8px 0px #4D2B82;
+      z-index: 10;
+      text-align: center;
+      direction: rtl;
+      pointer-events: none;
+    }
+    #bottom-panel {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 8px 24px;
+      border-radius: 20px;
+      color: #7C3AED;
+      font-size: 14px;
+      font-weight: bold;
+      z-index: 10;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="info-panel">🍎 اضغط على التفاحة أو البرتقالة لتشاهد رمش العين وحركة اليد الناعمة! 🍊</div>
+  <div id="bottom-panel">رندرة 3D حقيقية (MeshPhysicalMaterial) مع إضاءة ستوديو متقدمة وظلال ناعمة</div>
+
+  <script type="importmap">
+  { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
+  </script>
+  
+  <script type="module">
+    import * as THREE from 'three';
+
+    // 1. Scene Setup
+    const scene = new THREE.Scene();
+    scene.background = null; // transparent to show body radial gradient
+
+    // 2. Camera Setup
+    const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 1.4, 5.0);
+    camera.lookAt(0, 0.9, 0);
+
+    // 3. Renderer Setup (High Quality)
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "high-performance" });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Beautiful soft shadows
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
+    document.body.appendChild(renderer.domElement);
+
+    // 4. Studio Lighting Rig (Pixar Secret)
+    // Key Light (Main Light casting soft shadows)
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    keyLight.position.set(4, 6, 4);
+    keyLight.castShadow = true;
+    keyLight.shadow.mapSize.width = 1024;
+    keyLight.shadow.mapSize.height = 1024;
+    keyLight.shadow.bias = -0.001;
+    keyLight.shadow.radius = 6; // Soft shadow blur
+    scene.add(keyLight);
+
+    // Fill Light (Soft light on opposite side to soften shadows)
+    const fillLight = new THREE.DirectionalLight(0xfff0e0, 0.8);
+    fillLight.position.set(-4, 4, 2);
+    scene.add(fillLight);
+
+    // Rim Light / Backlight (Very strong backlight from behind to create glowing silhouette)
+    const rimLight = new THREE.DirectionalLight(0xffffff, 2.5);
+    rimLight.position.set(0, 4, -4);
+    scene.add(rimLight);
+
+    // Ambient / Ground bounce light
+    const ambientLight = new THREE.HemisphereLight(0xffffff, 0xa5d6a7, 0.6);
+    scene.add(ambientLight);
+
+    // 5. Floor (Receives Shadows)
+    const floorGeo = new THREE.PlaneGeometry(20, 20);
+    const floorMat = new THREE.ShadowMaterial({ opacity: 0.18 });
+    const floor = new THREE.Mesh(floorGeo, floorMat);
+    floor.rotation.x = -Math.PI / 2;
+    floor.position.y = 0.15;
+    floor.receiveShadow = true;
+    scene.add(floor);
+
+    // 6. Build High-Quality Procedural Clay Fruits
+    function createPremiumFruit(type, bodyColor, shoeColor) {
+      const root = new THREE.Group();
+      root.userData = {
+        isWaving: false,
+        waveTime: 0,
+        blinkTime: 0,
+        isBlinking: false,
+        blinkVal: 1.0,
+        phase: Math.random() * 10
+      };
+
+      // Clay Material (MeshPhysicalMaterial with clearcoat & sheen for Pixar look)
+      const clayMat = new THREE.MeshPhysicalMaterial({
+        color: bodyColor,
+        roughness: 0.35,
+        metalness: 0.05,
+        clearcoat: 0.7,
+        clearcoatRoughness: 0.25,
+        sheen: 1.0,
+        sheenColor: new THREE.Color(0xffffff),
+        sheenRoughness: 0.4
+      });
+
+      // Glossy Black Eye Material
+      const eyeMat = new THREE.MeshPhysicalMaterial({
+        color: 0x0a0a0a,
+        roughness: 0.05,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.0
+      });
+
+      // Glossy White Material
+      const whiteMat = new THREE.MeshPhysicalMaterial({
+        color: 0xffffff,
+        roughness: 0.1,
+        clearcoat: 0.8
+      });
+
+      // A. Sculpted Body Geometry
+      let bodyGeo = new THREE.SphereGeometry(0.65, 48, 48);
+      
+      if (type === 'apple') {
+        // Deform sphere to create a tapered bottom and a top stem dip
+        const pos = bodyGeo.attributes.position;
+        for (let i = 0; i < pos.count; i++) {
+          let x = pos.getX(i);
+          let y = pos.getY(i);
+          let z = pos.getZ(i);
+          
+          // Taper bottom
+          if (y < 0) {
+            const factor = 1.0 + y * 0.3; 
+            pos.setX(i, x * factor);
+            pos.setZ(i, z * factor);
+          }
+          // Top dip for stem
+          if (y > 0.4) {
+            const distFromTop = Math.sqrt(x*x + z*z);
+            if (distFromTop < 0.35) {
+              pos.setY(i, y - (0.35 - distFromTop) * 0.35);
+            }
+          }
+        }
+        bodyGeo.computeVertexNormals();
+      } else if (type === 'orange') {
+        // Squash orange slightly on Y axis and give it an organic bump
+        bodyGeo.scale(1.0, 0.86, 1.0);
+      }
+
+      const body = new THREE.Mesh(bodyGeo, clayMat);
+      body.position.y = 1.0;
+      body.castShadow = true;
+      body.receiveShadow = true;
+      root.add(body);
+      root.userData.body = body;
+
+      // Soft Clay Cheek Highlights
+      const cheekMat = new THREE.MeshBasicMaterial({
+        color: type === 'apple' ? 0xff9eb5 : 0xffc49e,
+        transparent: true,
+        opacity: 0.4,
+        side: THREE.DoubleSide
+      });
+      const cheekGeo = new THREE.CircleGeometry(0.09, 16);
+      
+      const leftCheek = new THREE.Mesh(cheekGeo, cheekMat);
+      leftCheek.position.set(-0.35, 0.95, 0.54);
+      leftCheek.rotation.y = -0.15;
+      root.add(leftCheek);
+
+      const rightCheek = new THREE.Mesh(cheekGeo, cheekMat);
+      rightCheek.position.set(0.35, 0.95, 0.54);
+      rightCheek.rotation.y = 0.15;
+      root.add(rightCheek);
+
+      // B. Smooth Dynamic Eyes (Grouped for easy scaling Y to blink)
+      const leftEyeGroup = new THREE.Group();
+      leftEyeGroup.position.set(-0.2, 1.12, 0.56);
+      
+      const rightEyeGroup = new THREE.Group();
+      rightEyeGroup.position.set(0.2, 1.12, 0.56);
+
+      const eyeGeo = new THREE.SphereGeometry(0.12, 24, 24);
+      eyeGeo.scale(1.0, 1.1, 0.8); // Kawaii oval eyes
+
+      const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
+      leftEyeGroup.add(leftEye);
+
+      const rightEye = new THREE.Mesh(eyeGeo, eyeMat);
+      rightEyeGroup.add(rightEye);
+
+      // Pupil Highlights (Shiny White Dots)
+      const shineGeo = new THREE.SphereGeometry(0.038, 12, 12);
+      
+      const leftShine = new THREE.Mesh(shineGeo, whiteMat);
+      leftShine.position.set(0.03, 0.04, 0.08);
+      leftEyeGroup.add(leftShine);
+
+      const rightShine = new THREE.Mesh(shineGeo, whiteMat);
+      rightShine.position.set(0.03, 0.04, 0.08);
+      rightEyeGroup.add(rightShine);
+
+      root.add(leftEyeGroup);
+      root.add(rightEyeGroup);
+      root.userData.leftEye = leftEyeGroup;
+      root.userData.rightEye = rightEyeGroup;
+
+      // C. Smiling Mouth (Dynamic Bezier Tube)
+      const mouthPts = [];
+      for (let i = 0; i <= 20; i++) {
+        const t = (i / 20) * Math.PI;
+        mouthPts.push(new THREE.Vector3(Math.cos(t) * 0.16, 0.84 - Math.sin(t) * 0.07, 0.59));
+      }
+      const mouthGeo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3(mouthPts), 16, 0.018, 6, false);
+      const mouth = new THREE.Mesh(mouthGeo, new THREE.MeshBasicMaterial({ color: 0x4a1500 }));
+      root.add(mouth);
+
+      // D. Stem and Leaf
+      const stemMat = new THREE.MeshStandardMaterial({ color: 0x5d4037, roughness: 0.8 });
+      const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.025, 0.22, 8), stemMat);
+      stem.position.set(0, 1.62, 0);
+      stem.rotation.z = -0.15;
+      root.add(stem);
+
+      const leafMat = new THREE.MeshPhysicalMaterial({
+        color: 0x4caf50,
+        roughness: 0.5,
+        clearcoat: 0.5,
+        side: THREE.DoubleSide
+      });
+      const leafShape = new THREE.Shape();
+      leafShape.moveTo(0, 0);
+      leafShape.quadraticCurveTo(0.1, 0.15, 0.24, 0.04);
+      leafShape.quadraticCurveTo(0.1, -0.06, 0, 0);
+      const leafGeo = new THREE.ShapeGeometry(leafShape);
+      const leaf = new THREE.Mesh(leafGeo, leafMat);
+      leaf.position.set(type === 'apple' ? 0.02 : -0.01, 1.70, 0.02);
+      leaf.rotation.z = type === 'apple' ? -0.3 : 0.4;
+      leaf.scale.set(1.1, 1.1, 1.1);
+      root.add(leaf);
+      root.userData.leaf = leaf;
+
+      // E. Arms (Using Groups as pivots for organic waving)
+      const armMat = clayMat;
+
+      // Left Arm (Idle by default)
+      const leftArmPivot = new THREE.Group();
+      leftArmPivot.position.set(-0.55, 1.0, 0);
+      const leftArmMesh = new THREE.Mesh(new THREE.CapsuleGeometry(0.06, 0.22, 8, 12), armMat);
+      leftArmMesh.position.y = -0.12;
+      leftArmPivot.add(leftArmMesh);
+      const leftHand = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 12), armMat);
+      leftHand.position.y = -0.24;
+      leftArmPivot.add(leftHand);
+      root.add(leftArmPivot);
+      leftArmPivot.rotation.z = 0.25;
+      root.userData.leftArm = leftArmPivot;
+
+      // Right Arm (Will wave dynamically on click)
+      const rightArmPivot = new THREE.Group();
+      rightArmPivot.position.set(0.55, 1.0, 0);
+      const rightArmMesh = new THREE.Mesh(new THREE.CapsuleGeometry(0.06, 0.22, 8, 12), armMat);
+      rightArmMesh.position.y = -0.12;
+      rightArmPivot.add(rightArmMesh);
+      const rightHand = new THREE.Mesh(new THREE.SphereGeometry(0.075, 12, 12), armMat);
+      rightHand.position.y = -0.24;
+      rightArmPivot.add(rightHand);
+      root.add(rightArmPivot);
+      rightArmPivot.rotation.z = -0.25;
+      root.userData.rightArm = rightArmPivot;
+
+      // F. Cute Feet
+      const shoeMat = new THREE.MeshPhysicalMaterial({ color: shoeColor, roughness: 0.4, clearcoat: 0.6 });
+      const footGeo = new THREE.SphereGeometry(0.08, 16, 16);
+      footGeo.scale(1.2, 0.55, 1.4); // cute flat shoe shape
+
+      const leftLeg = new THREE.Group();
+      leftLeg.position.set(-0.18, 0.4, 0);
+      const leftLegMesh = new THREE.Mesh(new THREE.CapsuleGeometry(0.065, 0.12, 8, 12), armMat);
+      leftLegMesh.position.y = -0.06;
+      leftLeg.add(leftLegMesh);
+      const leftFoot = new THREE.Mesh(footGeo, shoeMat);
+      leftFoot.position.set(0, -0.15, 0.03);
+      leftLeg.add(leftFoot);
+      root.add(leftLeg);
+
+      const rightLeg = new THREE.Group();
+      rightLeg.position.set(0.18, 0.4, 0);
+      const rightLegMesh = new THREE.Mesh(new THREE.CapsuleGeometry(0.065, 0.12, 8, 12), armMat);
+      rightLegMesh.position.y = -0.06;
+      rightLeg.add(rightLegMesh);
+      const rightFoot = new THREE.Mesh(footGeo, shoeMat);
+      rightFoot.position.set(0, -0.15, 0.03);
+      rightLeg.add(rightFoot);
+      root.add(rightLeg);
+
+      root.userData.leftLeg = leftLeg;
+      root.userData.rightLeg = rightLeg;
+
+      return root;
+    }
+
+    // Generate Apple (Vibrant Cherry Red, Light Red Shoes)
+    const apple = createPremiumFruit('apple', 0xE63946, 0x1D3557);
+    apple.position.x = -1.3;
+    scene.add(apple);
+
+    // Generate Orange (Warm Tangerine Orange, Cream Shoes)
+    const orange = createPremiumFruit('orange', 0xFF9F1C, 0x2EC4B6);
+    orange.position.x = 1.3;
+    scene.add(orange);
+
+    // 7. Raycasting & Interaction
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    const sound = new Audio('./public/excellent.mp3');
+    sound.volume = 0.5;
+
+    function onInteract(clientX, clientY) {
+      const rect = renderer.domElement.getBoundingClientRect();
+      mouse.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+      mouse.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+
+      raycaster.setFromCamera(mouse, camera);
+      
+      for (const mascot of [apple, orange]) {
+        const intersects = raycaster.intersectObjects(mascot.children, true);
+        if (intersects.length > 0 && !mascot.userData.isWaving) {
+          mascot.userData.isWaving = true;
+          mascot.userData.waveTime = 0;
+          
+          // Trigger instant blink sequence at the start of waving
+          mascot.userData.isBlinking = true;
+          mascot.userData.blinkTime = 0;
+
+          // Play sound
+          try {
+            sound.currentTime = 0;
+            sound.play().catch(e => {});
+          } catch(e){}
+        }
+      }
+    }
+
+    renderer.domElement.addEventListener('click', (e) => onInteract(e.clientX, e.clientY));
+    renderer.domElement.addEventListener('touchstart', (e) => {
+      if (e.touches[0]) onInteract(e.touches[0].clientX, e.touches[0].clientY);
+    });
+
+    // 8. Dynamic Animation Loop
+    const clock = new THREE.Clock();
+
+    function animateMascot(mascot, t, dt) {
+      const u = mascot.userData;
+
+      // --- STATIC IDLE (No breathing scale or vertical float per user request!) ---
+      // Eyes are normal, leaf has minor breeze sway
+      u.leaf.rotation.z += Math.sin(t * 1.5 + u.phase) * 0.0004;
+
+      // --- BLINKING SYSTEM (Natural smooth scale scaling Y down to 0) ---
+      if (!u.isBlinking && !u.isWaving) {
+        // Randomly trigger blink every 3-6s
+        u.blinkTime += dt;
+        if (u.blinkTime >= 3.0 + Math.random() * 3.0) {
+          u.isBlinking = true;
+          u.blinkTime = 0;
+        }
+      }
+
+      if (u.isBlinking) {
+        u.blinkTime += dt;
+        const progress = u.blinkTime / 0.18; // 180ms blink
+        if (progress < 0.5) {
+          u.blinkVal = 1.0 - (progress * 2.0); // go down to 0
+        } else if (progress < 1.0) {
+          u.blinkVal = (progress - 0.5) * 2.0; // go back up to 1
+        } else {
+          u.blinkVal = 1.0;
+          u.isBlinking = false;
+          u.blinkTime = 0;
+        }
+        // Apply smooth scale Y to eyes
+        u.leftEye.scale.y = Math.max(u.blinkVal, 0.05);
+        u.rightEye.scale.y = Math.max(u.blinkVal, 0.05);
+      }
+
+      // --- WAVING BYE-BYE SYSTEM (Arm rotates and waves naturally, rest of body is static) ---
+      if (u.isWaving) {
+        u.waveTime += dt;
+        const w = u.waveTime;
+        
+        // 1. Raise Right Arm and rotate it back and forth smoothly to wave bye-bye
+        // Target angle is raised (~ -2.2 rad), waving sweeps around it
+        u.rightArm.rotation.z = -2.1 + Math.sin(w * 18.0) * 0.4;
+        
+        // 2. Add very minor hip twist only when waving (leaves rest of body static)
+        u.body.rotation.y = Math.sin(w * 8.0) * 0.08;
+
+        // 3. Stop waving after 1.8 seconds and return right arm to idle pose
+        if (w > 1.8) {
+          u.isWaving = false;
+          u.waveTime = 0;
+          u.rightArm.rotation.z = -0.25;
+          u.body.rotation.y = 0;
+        }
+      } else {
+        // Arm stays in default idle pose
+        u.rightArm.rotation.z = -0.25;
+      }
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const t = clock.getElapsedTime();
+      const dt = Math.min(clock.getDelta(), 0.05);
+
+      animateMascot(apple, t, dt);
+      animateMascot(orange, t, dt);
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // 9. Resize Handling
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>

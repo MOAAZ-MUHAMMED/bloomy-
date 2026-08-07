@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <radialGradient id="gloveGrad" cx="40%" cy="40%" r="60%">
+      <stop offset="75%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#ECEFF1" />
+    </radialGradient>
+  </defs>
+  <!-- Waving Glove Palm & Fingers splayed open -->
+  <path d="M 30 65 
+           C 25 50, 30 30, 42 32 
+           C 48 33, 46 45, 52 40
+           C 58 35, 60 15, 70 18
+           C 78 20, 72 40, 80 38
+           C 88 36, 92 20, 100 24
+           C 106 27, 98 48, 102 52
+           C 106 55, 115 48, 118 56
+           C 120 64, 105 85, 80 95
+           C 55 105, 35 80, 30 65 Z" 
+        fill="url(#gloveGrad)" stroke="#212121" stroke-width="5" stroke-linejoin="round"/>
+  <!-- Glove Cuff -->
+  <path d="M 45 92 C 55 98, 70 95, 78 88" fill="none" stroke="#212121" stroke-width="6" stroke-linecap="round"/>
+</svg>

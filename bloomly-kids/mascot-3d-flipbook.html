@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>بلومي للأطفال - استعراض الـ 3D Flipbook المطور</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle, #FFECA1 0%, #FCD34D 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+      direction: rtl;
+    }
+
+    h1 {
+      color: #4D2B82;
+      font-size: 30px;
+      font-weight: 900;
+      text-shadow: 0 4px 0px rgba(255, 255, 255, 0.8);
+      margin-bottom: 5px;
+    }
+
+    p {
+      color: #7C3AED;
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 30px;
+      text-align: center;
+      max-width: 600px;
+    }
+
+    .playground {
+      display: flex;
+      gap: 80px;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .mascot-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: white;
+      border: 4px solid #4D2B82;
+      border-radius: 35px;
+      padding: 25px;
+      box-shadow: 0 10px 0px #4D2B82;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.2s ease;
+    }
+
+    .mascot-card:hover {
+      transform: translateY(-8px);
+    }
+
+    .mascot-card:active {
+      transform: translateY(2px);
+    }
+
+    .frame-container {
+      width: 250px;
+      height: 250px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* We stack images on top of each other and control visibility via class */
+    .mascot-frame {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      opacity: 0;
+      transition: opacity 0.05s ease-in-out;
+      pointer-events: none;
+    }
+
+    .mascot-frame.active {
+      opacity: 1;
+    }
+
+    .label {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: 900;
+      color: #4D2B82;
+    }
+
+    .info {
+      margin-top: 40px;
+      font-size: 14px;
+      color: #555;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 15px 30px;
+      border-radius: 20px;
+      border: 2px dashed #7C3AED;
+      max-width: 650px;
+      text-align: center;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>حركة الـ 3D Flipbook الاحترافية 🍎🍊✨</h1>
+  <p>هنا نقوم بدمج صور الـ 3D عالية الجودة الموجودة بالملف وعرضها كحركة متتالية (Frame-by-Frame) فائقة النعومة وتفاعلية بالكامل!</p>
+
+  <div class="playground">
+    
+    <!-- Apple Card -->
+    <div class="mascot-card" id="apple-card">
+      <div class="frame-container">
+        <!-- We load the existing transparent 3D PNG frames -->
+        <img src="./public/assets/mascots/apple_idle.png" id="apple-frame-idle" class="mascot-frame active" alt="Idle">
+        <img src="./public/assets/mascots/apple_blink.png" id="apple-frame-blink" class="mascot-frame" alt="Blink">
+        <img src="./public/assets/mascots/apple_wave_left.png" id="apple-frame-wave1" class="mascot-frame" alt="Wave 1">
+        <img src="./public/assets/mascots/apple_wave_right.png" id="apple-frame-wave2" class="mascot-frame" alt="Wave 2">
+      </div>
+      <div class="label">البطل تفاحة 🍎</div>
+    </div>
+
+    <!-- Orange Card -->
+    <div class="mascot-card" id="orange-card">
+      <div class="frame-container">
+        <img src="./public/assets/mascots/orange_idle.png" id="orange-frame-idle" class="mascot-frame active" alt="Idle">
+        <img src="./public/assets/mascots/orange_blink.png" id="orange-frame-blink" class="mascot-frame" alt="Blink">
+        <img src="./public/assets/mascots/orange_wave_left.png" id="orange-frame-wave1" class="mascot-frame" alt="Wave 1">
+        <img src="./public/assets/mascots/orange_wave_right.png" id="orange-frame-wave2" class="mascot-frame" alt="Wave 2">
+      </div>
+      <div class="label">البطل برتقالة 🍊</div>
+    </div>
+
+  </div>
+
+  <div class="info">
+    💡 <strong>كيف تعمل؟</strong> الشخصية تقف ثابتة بدقة 3D مجسمة. كل 3 ثوانٍ ترمش عينها تلقائياً بالتبديل لصورة الرمش لمدة 120ms. وعند النقر عليها، يتم التبديل السريع جداً بين إطارات التلويح (باي باي) لمدة 1.8 ثانية لتعطي حركة لوحة سينمائية انسيابية كاملة بدون أي بكسلة.
+  </div>
+
+  <script>
+    const sound = new Audio('./public/excellent.mp3');
+    sound.volume = 0.5;
+
+    function setupFlipbookMascot(cardId, prefix) {
+      const card = document.getElementById(cardId);
+      const idleFrame = document.getElementById(`${prefix}-frame-idle`);
+      const blinkFrame = document.getElementById(`${prefix}-frame-blink`);
+      const wave1Frame = document.getElementById(`${prefix}-frame-wave1`);
+      const wave2Frame = document.getElementById(`${prefix}-frame-wave2`);
+
+      const frames = [idleFrame, blinkFrame, wave1Frame, wave2Frame];
+      let isAnimating = false;
+
+      function showFrame(activeFrame) {
+        frames.forEach(f => f.classList.remove('active'));
+        activeFrame.classList.add('active');
+      }
+
+      // 1. Natural random blinking (120ms blink every 3-6s)
+      function scheduleBlink() {
+        const nextBlink = Math.random() * 3000 + 3000;
+        setTimeout(() => {
+          if (!isAnimating) {
+            showFrame(blinkFrame);
+            setTimeout(() => {
+              if (!isAnimating) showFrame(idleFrame);
+            }, 120);
+          }
+          scheduleBlink();
+        }, nextBlink);
+      }
+      scheduleBlink();
+
+      // 2. Click Interaction: Play wave bye-bye loop (rapid alternate between wave1, wave2, idle)
+      card.addEventListener('click', () => {
+        if (isAnimating) return;
+        isAnimating = true;
+
+        // Play Sound
+        try {
+          sound.currentTime = 0;
+          sound.play().catch(() => {});
+        } catch(e){}
+
+        let waveCount = 0;
+        const waveInterval = 180; // 180ms per frame swap
+        const maxWaves = 10; // Total 1.8 seconds of waving
+
+        const intervalId = setInterval(() => {
+          waveCount++;
+          if (waveCount >= maxWaves) {
+            clearInterval(intervalId);
+            showFrame(idleFrame);
+            isAnimating = false;
+          } else {
+            // Cycle through wave poses to create motion
+            if (waveCount % 3 === 1) {
+              showFrame(wave1Frame);
+            } else if (waveCount % 3 === 2) {
+              showFrame(wave2Frame);
+            } else {
+              showFrame(idleFrame);
+            }
+          }
+        }, waveInterval);
+      });
+    }
+
+    // Initialize both mascots
+    setupFlipbookMascot('apple-card', 'apple');
+    setupFlipbookMascot('orange-card', 'orange');
+  </script>
+</body>
+</html>

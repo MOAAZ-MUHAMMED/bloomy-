@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+  <defs>
+    <!-- Ultra-premium 3D Radial Gradient for volumetric look -->
+    <radialGradient id="apple3D" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#FF6B6B" />
+      <stop offset="40%" stop-color="#EE2E2E" />
+      <stop offset="85%" stop-color="#B71C1C" />
+      <stop offset="100%" stop-color="#7F0000" />
+    </radialGradient>
+    <!-- Soft Drop Shadow under the leaf/stem -->
+    <radialGradient id="shadowGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
+    </radialGradient>
+    <!-- High-gloss lacquer highlight -->
+    <linearGradient id="glossGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.7"/>
+      <stop offset="50%" stop-color="#FFFFFF" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Apple Body Shape -->
+  <path d="M 250 130 
+           C 285 105, 390 100, 420 180 
+           C 450 260, 390 380, 310 410 
+           C 275 425, 260 415, 250 415 
+           C 240 415, 225 425, 190 410 
+           C 110 380, 50 260, 80 180 
+           C 110 100, 215 105, 250 130 Z" 
+        fill="url(#apple3D)" stroke="#4A0000" stroke-width="7" stroke-linejoin="round"/>
+
+  <!-- Shadow under stem -->
+  <ellipse cx="250" cy="135" rx="35" ry="12" fill="url(#shadowGrad)"/>
+
+  <!-- Premium 3D Gloss Highlight -->
+  <path d="M 125 175 
+           C 135 135, 205 125, 245 140 
+           C 195 145, 145 165, 135 205
+           C 130 195, 123 185, 125 175 Z" 
+        fill="url(#glossGrad)"/>
+</svg>

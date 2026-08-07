@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 100" width="150" height="100">
+  <defs>
+    <linearGradient id="leafGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#81C784" />
+      <stop offset="100%" stop-color="#4CAF50" />
+    </linearGradient>
+  </defs>
+  <!-- Leaf Shape -->
+  <path d="M 10 80 C 40 40, 100 30, 140 20 C 110 50, 70 80, 10 80 Z" 
+        fill="url(#leafGrad)" stroke="#1B5E20" stroke-width="4" stroke-linejoin="round"/>
+  <!-- Central Vein -->
+  <path d="M 10 80 C 50 60, 100 45, 140 20" fill="none" stroke="#1B5E20" stroke-width="2"/>
+</svg>

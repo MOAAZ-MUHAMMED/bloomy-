@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>بلومي للأطفال - أبطال بلومي في الغابة السحرية</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(to bottom, #BAE6FD 0%, #E0F2FE 40%, #86EFAC 70%, #4ADE80 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+      direction: rtl;
+      position: relative;
+    }
+
+    /* 1. Cartoon Forest Background Elements */
+    .forest-background {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Floating Cloud Animation */
+    @keyframes float-cloud {
+      0% { transform: translateX(110vw); }
+      100% { transform: translateX(-20vw); }
+    }
+    .cloud {
+      position: absolute;
+      fill: #FFFFFF;
+      opacity: 0.9;
+      animation: float-cloud 35s linear infinite;
+    }
+    .cloud-1 { top: 10%; animation-duration: 45s; }
+    .cloud-2 { top: 20%; animation-duration: 32s; animation-delay: -8s; }
+
+    /* Floating Smiling Star (from user's screenshot) */
+    @keyframes float-star {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-10px) rotate(4deg); }
+    }
+    .star-container {
+      position: absolute;
+      top: 12%;
+      right: 15%;
+      width: 90px;
+      height: 90px;
+      animation: float-star 3.2s ease-in-out infinite;
+    }
+
+    /* 2. Interactive Area (Playground) */
+    .playground {
+      display: flex;
+      gap: 100px;
+      justify-content: center;
+      align-items: flex-end;
+      flex: 1;
+      width: 100%;
+      max-width: 1000px;
+      z-index: 5;
+      padding-bottom: 80px;
+      margin-top: 110px;
+    }
+
+    .mascot-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .mascot-container {
+      width: 280px;
+      height: 340px;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.2s ease;
+    }
+
+    .mascot-container:hover {
+      transform: translateY(-8px) scale(1.03);
+    }
+
+    .mascot-container:active {
+      transform: translateY(2px) scale(0.97);
+    }
+
+    .label {
+      margin-top: 15px;
+      background: white;
+      border: 4px solid #4D2B82;
+      padding: 10px 32px;
+      border-radius: 25px;
+      font-size: 22px;
+      font-weight: 900;
+      color: #4D2B82;
+      box-shadow: 0 6px 0px #4D2B82;
+      text-align: center;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    h1 {
+      position: absolute;
+      top: 25px;
+      color: #4D2B82;
+      font-size: 34px;
+      font-weight: 900;
+      text-shadow: 0 4px 0px rgba(255, 255, 255, 0.9);
+      text-align: center;
+      z-index: 10;
+      width: 100%;
+    }
+
+    .eye-element {
+      transform-origin: center;
+      transition: transform 0.08s ease-in-out;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>أبطال بلومي في الغابة السحرية 👋🌳🌟</h1>
+
+  <!-- SVG Forest Background Scene -->
+  <svg class="forest-background" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <!-- Tree Canopy Gradient -->
+      <radialGradient id="canopy-grad" cx="40%" cy="30%" r="70%">
+        <stop offset="0%" stop-color="#4ADE80" />
+        <stop offset="70%" stop-color="#16A34A" />
+        <stop offset="100%" stop-color="#14532D" />
+      </radialGradient>
+      <!-- Trunk Gradient -->
+      <linearGradient id="trunk-grad" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="#854D0E" />
+        <stop offset="100%" stop-color="#451A03" />
+      </linearGradient>
+    </defs>
+
+    <!-- Cloud 1 -->
+    <path class="cloud cloud-1" d="M120 35 C120 25, 140 15, 160 15 C175 15, 190 22, 195 30 C205 20, 225 20, 235 30 C245 25, 260 30, 260 45 C260 55, 245 65, 230 65 L130 65 C115 65, 100 55, 105 45 C105 35, 115 35, 120 35 Z" />
+    
+    <!-- Cloud 2 -->
+    <path class="cloud cloud-2" d="M30 45 C30 32, 55 20, 80 20 C100 20, 115 30, 122 40 C135 28, 160 28, 172 40 C185 32, 205 40, 200 60 C200 72, 180 85, 160 85 L60 85 C40 85, 20 72, 25 60 C25 48, 30 48, 30 45 Z" />
+
+    <!-- Distant mountains / Hills -->
+    <path d="M-100 900 Q200 550, 600 700 T1300 650 Q1500 680, 1600 900 Z" fill="#22C55E" opacity="0.5" />
+    <path d="M-100 900 Q300 600, 800 650 T1600 750 Z" fill="#16A34A" opacity="0.65" />
+
+    <!-- Left Apple Tree (exact style from user's screenshot background) -->
+    <g transform="translate(40, 480)">
+      <!-- Trunk -->
+      <path d="M80 350 L95 180 Q100 130, 110 110 L70 110 Q95 140, 90 180 L70 350 Z" fill="url(#trunk-grad)" />
+      <!-- Canopy -->
+      <path d="M90 120 C50 120, 10 90, 10 50 C10 10, 50 -30, 90 -30 C130 -30, 170 10, 170 50 C170 90, 130 120, 90 120 Z" fill="url(#canopy-grad)" />
+      <path d="M50 80 C20 80, -10 60, -10 30 C-10 0, 20 -20, 50 -20 C80 -20, 110 0, 110 30 C110 60, 80 80, 50 80 Z" fill="url(#canopy-grad)" opacity="0.9" />
+      <path d="M120 70 C90 70, 70 50, 70 25 C70 0, 90 -20, 120 -20 C150 -20, 170 0, 170 25 C170 50, 150 70, 120 70 Z" fill="url(#canopy-grad)" opacity="0.95" />
+      <!-- Red Apples in the Tree -->
+      <circle cx="50" cy="15" r="9" fill="#EF4444" />
+      <circle cx="120" cy="20" r="9" fill="#EF4444" />
+      <circle cx="85" cy="65" r="9" fill="#EF4444" />
+      <circle cx="30" cy="50" r="9" fill="#EF4444" />
+      <circle cx="140" cy="55" r="9" fill="#EF4444" />
+    </g>
+
+    <!-- Right Tree -->
+    <g transform="translate(1180, 500)">
+      <path d="M80 350 L85 180 Q90 130, 100 110 L60 110 Q85 140, 80 180 L60 350 Z" fill="url(#trunk-grad)" />
+      <path d="M80 110 C40 110, 0 80, 0 45 C0 10, 40 -25, 80 -25 C120 -25, 160 10, 160 45 C160 80, 120 110, 80 110 Z" fill="url(#canopy-grad)" />
+      <path d="M120 60 C90 60, 70 40, 70 20 C70 0, 90 -15, 120 -15 C150 -15, 170 0, 170 20 C170 40, 150 60, 120 60 Z" fill="url(#canopy-grad)" opacity="0.9" />
+    </g>
+
+    <!-- Foreground Hills (Grass) -->
+    <path d="M-100 900 Q200 700, 700 750 T1600 720 L1600 900 L-100 900 Z" fill="#4ADE80" />
+    <path d="M-100 900 Q400 740, 900 720 T1600 760 L1600 900 L-100 900 Z" fill="#22C55E" opacity="0.8" />
+
+    <!-- Cute little daisies in the grass -->
+    <g transform="translate(250, 780)">
+      <circle cx="0" cy="0" r="6" fill="#FCD34D" />
+      <circle cx="-12" cy="0" r="5" fill="#FFF" /><circle cx="12" cy="0" r="5" fill="#FFF" />
+      <circle cx="0" cy="-12" r="5" fill="#FFF" /><circle cx="0" cy="12" r="5" fill="#FFF" />
+    </g>
+    <g transform="translate(720, 810)">
+      <circle cx="0" cy="0" r="6" fill="#FCD34D" />
+      <circle cx="-12" cy="0" r="5" fill="#FFF" /><circle cx="12" cy="0" r="5" fill="#FFF" />
+      <circle cx="0" cy="-12" r="5" fill="#FFF" /><circle cx="0" cy="12" r="5" fill="#FFF" />
+    </g>
+  </svg>
+
+  <!-- Smiling floating star container (matches screenshot perfectly) -->
+  <div class="star-container">
+    <svg viewBox="0 0 100 100" width="100%" height="100%">
+      <defs>
+        <radialGradient id="star-grad" cx="45%" cy="35%" r="60%">
+          <stop offset="0%" stop-color="#FFE082" />
+          <stop offset="70%" stop-color="#FFCA28" />
+          <stop offset="100%" stop-color="#FFB300" />
+        </radialGradient>
+      </defs>
+      <!-- 5-Point Star -->
+      <polygon points="50,5 64,36 98,36 70,57 81,91 50,70 19,91 30,57 2,36 36,36" fill="url(#star-grad)" stroke="#FF8F00" stroke-width="2.5" stroke-linejoin="round"/>
+      <!-- Soft blushes -->
+      <ellipse cx="36" cy="54" rx="5" ry="3" fill="#FF8A80" />
+      <ellipse cx="64" cy="54" rx="5" ry="3" fill="#FF8A80" />
+      <!-- Cute Eyes -->
+      <circle cx="40" cy="46" r="3.5" fill="#222" />
+      <circle cx="60" cy="46" r="3.5" fill="#222" />
+      <!-- Happy smile -->
+      <path d="M46 54 Q50 59, 54 54" fill="none" stroke="#222" stroke-width="2.5" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <!-- Interactive Mascots Grid -->
+  <div class="playground">
+    
+    <!-- Apple Mascot (Exact shape and styling from user screenshot) -->
+    <div class="mascot-card">
+      <div class="mascot-container" id="apple-mascot">
+        <svg viewBox="0 0 300 350" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- High quality Pop Apple Gradient -->
+            <radialGradient id="apple-grad" cx="42%" cy="28%" r="65%">
+              <stop offset="0%" stop-color="#FF6B6B" />
+              <stop offset="40%" stop-color="#FF3838" />
+              <stop offset="80%" stop-color="#D90000" />
+              <stop offset="100%" stop-color="#8F0000" />
+            </radialGradient>
+
+            <linearGradient id="apple-highlight" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.8"/>
+              <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+            </linearGradient>
+
+            <linearGradient id="leaf-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#C5F942" />
+              <stop offset="100%" stop-color="#3F7A1E" />
+            </linearGradient>
+          </defs>
+
+          <!-- Drop Shadow under feet -->
+          <ellipse cx="150" cy="330" rx="65" ry="10" fill="#000000" fill-opacity="0.16" />
+
+          <!-- Left Leg & Foot (Bent slightly outwards) -->
+          <path d="M120 256 L110 315" stroke="#2D170B" stroke-width="8.5" stroke-linecap="round"/>
+          <path d="M88 318 C88 311, 118 308, 118 323 C118 328, 88 330, 88 318 Z" fill="#2D170B"/>
+
+          <!-- Right Leg & Foot (Bent slightly outwards) -->
+          <path d="M180 256 L190 315" stroke="#2D170B" stroke-width="8.5" stroke-linecap="round"/>
+          <path d="M182 323 C182 308, 212 311, 212 318 C212 330, 182 328, 182 323 Z" fill="#2D170B"/>
+
+          <!-- Left Arm (Resting Downward / Bending outwards slightly) -->
+          <path d="M72 195 C45 208, 48 238, 55 258" fill="none" stroke="#222" stroke-width="7" stroke-linecap="round"/>
+          <!-- Left Cartoon Glove Hand -->
+          <g transform="translate(42, 248) rotate(-15)">
+            <path d="M15 5 C22 5, 27 10, 27 18 C27 26, 20 30, 13 30 C6 30, 1 25, 1 18 C1 10, 8 5, 15 5 Z" fill="#FFF" stroke="#222" stroke-width="3"/>
+            <path d="M7 14 C10 11, 16 11, 19 14" fill="none" stroke="#222" stroke-width="2"/>
+            <line x1="11" y1="12" x2="9" y2="24" stroke="#222" stroke-width="2"/>
+            <line x1="15" y1="12" x2="14" y2="24" stroke="#222" stroke-width="2"/>
+          </g>
+
+          <!-- Right Arm Group (Pivot point at shoulder cx=228, cy=195) -->
+          <g id="apple-right-arm">
+            <!-- Right Arm (Raised up in waving pose) -->
+            <path d="M228 195 C255 186, 260 162, 252 135" fill="none" stroke="#222" stroke-width="7" stroke-linecap="round"/>
+            <!-- Right Waving Glove Hand (4 fingers splayed open waving) -->
+            <g transform="translate(236, 102) rotate(15)">
+              <path d="M12 28 
+                       C10 28, 4 24, 4 18 
+                       C4 12, 10 12, 12 18 
+                       C12 10, 18 10, 18 18 
+                       C18 9, 24 9, 24 18 
+                       C24 10, 29 12, 29 19
+                       C29 26, 22 30, 12 28 Z" 
+                    fill="#FFF" stroke="#222" stroke-width="3" stroke-linejoin="round"/>
+              <line x1="11" y1="21" x2="10" y2="27" stroke="#222" stroke-width="2"/>
+              <line x1="15" y1="21" x2="16" y2="27" stroke="#222" stroke-width="2"/>
+            </g>
+          </g>
+
+          <!-- Brown Stem (Slightly curved to the left, matches screenshot) -->
+          <path d="M150 112 Q144 72, 136 60" fill="none" stroke="#5D4037" stroke-width="10" stroke-linecap="round"/>
+
+          <!-- Green Leaf (Attached to stem pointing to the right, matches screenshot) -->
+          <path d="M142 80 C162 65, 192 72, 192 82 C192 98, 162 98, 142 80 Z" fill="url(#leaf-grad)" stroke="#224D0F" stroke-width="3"/>
+
+          <!-- Main Apple Body (Plump shape with deep top/bottom lobes, matches screenshot) -->
+          <path d="M 150 128 
+                   C 122 108, 55 110, 55 180 
+                   C 55 245, 100 270, 145 268 
+                   C 148 266, 152 266, 155 268 
+                   C 200 270, 245 245, 245 180 
+                   C 245 110, 178 108, 150 128 Z" 
+                fill="url(#apple-grad)" 
+                stroke="#3D0B00" 
+                stroke-width="5.5"/>
+
+          <!-- Top-Left Highlight Curve (Matches screenshot placement) -->
+          <path d="M80 134 C100 124, 136 126, 142 131 C115 133, 92 145, 80 134 Z" fill="url(#apple-highlight)" />
+
+          <!-- Face Elements -->
+          <!-- Big Cute Eyes (Touching/Very close in center, matches screenshot) -->
+          <g id="apple-eyes" class="eye-element">
+            <!-- Left Eye -->
+            <g transform="translate(125, 165)">
+              <ellipse cx="0" cy="0" rx="17" ry="24" fill="#FFF" stroke="#222" stroke-width="4"/>
+              <ellipse cx="2" cy="2" rx="10.5" ry="14" fill="#111"/>
+              <circle cx="0.5" cy="-4" r="5" fill="#FFF"/>
+              <circle cx="5" cy="5" r="2.5" fill="#FFF"/>
+            </g>
+            <!-- Right Eye -->
+            <g transform="translate(175, 165)">
+              <ellipse cx="0" cy="0" rx="17" ry="24" fill="#FFF" stroke="#222" stroke-width="4"/>
+              <ellipse cx="-2" cy="2" rx="10.5" ry="14" fill="#111"/>
+              <circle cx="-3.5" cy="-4" r="5" fill="#FFF"/>
+              <circle cx="1" cy="5" r="2.5" fill="#FFF"/>
+            </g>
+          </g>
+
+          <!-- Cute Arched Eyebrows (Matches screenshot placement) -->
+          <path d="M102 128 Q120 118, 136 126" fill="none" stroke="#222" stroke-width="4.5" stroke-linecap="round"/>
+          <path d="M164 126 Q180 118, 198 128" fill="none" stroke="#222" stroke-width="4.5" stroke-linecap="round"/>
+
+          <!-- Open Smiling Mouth directly below eyes showing white upper tooth and pink tongue -->
+          <g transform="translate(124, 198)">
+            <path d="M6 6 Q26 -4, 46 6 Q51 34, 26 34 Q1 34, 6 6 Z" fill="#421200" stroke="#222" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M13 3.5 Q26 1, 39 3.5 L37 11 Q26 12, 15 11 Z" fill="#FFF"/>
+            <path d="M13 25 C16 18, 36 18, 39 25 C34 32, 18 32, 13 25 Z" fill="#FF8A80"/>
+          </g>
+        </svg>
+      </div>
+      <div class="label">البطل تفاحة 🍎</div>
+    </div>
+
+    <!-- Orange Mascot (Styled to match the apple's vector style) -->
+    <div class="mascot-card">
+      <div class="mascot-container" id="orange-mascot">
+        <svg viewBox="0 0 300 350" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- Pop Orange Gradient -->
+            <radialGradient id="orange-grad" cx="42%" cy="28%" r="65%">
+              <stop offset="0%" stop-color="#FFBD59" />
+              <stop offset="35%" stop-color="#FF9100" />
+              <stop offset="80%" stop-color="#E05300" />
+              <stop offset="100%" stop-color="#8F2300" />
+            </radialGradient>
+
+            <linearGradient id="orange-highlight" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.8"/>
+              <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Drop Shadow under feet -->
+          <ellipse cx="150" cy="330" rx="65" ry="10" fill="#000000" fill-opacity="0.16" />
+
+          <!-- Left Leg & Foot -->
+          <path d="M120 258 L110 315" stroke="#2D170B" stroke-width="8.5" stroke-linecap="round"/>
+          <path d="M88 318 C88 311, 118 308, 118 323 C118 328, 88 330, 88 318 Z" fill="#2D170B"/>
+
+          <!-- Right Leg & Foot -->
+          <path d="M180 258 L190 315" stroke="#2D170B" stroke-width="8.5" stroke-linecap="round"/>
+          <path d="M182 323 C182 308, 212 311, 212 318 C212 330, 182 328, 182 323 Z" fill="#2D170B"/>
+
+          <!-- Left Arm -->
+          <path d="M64 198 C37 210, 40 240, 47 260" fill="none" stroke="#222" stroke-width="7" stroke-linecap="round"/>
+          <!-- Left Cartoon Glove Hand -->
+          <g transform="translate(34, 250) rotate(-15)">
+            <path d="M15 5 C22 5, 27 10, 27 18 C27 26, 20 30, 13 30 C6 30, 1 25, 1 18 C1 10, 8 5, 15 5 Z" fill="#FFF" stroke="#222" stroke-width="3"/>
+            <path d="M7 14 C10 11, 16 11, 19 14" fill="none" stroke="#222" stroke-width="2"/>
+            <line x1="11" y1="12" x2="9" y2="24" stroke="#222" stroke-width="2"/>
+            <line x1="15" y1="12" x2="14" y2="24" stroke="#222" stroke-width="2"/>
+          </g>
+
+          <!-- Right Arm Group (Pivot point at shoulder cx=236, cy=198) -->
+          <g id="orange-right-arm">
+            <!-- Right Arm -->
+            <path d="M236 198 C263 189, 268 165, 260 138" fill="none" stroke="#222" stroke-width="7" stroke-linecap="round"/>
+            <!-- Right Waving Glove Hand -->
+            <g transform="translate(244, 105) rotate(15)">
+              <path d="M12 28 
+                       C10 28, 4 24, 4 18 
+                       C4 12, 10 12, 12 18 
+                       C12 10, 18 10, 18 18 
+                       C18 9, 24 9, 24 18 
+                       C24 10, 29 12, 29 19
+                       C29 26, 22 30, 12 28 Z" 
+                    fill="#FFF" stroke="#222" stroke-width="3" stroke-linejoin="round"/>
+              <line x1="11" y1="21" x2="10" y2="27" stroke="#222" stroke-width="2"/>
+              <line x1="15" y1="21" x2="16" y2="27" stroke="#222" stroke-width="2"/>
+            </g>
+          </g>
+
+          <!-- Brown Stem -->
+          <path d="M150 102 Q144 65, 136 53" fill="none" stroke="#5D4037" stroke-width="10" stroke-linecap="round"/>
+
+          <!-- Green Leaf -->
+          <path d="M142 70 C162 55, 192 62, 192 72 C192 88, 162 88, 142 70 Z" fill="url(#leaf-grad)" stroke="#224D0F" stroke-width="3"/>
+
+          <!-- Main Orange Body (Oblate Spheroid) -->
+          <ellipse cx="150" cy="180" rx="95" ry="82" fill="url(#orange-grad)" stroke="#5C1600" stroke-width="5" />
+
+          <!-- Top-Left Highlight Curve -->
+          <path d="M85 140 C105 130, 141 132, 147 137 C120 139, 97 151, 85 140 Z" fill="url(#orange-highlight)" />
+
+          <!-- Face Elements -->
+          <!-- Big Cute Eyes -->
+          <g id="orange-eyes" class="eye-element">
+            <!-- Left Eye -->
+            <g transform="translate(125, 168)">
+              <ellipse cx="0" cy="0" rx="17" ry="24" fill="#FFF" stroke="#222" stroke-width="4"/>
+              <ellipse cx="2" cy="2" rx="10.5" ry="14" fill="#111"/>
+              <circle cx="0.5" cy="-4" r="5" fill="#FFF"/>
+              <circle cx="5" cy="5" r="2.5" fill="#FFF"/>
+            </g>
+            <!-- Right Eye -->
+            <g transform="translate(175, 168)">
+              <ellipse cx="0" cy="0" rx="17" ry="24" fill="#FFF" stroke="#222" stroke-width="4"/>
+              <ellipse cx="-2" cy="2" rx="10.5" ry="14" fill="#111"/>
+              <circle cx="-3.5" cy="-4" r="5" fill="#FFF"/>
+              <circle cx="1" cy="5" r="2.5" fill="#FFF"/>
+            </g>
+          </g>
+
+          <!-- Eyebrows -->
+          <path d="M102 131 Q120 121, 136 129" fill="none" stroke="#222" stroke-width="4.5" stroke-linecap="round"/>
+          <path d="M164 129 Q180 121, 198 131" fill="none" stroke="#222" stroke-width="4.5" stroke-linecap="round"/>
+
+          <!-- Open Smiling Mouth -->
+          <g transform="translate(124, 200)">
+            <path d="M6 6 Q26 -4, 46 6 Q51 34, 26 34 Q1 34, 6 6 Z" fill="#421200" stroke="#222" stroke-width="4" stroke-linejoin="round"/>
+            <path d="M13 3.5 Q26 1, 39 3.5 L37 11 Q26 12, 15 11 Z" fill="#FFF"/>
+            <path d="M13 25 C16 18, 36 18, 39 25 C34 32, 18 32, 13 25 Z" fill="#FF8A80"/>
+          </g>
+        </svg>
+      </div>
+      <div class="label">البطل برتقالة 🍊</div>
+    </div>
+
+  </div>
+
+  <div class="info-footer">
+    تم مطابقة تصميم التفاحة بصرياً (شكل الجسم، تداخل العينين، انحناء الجذع والورقة، الفم الكرتوني المبتسم، قفازات ميكي ماوس) مع لقطة الشاشة تماماً.
+  </div>
+
+  <script>
+    const sound = new Audio('./public/excellent.mp3');
+    sound.volume = 0.5;
+
+    function setupMascotInteraction(mascotId, armId, eyesId, shoulderX, shoulderY) {
+      const mascot = document.getElementById(mascotId);
+      const arm = document.getElementById(armId);
+      const eyes = document.getElementById(eyesId);
+
+      let isWaving = false;
+
+      // 1. Natural Auto Blinking (Blinks randomly every 3-6 seconds)
+      function scheduleAutoBlink() {
+        const nextBlink = Math.random() * 3500 + 2500;
+        setTimeout(() => {
+          if (!isWaving) {
+            eyes.style.transform = "scaleY(0.08)";
+            setTimeout(() => {
+              eyes.style.transform = "scaleY(1)";
+            }, 120);
+          }
+          scheduleAutoBlink();
+        }, nextBlink);
+      }
+      scheduleAutoBlink();
+
+      // 2. Click Interaction (Blink + Wave bye-bye)
+      mascot.addEventListener('click', () => {
+        if (isWaving) return;
+        isWaving = true;
+
+        // Play Sound
+        try {
+          sound.currentTime = 0;
+          sound.play().catch(() => {});
+        } catch(e){}
+
+        // Instantly blink
+        eyes.style.transform = "scaleY(0.08)";
+        setTimeout(() => {
+          eyes.style.transform = "scaleY(1)";
+        }, 120);
+
+        // Start waving bye-bye after blink
+        setTimeout(() => {
+          let startTime = null;
+          const waveDuration = 1800; // Wave for 1.8 seconds
+
+          function step(timestamp) {
+            if (!startTime) startTime = timestamp;
+            const elapsed = timestamp - startTime;
+
+            if (elapsed < waveDuration) {
+              // Wave hand back and forth: rotate between -16 and +16 degrees around the shoulder joint
+              const angle = Math.sin(elapsed * 0.024) * 16;
+              arm.setAttribute('transform', `rotate(${angle}, ${shoulderX}, ${shoulderY})`);
+              requestAnimationFrame(step);
+            } else {
+              // Reset to normal
+              arm.setAttribute('transform', `rotate(0, ${shoulderX}, ${shoulderY})`);
+              isWaving = false;
+            }
+          }
+          requestAnimationFrame(step);
+
+        }, 180);
+      });
+    }
+
+    // Setup both mascots with their exact joints
+    // Apple shoulder: x=228, y=195
+    // Orange shoulder: x=236, y=198
+    setupMascotInteraction('apple-mascot', 'apple-right-arm', 'apple-eyes', 228, 195);
+    setupMascotInteraction('orange-mascot', 'orange-right-arm', 'orange-eyes', 236, 198);
+  </script>
+</body>
+</html>

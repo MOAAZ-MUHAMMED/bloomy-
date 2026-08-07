@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120" width="200" height="120">
+  <defs>
+    <clipPath id="mouthClip">
+      <path d="M 10 20 L 190 20 C 190 20, 170 110, 100 110 C 30 110, 10 20, 10 20 Z" />
+    </clipPath>
+  </defs>
+  <!-- Main Mouth Cavity -->
+  <path d="M 10 20 L 190 20 C 190 20, 170 110, 100 110 C 30 110, 10 20, 10 20 Z" 
+        fill="#212121" stroke="#4A0E0E" stroke-width="5" stroke-linejoin="round"/>
+        
+  <!-- Inside Mouth (Teeth and Tongue clipped inside) -->
+  <g clip-path="url(#mouthClip)">
+    <!-- White Upper Tooth -->
+    <path d="M 15 20 L 185 20 L 185 45 C 150 45, 50 45, 15 45 Z" fill="#FFFFFF" />
+    <!-- Pink Tongue -->
+    <path d="M 50 110 C 50 80, 150 80, 150 110 Z" fill="#FF8A80" stroke="#FF5252" stroke-width="2"/>
+  </g>
+</svg>

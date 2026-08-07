@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 100" width="300" height="100">
+  <!-- Left Eyebrow Arch -->
+  <path d="M 30 70 C 50 30, 100 30, 120 65" fill="none" stroke="#212121" stroke-width="8" stroke-linecap="round"/>
+  <!-- Right Eyebrow Arch -->
+  <path d="M 180 65 C 200 30, 250 30, 270 70" fill="none" stroke="#212121" stroke-width="8" stroke-linecap="round"/>
+</svg>

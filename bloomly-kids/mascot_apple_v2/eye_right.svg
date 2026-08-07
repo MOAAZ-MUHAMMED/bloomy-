@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 200" width="150" height="200">
+  <defs>
+    <radialGradient id="eyeShadow" cx="50%" cy="50%" r="50%">
+      <stop offset="70%" stop-color="#FFFFFF" />
+      <stop offset="100%" stop-color="#E0E0E0" />
+    </radialGradient>
+  </defs>
+  <ellipse cx="75" cy="100" rx="45" ry="70" fill="url(#eyeShadow)" stroke="#212121" stroke-width="6"/>
+</svg>

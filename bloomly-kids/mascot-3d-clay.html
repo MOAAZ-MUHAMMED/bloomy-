@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>بلومي للأطفال - مجسم الصلصال ثلاثي الأبعاد تفاعلي</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle, #E0F2FE 0%, #BAE6FD 100%);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+      direction: rtl;
+    }
+
+    h1 {
+      position: absolute;
+      top: 30px;
+      color: #4D2B82;
+      font-size: 32px;
+      font-weight: 900;
+      text-shadow: 0 4px 0px rgba(255, 255, 255, 0.8);
+      margin: 0;
+      z-index: 10;
+      text-align: center;
+      width: 100%;
+    }
+
+    /* 3D Canvas container */
+    #canvas-container {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+
+    .info-overlay {
+      position: absolute;
+      bottom: 40px;
+      z-index: 10;
+      font-size: 16px;
+      color: #7C3AED;
+      font-weight: bold;
+      background: white;
+      padding: 15px 35px;
+      border-radius: 30px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      border: 3px solid #7C3AED;
+      max-width: 650px;
+      text-align: center;
+      line-height: 1.6;
+    }
+  </style>
+  <!-- Load Three.js library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+  <h1>بطل بلومي ثلاثي الأبعاد (Clay 3D Mascot) 🍎🌟</h1>
+
+  <div id="canvas-container"></div>
+
+  <div class="info-overlay">
+    💡 <strong>هذا مجسم 3D حقيقي يُرندر برمجياً بالكامل (بدون صور)</strong>! بستايل الصلصال اللامع (Claymation) ومحمي بإضاءة استوديو ثلاثية الأبعاد. يتنفس تلقائياً بحركة كرتونية مرنة، ويلوح بيده (باي باي) بنعومة بالغة.
+  </div>
+
+  <script>
+    // 1. Setup Scene, Camera, and Renderer
+    const container = document.getElementById('canvas-container');
+    const scene = new THREE.Scene();
+    
+    // Soft sky blue fog for a cute atmosphere
+    scene.fog = new THREE.FogExp2(0xBAE6FD, 0.08);
+
+    const camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 0.1, 100);
+    camera.position.set(0, 0.2, 5.5);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
+
+    // 2. High-end Studio Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    scene.add(ambientLight);
+
+    // Key Light (Main light with shadows)
+    const keyLight = new THREE.DirectionalLight(0xffffff, 0.9);
+    keyLight.position.set(2, 4, 3);
+    keyLight.castShadow = true;
+    keyLight.shadow.mapSize.width = 1024;
+    keyLight.shadow.mapSize.height = 1024;
+    keyLight.shadow.bias = -0.001;
+    scene.add(keyLight);
+
+    // Fill Light (Soft side light)
+    const fillLight = new THREE.DirectionalLight(0xE0F2FE, 0.5);
+    fillLight.position.set(-3, 1, 2);
+    scene.add(fillLight);
+
+    // Rim Light (Back light for premium 3D edge glow)
+    const rimLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    rimLight.position.set(-2, 2, -4);
+    scene.add(rimLight);
+
+    // 3. Materials
+    const bodyMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0xff3838,
+      roughness: 0.5,
+      metalness: 0.05,
+      clearcoat: 0.6,          // Shiny lacquer coat
+      clearcoatRoughness: 0.15,
+      sheen: 0.5,
+      sheenColor: 0xff8a80
+    });
+
+    const gloveMaterial = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      roughness: 0.45
+    });
+
+    const limbMaterial = new THREE.MeshStandardMaterial({
+      color: 0x222222,
+      roughness: 0.6
+    });
+
+    const stemMaterial = new THREE.MeshStandardMaterial({
+      color: 0x5D4037,
+      roughness: 0.6
+    });
+
+    const leafMaterial = new THREE.MeshStandardMaterial({
+      color: 0x4ade80,
+      roughness: 0.6
+    });
+
+    const eyeWhiteMaterial = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      roughness: 0.2
+    });
+
+    const pupilMaterial = new THREE.MeshStandardMaterial({
+      color: 0x111111,
+      roughness: 0.1
+    });
+
+    // 4. Mascot Group Creation
+    const mascotGroup = new THREE.Group();
+    scene.add(mascotGroup);
+
+    const bodyGroup = new THREE.Group();
+    mascotGroup.add(bodyGroup);
+
+    // --- Create Deformed Apple Body ---
+    // We deform a sphere to make it look like a plump apple with top and bottom indentations
+    const bodyGeo = new THREE.SphereGeometry(0.9, 64, 64);
+    const pos = bodyGeo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      let x = pos.getX(i);
+      let y = pos.getY(i);
+      let z = pos.getZ(i);
+
+      // Distance from center
+      let r = Math.sqrt(x*x + y*y + z*z);
+
+      // Apple top/bottom indentations based on Y height
+      if (y > 0) {
+        // Top dip
+        r -= Math.pow(y, 2) * 0.15;
+      } else {
+        // Bottom dip
+        r -= Math.pow(y, 2) * 0.12;
+      }
+      
+      // Slightly wider on the sides
+      const sideFactor = Math.sqrt(x*x + z*z);
+      r += sideFactor * 0.05;
+
+      // Apply new radius
+      const normal = new THREE.Vector3(x, y, z).normalize();
+      pos.setXYZ(i, normal.x * r, normal.y * r, normal.z * r);
+    }
+    bodyGeo.computeVertexNormals();
+
+    const bodyMesh = new THREE.Mesh(bodyGeo, bodyMaterial);
+    bodyMesh.castShadow = true;
+    bodyMesh.receiveShadow = true;
+    bodyGroup.add(bodyMesh);
+
+    // --- Face Elements ---
+    const faceGroup = new THREE.Group();
+    faceGroup.position.z = 0.72; // Position in front of the body
+    bodyGroup.add(faceGroup);
+
+    // Eyes Group
+    const eyesGroup = new THREE.Group();
+    faceGroup.add(eyesGroup);
+
+    // Left Eye
+    const eyeGeo = new THREE.SphereGeometry(0.18, 32, 32);
+    eyeGeo.scale(0.8, 1.2, 0.4); // Oval shape
+    const leftEye = new THREE.Mesh(eyeGeo, eyeWhiteMaterial);
+    leftEye.position.set(-0.16, 0.1, 0);
+    eyesGroup.add(leftEye);
+
+    const pupilGeo = new THREE.SphereGeometry(0.1, 32, 32);
+    pupilGeo.scale(0.8, 1.2, 0.4);
+    const leftPupil = new THREE.Mesh(pupilGeo, pupilMaterial);
+    leftPupil.position.set(-0.13, 0.1, 0.06);
+    eyesGroup.add(leftPupil);
+
+    const shineGeo = new THREE.SphereGeometry(0.03, 16, 16);
+    const leftShine = new THREE.Mesh(shineGeo, eyeWhiteMaterial);
+    leftShine.position.set(-0.11, 0.14, 0.11);
+    eyesGroup.add(leftShine);
+
+    // Right Eye
+    const rightEye = new THREE.Mesh(eyeGeo, eyeWhiteMaterial);
+    rightEye.position.set(0.16, 0.1, 0);
+    eyesGroup.add(rightEye);
+
+    const rightPupil = new THREE.Mesh(pupilGeo, pupilMaterial);
+    rightPupil.position.set(0.13, 0.1, 0.06);
+    eyesGroup.add(rightPupil);
+
+    const rightShine = new THREE.Mesh(shineGeo, eyeWhiteMaterial);
+    rightShine.position.set(0.15, 0.14, 0.11);
+    eyesGroup.add(rightShine);
+
+    // Cute Mouth (Smiling)
+    const mouthShape = new THREE.Shape();
+    mouthShape.absarc(0, 0, 0.15, Math.PI, 0, true);
+    const extrudeSettings = { depth: 0.04, bevelEnabled: true, bevelSegments: 3, steps: 1, bevelSize: 0.01, bevelThickness: 0.01 };
+    const mouthGeo = new THREE.ExtrudeGeometry(mouthShape, extrudeSettings);
+    mouthGeo.center();
+    const mouthMesh = new THREE.Mesh(mouthGeo, limbMaterial);
+    mouthMesh.position.set(0, -0.15, -0.02);
+    mouthMesh.rotation.x = 0.1;
+    faceGroup.add(mouthMesh);
+
+    // --- Stem & Leaf ---
+    const stemCurve = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0, 0.75, 0),
+      new THREE.Vector3(-0.06, 1.0, -0.05),
+      new THREE.Vector3(-0.15, 1.25, -0.1)
+    ]);
+    const stemGeo = new THREE.TubeGeometry(stemCurve, 20, 0.06, 8, false);
+    const stemMesh = new THREE.Mesh(stemGeo, stemMaterial);
+    bodyGroup.add(stemMesh);
+
+    const leafGeo = new THREE.SphereGeometry(0.2, 16, 16);
+    leafGeo.scale(1.8, 0.8, 0.3);
+    const leafMesh = new THREE.Mesh(leafGeo, leafMaterial);
+    leafMesh.position.set(0.12, 1.1, -0.05);
+    leafMesh.rotation.set(0.2, 0.5, -0.4);
+    bodyGroup.add(leafMesh);
+
+    // --- Limbs & Hands ---
+    // Left Arm (Resting Down)
+    const leftArmGroup = new THREE.Group();
+    leftArmGroup.position.set(-0.75, 0, 0);
+    mascotGroup.add(leftArmGroup);
+
+    const armCurveLeft = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(-0.2, -0.2, 0.1),
+      new THREE.Vector3(-0.35, -0.4, 0.15)
+    ]);
+    const armGeoLeft = new THREE.TubeGeometry(armCurveLeft, 20, 0.04, 8, false);
+    const armMeshLeft = new THREE.Mesh(armGeoLeft, limbMaterial);
+    leftArmGroup.add(armMeshLeft);
+
+    const gloveGeoLeft = new THREE.SphereGeometry(0.13, 32, 32);
+    const gloveMeshLeft = new THREE.Mesh(gloveGeoLeft, gloveMaterial);
+    gloveMeshLeft.position.set(-0.35, -0.42, 0.15);
+    leftArmGroup.add(gloveMeshLeft);
+
+    // Right Arm (Waving - Parent Pivot at shoulder cx=0.75, cy=0)
+    const rightArmGroup = new THREE.Group();
+    rightArmGroup.position.set(0.75, 0, 0);
+    mascotGroup.add(rightArmGroup);
+
+    // Arm extends up-right
+    const armCurveRight = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(0, 0, 0),
+      new THREE.Vector3(0.2, 0.15, 0.05),
+      new THREE.Vector3(0.35, 0.35, 0.1)
+    ]);
+    const armGeoRight = new THREE.TubeGeometry(armCurveRight, 20, 0.04, 8, false);
+    const armMeshRight = new THREE.Mesh(armGeoRight, limbMaterial);
+    rightArmGroup.add(armMeshRight);
+
+    // Waving Glove Hand (Modelled with fingers!)
+    const rightGloveGroup = new THREE.Group();
+    rightGloveGroup.position.set(0.35, 0.35, 0.1);
+    rightArmGroup.add(rightGloveGroup);
+
+    const glovePalm = new THREE.Mesh(new THREE.SphereGeometry(0.12, 32, 32), gloveMaterial);
+    rightGloveGroup.add(glovePalm);
+
+    // 4 Finger cylinders splayed open!
+    const fingerGeo = new THREE.CylinderGeometry(0.025, 0.025, 0.08, 8);
+    fingerGeo.translate(0, 0.04, 0); // Offset origin to base of finger
+
+    for (let i = 0; i < 4; i++) {
+      const finger = new THREE.Mesh(fingerGeo, gloveMaterial);
+      finger.position.y = 0.06;
+      // Rotate fingers to splay open
+      finger.rotation.z = -0.4 + (i * 0.25);
+      finger.position.x = -0.06 + (i * 0.04);
+      rightGloveGroup.add(finger);
+    }
+
+    // Legs
+    const leftLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.4), limbMaterial);
+    leftLeg.position.set(-0.25, -0.95, 0);
+    mascotGroup.add(leftLeg);
+
+    const leftShoe = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), stemMaterial);
+    leftShoe.scale.set(1.4, 0.8, 1);
+    leftShoe.position.set(-0.28, -1.15, 0.05);
+    mascotGroup.add(leftShoe);
+
+    const rightLeg = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.4), limbMaterial);
+    rightLeg.position.set(0.25, -0.95, 0);
+    mascotGroup.add(rightLeg);
+
+    const rightShoe = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16), stemMaterial);
+    rightShoe.scale.set(1.4, 0.8, 1);
+    rightShoe.position.set(0.28, -1.15, 0.05);
+    mascotGroup.add(rightShoe);
+
+
+    // 5. Animation Loop
+    const clock = new THREE.Clock();
+    let isBlinking = false;
+    let blinkProgress = 0;
+
+    function animate() {
+      requestAnimationFrame(animate);
+
+      const time = clock.getElapsedTime();
+
+      // --- 1. Breathing Squash-and-Stretch (Breathe & Smile at all times) ---
+      const breatheFactor = Math.sin(time * 2.2); // Breathing rhythm
+      bodyGroup.scale.y = 1.0 + breatheFactor * 0.025;
+      bodyGroup.scale.x = 1.0 - breatheFactor * 0.012;
+      bodyGroup.scale.z = 1.0 - breatheFactor * 0.012;
+
+      // Slight head bobbing up and down
+      bodyGroup.position.y = breatheFactor * 0.015;
+
+      // --- 2. Smooth Constant Arm Waving (Bye-Bye) ---
+      // Waves smoothly back and forth around the shoulder joint
+      const waveAngle = Math.sin(time * 5.0) * 0.22;
+      rightArmGroup.rotation.z = waveAngle;
+
+      // --- 3. Random Natural Blinking ---
+      if (!isBlinking && Math.random() < 0.005) {
+        isBlinking = true;
+        blinkProgress = 0;
+      }
+
+      if (isBlinking) {
+        blinkProgress += 0.12;
+        if (blinkProgress >= Math.PI) {
+          isBlinking = false;
+          eyesGroup.scale.y = 1.0;
+        } else {
+          // Scale eyes Y down to blink and back up
+          eyesGroup.scale.y = 1.0 - Math.abs(Math.sin(blinkProgress)) * 0.95;
+        }
+      }
+
+      renderer.render(scene, camera);
+    }
+
+    animate();
+
+    // Handle Window Resize
+    window.addEventListener('resize', onWindowResize, false);
+
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+  </script>
+</body>
+</html>

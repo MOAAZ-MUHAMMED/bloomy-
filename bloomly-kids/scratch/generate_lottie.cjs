@@ -1,0 +1,337 @@
+const fs = require('fs');
+const path = require('path');
+
+const lottieData = {
+  v: "5.7.5",
+  fr: 30,
+  ip: 0,
+  op: 60,
+  w: 500,
+  h: 500,
+  nm: "Apple Mascot Waving",
+  ddd: 0,
+  assets: [],
+  layers: [
+    // Layer 1: Right Arm & Glove (Waving)
+    {
+      ddd: 0,
+      ind: 1,
+      ty: 4, // Shape layer
+      nm: "Right Arm & Glove",
+      sr: 1,
+      ks: {
+        o: { a: 0, k: 100 },
+        r: {
+          a: 1,
+          k: [
+            { t: 0, s: [0], i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] } },
+            { t: 15, s: [25], i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] } },
+            { t: 30, s: [0], i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] } },
+            { t: 45, s: [-25], i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] } },
+            { t: 60, s: [0] }
+          ]
+        },
+        p: { a: 0, k: [340, 230, 0] }, // Shoulder position
+        a: { a: 0, k: [0, 0, 0] }, // Pivot at shoulder (0,0 relative to layer position)
+        s: { a: 0, k: [100, 100, 100] }
+      },
+      ao: 0,
+      shapes: [
+        {
+          ty: "gr",
+          it: [
+            // Arm path: line from shoulder (0,0) to hand (50, -40)
+            {
+              ty: "sh",
+              nm: "Arm Path",
+              ks: {
+                a: 0,
+                k: {
+                  i: [[0, 0], [0, 0]],
+                  o: [[0, 0], [0, 0]],
+                  v: [[0, 0], [50, -40]],
+                  c: false
+                }
+              }
+            },
+            // Stroke for arm
+            {
+              ty: "st",
+              c: { a: 0, k: [0.13, 0.13, 0.13, 1] },
+              o: { a: 0, k: 100 },
+              w: { a: 0, k: 7 },
+              lc: 2,
+              lj: 2
+            },
+            // Glove shape (attached to the end of the arm at 50, -40)
+            {
+              ty: "el",
+              p: { a: 0, k: [50, -40] },
+              s: { a: 0, k: [30, 30] },
+              nm: "Glove Base"
+            },
+            // Fill glove (White)
+            {
+              ty: "fl",
+              c: { a: 0, k: [1, 1, 1, 1] },
+              o: { a: 0, k: 100 }
+            },
+            // Glove outline
+            {
+              ty: "st",
+              c: { a: 0, k: [0.13, 0.13, 0.13, 1] },
+              o: { a: 0, k: 100 },
+              w: { a: 0, k: 3 }
+            },
+            {
+              ty: "tr",
+              p: { a: 0, k: [0, 0] },
+              a: { a: 0, k: [0, 0] },
+              s: { a: 0, k: [100, 100] },
+              r: { a: 0, k: 0 },
+              o: { a: 0, k: 100 }
+            }
+          ],
+          nm: "Arm Group"
+        }
+      ],
+      ip: 0,
+      op: 60,
+      st: 0
+    },
+    // Layer 2: Apple Body, Eyes, Mouth, Stem, Leaf
+    {
+      ddd: 0,
+      ind: 2,
+      ty: 4,
+      nm: "Apple Body & Face",
+      sr: 1,
+      ks: {
+        o: { a: 0, k: 100 },
+        r: { a: 0, k: 0 },
+        p: { a: 0, k: [250, 250, 0] }, // Screen Center
+        a: { a: 0, k: [0, 0, 0] },
+        s: { a: 0, k: [100, 100, 100] }
+      },
+      ao: 0,
+      shapes: [
+        // Left Eye (Black Circle)
+        {
+          ty: "gr",
+          it: [
+            {
+              ty: "el",
+              p: { a: 0, k: [-35, -25] },
+              s: {
+                a: 0,
+                k: [30, 42]
+              },
+              nm: "Left Eye Shape"
+            },
+            {
+              ty: "fl",
+              c: { a: 0, k: [0.08, 0.08, 0.08, 1] },
+              o: { a: 0, k: 100 }
+            },
+            {
+              ty: "tr",
+              // Blinking Animation (Scale Y down to 0 at frame 15, 45 etc.)
+              p: { a: 0, k: [0, 0] },
+              a: { a: 0, k: [-35, -25] },
+              s: {
+                a: 1,
+                k: [
+                  { t: 0, s: [100, 100], i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] } },
+                  { t: 8, s: [100, 10], i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] } },
+                  { t: 16, s: [100, 100], i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] } },
+                  { t: 38, s: [100, 100], i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] } },
+                  { t: 44, s: [100, 10], i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] } },
+                  { t: 50, s: [100, 100] }
+                ]
+              },
+              r: { a: 0, k: 0 },
+              o: { a: 0, k: 100 }
+            }
+          ],
+          nm: "Left Eye"
+        },
+        // Right Eye (Black Circle)
+        {
+          ty: "gr",
+          it: [
+            {
+              ty: "el",
+              p: { a: 0, k: [35, -25] },
+              s: {
+                a: 0,
+                k: [30, 42]
+              },
+              nm: "Right Eye Shape"
+            },
+            {
+              ty: "fl",
+              c: { a: 0, k: [0.08, 0.08, 0.08, 1] },
+              o: { a: 0, k: 100 }
+            },
+            {
+              ty: "tr",
+              p: { a: 0, k: [0, 0] },
+              a: { a: 0, k: [35, -25] },
+              s: {
+                a: 1,
+                k: [
+                  { t: 0, s: [100, 100], i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] } },
+                  { t: 8, s: [100, 10], i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] } },
+                  { t: 16, s: [100, 100], i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] } },
+                  { t: 38, s: [100, 100], i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] } },
+                  { t: 44, s: [100, 10], i: { x: [0.667], y: [1] }, o: { x: [0.333], y: [0] } },
+                  { t: 50, s: [100, 100] }
+                ]
+              },
+              r: { a: 0, k: 0 },
+              o: { a: 0, k: 100 }
+            }
+          ],
+          nm: "Right Eye"
+        },
+        // Mouth Smile (Curved Stroke)
+        {
+          ty: "gr",
+          it: [
+            {
+              ty: "sh",
+              ks: {
+                a: 0,
+                k: {
+                  i: [[-10, -5], [10, -5]],
+                  o: [[10, 5], [-10, 5]],
+                  v: [[-20, 15], [20, 15]],
+                  c: false
+                }
+              }
+            },
+            {
+              ty: "st",
+              c: { a: 0, k: [0.13, 0.13, 0.13, 1] },
+              o: { a: 0, k: 100 },
+              w: { a: 0, k: 4.5 },
+              lc: 2
+            },
+            {
+              ty: "tr",
+              p: { a: 0, k: [0, 10] },
+              a: { a: 0, k: [0, 0] },
+              s: { a: 0, k: [100, 100] },
+              r: { a: 0, k: 0 },
+              o: { a: 0, k: 100 }
+            }
+          ],
+          nm: "Mouth"
+        },
+        // Apple Body (Red Circle)
+        {
+          ty: "gr",
+          it: [
+            {
+              ty: "el",
+              p: { a: 0, k: [0, 20] },
+              s: { a: 0, k: [180, 170] }
+            },
+            {
+              ty: "fl",
+              c: { a: 0, k: [1, 0.23, 0.23, 1] },
+              o: { a: 0, k: 100 }
+            },
+            {
+              ty: "st",
+              c: { a: 0, k: [0.6, 0, 0, 1] },
+              o: { a: 0, k: 100 },
+              w: { a: 0, k: 5 }
+            },
+            {
+              ty: "tr",
+              p: { a: 0, k: [0, 0] },
+              a: { a: 0, k: [0, 0] },
+              s: { a: 0, k: [100, 100] },
+              r: { a: 0, k: 0 },
+              o: { a: 0, k: 100 }
+            }
+          ],
+          nm: "Body"
+        },
+        // Stem (Brown vertical bar)
+        {
+          ty: "gr",
+          it: [
+            {
+              ty: "sh",
+              ks: {
+                a: 0,
+                k: {
+                  i: [[0, 0], [0, 0]],
+                  o: [[0, 0], [0, 0]],
+                  v: [[0, -65], [-10, -95]],
+                  c: false
+                }
+              }
+            },
+            {
+              ty: "st",
+              c: { a: 0, k: [0.36, 0.25, 0.22, 1] },
+              o: { a: 0, k: 100 },
+              w: { a: 0, k: 8 },
+              lc: 2
+            },
+            {
+              ty: "tr",
+              p: { a: 0, k: [0, 0] },
+              a: { a: 0, k: [0, 0] },
+              s: { a: 0, k: [100, 100] },
+              r: { a: 0, k: 0 },
+              o: { a: 0, k: 100 }
+            }
+          ],
+          nm: "Stem"
+        },
+        // Leaf (Green ellipse)
+        {
+          ty: "gr",
+          it: [
+            {
+              ty: "el",
+              p: { a: 0, k: [12, -85] },
+              s: { a: 0, k: [35, 18] }
+            },
+            {
+              ty: "fl",
+              c: { a: 0, k: [0.3, 0.69, 0.24, 1] },
+              o: { a: 0, k: 100 }
+            },
+            {
+              ty: "st",
+              c: { a: 0, k: [0.15, 0.45, 0.1, 1] },
+              o: { a: 0, k: 100 },
+              w: { a: 0, k: 2 }
+            },
+            {
+              ty: "tr",
+              p: { a: 0, k: [0, 0] },
+              a: { a: 0, k: [0, 0] },
+              s: { a: 0, k: [100, 100] },
+              r: { a: 0, k: -20 }, // rotated slightly
+              o: { a: 0, k: 100 }
+            }
+          ],
+          nm: "Leaf"
+        }
+      ],
+      ip: 0,
+      op: 60,
+      st: 0
+    }
+  ]
+};
+
+const destPath = path.join(__dirname, '..', 'apple_waving_lottie.json');
+fs.writeFileSync(destPath, JSON.stringify(lottieData, null, 2), 'utf8');
+console.log(`Saved Lottie JSON file to: ${destPath}`);

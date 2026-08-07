@@ -4957,10 +4957,36 @@ const startNinjaGame = () => {
             {mathQuestion.text}
           </h3>
 
-          {/* Visual Display */}
+          {/* Visual Display with comparison mascots */}
           {mathQuestion.emojis && (
-            <div className="bg-[#FAF7FD] border-3 border-dashed border-[#4D2B82]/20 rounded-2xl p-8 text-center text-4xl tracking-widest mb-10 select-none">
-              {mathQuestion.emojis}
+            <div className="flex items-center justify-between gap-6 mb-10">
+              {/* Left Mascot: User's Waving Animation (MP4 Video) */}
+              <div className="flex flex-col items-center gap-1 w-28 h-32 flex-shrink-0 bg-[#FAF7FD] rounded-2xl border-3 border-[#4D2B82]/20 p-2 relative overflow-hidden select-none">
+                <span className="text-[10px] font-black text-[#4D2B82] bg-white border border-[#4D2B82]/20 px-2 py-0.5 rounded-full z-10 shadow-sm">تصميمك (Figma)</span>
+                <video
+                  src="/assets/mascots/apple_waving_user.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full object-contain -mt-2"
+                />
+              </div>
+
+              {/* Center Emojis Display Box */}
+              <div className="flex-grow bg-[#FAF7FD] border-3 border-dashed border-[#4D2B82]/20 rounded-2xl p-8 text-center text-4xl tracking-widest select-none">
+                {mathQuestion.emojis}
+              </div>
+
+              {/* Right Mascot: Our 3D-shaded Vector CSS SVG Mascot */}
+              <div className="flex flex-col items-center gap-1 w-28 h-32 flex-shrink-0 bg-[#FAF7FD] rounded-2xl border-3 border-[#4D2B82]/20 p-2 relative overflow-hidden select-none">
+                <span className="text-[10px] font-black text-[#4D2B82] bg-white border border-[#4D2B82]/20 px-2 py-0.5 rounded-full z-10 shadow-sm">تصميمي (CSS SVG)</span>
+                <img
+                  src="/assets/mascots/apple_mascot_css.svg"
+                  alt="Mascot Right"
+                  className="w-full h-full object-contain -mt-2"
+                />
+              </div>
             </div>
           )}
 

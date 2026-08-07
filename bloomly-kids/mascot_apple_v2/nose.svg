@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <defs>
+    <radialGradient id="noseGrad" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#FF8A80" />
+      <stop offset="55%" stop-color="#FF2D2D" />
+      <stop offset="100%" stop-color="#B71C1C" />
+    </radialGradient>
+  </defs>
+  <circle cx="40" cy="40" r="30" fill="url(#noseGrad)" stroke="#4A0000" stroke-width="4"/>
+  <circle cx="31" cy="29" r="8" fill="#FFFFFF" opacity="0.75"/>
+</svg>
