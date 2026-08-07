@@ -3311,10 +3311,14 @@ const startNinjaGame = () => {
   }>({ text: "", correct: 0, options: [] });
   const [mathFeedback, setMathFeedback] = useState<"idle" | "correct" | "wrong">("idle");
   const [mathSelectedOption, setMathSelectedOption] = useState<number | null>(null);
+  const [isHarvesting, setIsHarvesting] = useState(false);
+  const [isCelebrating, setIsCelebrating] = useState(false);
 
   const generateMathQuestion = () => {
     setMathFeedback("idle");
     setMathSelectedOption(null);
+    setIsHarvesting(false);
+    setIsCelebrating(false);
 
     const levelStr = activeDifficulty || propChildLevel || "level1";
     const emojiList = ["🍎", "🍊", "⭐", "🐞", "🌸", "🐝", "🎈", "🍦"];
@@ -3402,11 +3406,31 @@ const startNinjaGame = () => {
     if (mathSelectedOption !== null) return;
     setMathSelectedOption(option);
 
+    let delay = 1500;
+
     if (option === mathQuestion.correct) {
       setMathFeedback("correct");
       sfx.playSuccess();
-      sfx.speakArabic("ممتاز!", "correct");
+      setIsHarvesting(true);
+      setIsCelebrating(true);
+
+      const arabicNumbers = [
+        "واحد", "اثنان", "ثلاثة", "أربعة", "خمسة", "ستة", "سبعة", "ثمانية", "تسعة", "عشرة",
+        "أحد عشر", "اثنا عشر", "ثلاثة عشر", "أربعة عشر", "خمسة عشر", "ستة عشر", "سبعة عشر", "ثمانية عشر", "تسعة عشر", "عشرون",
+        "واحد وعشرون", "اثنان وعشرون", "ثلاثة وعشرون", "أربعة وعشرون", "خمسة وعشرون"
+      ];
+
+      for (let i = 0; i < option; i++) {
+        setTimeout(() => {
+          if ((window as any).sfx) {
+            (window as any).sfx.playPop();
+            (window as any).sfx.speakArabic(arabicNumbers[i] || "ممتاز", "correct");
+          }
+        }, i * 350 + 350);
+      }
+
       addStars(1);
+      delay = Math.max(1500, option * 350 + 700);
     } else {
       setMathFeedback("wrong");
       sfx.playWrong();
@@ -3414,13 +3438,14 @@ const startNinjaGame = () => {
     }
 
     setTimeout(() => {
+      setIsCelebrating(false);
       if (mathRound < 5) {
         setMathRound((prev) => prev + 1);
         generateMathQuestion();
       } else {
         triggerVictory();
       }
-    }, 1500);
+    }, delay);
   };
 
   const startMathGame = () => {
@@ -4931,10 +4956,10 @@ const startNinjaGame = () => {
 
       {/* --- MATH GAME PLAY VIEW --- */}
       {activeGame === "math" && !showLevelMap && (
-        <div className="card-bubbly bg-white max-w-2xl mx-auto p-8 relative overflow-hidden">
+        <div className="card-bubbly bg-gradient-to-b from-[#E0F2FE] to-[#FAF7FD] max-w-2xl mx-auto p-6 relative overflow-hidden shadow-2xl rounded-3xl border-4 border-purple-200 min-h-[500px]">
           
           {/* Header */}
-          <div className="flex items-center justify-between border-b-2 border-purple-100 pb-4 mb-6">
+          <div className="flex items-center justify-between border-b-2 border-purple-100/55 pb-4 mb-5">
             <button
               onClick={quitGame}
               className="flex items-center gap-1 font-bold text-sm text-[#E01E5A] hover:underline"
@@ -4952,40 +4977,187 @@ const startNinjaGame = () => {
             </div>
           </div>
 
-          {/* Question Text */}
-          <h3 className="text-2xl font-extrabold text-[#4D2B82] text-center mb-8">
-            {mathQuestion.text}
-          </h3>
+          {/* Question Text in a Happy Cloud Bubble */}
+          <div className="relative bg-white border-3 border-purple-200 rounded-2xl p-4 text-center mb-6 shadow-sm">
+            <h3 className="text-xl font-extrabold text-[#4D2B82] leading-relaxed">
+              {mathQuestion.text}
+            </h3>
+            {/* Cloud pointer shapes */}
+            <div className="absolute bottom-[-10px] left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[10px] border-l-transparent border-r-[10px] border-r-transparent border-t-[10px] border-t-white z-10"></div>
+            <div className="absolute bottom-[-13px] left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[11px] border-l-transparent border-r-[11px] border-r-transparent border-t-[11px] border-t-purple-200"></div>
+          </div>
 
-          {/* Visual Display with comparison mascots */}
-          <div className="flex items-center justify-between gap-6 mb-10">
-            {/* Left Mascot: User's Waving Animation (MP4 Video) */}
-            <div className="flex flex-col items-center gap-1 w-28 h-32 flex-shrink-0 bg-[#FAF7FD] rounded-2xl border-3 border-[#4D2B82]/20 p-2 relative overflow-hidden select-none">
-              <span className="text-[10px] font-black text-[#4D2B82] bg-white border border-[#4D2B82]/20 px-2 py-0.5 rounded-full z-10 shadow-sm">تصميمك (Figma)</span>
+          {/* The Interactive Garden Stage */}
+          <div className="relative w-full h-[260px] bg-gradient-to-b from-[#BFDBFE] to-[#FCD34D]/25 rounded-2xl border-3 border-purple-200 overflow-hidden mb-6 select-none shadow-inner">
+            {/* Sun */}
+            <div className="absolute top-2 right-2 text-4xl animate-pulse">☀️</div>
+            
+            {/* Clouds */}
+            <motion.div animate={{ x: [-50, 400] }} transition={{ duration: 40, repeat: Infinity, ease: "linear" }} className="absolute top-4 left-0 text-3xl opacity-20">☁️</motion.div>
+            <motion.div animate={{ x: [400, -50] }} transition={{ duration: 35, repeat: Infinity, ease: "linear" }} className="absolute top-10 right-0 text-2xl opacity-25">☁️</motion.div>
+            
+            {/* Giant Tree SVG */}
+            <div className="absolute inset-x-0 bottom-6 mx-auto w-60 h-48 flex items-center justify-center pointer-events-none">
+              <svg viewBox="0 0 300 240" className="w-full h-full">
+                {/* Trunk */}
+                <path d="M 135 240 L 142 140 C 142 130, 158 130, 158 140 L 165 240 Z" fill="#78350F" />
+                {/* Foliage */}
+                <path d="M 90 140 C 50 140, 40 90, 80 70 C 60 30, 120 20, 150 50 C 180 20, 240 30, 220 70 C 260 90, 250 140, 210 140 Z" fill="#10B981" opacity="0.9" />
+                <path d="M 105 120 C 75 120, 65 85, 95 70 C 85 40, 130 30, 150 55 C 170 30, 215 40, 205 70 C 235 85, 225 120, 195 120 Z" fill="#34D399" opacity="0.95" />
+              </svg>
+            </div>
+
+            {/* Grass Hills */}
+            <div className="absolute bottom-0 inset-x-0 h-10 bg-gradient-to-t from-[#10B981] to-[#34D399] z-10 border-t-2 border-emerald-600"></div>
+
+            {/* Wooden Basket */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-16 h-10 bg-[#8B5CF6]/0 z-10 flex items-center justify-center">
+              <span className="text-4xl filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]">🧺</span>
+            </div>
+
+            {/* Mascots standing on the grass */}
+            {/* Left Mascot: Figma MP4 Video */}
+            <div className={`absolute bottom-3 left-12 z-20 flex flex-col items-center select-none ${isCelebrating ? "animate-bounce" : ""}`}>
               <video
                 src="/assets/mascots/apple_waving_user.mp4"
                 autoPlay
                 loop
                 muted
                 playsInline
-                className="w-full h-full object-contain -mt-2"
+                style={{ mixBlendMode: 'multiply' }}
+                className="w-16 h-16 object-contain"
               />
+              <div className="w-10 h-1.5 bg-black/10 rounded-full blur-[1px] mt-0.5"></div>
             </div>
 
-            {/* Center Emojis Display Box */}
-            <div className="flex-grow bg-[#FAF7FD] border-3 border-dashed border-[#4D2B82]/20 rounded-2xl p-8 text-center text-4xl tracking-widest select-none min-h-[96px] flex items-center justify-center">
-              {mathQuestion.emojis || "🍎 ✨ 🍊"}
-            </div>
-
-            {/* Right Mascot: Our 3D-shaded Vector CSS SVG Mascot */}
-            <div className="flex flex-col items-center gap-1 w-28 h-32 flex-shrink-0 bg-[#FAF7FD] rounded-2xl border-3 border-[#4D2B82]/20 p-2 relative overflow-hidden select-none">
-              <span className="text-[10px] font-black text-[#4D2B82] bg-white border border-[#4D2B82]/20 px-2 py-0.5 rounded-full z-10 shadow-sm">تصميمي (CSS SVG)</span>
+            {/* Right Mascot: CSS SVG Mascot */}
+            <div className={`absolute bottom-3 right-12 z-20 flex flex-col items-center select-none ${isCelebrating ? "animate-bounce" : ""}`}>
               <img
                 src="/assets/mascots/apple_mascot_css.svg"
-                alt="Mascot Right"
-                className="w-full h-full object-contain -mt-2"
+                alt="CSS Mascot"
+                className="w-16 h-16 object-contain"
               />
+              <div className="w-10 h-1.5 bg-black/10 rounded-full blur-[1px] mt-0.5"></div>
             </div>
+
+            {/* Render the fruits on the tree / dropping */}
+            {(() => {
+              const BRANCH_SPOTS = [
+                { top: "25%", left: "38%" },
+                { top: "35%", left: "54%" },
+                { top: "22%", left: "48%" },
+                { top: "42%", left: "34%" },
+                { top: "38%", left: "62%" },
+                { top: "48%", left: "48%" },
+                { top: "32%", left: "44%" },
+                { top: "35%", left: "58%" },
+                { top: "27%", left: "60%" },
+                { top: "29%", left: "28%" }
+              ];
+
+              const ADDITION_LEFT_SPOTS = [
+                { top: "25%", left: "32%" },
+                { top: "35%", left: "26%" },
+                { top: "45%", left: "34%" },
+                { top: "31%", left: "38%" },
+                { top: "21%", left: "35%" }
+              ];
+
+              const ADDITION_RIGHT_SPOTS = [
+                { top: "25%", left: "64%" },
+                { top: "35%", left: "70%" },
+                { top: "45%", left: "62%" },
+                { top: "31%", left: "58%" },
+                { top: "21%", left: "61%" }
+              ];
+
+              const fruitOffsets = [
+                { x: -12, y: 0 }, { x: 8, y: -2 }, { x: -3, y: 4 }, { x: 10, y: 2 },
+                { x: -7, y: -4 }, { x: 2, y: 1 }, { x: -14, y: 3 }, { x: 12, y: -1 },
+                { x: -5, y: -2 }, { x: 4, y: 3 }, { x: -9, y: 1 }, { x: 6, y: -3 },
+                { x: -1, y: 2 }, { x: 11, y: 0 }, { x: -13, y: -1 }, { x: 3, y: 4 },
+                { x: -4, y: -3 }, { x: 7, y: 1 }, { x: -6, y: 2 }, { x: 0, y: -2 }
+              ];
+
+              const emoji = mathQuestion.emojis || "";
+              const isAddition = emoji.includes("+");
+              const fruitChar = emoji.replace(/[\s+]/g, "").charAt(0) || "🍎";
+              
+              const fruitItems: { id: number; xStart: string; yStart: string }[] = [];
+              
+              if (isAddition) {
+                const parts = emoji.split("+");
+                const leftCount = (parts[0].match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g) || []).length || parts[0].trim().replace(/\s/g, "").length / 2 || 3;
+                const rightCount = (parts[1].match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g) || []).length || parts[1].trim().replace(/\s/g, "").length / 2 || 2;
+                
+                for (let i = 0; i < leftCount; i++) {
+                  const spot = ADDITION_LEFT_SPOTS[i % ADDITION_LEFT_SPOTS.length];
+                  fruitItems.push({ id: i, xStart: spot.left, yStart: spot.top });
+                }
+                for (let i = 0; i < rightCount; i++) {
+                  const spot = ADDITION_RIGHT_SPOTS[i % ADDITION_RIGHT_SPOTS.length];
+                  fruitItems.push({ id: i + 10, xStart: spot.left, yStart: spot.top });
+                }
+              } else {
+                const count = (emoji.match(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g) || []).length || emoji.trim().replace(/\s/g, "").length / 2 || mathQuestion.correct || 5;
+                for (let i = 0; i < count; i++) {
+                  const spot = BRANCH_SPOTS[i % BRANCH_SPOTS.length];
+                  fruitItems.push({ id: i, xStart: spot.left, yStart: spot.top });
+                }
+              }
+
+              return fruitItems.map((item, idx) => {
+                const destX = `calc(50% + ${fruitOffsets[idx % 20].x}px)`;
+                const destY = `calc(82% + ${fruitOffsets[idx % 20].y}px)`;
+
+                return (
+                  <motion.div
+                    key={item.id}
+                    initial={{ left: item.xStart, top: item.yStart, scale: 0 }}
+                    animate={{
+                      left: isHarvesting ? destX : item.xStart,
+                      top: isHarvesting ? destY : item.yStart,
+                      scale: 1,
+                      rotate: isHarvesting ? [0, 90, 180, 360] : 0
+                    }}
+                    transition={{
+                      delay: isHarvesting ? idx * 0.35 : 0.1,
+                      duration: isHarvesting ? 0.6 : 0.3,
+                      type: isHarvesting ? "spring" : "tween",
+                      bounce: 0.15
+                    }}
+                    className="absolute w-8 h-8 z-20 flex items-center justify-center select-none text-2xl"
+                  >
+                    {(() => {
+                      if (fruitChar === "🍎") {
+                        return (
+                          <div className="relative w-7 h-7 bg-gradient-to-br from-red-400 to-red-600 rounded-full border border-red-800 shadow-sm flex items-center justify-center">
+                            <div className="absolute top-0 w-0.5 h-1.5 bg-amber-800 rounded-full transform -translate-y-1"></div>
+                            <div className="w-1.5 h-1.5 bg-white rounded-full opacity-60 absolute top-1 left-1"></div>
+                          </div>
+                        );
+                      }
+                      if (fruitChar === "🍊") {
+                        return (
+                          <div className="relative w-7 h-7 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full border border-orange-800 shadow-sm flex items-center justify-center">
+                            <div className="w-1 h-1 bg-white rounded-full opacity-60 absolute top-1 left-1"></div>
+                          </div>
+                        );
+                      }
+                      if (fruitChar === "⭐") {
+                        return (
+                          <div className="text-yellow-400 drop-shadow-[0_2px_4px_rgba(234,179,8,0.5)] animate-pulse">
+                            ⭐
+                          </div>
+                        );
+                      }
+                      return <span className="text-2xl">{fruitChar}</span>;
+                    })()}
+                  </motion.div>
+                );
+              });
+            })()}
+
           </div>
 
           {/* Feedback Overlay */}
