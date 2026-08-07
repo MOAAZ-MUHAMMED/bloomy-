@@ -3314,6 +3314,20 @@ const startNinjaGame = () => {
   const [isHarvesting, setIsHarvesting] = useState(false);
   const [isCelebrating, setIsCelebrating] = useState(false);
 
+  const getEmojiNameArabic = (emojiStr: string) => {
+    switch (emojiStr) {
+      case "🍎": return "التفاح";
+      case "🍊": return "البرتقال";
+      case "⭐": return "النجوم";
+      case "🐞": return "الدعسوقات";
+      case "🌸": return "الزهور";
+      case "🐝": return "النحلات";
+      case "🎈": return "البالونات";
+      case "🍦": return "المثلجات";
+      default: return "الأشكال";
+    }
+  };
+
   const generateMathQuestion = () => {
     setMathFeedback("idle");
     setMathSelectedOption(null);
@@ -3327,7 +3341,7 @@ const startNinjaGame = () => {
     // LEVEL 1: Emoji counting 1..5 ONLY (No operations)
     if (levelStr === "level1") {
       const count = 1 + Math.floor(Math.random() * 5);
-      const text = `كم عدد الـ (${emoji}) في الشكل؟`;
+      const text = `كم عدد ${getEmojiNameArabic(emoji)} (${emoji}) في الشكل؟`;
       const emojis = Array.from({ length: count }).map(() => emoji).join(" ");
 
       const options = [count];
@@ -3344,7 +3358,7 @@ const startNinjaGame = () => {
     // LEVEL 2: Emoji counting 1..10 ONLY (No operations)
     if (levelStr === "level2") {
       const count = 1 + Math.floor(Math.random() * 10);
-      const text = `كم عدد الـ (${emoji}) أدناه؟`;
+      const text = `كم عدد ${getEmojiNameArabic(emoji)} (${emoji}) أدناه؟`;
       const emojis = Array.from({ length: count }).map(() => emoji).join(" ");
 
       const options = [count];
@@ -4400,8 +4414,15 @@ const startNinjaGame = () => {
     }
   };
 
+  const isFullScreenGame = activeGame === "math" && !showLevelMap;
+  const sectionClass = activeGame === "menu"
+    ? "container mx-auto px-4 py-20 relative z-20"
+    : isFullScreenGame
+      ? "fixed inset-0 z-[9900] bg-[#38bdf8] overflow-hidden p-0 flex items-center justify-center select-none"
+      : "fixed inset-0 z-[9900] bg-[#FAF7FD] overflow-y-auto p-4 md:p-8 flex items-center justify-center select-none";
+
   return (
-    <section id="game-zone" ref={gameZoneRef} className={activeGame === "menu" ? "container mx-auto px-4 py-20 relative z-20" : "fixed inset-0 z-[9900] bg-[#FAF7FD] overflow-y-auto p-4 md:p-8 flex items-center justify-center select-none"}>
+    <section id="game-zone" ref={gameZoneRef} className={sectionClass}>
       
       {/* self-contained CSS for victory balloons & colorful shapes */}
       <style dangerouslySetInnerHTML={{__html: `
@@ -4959,27 +4980,49 @@ const startNinjaGame = () => {
         <div className="absolute inset-0 w-full h-full bg-[#E0F2FE] flex flex-col p-4 relative overflow-hidden select-none">
           
           {/* Sky background layers, clouds, sun */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#7DD3FC] via-[#E0F2FE] to-[#F0FDF4] pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#38bdf8] via-[#7dd3fc] to-[#e0f2fe] pointer-events-none" />
           <div className="absolute top-2 right-4 text-4xl animate-pulse pointer-events-none select-none">☀️</div>
           
           <motion.div animate={{ x: [-100, 500] }} transition={{ duration: 45, repeat: Infinity, ease: "linear" }} className="absolute top-6 left-0 text-3xl opacity-20 pointer-events-none">☁️</motion.div>
           <motion.div animate={{ x: [500, -100] }} transition={{ duration: 38, repeat: Infinity, ease: "linear" }} className="absolute top-12 right-0 text-2xl opacity-25 pointer-events-none">☁️</motion.div>
 
-          {/* Background Forest Trees (Layered parallax) */}
-          <div className="absolute left-[-25px] bottom-14 w-28 h-36 opacity-60 pointer-events-none">
-            <svg viewBox="0 0 100 120" className="w-full h-full">
-              <path d="M 45 120 L 55 120 L 50 80 Z" fill="#78350F" />
-              <circle cx="50" cy="60" r="30" fill="#047857" />
-              <circle cx="50" cy="45" r="22" fill="#059669" />
-            </svg>
-          </div>
-          <div className="absolute right-[-25px] bottom-14 w-28 h-36 opacity-60 pointer-events-none">
-            <svg viewBox="0 0 100 120" className="w-full h-full">
-              <path d="M 45 120 L 55 120 L 50 80 Z" fill="#78350F" />
-              <circle cx="50" cy="60" r="30" fill="#047857" />
-              <circle cx="50" cy="45" r="22" fill="#059669" />
-            </svg>
-          </div>
+          {/* Background Dense Forest Trees (12 overlapping trees for deep parallax jungle) */}
+          {(() => {
+            const bgTrees = [
+              { left: "-15%", bottom: "14px", scale: 1.1, color: "#064e3b" },
+              { left: "5%", bottom: "20px", scale: 0.85, color: "#065f46" },
+              { left: "20%", bottom: "25px", scale: 0.7, color: "#047857" },
+              { left: "35%", bottom: "28px", scale: 0.6, color: "#064e3b" },
+              { right: "35%", bottom: "28px", scale: 0.6, color: "#064e3b" },
+              { right: "20%", bottom: "25px", scale: 0.7, color: "#047857" },
+              { right: "5%", bottom: "20px", scale: 0.85, color: "#065f46" },
+              { right: "-15%", bottom: "14px", scale: 1.1, color: "#064e3b" },
+              { left: "-2%", bottom: "8px", scale: 1.3, color: "#059669" },
+              { right: "-2%", bottom: "8px", scale: 1.3, color: "#059669" },
+              { left: "15%", bottom: "10px", scale: 1.0, color: "#10b981" },
+              { right: "15%", bottom: "10px", scale: 1.0, color: "#10b981" }
+            ];
+            return bgTrees.map((tree, idx) => (
+              <div 
+                key={idx} 
+                className="absolute opacity-80 pointer-events-none" 
+                style={{ 
+                  left: tree.left, 
+                  right: tree.right, 
+                  bottom: tree.bottom, 
+                  transform: `scale(${tree.scale})`, 
+                  width: "120px", 
+                  height: "150px" 
+                }}
+              >
+                <svg viewBox="0 0 100 120" className="w-full h-full">
+                  <path d="M 45 120 L 55 120 L 50 80 Z" fill="#5c2e0b" />
+                  <circle cx="50" cy="60" r="30" fill={tree.color} />
+                  <circle cx="50" cy="45" r="22" fill={tree.color} opacity="0.8" />
+                </svg>
+              </div>
+            ));
+          })()}
 
           {/* Header */}
           <div className="flex items-center justify-between border-b-2 border-sky-200/50 pb-2 mb-3 z-20">
@@ -5000,9 +5043,12 @@ const startNinjaGame = () => {
             </div>
           </div>
 
-          {/* Question Bubble */}
-          <div className="relative bg-white/95 border-3 border-sky-300 rounded-2xl p-3 text-center mb-4 shadow-md max-w-md mx-auto w-full z-20">
-            <h3 className="text-lg font-black text-[#4D2B82] leading-tight">
+          {/* Question Wooden Hanging Board */}
+          <div className="relative bg-gradient-to-r from-[#8b4513] to-[#a0522d] border-4 border-[#5c2e0b] rounded-2xl p-4 text-center mb-4 shadow-xl max-w-md mx-auto w-full z-20">
+            {/* Hanging Ropes */}
+            <div className="absolute top-[-16px] left-[20%] w-1 h-4 bg-[#5c2e0b]"></div>
+            <div className="absolute top-[-16px] right-[20%] w-1 h-4 bg-[#5c2e0b]"></div>
+            <h3 className="text-xl font-black text-white leading-tight drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]">
               {mathQuestion.text}
             </h3>
           </div>
@@ -5011,10 +5057,10 @@ const startNinjaGame = () => {
           <div className="flex-grow relative w-full overflow-hidden select-none mb-4">
             
             {/* The Main Apple Tree (Centered and large) */}
-            <div className="absolute inset-x-0 bottom-4 mx-auto w-72 h-56 flex items-center justify-center pointer-events-none">
+            <div className="absolute inset-x-0 bottom-4 mx-auto w-80 h-64 flex items-center justify-center pointer-events-none">
               <svg viewBox="0 0 300 240" className="w-full h-full">
                 {/* Trunk */}
-                <path d="M 135 240 L 142 140 C 142 130, 158 130, 158 140 L 165 240 Z" fill="#78350F" />
+                <path d="M 135 240 L 142 140 C 142 130, 158 130, 158 140 L 165 240 Z" fill="#5c2e0b" />
                 {/* Foliage */}
                 <path d="M 90 140 C 50 140, 40 90, 80 70 C 60 30, 120 20, 150 50 C 180 20, 240 30, 220 70 C 260 90, 250 140, 210 140 Z" fill="#10B981" opacity="0.9" />
                 <path d="M 105 120 C 75 120, 65 85, 95 70 C 85 40, 130 30, 150 55 C 170 30, 215 40, 205 70 C 235 85, 225 120, 195 120 Z" fill="#34D399" opacity="0.95" />
@@ -5024,65 +5070,70 @@ const startNinjaGame = () => {
             {/* Grass Hills */}
             <div className="absolute bottom-0 inset-x-0 h-10 bg-gradient-to-t from-[#10B981] to-[#34D399] z-10 border-t-2 border-emerald-600"></div>
 
-            {/* Wooden Basket */}
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-16 h-10 z-10 flex items-center justify-center">
-              <span className="text-4xl filter drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]">🧺</span>
+            {/* Wooden Basket SVG */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 z-10 flex items-center justify-center pointer-events-none">
+              <svg viewBox="0 0 100 60" className="w-24 h-16 filter drop-shadow-md">
+                {/* Back rim (dark brown) to give depth inside */}
+                <ellipse cx="50" cy="15" rx="42" ry="10" fill="#451a03" />
+                
+                {/* Basket Body */}
+                <path d="M 12 15 L 20 52 C 20 56, 80 56, 80 52 L 88 15 Z" fill="url(#basketGrad)" stroke="#451a03" strokeWidth="2.5" />
+                
+                {/* Wooden planks detail */}
+                <path d="M 32 15 L 36 52 M 50 15 L 50 53 M 68 15 L 64 52" stroke="#451a03" strokeWidth="1.5" opacity="0.6" />
+                
+                {/* Front Rim (golden/light brown) */}
+                <ellipse cx="50" cy="15" rx="42" ry="8" fill="#a16207" stroke="#451a03" strokeWidth="2.5" />
+                
+                <defs>
+                  <linearGradient id="basketGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#d97706" />
+                    <stop offset="100%" stopColor="#b45309" />
+                  </linearGradient>
+                </defs>
+              </svg>
             </div>
 
-            {/* Mascots standing on the grass (Large sizes w-28 h-28) */}
-            {/* Left Mascot: Figma MP4 Video */}
-            <div className={`absolute bottom-3 left-6 z-20 flex flex-col items-center select-none ${isCelebrating ? "animate-bounce" : ""}`}>
-              <video
-                src="/assets/mascots/apple_waving_user.mp4"
-                autoPlay
-                loop
-                muted
-                playsInline
-                style={{ mixBlendMode: 'multiply' }}
-                className="w-24 h-24 object-contain"
-              />
-              <div className="w-16 h-1.5 bg-black/10 rounded-full blur-[1px] mt-0.5"></div>
-            </div>
-
-            {/* Right Mascot: CSS SVG Mascot */}
+            {/* Mascot standing on the grass (Large size: w-36 h-36) */}
             <div className={`absolute bottom-3 right-6 z-20 flex flex-col items-center select-none ${isCelebrating ? "animate-bounce" : ""}`}>
               <img
                 src="/assets/mascots/apple_mascot_css.svg"
                 alt="CSS Mascot"
-                className="w-24 h-24 object-contain"
+                className="w-36 h-36 object-contain"
               />
-              <div className="w-16 h-1.5 bg-black/10 rounded-full blur-[1px] mt-0.5"></div>
+              <div className="w-24 h-2.5 bg-black/10 rounded-full blur-[1.5px] mt-0.5"></div>
             </div>
 
             {/* Render the fruits on the tree / dropping */}
             {(() => {
+              // DENSE CLUSTERED COORDINATES (Closer and overlapping slightly)
               const BRANCH_SPOTS = [
-                { top: "25%", left: "38%" },
-                { top: "35%", left: "54%" },
-                { top: "22%", left: "48%" },
-                { top: "42%", left: "34%" },
-                { top: "38%", left: "62%" },
-                { top: "48%", left: "48%" },
-                { top: "32%", left: "44%" },
-                { top: "35%", left: "58%" },
-                { top: "27%", left: "60%" },
-                { top: "29%", left: "28%" }
+                { top: "30%", left: "46%" },
+                { top: "35%", left: "52%" },
+                { top: "28%", left: "48%" },
+                { top: "38%", left: "44%" },
+                { top: "36%", left: "55%" },
+                { top: "42%", left: "48%" },
+                { top: "32%", left: "45%" },
+                { top: "34%", left: "51%" },
+                { top: "28%", left: "53%" },
+                { top: "32%", left: "42%" }
               ];
 
               const ADDITION_LEFT_SPOTS = [
-                { top: "25%", left: "32%" },
-                { top: "35%", left: "26%" },
-                { top: "45%", left: "34%" },
-                { top: "31%", left: "38%" },
-                { top: "21%", left: "35%" }
+                { top: "30%", left: "42%" },
+                { top: "35%", left: "38%" },
+                { top: "40%", left: "44%" },
+                { top: "28%", left: "40%" },
+                { top: "25%", left: "43%" }
               ];
 
               const ADDITION_RIGHT_SPOTS = [
-                { top: "25%", left: "64%" },
-                { top: "35%", left: "70%" },
-                { top: "45%", left: "62%" },
-                { top: "31%", left: "58%" },
-                { top: "21%", left: "61%" }
+                { top: "30%", left: "55%" },
+                { top: "35%", left: "58%" },
+                { top: "40%", left: "52%" },
+                { top: "28%", left: "56%" },
+                { top: "25%", left: "53%" }
               ];
 
               const fruitOffsets = [
