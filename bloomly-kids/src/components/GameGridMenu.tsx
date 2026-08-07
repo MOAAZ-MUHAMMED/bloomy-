@@ -56,31 +56,71 @@ const render3DIcon = (id: string) => {
       );
     case 'math':
       return (
-        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md">
-          <g className="animate-float">
-            <rect x="12" y="30" width="30" height="30" rx="8" fill="#EF4444" stroke="#fff" strokeWidth="4" />
-            <text x="27" y="52" fontSize="24" fontWeight="bold" fill="#fff" textAnchor="middle" fontFamily="sans-serif">1</text>
+        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float-slow">
+          {/* Background circular glowing badge */}
+          <circle cx="50" cy="50" r="42" fill="url(#mathBadgeGrad)" stroke="#fff" strokeWidth="4.5" />
+          
+          {/* Wooden Basket at the bottom */}
+          <path d="M 28 65 L 34 85 C 34 87, 66 87, 66 85 L 72 65 Z" fill="#d97706" stroke="#451a03" strokeWidth="2.5" />
+          <ellipse cx="50" cy="65" rx="22" ry="4" fill="#a16207" stroke="#451a03" strokeWidth="2.5" />
+
+          {/* Little Apples inside the basket */}
+          <circle cx="42" cy="62" r="7" fill="#dc2626" stroke="#451a03" strokeWidth="2" />
+          <circle cx="50" cy="61" r="7" fill="#eab308" stroke="#451a03" strokeWidth="2" />
+          <circle cx="58" cy="62" r="7" fill="#dc2626" stroke="#451a03" strokeWidth="2" />
+
+          {/* Large Shiny Apple Mascot in the center-left */}
+          <g className="animate-float" style={{ animationDelay: '0.2s' }}>
+            {/* Apple Body with clay shader gradient */}
+            <circle cx="36" cy="42" r="16" fill="url(#appleMascotGrad)" stroke="#fff" strokeWidth="3" />
+            <path d="M 33 26 Q 30 18, 26 14 C 28 14, 34 16, 32 26" fill="#10B981" stroke="#fff" strokeWidth="1.5" />
+            {/* Mascot Eyes */}
+            <circle cx="31" cy="38" r="2.5" fill="#1e293b" />
+            <circle cx="41" cy="38" r="2.5" fill="#1e293b" />
+            <circle cx="30" cy="37" r="0.8" fill="#fff" />
+            <circle cx="40" cy="37" r="0.8" fill="#fff" />
+            {/* Mascot Smile */}
+            <path d="M 33 44 Q 36 47, 39 44" fill="none" stroke="#1e293b" strokeWidth="1.5" strokeLinecap="round" />
           </g>
-          <g className="animate-float" style={{ animationDelay: '0.5s' }}>
-            <rect x="58" y="30" width="30" height="30" rx="8" fill="#3B82F6" stroke="#fff" strokeWidth="4" />
-            <text x="73" y="52" fontSize="24" fontWeight="bold" fill="#fff" textAnchor="middle" fontFamily="sans-serif">+</text>
+
+          {/* Floating colorful 3D-like Numbers around */}
+          <g className="animate-float" style={{ animationDelay: '0.6s' }}>
+            <text x="68" y="32" fontSize="22" fontWeight="950" fill="#2563EB" stroke="#fff" strokeWidth="3" paintOrder="stroke" fontFamily="Outfit, Inter, sans-serif" textAnchor="middle" className="drop-shadow-sm">1</text>
           </g>
-          <g className="animate-float" style={{ animationDelay: '1s' }}>
-            <rect x="35" y="58" width="30" height="30" rx="8" fill="#10B981" stroke="#fff" strokeWidth="4" />
-            <text x="50" y="80" fontSize="24" fontWeight="bold" fill="#fff" textAnchor="middle" fontFamily="sans-serif">2</text>
+          <g className="animate-float" style={{ animationDelay: '1.2s' }}>
+            <text x="76" y="52" fontSize="22" fontWeight="950" fill="#16A34A" stroke="#fff" strokeWidth="3" paintOrder="stroke" fontFamily="Outfit, Inter, sans-serif" textAnchor="middle" className="drop-shadow-sm">2</text>
           </g>
+          <g className="animate-float" style={{ animationDelay: '1.8s' }}>
+            <text x="62" y="50" fontSize="24" fontWeight="950" fill="#EA580C" stroke="#fff" strokeWidth="3.5" paintOrder="stroke" fontFamily="Outfit, Inter, sans-serif" textAnchor="middle" className="drop-shadow-sm">+</text>
+          </g>
+
+          <defs>
+            <linearGradient id="mathBadgeGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#fef08a" />
+              <stop offset="100%" stopColor="#fcd34d" />
+            </linearGradient>
+            <linearGradient id="appleMascotGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#f87171" />
+              <stop offset="100%" stopColor="#dc2626" />
+            </linearGradient>
+          </defs>
         </svg>
       );
     case 'arabic':
       return (
-        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md">
-          <rect x="15" y="35" width="70" height="50" rx="8" fill="#F59E0B" stroke="#fff" strokeWidth="4" />
-          <path d="M50 35 V85" stroke="#fff" strokeWidth="3" />
-          <text x="32" y="70" fontSize="32" fontWeight="bold" fill="#fff" textAnchor="middle" fontFamily="sans-serif">أ</text>
-          <g className="animate-write" style={{ transformOrigin: '70px 30px' }}>
-            <path d="M60 45 L78 20 L84 26 L66 51 Z" fill="#EF4444" stroke="#fff" strokeWidth="3" />
-            <polygon points="60,45 56,49 61,51" fill="#FCD34D" stroke="#fff" strokeWidth="1.5" />
-          </g>
+        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float-slow">
+          {/* Background circular glowing badge */}
+          <circle cx="50" cy="50" r="42" fill="url(#arabicBadgeGrad)" stroke="#fff" strokeWidth="4.5" />
+          <path d="M 25 35 H 75 L 70 75 H 30 Z" fill="#F59E0B" stroke="#5c2e0b" strokeWidth="3" />
+          <path d="M50 35 V75" stroke="#fff" strokeWidth="2.5" />
+          <text x="36" y="62" fontSize="26" fontWeight="bold" fill="#fff" textAnchor="middle" fontFamily="sans-serif">أ</text>
+          <text x="64" y="62" fontSize="26" fontWeight="bold" fill="#fff" textAnchor="middle" fontFamily="sans-serif">ب</text>
+          <defs>
+            <linearGradient id="arabicBadgeGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#ffedd5" />
+              <stop offset="100%" stopColor="#fed7aa" />
+            </linearGradient>
+          </defs>
         </svg>
       );
     case 'quran':
@@ -174,7 +214,20 @@ const render3DIcon = (id: string) => {
         </svg>
       );
     default:
-      return <span>❓</span>;
+      return (
+        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float">
+          <polygon points="50,15 63,40 90,42 70,60 76,87 50,72 24,87 30,60 10,42 37,40" fill="url(#starLogoGrad)" stroke="#fff" strokeWidth="4" strokeLinejoin="round" />
+          <circle cx="43" cy="50" r="3" fill="#1e293b" />
+          <circle cx="57" cy="50" r="3" fill="#1e293b" />
+          <path d="M 46 58 Q 50 62, 54 58" fill="none" stroke="#1e293b" strokeWidth="2" strokeLinecap="round" />
+          <defs>
+            <linearGradient id="starLogoGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#fef08a" />
+              <stop offset="100%" stopColor="#f59e0b" />
+            </linearGradient>
+          </defs>
+        </svg>
+      );
   }
 };
 
@@ -528,9 +581,9 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
                         onSelectGame(game.id);
                       }}
                     >
-                      {/* Playful Illustration overlay inside the card */}
-                      <div className="absolute inset-0 flex items-center justify-center pb-8 opacity-80">
-                        <span className="text-7xl filter drop-shadow-lg transform rotate-6">{game.emoji}</span>
+                      {/* Playful 3D-shaded Illustration overlay inside the card */}
+                      <div className="absolute inset-0 flex items-center justify-center pb-8 scale-[1.1] pointer-events-none">
+                        {render3DIcon(game.id)}
                       </div>
 
                       {/* Top Left Tag Indicator */}
