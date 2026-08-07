@@ -4986,44 +4986,6 @@ const startNinjaGame = () => {
           <motion.div animate={{ x: [-100, 500] }} transition={{ duration: 45, repeat: Infinity, ease: "linear" }} className="absolute top-6 left-0 text-3xl opacity-20 pointer-events-none">☁️</motion.div>
           <motion.div animate={{ x: [500, -100] }} transition={{ duration: 38, repeat: Infinity, ease: "linear" }} className="absolute top-12 right-0 text-2xl opacity-25 pointer-events-none">☁️</motion.div>
 
-          {/* Background Dense Forest Trees (12 overlapping trees for deep parallax jungle) */}
-          {(() => {
-            const bgTrees = [
-              { left: "-15%", bottom: "14px", scale: 1.1, color: "#064e3b" },
-              { left: "5%", bottom: "20px", scale: 0.85, color: "#065f46" },
-              { left: "20%", bottom: "25px", scale: 0.7, color: "#047857" },
-              { left: "35%", bottom: "28px", scale: 0.6, color: "#064e3b" },
-              { right: "35%", bottom: "28px", scale: 0.6, color: "#064e3b" },
-              { right: "20%", bottom: "25px", scale: 0.7, color: "#047857" },
-              { right: "5%", bottom: "20px", scale: 0.85, color: "#065f46" },
-              { right: "-15%", bottom: "14px", scale: 1.1, color: "#064e3b" },
-              { left: "-2%", bottom: "8px", scale: 1.3, color: "#059669" },
-              { right: "-2%", bottom: "8px", scale: 1.3, color: "#059669" },
-              { left: "15%", bottom: "10px", scale: 1.0, color: "#10b981" },
-              { right: "15%", bottom: "10px", scale: 1.0, color: "#10b981" }
-            ];
-            return bgTrees.map((tree, idx) => (
-              <div 
-                key={idx} 
-                className="absolute opacity-80 pointer-events-none" 
-                style={{ 
-                  left: tree.left, 
-                  right: tree.right, 
-                  bottom: tree.bottom, 
-                  transform: `scale(${tree.scale})`, 
-                  width: "120px", 
-                  height: "150px" 
-                }}
-              >
-                <svg viewBox="0 0 100 120" className="w-full h-full">
-                  <path d="M 45 120 L 55 120 L 50 80 Z" fill="#5c2e0b" />
-                  <circle cx="50" cy="60" r="30" fill={tree.color} />
-                  <circle cx="50" cy="45" r="22" fill={tree.color} opacity="0.8" />
-                </svg>
-              </div>
-            ));
-          })()}
-
           {/* Header */}
           <div className="flex items-center justify-between border-b-2 border-sky-200/50 pb-2 mb-3 z-20">
             <button
@@ -5056,8 +5018,46 @@ const startNinjaGame = () => {
           {/* Central Play Stage */}
           <div className="flex-grow relative w-full overflow-hidden select-none mb-4">
             
+            {/* Background Dense Forest Trees (12 overlapping trees for deep parallax jungle - Sitting behind the grass) */}
+            {(() => {
+              const bgTrees = [
+                { left: "-15%", bottom: "12px", scale: 1.1, color: "#064e3b" },
+                { left: "5%", bottom: "16px", scale: 0.85, color: "#065f46" },
+                { left: "20%", bottom: "22px", scale: 0.7, color: "#047857" },
+                { left: "35%", bottom: "24px", scale: 0.6, color: "#064e3b" },
+                { right: "35%", bottom: "24px", scale: 0.6, color: "#064e3b" },
+                { right: "20%", bottom: "22px", scale: 0.7, color: "#047857" },
+                { right: "5%", bottom: "16px", scale: 0.85, color: "#065f46" },
+                { right: "-15%", bottom: "12px", scale: 1.1, color: "#064e3b" },
+                { left: "-2%", bottom: "8px", scale: 1.3, color: "#059669" },
+                { right: "-2%", bottom: "8px", scale: 1.3, color: "#059669" },
+                { left: "15%", bottom: "10px", scale: 1.0, color: "#10b981" },
+                { right: "15%", bottom: "10px", scale: 1.0, color: "#10b981" }
+              ];
+              return bgTrees.map((tree, idx) => (
+                <div 
+                  key={idx} 
+                  className="absolute opacity-85 pointer-events-none z-0" 
+                  style={{ 
+                    left: tree.left, 
+                    right: tree.right, 
+                    bottom: tree.bottom, 
+                    transform: `scale(${tree.scale})`, 
+                    width: "120px", 
+                    height: "150px" 
+                  }}
+                >
+                  <svg viewBox="0 0 100 120" className="w-full h-full">
+                    <path d="M 45 120 L 55 120 L 50 80 Z" fill="#5c2e0b" />
+                    <circle cx="50" cy="60" r="30" fill={tree.color} />
+                    <circle cx="50" cy="45" r="22" fill={tree.color} opacity="0.8" />
+                  </svg>
+                </div>
+              ));
+            })()}
+
             {/* The Main Apple Tree (Centered and large) */}
-            <div className="absolute inset-x-0 bottom-4 mx-auto w-80 h-64 flex items-center justify-center pointer-events-none">
+            <div className="absolute inset-x-0 bottom-4 mx-auto w-80 h-64 flex items-center justify-center pointer-events-none z-10">
               <svg viewBox="0 0 300 240" className="w-full h-full">
                 {/* Trunk */}
                 <path d="M 135 240 L 142 140 C 142 130, 158 130, 158 140 L 165 240 Z" fill="#5c2e0b" />
@@ -5094,14 +5094,14 @@ const startNinjaGame = () => {
               </svg>
             </div>
 
-            {/* Mascot standing on the grass (Large size: w-36 h-36) */}
+            {/* Mascot standing on the grass (Large size: w-48 h-48) */}
             <div className={`absolute bottom-3 right-6 z-20 flex flex-col items-center select-none ${isCelebrating ? "animate-bounce" : ""}`}>
               <img
                 src="/assets/mascots/apple_mascot_css.svg"
                 alt="CSS Mascot"
-                className="w-36 h-36 object-contain"
+                className="w-48 h-48 object-contain"
               />
-              <div className="w-24 h-2.5 bg-black/10 rounded-full blur-[1.5px] mt-0.5"></div>
+              <div className="w-32 h-3 bg-black/10 rounded-full blur-[2px] mt-0.5"></div>
             </div>
 
             {/* Render the fruits on the tree / dropping */}
@@ -5146,7 +5146,7 @@ const startNinjaGame = () => {
 
               const emoji = mathQuestion.emojis || "";
               const isAddition = emoji.includes("+");
-              const fruitChar = emoji.replace(/[\s+]/g, "").charAt(0) || "🍎";
+              const fruitChar = Array.from(emoji.replace(/[\s+]/g, ""))[0] || "🍎";
               
               const fruitItems: { id: number; xStart: string; yStart: string }[] = [];
               
