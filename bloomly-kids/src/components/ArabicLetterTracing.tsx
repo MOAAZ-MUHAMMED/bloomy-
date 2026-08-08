@@ -478,11 +478,49 @@ export default function ArabicLetterTracing({ onComplete, onBack }: Props) {
             {onBack && (
               <button
                 onClick={onBack}
-                className="w-14 h-14 rounded-full bg-gradient-to-b from-orange-400 to-orange-600 border-[4px] border-white shadow-[0_6px_0_0_#9a3412,_inset_0_4px_0_rgba(255,255,255,0.4)] flex items-center justify-center text-white cursor-pointer hover:scale-105 active:translate-y-[4px] active:shadow-[0_2px_0_0_#9a3412] transition-all relative overflow-hidden"
+                className="w-14 h-14 hover:scale-105 active:translate-y-[4px] active:scale-95 transition-all cursor-pointer select-none"
               >
-                {/* Glossy overlay */}
-                <div className="absolute top-0 inset-x-0 h-1/2 bg-gradient-to-b from-white/40 to-transparent rounded-t-full" />
-                <Home className="w-6 h-6 stroke-[3.5px] drop-shadow-sm" />
+                <svg viewBox="0 0 200 228" fill="none" className="w-full h-full">
+                  <defs>
+                    <linearGradient id="btnGrad" x1="48" y1="38" x2="152" y2="168" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stopColor="#FFE04A"></stop>
+                      <stop offset="44%" stopColor="#FFAA00"></stop>
+                      <stop offset="100%" stopColor="#FF7800"></stop>
+                    </linearGradient>
+                    <radialGradient id="gloss" cx="34%" cy="26%" r="50%" fx="25%" fy="17%">
+                      <stop offset="0%" stopColor="#ffffff" stopOpacity="0.90"></stop>
+                      <stop offset="50%" stopColor="#ffffff" stopOpacity="0.20"></stop>
+                      <stop offset="100%" stopColor="#ffffff" stopOpacity="0"></stop>
+                    </radialGradient>
+                    <radialGradient id="rim" cx="50%" cy="50%" r="50%">
+                      <stop offset="65%" stopColor="#ffffff" stopOpacity="0"></stop>
+                      <stop offset="100%" stopColor="#ffffff" stopOpacity="0.28"></stop>
+                    </radialGradient>
+                    <clipPath id="cc">
+                      <circle cx="100" cy="104" r="58"></circle>
+                    </clipPath>
+                  </defs>
+                  <circle cx="100" cy="112" r="58" fill="#C04800" opacity="0.9"></circle>
+                  <circle cx="100" cy="104" r="58" fill="url(#btnGrad)" stroke="white" strokeWidth="6"></circle>
+                  <circle cx="100" cy="104" r="58" fill="url(#rim)" clipPath="url(#cc)"></circle>
+                  <ellipse cx="78" cy="74" rx="36" ry="25" fill="url(#gloss)" clipPath="url(#cc)"></ellipse>
+                  <path d="
+                    M 100,83
+                    Q 100,80 103,83
+                    L 120,100
+                    Q 123,103 123,106
+                    L 123,123
+                    Q 123,126 120,126
+                    L 80,126
+                    Q 77,126 77,123
+                    L 77,106
+                    Q 77,103 80,100
+                    L 97,83
+                    Q 100,80 100,83
+                    Z
+                  " fill="white"></path>
+                  <rect x="92" y="112" width="16" height="14" rx="4" fill="url(#btnGrad)"></rect>
+                </svg>
               </button>
             )}
           </div>
