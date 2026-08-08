@@ -38,7 +38,7 @@ export default function KitchenCookingPot({ collectedIngredients, onComplete, on
   const [cookingState, setCookingState] = useState<"preparation" | "mixing" | "cooked" | "feeding">("preparation");
   
   // Bloomly Dog Mascot Pose
-  const [dogPose, setDogPose] = useState<"waving" | "happy" | "thinking">("waving");
+  const [dogPose, setDogPose] = useState<"waving" | "happy" | "idle">("waving");
   const [instructionText, setInstructionText] = useState<string>("اسحب المكونات وضعها في حلة الطهي السحرية!");
 
   useEffect(() => {
@@ -92,7 +92,7 @@ export default function KitchenCookingPot({ collectedIngredients, onComplete, on
   const startCooking = () => {
     if (potIngredients.length < 5) return;
     setCookingState("mixing");
-    setDogPose("thinking");
+    setDogPose("idle");
     setInstructionText("جاري طهي المكونات وخلطها... ♨️🌪️");
     playSound(400, 'sawtooth', 1.0); // mix whirring sound
 
@@ -209,7 +209,7 @@ export default function KitchenCookingPot({ collectedIngredients, onComplete, on
                   <motion.div
                     key={item.id}
                     draggable={!inPot && cookingState === "preparation"}
-                    onDragStart={(e) => handleDragStart(e, item.id)}
+                    onDragStart={(e: any) => handleDragStart(e, item.id)}
                     whileHover={!inPot && cookingState === "preparation" ? { scale: 1.1 } : {}}
                     className={`w-14 h-14 bg-white border-2 border-rose-200 rounded-2xl flex items-center justify-center shadow-md relative ${
                       inPot ? 'opacity-30 filter grayscale cursor-not-allowed' : 'cursor-grab active:cursor-grabbing'

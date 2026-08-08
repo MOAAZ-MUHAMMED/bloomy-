@@ -47,7 +47,7 @@ export default function ScienceBodyPuzzle({ onComplete, onBack }: Props) {
   const [completedParts, setCompletedParts] = useState<string[]>([]);
   const [activePartIndex, setActivePartIndex] = useState<number>(0);
   const [instructionText, setInstructionText] = useState<string>("");
-  const [mascotState, setMascotState] = useState<string>("talking");
+  const [mascotPose, setMascotPose] = useState<"welcome" | "thinking" | "talking" | "victory">("talking");
 
   useEffect(() => {
     guideNextPart(0);
@@ -60,8 +60,8 @@ export default function ScienceBodyPuzzle({ onComplete, onBack }: Props) {
       utterance.lang = "ar-SA";
       utterance.pitch = 1.15;
       utterance.rate = 0.95;
-      utterance.onstart = () => setMascotState("talking");
-      utterance.onend = () => setMascotState("neutral");
+      utterance.onstart = () => setMascotPose("talking");
+      utterance.onend = () => setMascotPose("welcome");
       window.speechSynthesis.speak(utterance);
     } catch (e) {}
   };
@@ -93,7 +93,7 @@ export default function ScienceBodyPuzzle({ onComplete, onBack }: Props) {
       playBeep(600, 'sine', 0.2);
       const nextCompleted = [...completedParts, draggedId];
       setCompletedParts(nextCompleted);
-      setMascotState("happy");
+      setMascotPose("victory");
 
       // Speak info about the part
       speakGuide(currentTarget.info);
@@ -105,7 +105,7 @@ export default function ScienceBodyPuzzle({ onComplete, onBack }: Props) {
     } else {
       // Fail Match
       playBeep(220, 'triangle', 0.25);
-      setMascotState("thinking");
+      setMascotPose("thinking");
       speakGuide(`ليست هذه! ابحث عن ${currentTarget.name} واسحبها لمكانها الوامض!`);
     }
   };
@@ -183,7 +183,7 @@ export default function ScienceBodyPuzzle({ onComplete, onBack }: Props) {
         {/* Left column: Mascot Sprout (Mercurial guide) */}
         <div className="col-span-1 md:col-span-3 flex flex-row md:flex-col items-center justify-center gap-4">
           <div className="w-32 h-32 md:w-44 md:h-44 bg-white/90 rounded-[40px] border-[5px] border-white shadow-xl flex items-center justify-center overflow-hidden scale-x-[-1]">
-            <SproutMascot className="w-[100px] h-[100px] md:w-[150px] md:h-[150px]" state={mascotState} />
+            <SproutMascot className="w-[100px] h-[100px] md:w-[150px] md:h-[150px]" pose={mascotPose} />
           </div>
           <div className="relative bg-white border-[4px] border-[#4D2B82] p-4 rounded-[24px] shadow-[0_5px_0_0_#4D2B82] text-right max-w-[200px]">
             <p className="text-[11px] font-black text-[#4D2B82] leading-relaxed">
@@ -266,7 +266,7 @@ export default function ScienceBodyPuzzle({ onComplete, onBack }: Props) {
                   <motion.div
                     key={part.id}
                     draggable={!isMatched}
-                    onDragStart={(e) => handleDragStart(e, part.id)}
+                    onDragStart={(e: any) => handleDragStart(e, part.id)}
                     whileHover={!isMatched ? { scale: 1.1 } : {}}
                     className={`w-14 h-14 bg-white border-[3px] border-purple-200 rounded-2xl flex flex-col items-center justify-center shadow-md relative ${
                       isMatched ? 'opacity-30 filter grayscale cursor-not-allowed' : 'cursor-grab active:cursor-grabbing'

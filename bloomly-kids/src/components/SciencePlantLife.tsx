@@ -54,7 +54,7 @@ export default function SciencePlantLife({ onComplete, onBack }: Props) {
 
   const handleDropOnSoil = (e: React.DragEvent) => {
     e.preventDefault();
-    const draggedItem = e.dataTransfer.setData ? e.dataTransfer.getData("text/plain") : "";
+    const draggedItem = e.dataTransfer ? e.dataTransfer.getData("text/plain") : "";
     
     // Fallback or explicit drag item match
     if (stage === "seed") {
@@ -380,7 +380,7 @@ export default function SciencePlantLife({ onComplete, onBack }: Props) {
         {/* Right Side: Mascot Sprout (Mercurial guide) */}
         <div className="col-span-1 md:col-span-3 flex flex-row md:flex-col items-center justify-center gap-4">
           <div className="w-32 h-32 md:w-44 md:h-44 bg-white/90 rounded-[40px] border-[5px] border-white shadow-xl flex items-center justify-center overflow-hidden scale-x-[-1]">
-            <SproutMascot className="w-[100px] h-[100px] md:w-[150px] md:h-[150px]" state={stage === "bloomed" ? "happy" : "talking"} />
+            <SproutMascot className="w-[100px] h-[100px] md:w-[150px] md:h-[150px]" pose={stage === "bloomed" ? "victory" : "talking"} />
           </div>
           
           <span className="text-xs font-black text-emerald-800 bg-emerald-50 border-2 border-emerald-300 px-4 py-1.5 rounded-full mt-2 shadow-md">

@@ -141,7 +141,7 @@ export default function MarketShoppingGame({ onComplete, onBack }: Props) {
   const [basketList, setBasketList] = useState<string[]>([]);       // matched ids in part 2
   
   // Audio Speech Recognition Voice instructions
-  const [mascotState, setMascotState] = useState<string>("talking");
+  const [mascotPose, setMascotPose] = useState<"welcome" | "thinking" | "talking" | "victory">("talking");
   const [instructionText, setInstructionText] = useState<string>("");
   const [wordChoices, setWordChoices] = useState<Ingredient[]>([]);
   const [marketChoices, setMarketChoices] = useState<Ingredient[]>([]);
@@ -162,8 +162,8 @@ export default function MarketShoppingGame({ onComplete, onBack }: Props) {
       utterance.lang = "ar-SA";
       utterance.pitch = 1.15;
       utterance.rate = 0.95;
-      utterance.onstart = () => setMascotState("talking");
-      utterance.onend = () => setMascotState("neutral");
+      utterance.onstart = () => setMascotPose("talking");
+      utterance.onend = () => setMascotPose("welcome");
       window.speechSynthesis.speak(utterance);
     } catch (e) {}
   };
@@ -202,13 +202,13 @@ export default function MarketShoppingGame({ onComplete, onBack }: Props) {
       playBeep(660, 'sine', 0.18);
       const nextCompleted = [...completedList, droppedId];
       setCompletedList(nextCompleted);
-      setMascotState("happy");
+      setMascotPose("victory");
 
       if (nextCompleted.length === 5) {
         // Switch to market shopping
         setTimeout(() => {
           setPhase("market_shopping");
-          setMascotState("happy");
+          setMascotPose("victory");
           generateMarketChoices(targetList[0], INGREDIENTS_POOL);
         }, 1200);
       } else {
@@ -219,7 +219,7 @@ export default function MarketShoppingGame({ onComplete, onBack }: Props) {
     } else {
       // Failed Match
       playBeep(220, 'triangle', 0.25);
-      setMascotState("thinking");
+      setMascotPose("thinking");
       speakGuide(`حاول مرة أخرى يا بطل! ابحث عن كلمة ${currentTarget.name}!`);
     }
   };
@@ -236,7 +236,7 @@ export default function MarketShoppingGame({ onComplete, onBack }: Props) {
       playBeep(880, 'sine', 0.2);
       const nextBasket = [...basketList, droppedId];
       setBasketList(nextBasket);
-      setMascotState("happy");
+      setMascotPose("victory");
 
       if (nextBasket.length === 5) {
         // Complete Game!
@@ -252,7 +252,7 @@ export default function MarketShoppingGame({ onComplete, onBack }: Props) {
     } else {
       // Mistake
       playBeep(220, 'triangle', 0.25);
-      setMascotState("thinking");
+      setMascotPose("thinking");
       speakGuide(`ليست هذه! ابحث عن ثمرة الـ ${currentTarget.name} اللذيذة!`);
     }
   };
@@ -330,7 +330,7 @@ export default function MarketShoppingGame({ onComplete, onBack }: Props) {
         {/* Left column: Mascot Sprout (Mercurial guide) */}
         <div className="col-span-1 md:col-span-3 flex flex-row md:flex-col items-center justify-center gap-4">
           <div className="w-32 h-32 md:w-44 md:h-44 bg-white/90 rounded-[40px] border-[5px] border-white shadow-xl flex items-center justify-center overflow-hidden scale-x-[-1]">
-            <SproutMascot className="w-[100px] h-[100px] md:w-[150px] md:h-[150px]" state={mascotState} />
+            <SproutMascot className="w-[100px] h-[100px] md:w-[150px] md:h-[150px]" pose={mascotPose} />
           </div>
           <div className="relative bg-white border-[4px] border-[#4D2B82] p-4 rounded-[24px] shadow-[0_5px_0_0_#4D2B82] text-right max-w-[200px]">
             <p className="text-[11px] font-black text-[#4D2B82] leading-relaxed">
@@ -410,7 +410,7 @@ export default function MarketShoppingGame({ onComplete, onBack }: Props) {
                       <motion.div
                         key={choice.id}
                         draggable={!isAlreadyMatched}
-                        onDragStart={(e) => handleDragStart(e, choice.id)}
+                        onDragStart={(e: any) => handleDragStart(e, choice.id)}
                         whileHover={!isAlreadyMatched ? { scale: 1.05 } : {}}
                         whileTap={!isAlreadyMatched ? { scale: 0.95 } : {}}
                         className={`px-6 py-4 rounded-[24px] border-[4px] font-black text-lg text-center shadow-lg transition-all ${
@@ -460,7 +460,7 @@ export default function MarketShoppingGame({ onComplete, onBack }: Props) {
                         >
                           <motion.div
                             draggable={!isAlreadyInBasket}
-                            onDragStart={(e) => handleDragStart(e, item.id)}
+                            onDragStart={(e: any) => handleDragStart(e, item.id)}
                             whileHover={!isAlreadyInBasket ? { scale: 1.15 } : {}}
                             whileTap={!isAlreadyInBasket ? { scale: 0.95 } : {}}
                             className={`w-20 h-20 bg-white border-[3.5px] border-amber-200 rounded-[24px] flex items-center justify-center shadow-md relative ${
