@@ -300,6 +300,95 @@ const render3DIcon = (id: string) => {
           </defs>
         </svg>
       );
+    case 'marketShopping':
+      return (
+        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float-slow">
+          <circle cx="50" cy="50" r="42" fill="url(#shopGrad)" stroke="#fff" strokeWidth="4" />
+          <path d="M 12 36 A 42 42 0 0 1 88 36 A 42 32 0 0 0 12 36 Z" fill="url(#glassShine)" opacity="0.65" />
+          <g className="animate-bounce" style={{ animationDuration: '2s' }}>
+            <rect x="30" y="38" width="40" height="28" rx="5" fill="#fff" stroke="#f97316" strokeWidth="3" />
+            <path d="M38 38 V30 H62 V38" fill="none" stroke="#f97316" strokeWidth="3" strokeLinecap="round" />
+            <circle cx="38" cy="72" r="4" fill="#f97316" stroke="#fff" strokeWidth="2" />
+            <circle cx="62" cy="72" r="4" fill="#f97316" stroke="#fff" strokeWidth="2" />
+            <text x="38" y="55" fontSize="14">🥕</text>
+            <text x="50" y="55" fontSize="14">🍅</text>
+          </g>
+          <defs>
+            <linearGradient id="shopGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#fed7aa" />
+              <stop offset="100%" stopColor="#ea580c" />
+            </linearGradient>
+          </defs>
+        </svg>
+      );
+    case 'kitchenCooking':
+      return (
+        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float-slow">
+          <circle cx="50" cy="50" r="42" fill="url(#cookGrad)" stroke="#fff" strokeWidth="4" />
+          <path d="M 12 36 A 42 42 0 0 1 88 36 A 42 32 0 0 0 12 36 Z" fill="url(#glassShine)" opacity="0.65" />
+          <g className="animate-float" style={{ animationDelay: '0.3s' }}>
+            <ellipse cx="50" cy="60" rx="25" ry="12" fill="#dc2626" stroke="#fff" strokeWidth="3" />
+            <rect x="25" y="48" width="50" height="12" rx="3" fill="#ef4444" stroke="#fff" strokeWidth="3" />
+            <path d="M40 48 Q42 38, 40 30" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" className="animate-steam-1" />
+            <path d="M50 48 Q52 38, 50 28" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" className="animate-steam-2" />
+            <path d="M60 48 Q62 38, 60 30" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" className="animate-steam-1" />
+          </g>
+          <defs>
+            <linearGradient id="cookGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#fecdd3" />
+              <stop offset="100%" stopColor="#be123c" />
+            </linearGradient>
+          </defs>
+        </svg>
+      );
+    case 'sciencePlantLife':
+      return (
+        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float-slow">
+          <circle cx="50" cy="50" r="42" fill="url(#plantGrad)" stroke="#fff" strokeWidth="4" />
+          <path d="M 12 36 A 42 42 0 0 1 88 36 A 42 32 0 0 0 12 36 Z" fill="url(#glassShine)" opacity="0.65" />
+          <g className="animate-float" style={{ animationDelay: '0.5s' }}>
+            <rect x="42" y="55" width="16" height="18" rx="4" fill="#92400e" stroke="#fff" strokeWidth="2" />
+            <path d="M50 55 V35" stroke="#15803d" strokeWidth="4" strokeLinecap="round" />
+            <ellipse cx="40" cy="38" rx="10" ry="8" fill="#22c55e" stroke="#fff" strokeWidth="2" />
+            <ellipse cx="60" cy="38" rx="10" ry="8" fill="#16a34a" stroke="#fff" strokeWidth="2" />
+            <circle cx="50" cy="28" r="8" fill="#facc15" stroke="#fff" strokeWidth="2" />
+            <circle cx="48" cy="27" r="1.5" fill="#1e293b" />
+            <circle cx="52" cy="27" r="1.5" fill="#1e293b" />
+            <path d="M48 30 Q50 32, 52 30" fill="none" stroke="#1e293b" strokeWidth="1.5" strokeLinecap="round" />
+          </g>
+          <defs>
+            <linearGradient id="plantGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#bbf7d0" />
+              <stop offset="100%" stopColor="#15803d" />
+            </linearGradient>
+          </defs>
+        </svg>
+      );
+    case 'scienceBodyPuzzle':
+      return (
+        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float-slow">
+          <circle cx="50" cy="50" r="42" fill="url(#bodyGrad)" stroke="#fff" strokeWidth="4" />
+          <path d="M 12 36 A 42 42 0 0 1 88 36 A 42 32 0 0 0 12 36 Z" fill="url(#glassShine)" opacity="0.65" />
+          <g className="animate-float" style={{ animationDelay: '0.2s' }}>
+            <circle cx="50" cy="32" r="10" fill="#fde68a" stroke="#fff" strokeWidth="2.5" />
+            <circle cx="47" cy="30" r="1.5" fill="#1e293b" />
+            <circle cx="53" cy="30" r="1.5" fill="#1e293b" />
+            <path d="M48 34 Q50 36, 52 34" fill="none" stroke="#1e293b" strokeWidth="1.5" strokeLinecap="round" />
+            <rect x="42" y="42" width="16" height="22" rx="4" fill="#93c5fd" stroke="#fff" strokeWidth="2.5" />
+            <path d="M42 50 L32 55" stroke="#93c5fd" strokeWidth="4" strokeLinecap="round" />
+            <path d="M58 50 L68 55" stroke="#93c5fd" strokeWidth="4" strokeLinecap="round" />
+            <path d="M46 64 L44 78" stroke="#93c5fd" strokeWidth="4" strokeLinecap="round" />
+            <path d="M54 64 L56 78" stroke="#93c5fd" strokeWidth="4" strokeLinecap="round" />
+            <path d="M47 48 L50 52 L53 48" fill="#ef4444" stroke="#dc2626" strokeWidth="1.5" />
+          </g>
+          <defs>
+            <linearGradient id="bodyGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#e0e7ff" />
+              <stop offset="100%" stopColor="#6366f1" />
+            </linearGradient>
+          </defs>
+        </svg>
+      );
     default:
       return (
         <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float">
