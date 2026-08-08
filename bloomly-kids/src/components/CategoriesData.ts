@@ -18,7 +18,7 @@ export const categoriesData: CategoryData[] = [
     bgGradient: "from-[#ff9a9e]/90 to-[#fecfef]/90",
     textColor: "text-pink-700",
     borderColor: "border-pink-300",
-    games: ["arrowRacer", "tapRacer", "safari", "catcher", "spaceCatcher", "maze", "ninja", "space", "train", "funWhackAMole", "funHiddenCup"]
+    games: ["arrowRacer", "tapRacer", "safari", "catcher", "spaceCatcher", "maze", "ninja", "space", "train", "funWhackAMole", "funHiddenCup", "sciencePlantLife", "scienceBodyPuzzle"]
   },
   {
     id: "arabic",
@@ -28,7 +28,7 @@ export const categoriesData: CategoryData[] = [
     bgGradient: "from-[#a1c4fd]/90 to-[#c2e9fb]/90",
     textColor: "text-blue-700",
     borderColor: "border-blue-300",
-    games: ["kitchenMarketList", "spelling", "sorting", "arabicLetterTracing", "arabicShadowMatch"]
+    games: ["kitchenMarketList", "spelling", "sorting", "arabicLetterTracing", "arabicShadowMatch", "marketShopping"]
   },
   {
     id: "math",
@@ -48,7 +48,7 @@ export const categoriesData: CategoryData[] = [
     bgGradient: "from-[#fccb90]/90 to-[#d57eeb]/90",
     textColor: "text-purple-700",
     borderColor: "border-purple-300",
-    games: ["chef", "kitchenPizzaMaker", "kitchenJuiceBar", "kitchenMarketList"]
+    games: ["chef", "kitchenPizzaMaker", "kitchenJuiceBar", "kitchenMarketList", "marketShopping", "kitchenCooking"]
   },
   {
     id: "stories",

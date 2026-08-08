@@ -30,6 +30,11 @@ import MathHungryCrocodile from "./MathHungryCrocodile";
 import EnglishSpaceDecoder from "./EnglishSpaceDecoder";
 import DrawingNeonArt from "./DrawingNeonArt";
 import EnglishWordSafari from "./EnglishWordSafari";
+import SpacePreviewModal from "./SpacePreviewModal";
+import MarketShoppingGame from "./MarketShoppingGame";
+import KitchenCookingPot from "./KitchenCookingPot";
+import SciencePlantLife from "./SciencePlantLife";
+import ScienceBodyPuzzle from "./ScienceBodyPuzzle";
 
 // New IQ Games
 import IqOddOneOut from "./IqOddOneOut";
@@ -3291,7 +3296,7 @@ const startNinjaGame = () => {
       else if (activeGame === "train") startTrainGame();
       else if (activeGame === "arrowRacer") startRunnerGame();
       else if (activeGame === "tapRacer") startTapRacerGame();
-      else if (activeGame === "kitchenMarketList" || activeGame === "arabicShadowMatch" || activeGame === "arabicLetterTracing" || activeGame === "englishLetterTracing" || activeGame === "englishWordSafari" || activeGame === "englishSpaceDecoder" || activeGame === "drawingSymmetry" || activeGame === "drawingNeonArt") {
+      else if (activeGame === "kitchenMarketList" || activeGame === "arabicShadowMatch" || activeGame === "arabicLetterTracing" || activeGame === "englishLetterTracing" || activeGame === "englishWordSafari" || activeGame === "englishSpaceDecoder" || activeGame === "drawingSymmetry" || activeGame === "drawingNeonArt" || activeGame === "marketShopping" || activeGame === "kitchenCooking" || activeGame === "sciencePlantLife" || activeGame === "scienceBodyPuzzle" || activeGame === "spacePreview") {
         setShowLevelMap(false);
       }
     } else {
@@ -7428,7 +7433,37 @@ const startNinjaGame = () => {
           }}
         />
       )}
-      {/* --- NEW 11 MINIGAMES VIEWS --- */}
+      {activeGame === "spacePreview" && (
+        <SpacePreviewModal onBack={quitGame} />
+      )}
+      {activeGame === "marketShopping" && !showLevelMap && (
+        <MarketShoppingGame
+          onComplete={(collected) => {
+            addStars(5);
+            // transition to cooking!
+            setActiveGame("kitchenCooking");
+          }}
+          onBack={quitGame}
+        />
+      )}
+      {activeGame === "kitchenCooking" && !showLevelMap && (
+        <KitchenCookingPot
+          onComplete={() => { addStars(10); triggerVictory(); }}
+          onBack={quitGame}
+        />
+      )}
+      {activeGame === "sciencePlantLife" && !showLevelMap && (
+        <SciencePlantLife
+          onComplete={() => { addStars(5); triggerVictory(); }}
+          onBack={quitGame}
+        />
+      )}
+      {activeGame === "scienceBodyPuzzle" && !showLevelMap && (
+        <ScienceBodyPuzzle
+          onComplete={() => { addStars(5); triggerVictory(); }}
+          onBack={quitGame}
+        />
+      )}
       {activeGame === "arabicLetterTracing" && !showLevelMap && (
         <ArabicLetterTracing onComplete={() => { addStars(3); triggerVictory(); }} onBack={quitGame} />
       )}

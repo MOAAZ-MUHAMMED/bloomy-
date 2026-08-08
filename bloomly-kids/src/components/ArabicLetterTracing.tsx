@@ -84,6 +84,7 @@ export default function ArabicLetterTracing({ onComplete, onBack }: Props) {
   const particlesRef = useRef<Particle[]>([]);
   const requestRef = useRef<number>(0);
   const particleIdRef = useRef<number>(0);
+  const lastMoveTimeRef = useRef<number>(Date.now());
 
   const currentItem = ARABIC_LETTERS[currentIndex];
 
@@ -235,6 +236,36 @@ export default function ArabicLetterTracing({ onComplete, onBack }: Props) {
       });
     }
 
+    // Adaptive Guidance Hint (Sliding yellow pointer after 4 seconds of inactivity)
+    const showHint = Date.now() - lastMoveTimeRef.current > 4000;
+    if (showHint && !traced && currentItem.checkpoints) {
+      const start = activeCheckpoint === 0 
+        ? currentItem.startSpot 
+        : currentItem.checkpoints[activeCheckpoint - 1];
+      const end = currentItem.checkpoints[activeCheckpoint];
+      if (start && end) {
+        const t = (Date.now() % 1500) / 1500;
+        const x = start.x + (end.x - start.x) * t;
+        const y = start.y + (end.y - start.y) * t;
+        
+        ctx.save();
+        ctx.shadowColor = '#FBBF24';
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.arc(x, y, 12, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(251, 191, 36, 0.7)';
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 3;
+        ctx.fill();
+        ctx.stroke();
+        
+        ctx.shadowBlur = 0;
+        ctx.font = '22px sans-serif';
+        ctx.fillText('👆', x, y + 20);
+        ctx.restore();
+      }
+    }
+
     // 2. Update and Draw Particles
     const particles = particlesRef.current;
     for (let i = particles.length - 1; i >= 0; i--) {
@@ -257,6 +288,7 @@ export default function ArabicLetterTracing({ onComplete, onBack }: Props) {
   };
 
   useEffect(() => {
+    lastMoveTimeRef.current = Date.now();
     if (!showSplash) {
       requestRef.current = requestAnimationFrame(animateCanvas);
     }
@@ -311,12 +343,14 @@ export default function ArabicLetterTracing({ onComplete, onBack }: Props) {
 
   const handlePointerDown = (e: React.MouseEvent | React.TouchEvent) => {
     if (traced) return;
+    lastMoveTimeRef.current = Date.now();
     setIsDrawing(true);
     handlePointerDrag(e);
   };
 
   const handlePointerDrag = (e: React.MouseEvent | React.TouchEvent) => {
     if (!isDrawing || traced) return;
+    lastMoveTimeRef.current = Date.now();
 
     const canvas = canvasRef.current;
     if (!canvas) return;

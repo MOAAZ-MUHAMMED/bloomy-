@@ -268,6 +268,38 @@ const render3DIcon = (id: string) => {
           <circle cx="86" cy="50" r="5" fill="#FBBF24" stroke="#fff" strokeWidth="2.5" />
         </svg>
       );
+    case 'space':
+    case 'spacePreview':
+      return (
+        <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float-slow">
+          <circle cx="50" cy="50" r="42" fill="url(#spaceGrad)" stroke="#fff" strokeWidth="4" />
+          <path d="M 12 36 A 42 42 0 0 1 88 36 A 42 32 0 0 0 12 36 Z" fill="url(#glassShine)" opacity="0.65" />
+          
+          <g transform="translate(10, 10) rotate(15 40 40)" className="animate-bounce" style={{ animationDuration: '3s' }}>
+            <path d="M30 65 L40 85 L50 65 Z" fill="#EF4444" />
+            <path d="M33 65 L40 78 L47 65 Z" fill="#FBBF24" />
+            <path d="M25 35 C25 20, 40 5, 40 5 C40 5, 55 20, 55 35 L55 65 L25 65 Z" fill="#F3F4F6" stroke="#1E293B" strokeWidth="2.5" />
+            <path d="M25 50 L12 65 L25 65 Z" fill="#3B82F6" stroke="#1E293B" strokeWidth="2" />
+            <path d="M55 50 L68 65 L55 65 Z" fill="#3B82F6" stroke="#1E293B" strokeWidth="2" />
+            <circle cx="40" cy="35" r="7" fill="#60A5FA" stroke="#1E293B" strokeWidth="2" />
+            <circle cx="38" cy="33" r="2.5" fill="#fff" opacity="0.8" />
+          </g>
+          
+          <circle cx="70" cy="28" r="8" fill="#F59E0B" stroke="#fff" strokeWidth="1.5" />
+          <ellipse cx="70" cy="28" rx="14" ry="3" fill="none" stroke="#F59E0B" strokeWidth="1.5" transform="rotate(-15 70 28)" />
+
+          <defs>
+            <linearGradient id="spaceGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stopColor="#1e1b4b" />
+              <stop offset="100%" stopColor="#4c1d95" />
+            </linearGradient>
+            <linearGradient id="glassShine" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="#ffffff" stopOpacity="0.0" />
+            </linearGradient>
+          </defs>
+        </svg>
+      );
     default:
       return (
         <svg viewBox="0 0 100 100" className="w-24 h-24 filter drop-shadow-md animate-float">
@@ -348,7 +380,8 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
     { id: 'kitchen', title: 'المطبخ الصغير', englishTitle: 'KITCHEN', action: () => onSelectCategory?.('kitchen'), bgGradient: 'from-[#FECDD3] to-[#BE123C]', color: 'text-rose-950', shadowColor: '#9f1239' },
     { id: 'coloring', title: 'لوّن وارسم', englishTitle: 'COLORING', action: () => onSelectCategory?.('coloring'), bgGradient: 'from-[#A7F3D0] to-[#0D9488]', color: 'text-teal-950', shadowColor: '#115e59' },
     { id: 'habits', title: 'عادات صحية', englishTitle: 'HABITS', action: () => onSelectGame('dailyHabits'), bgGradient: 'from-[#E0F2FE] to-[#0284C7]', color: 'text-sky-900', shadowColor: '#075985' },
-    { id: 'iq', title: 'ألعاب الذكاء', englishTitle: 'IQ GAMES', action: () => onSelectCategory?.('iq'), bgGradient: 'from-[#FBCFE8] to-[#7C3AED]', color: 'text-purple-950', shadowColor: '#6d28d9' }
+    { id: 'iq', title: 'ألعاب الذكاء', englishTitle: 'IQ GAMES', action: () => onSelectCategory?.('iq'), bgGradient: 'from-[#FBCFE8] to-[#7C3AED]', color: 'text-purple-950', shadowColor: '#6d28d9' },
+    { id: 'space', title: 'عالم الفضاء', englishTitle: 'SPACE WORLD', action: () => onSelectGame('spacePreview'), bgGradient: 'from-[#1E1B4B] to-[#311042]', color: 'text-purple-300', shadowColor: '#16133a', isLocked: true }
   ];
 
   const getSubcategories = (catId: string) => {
@@ -356,7 +389,7 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
       case 'arabic':
         return [
           { title: 'Phonemic Awareness (الوعي الفونيمي)', gameIds: ['arabicLetterTracing', 'arabicShadowMatch'] },
-          { title: 'Knowledge of Books (معرفة المطبوعات)', gameIds: ['sorting', 'spelling'] }
+          { title: 'Knowledge of Books (معرفة المطبوعات)', gameIds: ['sorting', 'spelling', 'marketShopping'] }
         ];
       case 'english':
         return [
@@ -372,12 +405,13 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
         return [
           { title: 'Speed & Action (السرعة والنشاط اللانهائي)', gameIds: ['arrowRacer', 'tapRacer', 'ninja'] },
           { title: 'Safari & Catching (صيد النجوم والتركيز)', gameIds: ['safari', 'catcher', 'spaceCatcher', 'maze'] },
-          { title: 'Fun & Adventure (المرح والمحاكاة)', gameIds: ['train', 'funWhackAMole', 'funHiddenCup'] }
+          { title: 'Fun & Adventure (المرح والمحاكاة)', gameIds: ['train', 'funWhackAMole', 'funHiddenCup'] },
+          { title: 'Science & Discovery (العلوم والاستكشاف المثير)', gameIds: ['sciencePlantLife', 'scienceBodyPuzzle'] }
         ];
       case 'kitchen':
         return [
-          { title: 'Bloomly Chef (شيف بلومي الصغير)', gameIds: ['chef', 'kitchenPizzaMaker'] },
-          { title: 'Market & Juices (العصائر والتسوق)', gameIds: ['kitchenJuiceBar', 'kitchenMarketList'] }
+          { title: 'Bloomly Chef (شيف بلومي الصغير)', gameIds: ['chef', 'kitchenPizzaMaker', 'kitchenCooking'] },
+          { title: 'Market & Juices (العصائر والتسوق)', gameIds: ['kitchenJuiceBar', 'kitchenMarketList', 'marketShopping'] }
         ];
       case 'coloring':
         return [
@@ -525,6 +559,16 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
                   if (item.action) item.action();
                 }}
               >
+                {item.isLocked && (
+                  <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px] z-20 flex flex-col items-center justify-center gap-2">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-b from-amber-300 to-amber-500 border-[3.5px] border-white shadow-lg flex items-center justify-center text-white text-2xl animate-pulse">
+                      🔒
+                    </div>
+                    <span className="bg-purple-600 text-white font-black text-[10px] px-3 py-1 rounded-full border-2 border-white shadow-md uppercase tracking-wider animate-bounce">
+                      قريباً ... Soon
+                    </span>
+                  </div>
+                )}
                 <div className="relative mb-6 z-10 flex flex-col items-center justify-center">
                   {render3DIcon(item.id)}
                 </div>

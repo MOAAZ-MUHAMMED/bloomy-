@@ -1322,6 +1322,8 @@ export default function InteractiveStories({ onClose, globalStars, setGlobalStar
   const handleNextPage = () => {
     if (!activeStory) return;
     handleStopVoiceover();
+    stopVoiceReading();
+    setReadWordsIndices([]);
 
     if (currentPageIdx < activeStory.pages.length - 1) {
       setCurrentPageIdx(prev => prev + 1);
@@ -1337,6 +1339,8 @@ export default function InteractiveStories({ onClose, globalStars, setGlobalStar
   const handlePrevPage = () => {
     if (currentPageIdx > 0) {
       handleStopVoiceover();
+      stopVoiceReading();
+      setReadWordsIndices([]);
       setCurrentPageIdx(prev => prev - 1);
     }
   };
@@ -1348,20 +1352,118 @@ export default function InteractiveStories({ onClose, globalStars, setGlobalStar
         if ("speechSynthesis" in window) {
           window.speechSynthesis.cancel();
         }
+        if (recognitionRef.current) {
+          recognitionRef.current.stop();
+        }
       } catch (e) {}
     };
   }, []);
+
+  // Voice reading companion state
+  const [isReadingSelf, setIsReadingSelf] = useState(false);
+  const [readWordsIndices, setReadWordsIndices] = useState<number[]>([]);
+  const recognitionRef = useRef<any>(null);
+
+  const startVoiceReading = () => {
+    try {
+      window.speechSynthesis.cancel();
+      handleStopVoiceover();
+
+      const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("متصفحك لا يدعم التعرف على الصوت محلياً!");
+        return;
+      }
+
+      const rec = new SpeechRecognition();
+      rec.continuous = true;
+      rec.interimResults = true;
+      rec.lang = "ar-EG";
+
+      rec.onstart = () => {
+        setIsReadingSelf(true);
+        setReadWordsIndices([]);
+      };
+
+      rec.onresult = (e: any) => {
+        let finalTranscript = "";
+        for (let i = e.resultIndex; i < e.results.length; ++i) {
+          finalTranscript += e.results[i][0].transcript + " ";
+        }
+
+        const storyText = activeStory?.pages[currentPageIdx]?.text || "";
+        
+        const normalizeAr = (str: string) => {
+          return str
+            .replace(/[\u064B-\u065F]/g, "") // remove tashkeel
+            .replace(/[أإآ]/g, "ا")
+            .replace(/ة/g, "ه")
+            .replace(/ى/g, "ي")
+            .trim()
+            .toLowerCase();
+        };
+
+        const storyWords = storyText.split(" ").map(w => normalizeAr(w));
+        const spokenWords = finalTranscript.split(" ").map(w => normalizeAr(w));
+
+        const matchedIndices: number[] = [];
+        storyWords.forEach((storyW, sIdx) => {
+          if (spokenWords.some(spkW => spkW === storyW || (spkW.length > 2 && storyW.includes(spkW)))) {
+            matchedIndices.push(sIdx);
+          }
+        });
+
+        setReadWordsIndices(matchedIndices);
+
+        if (matchedIndices.length >= Math.ceil(storyWords.length * 0.8)) {
+          // Finished reading!
+          rec.stop();
+          setIsReadingSelf(false);
+          setReadWordsIndices(storyWords.map((_, i) => i));
+          // Go to next page after delay
+          setTimeout(() => {
+            handleNextPage();
+          }, 1500);
+        }
+      };
+
+      rec.onend = () => {
+        setIsReadingSelf(false);
+      };
+
+      rec.onerror = () => {
+        setIsReadingSelf(false);
+      };
+
+      recognitionRef.current = rec;
+      rec.start();
+    } catch (e) {
+      setIsReadingSelf(false);
+    }
+  };
+
+  const stopVoiceReading = () => {
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (err) {}
+    }
+    setIsReadingSelf(false);
+  };
 
   // Split text to span elements
   const renderTextSpans = (text: string) => {
     const words = text.split(" ");
     return words.map((word, idx) => {
+      const isRead = readWordsIndices.includes(idx);
       const isHighlighted = activeWordIdx === idx;
       return (
         <span
           key={idx}
-          className={`inline-block mx-1.5 px-1.5 py-1 rounded-md transition-colors text-3xl sm:text-4xl leading-[1.8] font-black ${
-            isHighlighted 
+          className={`inline-block mx-1.5 px-2 py-1 rounded-xl transition-all duration-300 text-3xl sm:text-4xl leading-[1.8] font-black ${
+            isRead
+              ? "bg-emerald-400 text-white border-2 border-emerald-500 scale-105 shadow-md shadow-emerald-200"
+              : isHighlighted 
               ? "bg-yellow-300 text-purple-900 scale-105 shadow-sm" 
               : "text-[#4D2B82]"
           }`}
@@ -1499,7 +1601,7 @@ export default function InteractiveStories({ onClose, globalStars, setGlobalStar
                   {!isPlaying ? (
                     <button
                       onClick={handlePlayVoiceover}
-                      className="bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs px-3.5 py-1.5 rounded-full border-2 border-emerald-700 flex items-center gap-1 cursor-pointer"
+                      className="bg-emerald-500 hover:bg-emerald-600 text-white font-black text-xs px-3.5 py-1.5 rounded-full border-2 border-emerald-700 flex items-center gap-1 cursor-pointer animate-bounce"
                     >
                       <Play className="w-3.5 h-3.5 fill-white" />
                       <span>استمع للقصة 🔊</span>
@@ -1511,6 +1613,22 @@ export default function InteractiveStories({ onClose, globalStars, setGlobalStar
                     >
                       <Square className="w-3.5 h-3.5 fill-white" />
                       <span>إيقاف الصوت</span>
+                    </button>
+                  )}
+
+                  {!isReadingSelf ? (
+                    <button
+                      onClick={startVoiceReading}
+                      className="bg-purple-500 hover:bg-purple-600 text-white font-black text-xs px-3.5 py-1.5 rounded-full border-2 border-purple-700 flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>🎙️ أقرأ بنفسي</span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={stopVoiceReading}
+                      className="bg-red-500 hover:bg-red-600 text-white font-black text-xs px-3.5 py-1.5 rounded-full border-2 border-red-700 flex items-center gap-1 cursor-pointer animate-pulse"
+                    >
+                      <span>🛑 إيقاف القراءة</span>
                     </button>
                   )}
                 </div>
