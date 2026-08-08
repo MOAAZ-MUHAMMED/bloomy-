@@ -4,6 +4,16 @@ import { ArrowLeft, ArrowRight, Play, X, Star, Home } from 'lucide-react';
 import DogMascot from './DogMascot';
 import MascotCharacter from './MascotCharacter';
 
+const VectorTree = ({ className = "w-20 h-28" }: { className?: string }) => (
+  <svg viewBox="0 0 100 120" className={`${className} filter drop-shadow-md select-none pointer-events-none`}>
+    <path d="M46,80 L54,80 L52,120 L48,120 Z" fill="#78350F" />
+    <circle cx="50" cy="55" r="28" fill="#10B981" />
+    <circle cx="36" cy="65" r="20" fill="#059669" />
+    <circle cx="64" cy="65" r="20" fill="#047857" />
+    <circle cx="50" cy="40" r="20" fill="#34D399" />
+  </svg>
+);
+
 interface Letter {
   letter: string;
   name: string;
@@ -389,10 +399,19 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
         <div className="absolute -top-14 left-1/4 w-72 h-32 bg-[#10B981] rounded-full opacity-60 blur-[1px]"></div>
         <div className="absolute -top-16 right-1/4 w-80 h-36 bg-[#059669] rounded-full opacity-40 blur-[1px]"></div>
         
-        <div className="absolute bottom-16 left-6 text-5xl opacity-40">🌲</div>
-        <div className="absolute bottom-20 left-20 text-6xl opacity-30">🌳</div>
-        <div className="absolute bottom-16 right-6 text-5xl opacity-40">🌲</div>
-        <div className="absolute bottom-20 right-20 text-6xl opacity-30">🌳</div>
+        {/* Real Vector Trees standing on the grass */}
+        <div className="absolute bottom-10 left-4 z-10 opacity-70">
+          <VectorTree className="w-20 h-28" />
+        </div>
+        <div className="absolute bottom-12 left-16 z-10 opacity-50 scale-75">
+          <VectorTree className="w-20 h-28" />
+        </div>
+        <div className="absolute bottom-10 right-4 z-10 opacity-70">
+          <VectorTree className="w-20 h-28" />
+        </div>
+        <div className="absolute bottom-12 right-16 z-10 opacity-50 scale-75">
+          <VectorTree className="w-20 h-28" />
+        </div>
       </div>
 
       {/* ========================================================================= */}
@@ -470,7 +489,7 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
             {onBack && (
               <button
                 onClick={onBack}
-                className="w-20 h-20 hover:scale-105 active:translate-y-[4px] active:scale-95 transition-all cursor-pointer select-none"
+                className="w-28 h-28 hover:scale-105 active:translate-y-[4px] active:scale-95 transition-all cursor-pointer select-none"
               >
                 <svg viewBox="0 0 200 228" fill="none" className="w-full h-full">
                   <defs>
@@ -520,14 +539,14 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
           {/* PLAYGROUND STAGE */}
           <div className="flex-grow w-full max-w-5xl flex items-center justify-between px-6 gap-2 relative">
             
-            {/* Apple Mascot on the left */}
-            <div className="hidden md:flex flex-col items-center z-20 w-44 select-none self-end pb-8">
+            {/* Apple Mascot standing firmly on the grass */}
+            <div className="hidden md:flex absolute bottom-[-16px] left-0 flex-col items-center z-20 w-44 select-none">
               <img
                 src="/assets/mascots/apple_mascot_css.svg"
                 alt="Apple Mascot"
-                className="w-44 h-44 object-contain animate-float-slow"
+                className="w-40 h-40 object-contain"
               />
-              <div className="w-24 h-2.5 bg-black/10 rounded-full blur-[2px] mt-0.5"></div>
+              <div className="w-24 h-2 bg-black/15 rounded-full blur-[2px] mt-1"></div>
             </div>
 
             {/* Tracing Canvas Card */}
@@ -567,10 +586,10 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
               </p>
             </div>
 
-            {/* Dog Mascot on the right */}
-            <div className="hidden md:flex flex-col items-center z-20 w-44 select-none self-end pb-8">
-              <DogMascot pose={traced ? "happy" : "waving"} className="w-44 h-44" />
-              <div className="w-24 h-2.5 bg-black/10 rounded-full blur-[2px] mt-0.5"></div>
+            {/* Dog Mascot standing firmly on the grass */}
+            <div className="hidden md:flex absolute bottom-[-16px] right-0 flex-col items-center z-20 w-44 select-none">
+              <DogMascot pose={traced ? "happy" : "waving"} className="w-40 h-40" />
+              <div className="w-24 h-2 bg-black/15 rounded-full blur-[2px] mt-1"></div>
             </div>
 
             {/* Far Right Sidebar with mascot cards (exactly like in photo) */}

@@ -501,9 +501,49 @@ export default function QuranIsland({ onClose, globalStars, setGlobalStars }: Qu
               stopPlaying();
               onClose();
             }}
-            className="w-12 h-12 bg-white hover:bg-red-50 text-red-500 rounded-full flex items-center justify-center cursor-pointer border-3 border-[#4D2B82] shadow-[0_4px_0_0_#4D2B82] active:translate-y-1 active:shadow-none transition-all"
+            className="w-24 h-24 hover:scale-105 active:translate-y-[4px] active:scale-95 transition-all cursor-pointer select-none"
           >
-            <X className="w-6 h-6 stroke-[3px]" />
+            <svg viewBox="0 0 200 228" fill="none" className="w-full h-full">
+              <defs>
+                <linearGradient id="btnGradQuran" x1="48" y1="38" x2="152" y2="168" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#FFE04A"></stop>
+                  <stop offset="44%" stopColor="#FFAA00"></stop>
+                  <stop offset="100%" stopColor="#FF7800"></stop>
+                </linearGradient>
+                <radialGradient id="glossQuran" cx="34%" cy="26%" r="50%" fx="25%" fy="17%">
+                  <stop offset="0%" stopColor="#ffffff" stopOpacity="0.90"></stop>
+                  <stop offset="50%" stopColor="#ffffff" stopOpacity="0.20"></stop>
+                  <stop offset="100%" stopColor="#ffffff" stopOpacity="0"></stop>
+                </radialGradient>
+                <radialGradient id="rimQuran" cx="50%" cy="50%" r="50%">
+                  <stop offset="65%" stopColor="#ffffff" stopOpacity="0"></stop>
+                  <stop offset="100%" stopColor="#ffffff" stopOpacity="0.28"></stop>
+                </radialGradient>
+                <clipPath id="ccQuran">
+                  <circle cx="100" cy="104" r="58"></circle>
+                </clipPath>
+              </defs>
+              <circle cx="100" cy="112" r="58" fill="#C04800" opacity="0.9"></circle>
+              <circle cx="100" cy="104" r="58" fill="url(#btnGradQuran)" stroke="white" strokeWidth="6"></circle>
+              <circle cx="100" cy="104" r="58" fill="url(#rimQuran)" clipPath="url(#ccQuran)"></circle>
+              <ellipse cx="78" cy="74" rx="36" ry="25" fill="url(#glossQuran)" clipPath="url(#ccQuran)"></ellipse>
+              <path d="
+                M 100,83
+                Q 100,80 103,83
+                L 120,100
+                Q 123,103 123,106
+                L 123,123
+                Q 123,126 120,126
+                L 80,126
+                Q 77,126 77,123
+                L 77,106
+                Q 77,103 80,100
+                L 97,83
+                Q 100,80 100,83
+                Z
+              " fill="white"></path>
+              <rect x="92" y="112" width="16" height="14" rx="4" fill="url(#btnGradQuran)"></rect>
+            </svg>
           </button>
         ) : (
           <button
