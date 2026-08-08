@@ -358,6 +358,11 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
           { title: 'Phonemic Awareness (الوعي الفونيمي)', gameIds: ['arabicLetterTracing', 'arabicShadowMatch'] },
           { title: 'Knowledge of Books (معرفة المطبوعات)', gameIds: ['sorting', 'spelling'] }
         ];
+      case 'english':
+        return [
+          { title: 'Phonemic Awareness (الوعي الصوتي)', gameIds: ['englishLetterTracing', 'spellingEn'] },
+          { title: 'English Word Adventure (مغامرة الكلمات)', gameIds: ['englishSpaceDecoder', 'englishWordSafari'] }
+        ];
       case 'math':
         return [
           { title: 'Numbers & Counting (الأرقام والعد السحري)', gameIds: ['mathNumberTrain', 'mathSpaceTower'] },

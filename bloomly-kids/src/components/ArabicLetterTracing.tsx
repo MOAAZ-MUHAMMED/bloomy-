@@ -478,7 +478,7 @@ export default function ArabicLetterTracing({ onComplete, onBack }: Props) {
             {onBack && (
               <button
                 onClick={onBack}
-                className="w-14 h-14 hover:scale-105 active:translate-y-[4px] active:scale-95 transition-all cursor-pointer select-none"
+                className="w-20 h-20 hover:scale-105 active:translate-y-[4px] active:scale-95 transition-all cursor-pointer select-none"
               >
                 <svg viewBox="0 0 200 228" fill="none" className="w-full h-full">
                   <defs>

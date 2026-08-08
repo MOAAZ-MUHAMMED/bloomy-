@@ -3291,7 +3291,7 @@ const startNinjaGame = () => {
       else if (activeGame === "train") startTrainGame();
       else if (activeGame === "arrowRacer") startRunnerGame();
       else if (activeGame === "tapRacer") startTapRacerGame();
-      else if (activeGame === "kitchenMarketList" || activeGame === "arabicShadowMatch" || activeGame === "arabicLetterTracing" || activeGame === "englishWordSafari" || activeGame === "englishSpaceDecoder" || activeGame === "drawingSymmetry" || activeGame === "drawingNeonArt") {
+      else if (activeGame === "kitchenMarketList" || activeGame === "arabicShadowMatch" || activeGame === "arabicLetterTracing" || activeGame === "englishLetterTracing" || activeGame === "englishWordSafari" || activeGame === "englishSpaceDecoder" || activeGame === "drawingSymmetry" || activeGame === "drawingNeonArt") {
         setShowLevelMap(false);
       }
     } else {
