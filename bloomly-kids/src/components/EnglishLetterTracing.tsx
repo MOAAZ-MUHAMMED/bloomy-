@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Play, X, Star } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Play, X, Star, Home } from 'lucide-react';
+import DogMascot from './DogMascot';
+import MascotCharacter from './MascotCharacter';
 
 interface Letter {
   letter: string;
@@ -8,35 +10,36 @@ interface Letter {
   word: string;
   color: string;
   startSpot: { x: number; y: number };
+  checkpoints: { x: number; y: number }[];
 }
 
 const ENGLISH_LETTERS: Letter[] = [
-  { letter: 'A', name: 'A', word: 'Apple 🍎', color: '#EF4444', startSpot: { x: 150, y: 70 } },
-  { letter: 'B', name: 'B', word: 'Balloon 🎈', color: '#3B82F6', startSpot: { x: 100, y: 70 } },
-  { letter: 'C', name: 'C', word: 'Cat 🐱', color: '#10B981', startSpot: { x: 200, y: 80 } },
-  { letter: 'D', name: 'D', word: 'Dog 🐶', color: '#F59E0B', startSpot: { x: 100, y: 70 } },
-  { letter: 'E', name: 'E', word: 'Elephant 🐘', color: '#8B5CF6', startSpot: { x: 100, y: 70 } },
-  { letter: 'F', name: 'F', word: 'Fish 🐟', color: '#EC4899', startSpot: { x: 100, y: 70 } },
-  { letter: 'G', name: 'G', word: 'Grapes 🍇', color: '#06B6D4', startSpot: { x: 180, y: 70 } },
-  { letter: 'H', name: 'H', word: 'House 🏠', color: '#F43F5E', startSpot: { x: 90, y: 70 } },
-  { letter: 'I', name: 'I', word: 'Ice Cream 🍦', color: '#10B981', startSpot: { x: 150, y: 70 } },
-  { letter: 'J', name: 'J', word: 'Juice 🥤', color: '#EAB308', startSpot: { x: 130, y: 70 } },
-  { letter: 'K', name: 'K', word: 'Kite 🪁', color: '#D97706', startSpot: { x: 100, y: 70 } },
-  { letter: 'L', name: 'L', word: 'Lion 🦁', color: '#6366F1', startSpot: { x: 110, y: 70 } },
-  { letter: 'M', name: 'M', word: 'Monkey 🐒', color: '#FF7A00', startSpot: { x: 80, y: 100 } },
-  { letter: 'N', name: 'N', word: 'Nest 🪹', color: '#059669', startSpot: { x: 90, y: 100 } },
-  { letter: 'O', name: 'O', word: 'Orange 🍊', color: '#A855F7', startSpot: { x: 150, y: 70 } },
-  { letter: 'P', name: 'P', word: 'Panda 🐼', color: '#38BDF8', startSpot: { x: 100, y: 70 } },
-  { letter: 'Q', name: 'Q', word: 'Queen 👑', color: '#4B5563', startSpot: { x: 150, y: 70 } },
-  { letter: 'R', name: 'R', word: 'Rabbit 🐰', color: '#EC4899', startSpot: { x: 100, y: 70 } },
-  { letter: 'S', name: 'S', word: 'Sun ☀️', color: '#10B981', startSpot: { x: 190, y: 80 } },
-  { letter: 'T', name: 'T', word: 'Tree 🌳', color: '#3B82F6', startSpot: { x: 150, y: 70 } },
-  { letter: 'U', name: 'U', word: 'Umbrella 🪂', color: '#EA580C', startSpot: { x: 90, y: 80 } },
-  { letter: 'V', name: 'V', word: 'Violin 🎻', color: '#14B8A6', startSpot: { x: 90, y: 80 } },
-  { letter: 'W', name: 'W', word: 'Watermelon 🍉', color: '#84CC16', startSpot: { x: 80, y: 80 } },
-  { letter: 'X', name: 'X', word: 'Xylophone 🪘', color: '#EF4444', startSpot: { x: 90, y: 80 } },
-  { letter: 'Y', name: 'Y', word: 'Yo-Yo 🪀', color: '#8B5CF6', startSpot: { x: 90, y: 80 } },
-  { letter: 'Z', name: 'Z', word: 'Zebra 🦓', color: '#F43F5E', startSpot: { x: 90, y: 80 } }
+  { letter: 'A', name: 'A', word: 'Apple 🍎', color: '#EF4444', startSpot: { x: 150, y: 70 }, checkpoints: [{ x: 150, y: 70 }, { x: 100, y: 160 }, { x: 70, y: 230 }, { x: 230, y: 230 }, { x: 150, y: 160 }] },
+  { letter: 'B', name: 'B', word: 'Balloon 🎈', color: '#3B82F6', startSpot: { x: 100, y: 70 }, checkpoints: [{ x: 100, y: 70 }, { x: 100, y: 220 }, { x: 100, y: 70 }, { x: 180, y: 100 }, { x: 110, y: 140 }, { x: 190, y: 180 }, { x: 100, y: 220 }] },
+  { letter: 'C', name: 'C', word: 'Cat 🐱', color: '#10B981', startSpot: { x: 210, y: 100 }, checkpoints: [{ x: 210, y: 100 }, { x: 140, y: 80 }, { x: 90, y: 150 }, { x: 140, y: 220 }, { x: 210, y: 200 }] },
+  { letter: 'D', name: 'D', word: 'Dog 🐶', color: '#F59E0B', startSpot: { x: 100, y: 70 }, checkpoints: [{ x: 100, y: 70 }, { x: 100, y: 220 }, { x: 100, y: 70 }, { x: 200, y: 110 }, { x: 200, y: 180 }, { x: 100, y: 220 }] },
+  { letter: 'E', name: 'E', word: 'Elephant 🐘', color: '#8B5CF6', startSpot: { x: 100, y: 70 }, checkpoints: [{ x: 100, y: 70 }, { x: 100, y: 220 }, { x: 100, y: 70 }, { x: 200, y: 70 }, { x: 100, y: 145 }, { x: 180, y: 145 }, { x: 100, y: 220 }, { x: 200, y: 220 }] },
+  { letter: 'F', name: 'F', word: 'Fish 🐟', color: '#EC4899', startSpot: { x: 100, y: 70 }, checkpoints: [{ x: 100, y: 70 }, { x: 100, y: 220 }, { x: 100, y: 70 }, { x: 200, y: 70 }, { x: 100, y: 145 }, { x: 180, y: 145 }] },
+  { letter: 'G', name: 'G', word: 'Grapes 🍇', color: '#06B6D4', startSpot: { x: 210, y: 100 }, checkpoints: [{ x: 210, y: 100 }, { x: 140, y: 80 }, { x: 90, y: 150 }, { x: 140, y: 220 }, { x: 210, y: 220 }, { x: 210, y: 160 }, { x: 160, y: 160 }] },
+  { letter: 'H', name: 'H', word: 'House 🏠', color: '#F43F5E', startSpot: { x: 90, y: 70 }, checkpoints: [{ x: 90, y: 70 }, { x: 90, y: 220 }, { x: 210, y: 70 }, { x: 210, y: 220 }, { x: 90, y: 145 }, { x: 210, y: 145 }] },
+  { letter: 'I', name: 'I', word: 'Ice Cream 🍦', color: '#10B981', startSpot: { x: 150, y: 70 }, checkpoints: [{ x: 150, y: 70 }, { x: 150, y: 220 }, { x: 100, y: 70 }, { x: 200, y: 70 }, { x: 100, y: 220 }, { x: 200, y: 220 }] },
+  { letter: 'J', name: 'J', word: 'Juice 🥤', color: '#EAB308', startSpot: { x: 100, y: 70 }, checkpoints: [{ x: 100, y: 70 }, { x: 200, y: 70 }, { x: 150, y: 70 }, { x: 150, y: 190 }, { x: 100, y: 210 }] },
+  { letter: 'K', name: 'K', word: 'Kite 🪁', color: '#D97706', startSpot: { x: 100, y: 70 }, checkpoints: [{ x: 100, y: 70 }, { x: 100, y: 220 }, { x: 100, y: 145 }, { x: 200, y: 70 }, { x: 100, y: 145 }, { x: 200, y: 220 }] },
+  { letter: 'L', name: 'L', word: 'Lion 🦁', color: '#6366F1', startSpot: { x: 110, y: 70 }, checkpoints: [{ x: 110, y: 70 }, { x: 110, y: 220 }, { x: 200, y: 220 }] },
+  { letter: 'M', name: 'M', word: 'Monkey 🐒', color: '#FF7A00', startSpot: { x: 80, y: 220 }, checkpoints: [{ x: 80, y: 220 }, { x: 80, y: 70 }, { x: 150, y: 150 }, { x: 220, y: 70 }, { x: 220, y: 220 }] },
+  { letter: 'N', name: 'N', word: 'Nest 🪹', color: '#059669', startSpot: { x: 90, y: 220 }, checkpoints: [{ x: 90, y: 220 }, { x: 90, y: 70 }, { x: 210, y: 220 }, { x: 210, y: 70 }] },
+  { letter: 'O', name: 'O', word: 'Orange 🍊', color: '#A855F7', startSpot: { x: 150, y: 70 }, checkpoints: [{ x: 150, y: 70 }, { x: 90, y: 145 }, { x: 150, y: 220 }, { x: 210, y: 145 }, { x: 150, y: 70 }] },
+  { letter: 'P', name: 'P', word: 'Panda 🐼', color: '#38BDF8', startSpot: { x: 100, y: 70 }, checkpoints: [{ x: 100, y: 70 }, { x: 100, y: 220 }, { x: 100, y: 70 }, { x: 190, y: 100 }, { x: 100, y: 145 }] },
+  { letter: 'Q', name: 'Q', word: 'Queen 👑', color: '#4B5563', startSpot: { x: 150, y: 70 }, checkpoints: [{ x: 150, y: 70 }, { x: 90, y: 145 }, { x: 150, y: 220 }, { x: 210, y: 145 }, { x: 150, y: 70 }, { x: 160, y: 160 }, { x: 220, y: 220 }] },
+  { letter: 'R', name: 'R', word: 'Rabbit 🐰', color: '#EC4899', startSpot: { x: 100, y: 70 }, checkpoints: [{ x: 100, y: 70 }, { x: 100, y: 220 }, { x: 100, y: 70 }, { x: 190, y: 100 }, { x: 100, y: 145 }, { x: 190, y: 220 }] },
+  { letter: 'S', name: 'S', word: 'Sun ☀️', color: '#10B981', startSpot: { x: 200, y: 90 }, checkpoints: [{ x: 200, y: 90 }, { x: 140, y: 80 }, { x: 100, y: 120 }, { x: 150, y: 150 }, { x: 200, y: 180 }, { x: 140, y: 220 }, { x: 90, y: 200 }] },
+  { letter: 'T', name: 'T', word: 'Tree 🌳', color: '#3B82F6', startSpot: { x: 100, y: 70 }, checkpoints: [{ x: 100, y: 70 }, { x: 200, y: 70 }, { x: 150, y: 70 }, { x: 150, y: 220 }] },
+  { letter: 'U', name: 'U', word: 'Umbrella 🪂', color: '#EA580C', startSpot: { x: 90, y: 80 }, checkpoints: [{ x: 90, y: 80 }, { x: 90, y: 180 }, { x: 150, y: 220 }, { x: 210, y: 180 }, { x: 210, y: 80 }] },
+  { letter: 'V', name: 'V', word: 'Violin 🎻', color: '#14B8A6', startSpot: { x: 90, y: 80 }, checkpoints: [{ x: 90, y: 80 }, { x: 150, y: 220 }, { x: 210, y: 80 }] },
+  { letter: 'W', name: 'W', word: 'Watermelon 🍉', color: '#84CC16', startSpot: { x: 80, y: 80 }, checkpoints: [{ x: 80, y: 80 }, { x: 110, y: 220 }, { x: 150, y: 140 }, { x: 190, y: 220 }, { x: 220, y: 80 }] },
+  { letter: 'X', name: 'X', word: 'Xylophone 🪘', color: '#EF4444', startSpot: { x: 90, y: 80 }, checkpoints: [{ x: 90, y: 80 }, { x: 210, y: 220 }, { x: 210, y: 80 }, { x: 90, y: 220 }] },
+  { letter: 'Y', name: 'Y', word: 'Yo-Yo 🪀', color: '#8B5CF6', startSpot: { x: 90, y: 80 }, checkpoints: [{ x: 90, y: 80 }, { x: 150, y: 140 }, { x: 210, y: 80 }, { x: 150, y: 140 }, { x: 150, y: 220 }] },
+  { letter: 'Z', name: 'Z', word: 'Zebra 🦓', color: '#F43F5E', startSpot: { x: 90, y: 80 }, checkpoints: [{ x: 90, y: 80 }, { x: 210, y: 80 }, { x: 90, y: 220 }, { x: 210, y: 220 }] }
 ];
 
 interface Particle {
@@ -62,14 +65,13 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [traced, setTraced] = useState(false);
   const [isDrawing, setIsDrawing] = useState(false);
+  const [activeCheckpoint, setActiveCheckpoint] = useState(0);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const strokePointsRef = useRef<number>(0);
   const userStrokePointsRef = useRef<{ x: number; y: number }[]>([]);
   const particlesRef = useRef<Particle[]>([]);
   const requestRef = useRef<number>(0);
   const particleIdRef = useRef<number>(0);
-  const hasCompletedRef = useRef<boolean>(false);
 
   const currentItem = ENGLISH_LETTERS[currentIndex];
 
@@ -119,9 +121,8 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
     ctx.restore();
   };
 
-  // Add draw stroke guides
-  const drawLetterGuide = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
-    // Clear canvas background
+  // Render bubble guide and confined user drawing brush
+  const drawLetterGuideAndStroke = (ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
     ctx.fillStyle = '#FFFDF8';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -129,7 +130,7 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
     const strokeColor = currentItem.color;
 
     // Font setting
-    ctx.font = '900 220px "Outfit", "Inter", "sans-serif"';
+    ctx.font = '900 230px "Outfit", "Inter", "sans-serif"';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
 
@@ -137,44 +138,29 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
     const cy = canvas.height / 2 + 10;
 
     // 1. Draw thick outer shadow
-    ctx.strokeStyle = strokeColor + '30';
+    ctx.strokeStyle = strokeColor + '20';
     ctx.lineWidth = 38;
     ctx.strokeText(letter, cx, cy);
 
-    // 2. Draw thick bubble outline
-    ctx.fillStyle = '#FCE7F3';
-    ctx.strokeStyle = strokeColor;
-    ctx.lineWidth = 26;
-    ctx.strokeText(letter, cx, cy);
+    // 2. Draw light background shape (Destination)
+    ctx.fillStyle = '#FCE7F3'; // Light pink guide fill
     ctx.fillText(letter, cx, cy);
 
-    // 3. Draw dashed guide centerline
-    ctx.strokeStyle = '#FFFFFF';
-    ctx.lineWidth = 3;
-    ctx.setLineDash([8, 8]);
+    // Draw bubble outline border
+    ctx.strokeStyle = strokeColor + '50';
+    ctx.lineWidth = 26;
     ctx.strokeText(letter, cx, cy);
-    ctx.setLineDash([]);
-  };
 
-  // Animation Loop (Updates drawing guide, strokes, particles)
-  const animateCanvas = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // 1. Redraw Guide Letter
-    drawLetterGuide(ctx, canvas);
-
-    // 2. Draw user traced stroke points
+    // 3. DRAW USER STROKE WITH MASKING (source-atop)
     if (userStrokePointsRef.current.length > 0) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'source-atop';
+
       ctx.beginPath();
-      ctx.lineWidth = 16;
+      ctx.lineWidth = 28;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
-      ctx.strokeStyle = currentItem.color;
-      ctx.shadowColor = currentItem.color;
-      ctx.shadowBlur = 12;
+      ctx.strokeStyle = strokeColor;
 
       const p0 = userStrokePointsRef.current[0];
       ctx.moveTo(p0.x, p0.y);
@@ -182,32 +168,67 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
         ctx.lineTo(userStrokePointsRef.current[i].x, userStrokePointsRef.current[i].y);
       }
       ctx.stroke();
-      ctx.shadowBlur = 0; // Reset shadow
+
+      ctx.restore();
     }
 
-    // 3. Draw pulsing start spot (if not traced)
-    if (!traced) {
-      const pulse = 1 + Math.sin(Date.now() / 150) * 0.1;
-      ctx.beginPath();
-      ctx.arc(currentItem.startSpot.x, currentItem.startSpot.y, 10 * pulse, 0, Math.PI * 2);
-      ctx.fillStyle = '#FBBF24';
-      ctx.strokeStyle = '#FFFFFF';
-      ctx.lineWidth = 3;
-      ctx.shadowColor = '#FBBF24';
-      ctx.shadowBlur = 10;
-      ctx.fill();
-      ctx.stroke();
-      ctx.shadowBlur = 0;
+    // 4. Draw dashed centerline guide on top
+    ctx.strokeStyle = '#FFFFFF';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([8, 8]);
+    ctx.strokeText(letter, cx, cy);
+    ctx.setLineDash([]);
+  };
+
+  // Animation Loop
+  const animateCanvas = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Redraw letters guide + stroke
+    drawLetterGuideAndStroke(ctx, canvas);
+
+    // 1. Draw Checkpoints dots
+    if (!traced && currentItem.checkpoints) {
+      currentItem.checkpoints.forEach((cp, index) => {
+        const isCompleted = index < activeCheckpoint;
+        const isActive = index === activeCheckpoint;
+
+        ctx.beginPath();
+        ctx.arc(cp.x, cp.y, isActive ? 10 : 7, 0, Math.PI * 2);
+        
+        if (isCompleted) {
+          ctx.fillStyle = '#10B981';
+          ctx.strokeStyle = '#FFFFFF';
+        } else if (isActive) {
+          const pulse = 1 + Math.sin(Date.now() / 120) * 0.15;
+          ctx.arc(cp.x, cp.y, 11 * pulse, 0, Math.PI * 2);
+          ctx.fillStyle = '#FBBF24';
+          ctx.strokeStyle = '#FFFFFF';
+          ctx.shadowColor = '#FBBF24';
+          ctx.shadowBlur = 10;
+        } else {
+          ctx.fillStyle = '#CBD5E1';
+          ctx.strokeStyle = '#FFFFFF';
+        }
+
+        ctx.lineWidth = 2.5;
+        ctx.fill();
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      });
     }
 
-    // 4. Update and Draw Particles
+    // 2. Update and Draw Particles
     const particles = particlesRef.current;
     for (let i = particles.length - 1; i >= 0; i--) {
       const p = particles[i];
       p.x += p.vx;
       p.y += p.vy;
-      p.vy += 0.2; // gravity
-      p.alpha -= 0.016; // fade
+      p.vy += 0.22;
+      p.alpha -= 0.016;
       p.rotation += p.rotationSpeed;
 
       if (p.alpha <= 0) {
@@ -223,56 +244,53 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
 
   useEffect(() => {
     if (!showSplash) {
-      // Start animation loop when canvas is visible
       requestRef.current = requestAnimationFrame(animateCanvas);
     }
     return () => {
       cancelAnimationFrame(requestRef.current);
     };
-  }, [showSplash, currentIndex, traced]);
+  }, [showSplash, currentIndex, traced, activeCheckpoint]);
 
   const addTracingSparkle = (x: number, y: number) => {
-    // Generate beautiful colorful star particles following pointer
     const colors = ['#FFD700', '#FF5A92', '#3B82F6', '#2ECC71', '#A855F7', '#FF7A00'];
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 3; i++) {
       particleIdRef.current += 1;
       particlesRef.current.push({
         id: particleIdRef.current,
         x,
         y,
-        vx: (Math.random() - 0.5) * 4,
-        vy: (Math.random() - 0.5) * 4 - 1,
-        size: 5 + Math.random() * 6,
+        vx: (Math.random() - 0.5) * 5,
+        vy: (Math.random() - 0.5) * 5 - 1.5,
+        size: 6 + Math.random() * 7,
         color: colors[Math.floor(Math.random() * colors.length)],
         alpha: 1,
         rotation: Math.random() * 360,
-        rotationSpeed: (Math.random() - 0.5) * 10
+        rotationSpeed: (Math.random() - 0.5) * 12
       });
     }
   };
 
   const spawnStarburstCelebration = () => {
-    // Burst of 75+ golden stars shooting outward from the center
-    const colors = ['#FFD700', '#FBBF24', '#FCD34D', '#FFF9C4', '#F59E0B'];
+    const colors = ['#FFD700', '#FBBF24', '#FCD34D', '#FFF9C4', '#F59E0B', '#60A5FA', '#34D399'];
     const canvas = canvasRef.current;
     const cx = canvas ? canvas.width / 2 : 150;
     const cy = canvas ? canvas.height / 2 : 150;
 
-    for (let i = 0; i < 75; i++) {
+    for (let i = 0; i < 80; i++) {
       const angle = Math.random() * Math.PI * 2;
-      const speed = 2 + Math.random() * 7;
+      const speed = 3 + Math.random() * 9;
       particleIdRef.current += 1;
       particlesRef.current.push({
         id: particleIdRef.current,
         x: cx,
         y: cy,
         vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed - 2,
-        size: 6 + Math.random() * 9,
+        vy: Math.sin(angle) * speed - 3,
+        size: 7 + Math.random() * 10,
         color: colors[Math.floor(Math.random() * colors.length)],
         alpha: 1,
         rotation: Math.random() * 360,
-        rotationSpeed: (Math.random() - 0.5) * 15
+        rotationSpeed: (Math.random() - 0.5) * 16
       });
     }
   };
@@ -280,8 +298,6 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
   const handlePointerDown = (e: React.MouseEvent | React.TouchEvent) => {
     if (traced) return;
     setIsDrawing(true);
-    userStrokePointsRef.current = [];
-    strokePointsRef.current = 0;
     handlePointerDrag(e);
   };
 
@@ -308,13 +324,21 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
     const y = ((clientY - rect.top) / rect.height) * canvas.height;
 
     userStrokePointsRef.current.push({ x, y });
-    strokePointsRef.current += 1;
 
     addTracingSparkle(x, y);
 
-    // If traced 26 points, trigger local completion
-    if (strokePointsRef.current >= 26 && !traced) {
-      completeTracing();
+    // Verify checkpoints sequence
+    const currentCp = currentItem.checkpoints[activeCheckpoint];
+    if (currentCp) {
+      const distance = Math.hypot(x - currentCp.x, y - currentCp.y);
+      if (distance < 28) {
+        playPopSound();
+        if (activeCheckpoint === currentItem.checkpoints.length - 1) {
+          completeTracing();
+        } else {
+          setActiveCheckpoint(prev => prev + 1);
+        }
+      }
     }
   };
 
@@ -335,9 +359,9 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
   const handleNextLetter = () => {
     if (currentIndex < ENGLISH_LETTERS.length - 1) {
       userStrokePointsRef.current = [];
-      strokePointsRef.current = 0;
       setTraced(false);
       setIsDrawing(false);
+      setActiveCheckpoint(0);
       setCurrentIndex(prev => prev + 1);
     }
   };
@@ -345,63 +369,60 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
   const handlePrevLetter = () => {
     if (currentIndex > 0) {
       userStrokePointsRef.current = [];
-      strokePointsRef.current = 0;
       setTraced(false);
       setIsDrawing(false);
+      setActiveCheckpoint(0);
       setCurrentIndex(prev => prev - 1);
     }
   };
 
   return (
-    <div className="fixed inset-0 w-full h-full select-none overflow-hidden bg-gradient-to-b from-[#38bdf8] via-[#7dd3fc] to-[#e0f2fe] flex flex-col p-4 font-sans">
-      {/* Sky clouds layers */}
-      <div className="absolute top-2 right-4 text-4xl animate-pulse pointer-events-none select-none">☀️</div>
-      <motion.div animate={{ x: [-100, 500] }} transition={{ duration: 45, repeat: Infinity, ease: "linear" }} className="absolute top-6 left-0 text-3xl opacity-20 pointer-events-none">☁️</motion.div>
-      <motion.div animate={{ x: [500, -100] }} transition={{ duration: 38, repeat: Infinity, ease: "linear" }} className="absolute top-12 right-0 text-2xl opacity-25 pointer-events-none">☁️</motion.div>
+    <div className="fixed inset-0 w-full h-full select-none overflow-hidden bg-gradient-to-b from-[#38bdf8] via-[#7dd3fc] to-[#bae6fd] flex flex-col p-4 z-50">
+      
+      {/* 1. SKY & FLOATING CLOUDS LAYERS */}
+      <div className="absolute top-2 left-6 text-4xl animate-pulse pointer-events-none select-none z-10">☀️</div>
+      <motion.div animate={{ x: [-150, window.innerWidth + 150] }} transition={{ duration: 55, repeat: Infinity, ease: "linear" }} className="absolute top-8 left-0 text-3xl opacity-20 pointer-events-none z-10">☁️</motion.div>
+      <motion.div animate={{ x: [window.innerWidth + 150, -150] }} transition={{ duration: 42, repeat: Infinity, ease: "linear" }} className="absolute top-16 right-0 text-2xl opacity-25 pointer-events-none z-10">☁️</motion.div>
 
-      {/* Decorative Forest background */}
-      <div className="absolute bottom-0 inset-x-0 h-28 bg-gradient-to-t from-[#10B981] to-[#34D399] z-0 border-t-4 border-emerald-600 flex items-center justify-between px-6 pointer-events-none" />
-
-      {/* Exit button */}
-      {onBack && (
-        <div className="absolute top-4 left-4 z-50">
-          <button
-            onClick={onBack}
-            className="w-14 h-14 rounded-full bg-gradient-to-b from-red-400 to-red-600 border-[4px] border-white shadow-[0_6px_0_0_#991b1b,_inset_0_2px_0_rgba(255,255,255,0.4)] flex items-center justify-center text-white cursor-pointer hover:scale-105 active:translate-y-1 active:shadow-[0_2px_0_0_#991b1b] transition-all"
-          >
-            <X className="w-7 h-7 stroke-[3px]" />
-          </button>
-        </div>
-      )}
+      {/* 2. BEAUTIFUL LAYERED LANDSCAPE */}
+      <div className="absolute bottom-0 inset-x-0 h-44 bg-[#34D399] z-0 border-t-8 border-emerald-600 flex items-center justify-between pointer-events-none">
+        <div className="absolute -top-14 left-1/4 w-72 h-32 bg-[#10B981] rounded-full opacity-60 blur-[1px]"></div>
+        <div className="absolute -top-16 right-1/4 w-80 h-36 bg-[#059669] rounded-full opacity-40 blur-[1px]"></div>
+        
+        <div className="absolute bottom-16 left-6 text-5xl opacity-40">🌲</div>
+        <div className="absolute bottom-20 left-20 text-6xl opacity-30">🌳</div>
+        <div className="absolute bottom-16 right-6 text-5xl opacity-40">🌲</div>
+        <div className="absolute bottom-20 right-20 text-6xl opacity-30">🌳</div>
+      </div>
 
       {/* ========================================================================= */}
-      {/* 1. WELCOME SPLASH SCREEN */}
+      {/* 3. WELCOME SPLASH SCREEN */}
       {/* ========================================================================= */}
       <AnimatePresence>
         {showSplash && (
           <motion.div
             initial={{ opacity: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.5 }}
-            className="absolute inset-0 bg-[#E0F2FE] z-40 flex flex-col items-center justify-center p-6 text-center select-none"
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.4 }}
+            className="absolute inset-0 bg-[#E0F2FE] z-50 flex flex-col items-center justify-center p-6 text-center select-none"
           >
-            <div className="absolute inset-0 bg-gradient-to-b from-[#38bdf8] via-[#7dd3fc] to-[#e0f2fe] pointer-events-none" />
-            <div className="absolute bottom-0 inset-x-0 h-28 bg-gradient-to-t from-[#10B981] to-[#34D399] border-t-4 border-emerald-600 pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#38bdf8] via-[#7dd3fc] to-[#bae6fd] pointer-events-none" />
+            <div className="absolute bottom-0 inset-x-0 h-44 bg-[#34D399] border-t-8 border-emerald-600 pointer-events-none" />
 
             {/* Apple Mascot left */}
-            <div className="absolute bottom-4 left-8 w-44 h-44 z-10 pointer-events-none">
+            <div className="absolute bottom-6 left-12 w-48 h-48 z-10 pointer-events-none">
               <img src="/assets/mascots/apple_mascot_css.svg" className="w-full h-full object-contain animate-bounce" style={{ animationDuration: '3s' }} />
             </div>
 
             {/* Dog Mascot right */}
-            <div className="absolute bottom-4 right-8 w-44 h-44 z-10 pointer-events-none">
-              <img src="/assets/mascots/dog_mascot_css.svg" className="w-full h-full object-contain animate-bounce" style={{ animationDuration: '3.5s' }} />
+            <div className="absolute bottom-6 right-12 w-48 h-48 z-10 pointer-events-none">
+              <DogMascot pose="happy" className="w-48 h-48" />
             </div>
 
             <div className="relative bg-white/95 border-[6px] border-[#4D2B82] p-8 rounded-[40px] shadow-[0_12px_0_0_#4D2B82] max-w-lg z-20 flex flex-col items-center">
-              <span className="text-5xl mb-4">✏️🌈</span>
+              <span className="text-5xl mb-4 animate-bounce">✏️</span>
               <h2 className="text-3xl font-black text-[#4D2B82] leading-tight mb-2">Magic Letter Tracing</h2>
-              <p className="text-sm font-extrabold text-[#6B4E9E] mb-8">Have fun tracing letters with puppy Boolny and shiny Apple mascot!</p>
+              <p className="text-sm font-extrabold text-[#6B4E9E] mb-8">Trace English letters with puppy Boolny and shiny Apple mascot!</p>
               
               {/* Giant Glassy Start Button */}
               <button
@@ -409,10 +430,10 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
                   playPopSound();
                   setShowSplash(false);
                 }}
-                className="px-10 py-4.5 rounded-[26px] bg-gradient-to-b from-green-400 to-green-600 text-white font-black text-xl border-[5px] border-white shadow-[0_8px_0_0_#166534,_inset_0_3px_0_rgba(255,255,255,0.45)] hover:scale-105 active:translate-y-1 active:shadow-[0_2px_0_0_#166534] transition-all cursor-pointer relative overflow-hidden"
+                className="px-10 py-4.5 rounded-[28px] bg-gradient-to-b from-green-400 to-green-600 text-white font-black text-xl border-[4px] border-white shadow-[0_6px_0_0_#15803d,_inset_0_4px_0_rgba(255,255,255,0.4)] hover:scale-105 active:translate-y-[4px] active:shadow-[0_2px_0_0_#15803d] transition-all cursor-pointer relative overflow-hidden"
               >
                 <div className="absolute top-0 inset-x-0 h-1/2 bg-gradient-to-b from-white/35 to-transparent rounded-t-[20px]" />
-                <span>Start Tracing! 🚀</span>
+                <span>Start Tracing Now! 🚀</span>
               </button>
             </div>
           </motion.div>
@@ -420,34 +441,59 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
       </AnimatePresence>
 
       {/* ========================================================================= */}
-      {/* 2. MAIN TRACING INTERFACE */}
+      {/* 4. MAIN GAMEPLAY PLATFORM */}
       {/* ========================================================================= */}
       {!showSplash && (
-        <div className="flex-grow w-full flex flex-col justify-between items-center relative z-10 select-none">
+        <div className="absolute inset-0 flex flex-col justify-between items-center z-20 p-4">
           
-          {/* Top Title Board */}
-          <div className="pt-2 z-20 text-center">
-            <h2 className="text-xl sm:text-2xl font-black text-[#4D2B82] drop-shadow-sm bg-white/90 border-3 border-[#4D2B82] px-6 py-2 rounded-full shadow-lg">
-              Trace Letter {currentItem.name} - {currentItem.word}
-            </h2>
+          {/* HEADER BAR */}
+          <div className="w-full flex items-center justify-between z-30">
+            {/* Top-Left: Green Sprout Mascot in bubble card */}
+            <div className="flex items-center gap-3 bg-white/95 border-[4px] border-white rounded-[24px] px-3.5 py-1.5 shadow-lg shadow-black/10">
+              <div className="w-12 h-12 bg-emerald-100 rounded-full border-2 border-emerald-400 overflow-visible flex items-center justify-center p-1">
+                <MascotCharacter pose="victory" className="w-10 h-10" />
+              </div>
+              <div className="text-left font-sans">
+                <span className="block text-[10px] font-black text-emerald-600 leading-none">Magic Guide</span>
+                <span className="text-xs font-black text-[#4D2B82]">Little Sprout</span>
+              </div>
+            </div>
+
+            {/* Center: Title */}
+            <div className="bg-white/95 border-[4px] border-[#4D2B82] px-6 py-2 rounded-full shadow-lg shadow-black/10 text-center">
+              <h2 className="text-lg sm:text-xl font-black text-[#4D2B82]">
+                Letter {currentItem.letter} - {currentItem.word}
+              </h2>
+            </div>
+
+            {/* Top-Right: Home return button (Orange Glassy 3D Button) */}
+            {onBack && (
+              <button
+                onClick={onBack}
+                className="w-14 h-14 rounded-full bg-gradient-to-b from-orange-400 to-orange-600 border-[4px] border-white shadow-[0_6px_0_0_#9a3412,_inset_0_4px_0_rgba(255,255,255,0.4)] flex items-center justify-center text-white cursor-pointer hover:scale-105 active:translate-y-[4px] active:shadow-[0_2px_0_0_#9a3412] transition-all relative overflow-hidden"
+              >
+                <div className="absolute top-0 inset-x-0 h-1/2 bg-gradient-to-b from-white/40 to-transparent rounded-t-full" />
+                <Home className="w-6 h-6 stroke-[3.5px] drop-shadow-sm" />
+              </button>
+            )}
           </div>
 
-          {/* Core Content Stage */}
-          <div className="flex-grow w-full max-w-4xl flex items-center justify-between px-6 gap-6 relative">
+          {/* PLAYGROUND STAGE */}
+          <div className="flex-grow w-full max-w-5xl flex items-center justify-between px-6 gap-2 relative">
             
             {/* Apple Mascot on the left */}
-            <div className="hidden md:flex flex-col items-center z-10 w-40 select-none">
+            <div className="hidden md:flex flex-col items-center z-20 w-44 select-none self-end pb-8">
               <img
                 src="/assets/mascots/apple_mascot_css.svg"
                 alt="Apple Mascot"
-                className="w-40 h-40 object-contain animate-float-slow"
+                className="w-44 h-44 object-contain animate-float-slow"
               />
               <div className="w-24 h-2.5 bg-black/10 rounded-full blur-[2px] mt-0.5"></div>
             </div>
 
             {/* Tracing Canvas Card */}
-            <div className="flex-grow flex flex-col items-center justify-center">
-              <div className="relative w-80 h-80 bg-white/95 border-[6px] border-white rounded-[36px] shadow-2xl overflow-hidden flex items-center justify-center cursor-crosshair">
+            <div className="flex-grow flex flex-col items-center justify-center z-10">
+              <div className="relative w-80 h-80 bg-white/95 border-[6px] border-[#4D2B82] rounded-[42px] shadow-2xl overflow-hidden flex items-center justify-center cursor-crosshair">
                 <canvas
                   ref={canvasRef}
                   width={300}
@@ -462,7 +508,7 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
                   className="w-full h-full touch-none select-none"
                 />
 
-                {/* Local Complete Celebration overlay stamp */}
+                {/* Celebration stamp overlay */}
                 <AnimatePresence>
                   {traced && (
                     <motion.div
@@ -470,59 +516,68 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
                       animate={{ scale: 1.5, rotate: 0 }}
                       className="absolute text-8xl pointer-events-none z-30"
                     >
-                      ✨🎉
+                      ✨⭐
                     </motion.div>
                   )}
                 </AnimatePresence>
               </div>
 
               {/* Guide prompt */}
-              <p className="text-[11px] font-black text-rose-800 bg-white/80 border border-rose-200 px-4 py-1.5 rounded-full mt-3 shadow-sm">
-                {traced ? 'Excellent! Letter traced successfully! 🌟' : '💡 Start tracing from the glowing yellow spot!'}
+              <p className="text-[11px] font-black text-rose-800 bg-white/90 border-2 border-rose-300 px-5 py-1.5 rounded-full mt-3 shadow-md">
+                {traced ? 'Great! Letter completed successfully! 🌟' : '💡 Draw the letter by matching the yellow dots!'}
               </p>
             </div>
 
             {/* Dog Mascot on the right */}
-            <div className="hidden md:flex flex-col items-center z-10 w-40 select-none">
-              <img
-                src="/assets/mascots/dog_mascot_css.svg"
-                alt="Dog Mascot"
-                className="w-40 h-40 object-contain animate-float"
-              />
+            <div className="hidden md:flex flex-col items-center z-20 w-44 select-none self-end pb-8">
+              <DogMascot pose={traced ? "happy" : "waving"} className="w-44 h-44" />
               <div className="w-24 h-2.5 bg-black/10 rounded-full blur-[2px] mt-0.5"></div>
+            </div>
+
+            {/* Far Right Sidebar with mascot cards (exactly like in photo) */}
+            <div className="hidden lg:flex flex-col gap-3.5 bg-white/40 backdrop-blur-md border border-white/60 p-3 rounded-[32px] shadow-lg">
+              <div className="w-16 h-16 bg-[#e0f2fe] border-3 border-[#3b82f6] rounded-[20px] flex items-center justify-center p-1.5 shadow-md">
+                <DogMascot pose="idle" className="w-full h-full" />
+              </div>
+              <div className="w-16 h-16 bg-[#fee2e2] border-3 border-[#ef4444] rounded-[20px] flex items-center justify-center p-1 shadow-md">
+                <img src="/assets/mascots/apple_mascot_css.svg" className="w-full h-full object-contain" />
+              </div>
+              <div className="w-16 h-16 bg-[#d1fae5] border-3 border-[#10b981] rounded-[20px] flex items-center justify-center p-1.5 shadow-md">
+                <MascotCharacter pose="victory" className="w-full h-full" />
+              </div>
             </div>
 
           </div>
 
-          {/* Bottom Navigation Buttons Panel */}
-          <div className="pb-6 z-20 flex items-center gap-6">
+          {/* BOTTOM NAVIGATION CONTROL PANEL */}
+          <div className="pb-4 z-30 flex items-center gap-6">
             
-            {/* Prev Arrow Button (Glassy green) */}
+            {/* Prev Letter Arrow */}
             <button
               onClick={() => {
                 playPopSound();
                 handlePrevLetter();
               }}
               disabled={currentIndex === 0}
-              className="w-14 h-14 rounded-full bg-gradient-to-b from-green-400 to-green-600 border-[4px] border-white shadow-[0_6px_0_0_#166534,_inset_0_2px_0_rgba(255,255,255,0.4)] flex items-center justify-center text-white cursor-pointer hover:scale-105 active:translate-y-1 active:shadow-[0_2px_0_0_#166534] disabled:opacity-50 disabled:pointer-events-none transition-all relative overflow-hidden"
+              className="w-14 h-14 rounded-full bg-gradient-to-b from-green-400 to-green-600 border-[4px] border-white shadow-[0_6px_0_0_#15803d,_inset_0_4px_0_rgba(255,255,255,0.4)] flex items-center justify-center text-white cursor-pointer hover:scale-105 active:translate-y-[4px] active:shadow-[0_2px_0_0_#15803d] disabled:opacity-50 disabled:pointer-events-none transition-all relative overflow-hidden"
             >
               <div className="absolute top-0 inset-x-0 h-1/2 bg-gradient-to-b from-white/35 to-transparent rounded-t-full" />
               <ArrowLeft className="w-6 h-6 stroke-[3.5px]" />
             </button>
 
-            {/* Letters Progress Tracker Badge */}
+            {/* Letter tracker badge */}
             <div className="bg-white/95 border-[4px] border-[#4D2B82] px-6 py-2.5 rounded-[22px] shadow-lg flex items-center justify-center font-black text-sm text-[#4D2B82]">
               Letter {currentItem.letter} ({currentIndex + 1} of {ENGLISH_LETTERS.length})
             </div>
 
-            {/* Next Arrow Button (Glassy green) */}
+            {/* Next Letter Arrow */}
             <button
               onClick={() => {
                 playPopSound();
                 handleNextLetter();
               }}
               disabled={currentIndex === ENGLISH_LETTERS.length - 1}
-              className="w-14 h-14 rounded-full bg-gradient-to-b from-green-400 to-green-600 border-[4px] border-white shadow-[0_6px_0_0_#166534,_inset_0_2px_0_rgba(255,255,255,0.4)] flex items-center justify-center text-white cursor-pointer hover:scale-105 active:translate-y-1 active:shadow-[0_2px_0_0_#166534] disabled:opacity-50 disabled:pointer-events-none transition-all relative overflow-hidden"
+              className="w-14 h-14 rounded-full bg-gradient-to-b from-green-400 to-green-600 border-[4px] border-white shadow-[0_6px_0_0_#15803d,_inset_0_4px_0_rgba(255,255,255,0.4)] flex items-center justify-center text-white cursor-pointer hover:scale-105 active:translate-y-[4px] active:shadow-[0_2px_0_0_#15803d] disabled:opacity-50 disabled:pointer-events-none transition-all relative overflow-hidden"
             >
               <div className="absolute top-0 inset-x-0 h-1/2 bg-gradient-to-b from-white/35 to-transparent rounded-t-full" />
               <ArrowRight className="w-6 h-6 stroke-[3.5px]" />
