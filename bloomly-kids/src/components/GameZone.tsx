@@ -37,6 +37,7 @@ import SciencePlantLife from "./SciencePlantLife";
 import ScienceBodyPuzzle from "./ScienceBodyPuzzle";
 import DogMascot from "./DogMascot";
 import Rainbow3D from "./Rainbow3D";
+import rainbowImage from "./Rainbow.png";
 
 // New IQ Games
 import IqOddOneOut from "./IqOddOneOut";
@@ -7245,7 +7246,7 @@ const startNinjaGame = () => {
               
               {/* Victory Celebration Rainbow */}
               <motion.img 
-                src="/Rainbow.png" 
+                src={rainbowImage} 
                 alt="Victory Rainbow" 
                 className="w-44 h-auto object-contain mb-3 filter drop-shadow-md select-none"
                 animate={{ y: [0, -6, 0] }}

@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 // @ts-ignore
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+// @ts-ignore
+import rainbowModel from './Rainbow_animation.glb';
 
 interface Rainbow3DProps {
   className?: string;
@@ -43,7 +45,7 @@ export default function Rainbow3D({ className = "w-40 h-40", style }: Rainbow3DP
     // Load 3D model
     const loader = new GLTFLoader();
     loader.load(
-      '/Rainbow_animation.glb',
+      rainbowModel,
       (gltf: any) => {
         const loadedModel = gltf.scene;
         scene.add(loadedModel);

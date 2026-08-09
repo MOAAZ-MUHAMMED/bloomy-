@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import dogImage from './dog.png';
 
 interface DogMascotProps {
   className?: string;
@@ -46,12 +47,12 @@ export default function DogMascot({ className = "", pose = "idle" }: DogMascotPr
   return (
     <div className={`relative flex items-center justify-center select-none overflow-visible ${className}`} style={{ overflow: 'visible' }}>
       <motion.img
-        src="/dog.png"
+        src={dogImage}
         alt="Dog Mascot"
-        className="w-full h-full object-contain filter drop-shadow-[0_8px_12px_rgba(0,0,0,0.15)] translate-y-3.5"
+        className="w-full h-full object-contain filter drop-shadow-[0_8px_12px_rgba(0,0,0,0.15)]"
         animate={anim}
         transition={trans}
-        style={{ transformOrigin: "bottom center" }}
+        style={{ transformOrigin: "bottom center", transform: "scale(2.2) translateY(14px)" }}
       />
     </div>
   );
