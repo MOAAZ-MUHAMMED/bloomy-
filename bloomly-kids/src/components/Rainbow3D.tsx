@@ -45,22 +45,22 @@ export default function Rainbow3D({ className = "w-40 h-40", style }: Rainbow3DP
     loader.load(
       '/Rainbow_animation.glb',
       (gltf: any) => {
-        model = gltf.scene;
-        scene.add(model);
+        const loadedModel = gltf.scene;
+        scene.add(loadedModel);
 
         // Center and scale the model
-        const box = new THREE.Box3().setFromObject(model);
+        const box = new THREE.Box3().setFromObject(loadedModel);
         const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
-        model.position.sub(center);
+        loadedModel.position.sub(center);
 
         // Auto-scale to fit within camera bounds nicely
         const maxDim = Math.max(size.x, size.y, size.z);
         const scale = 2.5 / maxDim;
-        model.scale.setScalar(scale);
+        loadedModel.scale.setScalar(scale);
 
         // Traverse through meshes and assign vibrant unlit colors to avoid black model rendering
-        model.traverse((child: any) => {
+        loadedModel.traverse((child: any) => {
           if (child.isMesh) {
             child.castShadow = false;
             child.receiveShadow = false;
@@ -96,6 +96,9 @@ export default function Rainbow3D({ className = "w-40 h-40", style }: Rainbow3DP
             }
           }
         });
+
+        // Assign to parent scope variable
+        model = loadedModel;
       },
       undefined,
       (error: any) => {
