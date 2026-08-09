@@ -48,7 +48,7 @@ export default function DogMascot({ className = "", pose = "idle" }: DogMascotPr
       <motion.img
         src="/dog.png"
         alt="Dog Mascot"
-        className="w-full h-full object-contain filter drop-shadow-[0_8px_12px_rgba(0,0,0,0.15)]"
+        className="w-full h-full object-contain filter drop-shadow-[0_8px_12px_rgba(0,0,0,0.15)] translate-y-3.5"
         animate={anim}
         transition={trans}
         style={{ transformOrigin: "bottom center" }}

@@ -821,12 +821,6 @@ export default function QuranIsland({ onClose, globalStars, setGlobalStars }: Qu
           {/* Interactive room layout container */}
           <div className="relative w-full max-w-4xl aspect-[8/4.5] bg-white border-[6px] border-[#0369A1] rounded-[32px] shadow-2xl overflow-hidden">
             
-            {/* Floating 3D Rainbow */}
-            <Rainbow3D 
-              className="absolute w-28 h-28 z-20 pointer-events-none" 
-              style={{ left: '42%', top: '15%' }} 
-            />
-
             {/* Vector Bedroom SVG Scene */}
             <svg viewBox="0 0 800 450" className="w-full h-full rounded-[24px] shadow-inner select-none pointer-events-auto">
               {/* Room Walls & Floor */}
@@ -881,6 +875,12 @@ export default function QuranIsland({ onClose, globalStars, setGlobalStars }: Qu
                 <rect x="85" y="18" width="10" height="16" fill="#E5E7EB" stroke="#4B5563" strokeWidth="1" rx="2" />
               </g>
             </svg>
+
+            {/* Floating 3D Rainbow */}
+            <Rainbow3D 
+              className="absolute w-40 h-40 z-30 pointer-events-none" 
+              style={{ left: '50%', top: '8%', transform: 'translateX(-50%)' }} 
+            />
 
             {/* Glowing Hotspot Overlays */}
             

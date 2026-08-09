@@ -4991,7 +4991,7 @@ const startNinjaGame = () => {
           <div className="absolute top-2 right-4 text-4xl animate-pulse pointer-events-none select-none">☀️</div>
           
           {/* Floating 3D Rainbow */}
-          <Rainbow3D className="absolute w-36 h-36 z-10 pointer-events-none" style={{ left: '10%', top: '8%' }} />
+          <Rainbow3D className="absolute w-56 h-56 z-10 pointer-events-none" style={{ left: '50%', top: '10%', transform: 'translateX(-50%)' }} />
 
           <motion.div animate={{ x: [-100, 500] }} transition={{ duration: 45, repeat: Infinity, ease: "linear" }} className="absolute top-6 left-0 text-3xl opacity-20 pointer-events-none">☁️</motion.div>
           <motion.div animate={{ x: [500, -100] }} transition={{ duration: 38, repeat: Infinity, ease: "linear" }} className="absolute top-12 right-0 text-2xl opacity-25 pointer-events-none">☁️</motion.div>

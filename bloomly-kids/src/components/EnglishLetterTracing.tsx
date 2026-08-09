@@ -429,7 +429,7 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
       <motion.div animate={{ x: [window.innerWidth + 150, -150] }} transition={{ duration: 42, repeat: Infinity, ease: "linear" }} className="absolute top-16 right-0 text-2xl opacity-25 pointer-events-none z-10">☁️</motion.div>
       
       {/* Floating 3D Rainbow */}
-      <Rainbow3D className="absolute w-36 h-36 z-10 pointer-events-none" style={{ left: '10%', top: '8%' }} />
+      <Rainbow3D className="absolute w-56 h-56 z-10 pointer-events-none" style={{ left: '50%', top: '10%', transform: 'translateX(-50%)' }} />
 
       {/* 2. BEAUTIFUL LAYERED LANDSCAPE */}
       <div className="absolute bottom-0 inset-x-0 h-44 bg-[#34D399] z-0 border-t-8 border-emerald-600 flex items-center justify-between pointer-events-none">
@@ -624,9 +624,9 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
             </div>
 
             {/* Dog Mascot standing firmly on the grass */}
-            <div className="hidden md:flex absolute bottom-[-16px] right-0 flex-col items-center z-20 w-44 select-none">
-              <DogMascot pose={traced ? "happy" : "waving"} className="w-40 h-40" />
-              <div className="w-24 h-2 bg-black/15 rounded-full blur-[2px] mt-1"></div>
+            <div className="hidden md:flex absolute bottom-[-24px] right-0 flex-col items-center z-20 w-56 select-none">
+              <DogMascot pose={traced ? "happy" : "waving"} className="w-52 h-52" />
+              <div className="w-32 h-2.5 bg-black/15 rounded-full blur-[2px] mt-1"></div>
             </div>
 
             {/* Far Right Sidebar with mascot cards (exactly like in photo) */}

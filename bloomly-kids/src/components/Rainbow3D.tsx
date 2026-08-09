@@ -23,7 +23,7 @@ export default function Rainbow3D({ className = "w-40 h-40", style }: Rainbow3DP
 
     // Perspective Camera
     const camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
-    camera.position.set(0, 0.5, 3.8);
+    camera.position.set(0, 0.4, 3.8);
 
     // Renderer (Alpha: true for transparent background)
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -32,20 +32,10 @@ export default function Rainbow3D({ className = "w-40 h-40", style }: Rainbow3DP
     renderer.shadowMap.enabled = true;
     container.appendChild(renderer.domElement);
 
-    // Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);
+    // Lights (Basic ambient for general brightness)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.5);
     scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    dirLight.position.set(2, 5, 3);
-    dirLight.castShadow = true;
-    scene.add(dirLight);
-
-    const dirLight2 = new THREE.DirectionalLight(0xffe0b2, 0.5);
-    dirLight2.position.set(-2, 2, -3);
-    scene.add(dirLight2);
-
-    let mixer: THREE.AnimationMixer | null = null;
     let model: THREE.Group | null = null;
     const clock = new THREE.Clock();
     let animationFrameId: number;
@@ -58,34 +48,54 @@ export default function Rainbow3D({ className = "w-40 h-40", style }: Rainbow3DP
         model = gltf.scene;
         scene.add(model);
 
-        // Center the model
+        // Center and scale the model
         const box = new THREE.Box3().setFromObject(model);
         const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
         model.position.sub(center);
 
-        // Adjust model height to sit nicely
-        model.position.y += 0.2;
-
-        // Auto-scale to fit within camera bounds
+        // Auto-scale to fit within camera bounds nicely
         const maxDim = Math.max(size.x, size.y, size.z);
-        const scale = 2.4 / maxDim;
+        const scale = 2.5 / maxDim;
         model.scale.setScalar(scale);
 
-        // Play animations
-        if (gltf.animations && gltf.animations.length > 0) {
-          mixer = new THREE.AnimationMixer(model);
-          
-          // Try to find the jump & turn animation or fall back to the first clip
-          const clip = gltf.animations.find((anim: any) => 
-            anim.name.toLowerCase().includes('jump') || 
-            anim.name.toLowerCase().includes('turn') ||
-            anim.name.toLowerCase().includes('jumb')
-          ) || gltf.animations[0];
+        // Traverse through meshes and assign vibrant unlit colors to avoid black model rendering
+        model.traverse((child: any) => {
+          if (child.isMesh) {
+            child.castShadow = false;
+            child.receiveShadow = false;
 
-          const action = mixer.clipAction(clip);
-          action.play();
-        }
+            if (child.material) {
+              const materials = Array.isArray(child.material) ? child.material : [child.material];
+              const newMaterials = materials.map((oldMat: any) => {
+                let color = new THREE.Color(0xffffff);
+                if (oldMat.color) {
+                  color.copy(oldMat.color);
+                }
+
+                // Force vibrant colors based on standard rainbow names
+                const name = (oldMat.name || "").toLowerCase();
+                if (name.includes("red")) color.setHex(0xff4444);
+                else if (name.includes("orange")) color.setHex(0xff7800);
+                else if (name.includes("yellow")) color.setHex(0xffd700);
+                else if (name.includes("green")) color.setHex(0x34d399);
+                else if (name.includes("blue")) color.setHex(0x3b82f6);
+                else if (name.includes("cyan")) color.setHex(0x22d3ee);
+                else if (name.includes("violet") || name.includes("purple")) color.setHex(0xa855f7);
+                else if (name.includes("white")) color.setHex(0xffffff);
+
+                return new THREE.MeshBasicMaterial({
+                  color: color,
+                  transparent: oldMat.transparent || false,
+                  opacity: oldMat.opacity ?? 1.0,
+                  side: THREE.DoubleSide
+                });
+              });
+
+              child.material = Array.isArray(child.material) ? newMaterials : newMaterials[0];
+            }
+          }
+        });
       },
       undefined,
       (error: any) => {
@@ -97,14 +107,18 @@ export default function Rainbow3D({ className = "w-40 h-40", style }: Rainbow3DP
     const animate = () => {
       animationFrameId = requestAnimationFrame(animate);
 
-      const delta = clock.getDelta();
-      if (mixer) {
-        mixer.update(delta);
-      }
+      const time = clock.getElapsedTime();
 
-      // Gentle auto-rotation if no animation is active
-      if (model && !mixer) {
-        model.rotation.y += 0.01;
+      // Custom "Jump & Turn" animation inside code (since GLB does not have embedded animations)
+      if (model) {
+        // 1. Jumping: Bounces up and down smoothly
+        model.position.y = Math.abs(Math.sin(time * 3.5)) * 0.8 - 0.4;
+        
+        // 2. Turning: Rotates around Y-axis
+        model.rotation.y = time * 1.8;
+        
+        // 3. Tilting: Slight tilt while turning for dynamic effect
+        model.rotation.z = Math.sin(time * 2) * 0.15;
       }
 
       renderer.render(scene, camera);
