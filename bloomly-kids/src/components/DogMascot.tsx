@@ -29,18 +29,18 @@ export default function DogMascot({ className = "", pose = "idle" }: DogMascotPr
     ? { 
         duration: 0.6, 
         repeat: Infinity, 
-        ease: "easeInOut" 
+        ease: "easeInOut" as const 
       }
     : pose === 'waving'
       ? { 
           duration: 0.8, 
           repeat: Infinity, 
-          ease: "easeInOut" 
+          ease: "easeInOut" as const 
         }
       : { 
           duration: 2.2, 
           repeat: Infinity, 
-          ease: "easeInOut" 
+          ease: "easeInOut" as const 
         };
 
   return (

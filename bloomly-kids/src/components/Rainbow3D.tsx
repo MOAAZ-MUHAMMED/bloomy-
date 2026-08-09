@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+// @ts-ignore
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 interface Rainbow3DProps {
@@ -53,7 +54,7 @@ export default function Rainbow3D({ className = "w-40 h-40", style }: Rainbow3DP
     const loader = new GLTFLoader();
     loader.load(
       '/Rainbow_animation.glb',
-      (gltf) => {
+      (gltf: any) => {
         model = gltf.scene;
         scene.add(model);
 
@@ -76,7 +77,7 @@ export default function Rainbow3D({ className = "w-40 h-40", style }: Rainbow3DP
           mixer = new THREE.AnimationMixer(model);
           
           // Try to find the jump & turn animation or fall back to the first clip
-          const clip = gltf.animations.find(anim => 
+          const clip = gltf.animations.find((anim: any) => 
             anim.name.toLowerCase().includes('jump') || 
             anim.name.toLowerCase().includes('turn') ||
             anim.name.toLowerCase().includes('jumb')
@@ -87,7 +88,7 @@ export default function Rainbow3D({ className = "w-40 h-40", style }: Rainbow3DP
         }
       },
       undefined,
-      (error) => {
+      (error: any) => {
         console.error("Failed to load Rainbow_animation.glb:", error);
       }
     );
