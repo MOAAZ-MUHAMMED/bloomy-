@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Play, Square, RotateCcw, Volume2, Mic, CheckCircle, ArrowLeft, ArrowRight, Home, Star } from "lucide-react";
 import { ScreenOrientation } from '@capacitor/screen-orientation';
+import Rainbow3D from "./Rainbow3D";
 
 interface Surah {
   id: number;
@@ -820,6 +821,12 @@ export default function QuranIsland({ onClose, globalStars, setGlobalStars }: Qu
           {/* Interactive room layout container */}
           <div className="relative w-full max-w-4xl aspect-[8/4.5] bg-white border-[6px] border-[#0369A1] rounded-[32px] shadow-2xl overflow-hidden">
             
+            {/* Floating 3D Rainbow */}
+            <Rainbow3D 
+              className="absolute w-28 h-28 z-20 pointer-events-none" 
+              style={{ left: '42%', top: '15%' }} 
+            />
+
             {/* Vector Bedroom SVG Scene */}
             <svg viewBox="0 0 800 450" className="w-full h-full rounded-[24px] shadow-inner select-none pointer-events-auto">
               {/* Room Walls & Floor */}

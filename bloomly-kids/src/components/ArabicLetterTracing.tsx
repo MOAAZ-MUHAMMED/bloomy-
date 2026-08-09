@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Play, X, Star, Home } from 'lucide-react';
 import DogMascot from './DogMascot';
 import MascotCharacter from './MascotCharacter';
+import Rainbow3D from './Rainbow3D';
 
 const VectorTree = ({ className = "w-20 h-28" }: { className?: string }) => (
   <svg viewBox="0 0 100 120" className={`${className} filter drop-shadow-md select-none pointer-events-none`}>
@@ -433,6 +434,9 @@ export default function ArabicLetterTracing({ onComplete, onBack }: Props) {
       <div className="absolute top-2 left-6 text-4xl animate-pulse pointer-events-none select-none z-10">☀️</div>
       <motion.div animate={{ x: [-150, window.innerWidth + 150] }} transition={{ duration: 55, repeat: Infinity, ease: "linear" }} className="absolute top-8 left-0 text-3xl opacity-20 pointer-events-none z-10">☁️</motion.div>
       <motion.div animate={{ x: [window.innerWidth + 150, -150] }} transition={{ duration: 42, repeat: Infinity, ease: "linear" }} className="absolute top-16 right-0 text-2xl opacity-25 pointer-events-none z-10">☁️</motion.div>
+      
+      {/* Floating 3D Rainbow */}
+      <Rainbow3D className="absolute w-36 h-36 z-10 pointer-events-none" style={{ left: '10%', top: '8%' }} />
 
       {/* 2. BEAUTIFUL LAYERED LANDSCAPE (Rich forest layout matching Lamsa) */}
       <div className="absolute bottom-0 inset-x-0 h-44 bg-[#34D399] z-0 border-t-8 border-emerald-600 flex items-center justify-between pointer-events-none">

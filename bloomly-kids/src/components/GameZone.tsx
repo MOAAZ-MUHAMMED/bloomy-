@@ -35,6 +35,8 @@ import MarketShoppingGame from "./MarketShoppingGame";
 import KitchenCookingPot from "./KitchenCookingPot";
 import SciencePlantLife from "./SciencePlantLife";
 import ScienceBodyPuzzle from "./ScienceBodyPuzzle";
+import DogMascot from "./DogMascot";
+import Rainbow3D from "./Rainbow3D";
 
 // New IQ Games
 import IqOddOneOut from "./IqOddOneOut";
@@ -4988,6 +4990,9 @@ const startNinjaGame = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-[#38bdf8] via-[#7dd3fc] to-[#e0f2fe] pointer-events-none" />
           <div className="absolute top-2 right-4 text-4xl animate-pulse pointer-events-none select-none">☀️</div>
           
+          {/* Floating 3D Rainbow */}
+          <Rainbow3D className="absolute w-36 h-36 z-10 pointer-events-none" style={{ left: '10%', top: '8%' }} />
+
           <motion.div animate={{ x: [-100, 500] }} transition={{ duration: 45, repeat: Infinity, ease: "linear" }} className="absolute top-6 left-0 text-3xl opacity-20 pointer-events-none">☁️</motion.div>
           <motion.div animate={{ x: [500, -100] }} transition={{ duration: 38, repeat: Infinity, ease: "linear" }} className="absolute top-12 right-0 text-2xl opacity-25 pointer-events-none">☁️</motion.div>
 
@@ -5099,13 +5104,9 @@ const startNinjaGame = () => {
               </svg>
             </div>
 
-            {/* Mascot standing on the grass (Large size: w-48 h-48) */}
-            <div className={`absolute bottom-3 right-6 z-20 flex flex-col items-center select-none ${isCelebrating ? "animate-bounce" : ""}`}>
-              <img
-                src="/assets/mascots/apple_mascot_css.svg"
-                alt="CSS Mascot"
-                className="w-48 h-48 object-contain"
-              />
+            {/* Mascot standing on the grass (Large size: w-40 h-40) */}
+            <div className={`absolute bottom-3 right-6 z-20 flex flex-col items-center select-none`}>
+              <DogMascot pose={isCelebrating ? "happy" : "idle"} className="w-40 h-40" />
               <div className="w-32 h-3 bg-black/10 rounded-full blur-[2px] mt-0.5"></div>
             </div>
 
@@ -7240,7 +7241,16 @@ const startNinjaGame = () => {
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-yellow-100 rounded-full filter blur-3xl opacity-50 z-0 pointer-events-none animate-pulse" />
 
             {/* Triumphant Content */}
-            <div className="relative z-10">
+            <div className="relative z-10 flex flex-col items-center justify-center">
+              
+              {/* Victory Celebration Rainbow */}
+              <motion.img 
+                src="/Rainbow.png" 
+                alt="Victory Rainbow" 
+                className="w-44 h-auto object-contain mb-3 filter drop-shadow-md select-none"
+                animate={{ y: [0, -6, 0] }}
+                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              />
               
             {/* Bouncing Trophy with rotating sparkle stars background */}
             <div className="relative inline-block mb-4">
