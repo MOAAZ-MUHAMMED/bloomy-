@@ -640,7 +640,7 @@ export default function ArabicLetterTracing({ onComplete, onBack }: Props) {
                 src={owlModel} 
                 customAnimation={traced ? "spin" : "float"} 
                 className="w-full h-full" 
-                scaleAdjustment={1.2}
+                scaleAdjustment={1.5}
               />
               <div className="w-24 h-2 bg-black/10 rounded-full blur-[3px] mt-0.5 animate-pulse"></div>
             </div>
@@ -649,7 +649,7 @@ export default function ArabicLetterTracing({ onComplete, onBack }: Props) {
             <div className="hidden lg:flex flex-col gap-3.5 bg-white/40 backdrop-blur-md border border-white/60 p-3 rounded-[32px] shadow-lg">
               {/* Card 1: Owl */}
               <div className="w-16 h-16 bg-[#e0f2fe] border-3 border-[#3b82f6] rounded-[20px] flex items-center justify-center p-1.5 shadow-md">
-                <Model3D src={owlModel} customAnimation="float" className="w-full h-full" />
+                <Model3D src={owlModel} customAnimation="float" className="w-full h-full" scaleAdjustment={1.4} />
               </div>
               {/* Card 2: Apple */}
               <div className="w-16 h-16 bg-[#fee2e2] border-3 border-[#ef4444] rounded-[20px] flex items-center justify-center p-1 shadow-md">

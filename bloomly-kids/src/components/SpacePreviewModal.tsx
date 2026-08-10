@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Model3D from './Model3D';
-const solarSystemModel = "https://raw.githubusercontent.com/MOAAZ-MUHAMMED/bloomy-/main/orbiting_solar_system.glb";
-const astronautModel = "https://raw.githubusercontent.com/MOAAZ-MUHAMMED/bloomy-/main/walking_astronaut.glb";
+// @ts-ignore
+import solarSystemModel from './orbiting_solar_system.glb?url';
+// @ts-ignore
+import astronautModel from './walking_astronaut.glb?url';
 // @ts-ignore
 import flyingSaucerModel from './flying_saucer.glb?url';
 
@@ -61,7 +63,7 @@ export default function SpacePreviewModal({ onBack }: Props) {
           src={solarSystemModel} 
           animationName="natural_orbit" 
           className="w-full h-full z-10"
-          scaleAdjustment={1.1}
+          scaleAdjustment={1.3}
           colorMapping={false} // Preserve beautiful real planetary textures!
         />
 
@@ -71,7 +73,7 @@ export default function SpacePreviewModal({ onBack }: Props) {
             src={flyingSaucerModel} 
             animationName="hover" 
             className="w-full h-full"
-            scaleAdjustment={1.25}
+            scaleAdjustment={1.4}
             autoRotate={true}
             rotationSpeed={0.006}
             colorMapping={false} // Disable colorMapping to let original colors render with lights!
@@ -87,7 +89,7 @@ export default function SpacePreviewModal({ onBack }: Props) {
             src={astronautModel} 
             animationName={astronautAnim} 
             className="w-full h-full"
-            scaleAdjustment={1.3}
+            scaleAdjustment={1.5}
             onClick={triggerAstronautAction}
             colorMapping={false} // Preserve detailed spacesuit texture!
           />

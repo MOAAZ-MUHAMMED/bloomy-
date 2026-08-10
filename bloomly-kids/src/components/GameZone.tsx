@@ -5118,7 +5118,7 @@ const startNinjaGame = () => {
                 src={bunnyModel} 
                 customAnimation={isCelebrating ? "jump" : "float"} 
                 className="w-full h-full" 
-                scaleAdjustment={1.15}
+                scaleAdjustment={1.4}
               />
               <div className="w-32 h-3 bg-black/10 rounded-full blur-[2px] mt-0.5"></div>
             </div>
@@ -7261,7 +7261,7 @@ const startNinjaGame = () => {
                 src={balloonsModel} 
                 animationName="idle_sway" 
                 className="w-56 h-36 mb-1" 
-                scaleAdjustment={1.0}
+                scaleAdjustment={1.3}
               />
               
             {/* Bouncing Trophy with rotating sparkle stars background */}
@@ -7306,7 +7306,7 @@ const startNinjaGame = () => {
                   autoRotate={true}
                   rotationSpeed={0.02}
                   className="w-full h-full"
-                  scaleAdjustment={1.2}
+                  scaleAdjustment={1.4}
                 />
               </div>
             </div>

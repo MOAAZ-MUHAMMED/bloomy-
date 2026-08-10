@@ -884,7 +884,7 @@ export default function QuranIsland({ onClose, globalStars, setGlobalStars }: Qu
                 src={cheeseburgerModel} 
                 customAnimation="float" 
                 className="w-full h-full"
-                scaleAdjustment={0.8}
+                scaleAdjustment={1.2}
               />
             </div>
 
@@ -894,7 +894,7 @@ export default function QuranIsland({ onClose, globalStars, setGlobalStars }: Qu
                 src={merlinModel} 
                 animationName="Idle3_1" 
                 className="w-full h-full"
-                scaleAdjustment={1.1}
+                scaleAdjustment={1.45}
                 colorMapping={false} // Preserve detailed wizard textures!
               />
               <div className="text-[8px] md:text-[10px] font-black text-center text-amber-200 bg-amber-950/75 px-2.5 py-0.5 rounded-full border border-amber-500/30 shadow-md select-none pointer-events-none -mt-2">
