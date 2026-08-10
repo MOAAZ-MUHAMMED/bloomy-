@@ -3,7 +3,7 @@ import * as THREE from 'three';
 // @ts-ignore
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 // @ts-ignore
-import rainbowModel from './Rainbow_animation.glb';
+import rainbowModel from './Rainbow_animation.glb?url';
 
 interface Rainbow3DProps {
   className?: string;
