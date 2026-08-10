@@ -26,7 +26,7 @@ export default function Model3D({
   customAnimation = 'none',
   scaleAdjustment = 1.0,
   onClick,
-  colorMapping = true
+  colorMapping = false
 }: Model3DProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const clickRef = useRef<(() => void) | undefined>(onClick);
@@ -57,8 +57,16 @@ export default function Model3D({
     container.appendChild(renderer.domElement);
 
     // Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 2.0);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.8);
     scene.add(ambientLight);
+
+    const dirLight1 = new THREE.DirectionalLight(0xffffff, 2.2);
+    dirLight1.position.set(3, 5, 4);
+    scene.add(dirLight1);
+
+    const dirLight2 = new THREE.DirectionalLight(0xffffff, 1.2);
+    dirLight2.position.set(-3, -4, -2);
+    scene.add(dirLight2);
 
     let mixer: THREE.AnimationMixer | null = null;
     let model: THREE.Group | null = null;
@@ -119,6 +127,11 @@ export default function Model3D({
                 else if (name.includes("cyan")) color.setHex(0x22d3ee);
                 else if (name.includes("violet") || name.includes("purple")) color.setHex(0xa855f7);
                 else if (name.includes("white")) color.setHex(0xffffff);
+                else {
+                  if (oldMat.color) {
+                    color.copy(oldMat.color);
+                  }
+                }
 
                 return new THREE.MeshBasicMaterial({
                   color: color,

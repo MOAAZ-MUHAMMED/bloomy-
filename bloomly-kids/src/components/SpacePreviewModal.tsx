@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import Model3D from './Model3D';
-// @ts-ignore
-import solarSystemModel from './orbiting_solar_system.glb?url';
-// @ts-ignore
-import astronautModel from './walking_astronaut.glb?url';
+const solarSystemModel = "https://raw.githubusercontent.com/MOAAZ-MUHAMMED/bloomy-/main/orbiting_solar_system.glb";
+const astronautModel = "https://raw.githubusercontent.com/MOAAZ-MUHAMMED/bloomy-/main/walking_astronaut.glb";
 // @ts-ignore
 import flyingSaucerModel from './flying_saucer.glb?url';
 
@@ -76,7 +74,7 @@ export default function SpacePreviewModal({ onBack }: Props) {
             scaleAdjustment={1.25}
             autoRotate={true}
             rotationSpeed={0.006}
-            colorMapping={true} // Add vibrant unlit emission
+            colorMapping={false} // Disable colorMapping to let original colors render with lights!
           />
           <div className="text-[10px] font-black text-center text-emerald-300 bg-black/50 px-2 py-0.5 rounded-full mt-1 border border-emerald-500/30 shadow-md">
             🛸 زائر فضائي
