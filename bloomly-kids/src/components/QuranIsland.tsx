@@ -3,6 +3,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Play, Square, RotateCcw, Volume2, Mic, CheckCircle, ArrowLeft, ArrowRight, Home, Star } from "lucide-react";
 import { ScreenOrientation } from '@capacitor/screen-orientation';
 import Rainbow3D from "./Rainbow3D";
+import Model3D from "./Model3D";
+// @ts-ignore
+import cheeseburgerModel from "./cheeseburger.glb?url";
+// @ts-ignore
+import merlinModel from "./merlin.glb?url";
 
 interface Surah {
   id: number;
@@ -867,14 +872,35 @@ export default function QuranIsland({ onClose, globalStars, setGlobalStars }: Qu
                 <rect x="25" y="40" width="12" height="50" fill="#78350F" rx="2" />
                 <rect x="93" y="40" width="12" height="50" fill="#78350F" rx="2" />
                 <ellipse cx="65" cy="40" rx="65" ry="12" fill="#D97706" stroke="#fff" strokeWidth="4" />
-                {/* Red Apple on table */}
-                <circle cx="55" cy="27" r="9" fill="#EF4444" stroke="#fff" strokeWidth="1.5" />
-                <path d="M55 18 Q57 14, 60 14" fill="none" stroke="#10B981" strokeWidth="1.5" />
                 {/* Plate and Cup */}
                 <ellipse cx="65" cy="31" rx="16" ry="4" fill="#F3F4F6" stroke="#D1D5DB" strokeWidth="1" />
                 <rect x="85" y="18" width="10" height="16" fill="#E5E7EB" stroke="#4B5563" strokeWidth="1" rx="2" />
               </g>
             </svg>
+
+            {/* 3D Cheeseburger on table (Replacing SVG apple) */}
+            <div className="absolute w-[8%] h-[12%] z-30 pointer-events-none" style={{ left: '66.5%', top: '56%' }}>
+              <Model3D 
+                src={cheeseburgerModel} 
+                customAnimation="float" 
+                className="w-full h-full"
+                scaleAdjustment={0.8}
+              />
+            </div>
+
+            {/* 3D Merlin Wizard Character standing on the floor (Right side) */}
+            <div className="absolute bottom-[4%] right-[3%] z-30 w-[18%] h-[35%] flex flex-col items-center select-none pointer-events-auto">
+              <Model3D 
+                src={merlinModel} 
+                animationName="Idle3_1" 
+                className="w-full h-full"
+                scaleAdjustment={1.1}
+                colorMapping={false} // Preserve detailed wizard textures!
+              />
+              <div className="text-[8px] md:text-[10px] font-black text-center text-amber-200 bg-amber-950/75 px-2.5 py-0.5 rounded-full border border-amber-500/30 shadow-md select-none pointer-events-none -mt-2">
+                الساحر ميرلين 🧙‍♂️
+              </div>
+            </div>
 
             {/* Floating 3D Rainbow */}
             <Rainbow3D 

@@ -38,6 +38,13 @@ import ScienceBodyPuzzle from "./ScienceBodyPuzzle";
 import DogMascot from "./DogMascot";
 import Rainbow3D from "./Rainbow3D";
 import rainbowImage from "./Rainbow.png";
+import Model3D from "./Model3D";
+// @ts-ignore
+import bunnyModel from "./bunny.glb?url";
+// @ts-ignore
+import goldTrophyModel from "./gold_trophy.glb?url";
+// @ts-ignore
+import balloonsModel from "./celebration_balloons.glb?url";
 
 // New IQ Games
 import IqOddOneOut from "./IqOddOneOut";
@@ -5106,8 +5113,13 @@ const startNinjaGame = () => {
             </div>
 
             {/* Mascot standing on the grass (Large size: w-40 h-40) */}
-            <div className={`absolute bottom-3 right-6 z-20 flex flex-col items-center select-none`}>
-              <DogMascot pose={isCelebrating ? "happy" : "idle"} className="w-40 h-40" />
+            <div className={`absolute bottom-2 right-6 z-20 flex flex-col items-center select-none w-56 h-56`}>
+              <Model3D 
+                src={bunnyModel} 
+                customAnimation={isCelebrating ? "jump" : "float"} 
+                className="w-full h-full" 
+                scaleAdjustment={1.15}
+              />
               <div className="w-32 h-3 bg-black/10 rounded-full blur-[2px] mt-0.5"></div>
             </div>
 
@@ -7244,13 +7256,12 @@ const startNinjaGame = () => {
             {/* Triumphant Content */}
             <div className="relative z-10 flex flex-col items-center justify-center">
               
-              {/* Victory Celebration Rainbow */}
-              <motion.img 
-                src={rainbowImage} 
-                alt="Victory Rainbow" 
-                className="w-44 h-auto object-contain mb-3 filter drop-shadow-md select-none"
-                animate={{ y: [0, -6, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              {/* Victory Celebration Balloons */}
+              <Model3D 
+                src={balloonsModel} 
+                animationName="idle_sway" 
+                className="w-56 h-36 mb-1" 
+                scaleAdjustment={1.0}
               />
               
             {/* Bouncing Trophy with rotating sparkle stars background */}
@@ -7289,40 +7300,15 @@ const startNinjaGame = () => {
               ))}
               
               {/* Trophy */}
-              <motion.div
-                animate={{ rotate: [0, -10, 10, -5, 5, 0], scale: [1, 1.15, 1] }}
-                transition={{ repeat: Infinity, duration: 2.5 }}
-                className="inline-block relative z-10"
-              >
-                <svg viewBox="0 0 100 100" className="w-28 h-28 mx-auto">
-                  {/* Glow/shine behind trophy */}
-                  <circle cx="50" cy="45" r="28" fill="#FFF59D" opacity="0.3" className="animate-pulse" />
-                  
-                  {/* Left Cup Handle */}
-                  <path d="M32 30 C20 30 20 50 32 52" fill="none" stroke="#D97706" strokeWidth="4" strokeLinecap="round" />
-                  <path d="M32 34 C24 34 24 46 32 48" fill="none" stroke="#FBBF24" strokeWidth="4" strokeLinecap="round" />
-                  
-                  {/* Right Cup Handle */}
-                  <path d="M68 30 C80 30 80 50 68 52" fill="none" stroke="#D97706" strokeWidth="4" strokeLinecap="round" />
-                  <path d="M68 34 C76 34 76 46 68 48" fill="none" stroke="#FBBF24" strokeWidth="4" strokeLinecap="round" />
-
-                  {/* Trophy Cup Body */}
-                  <path d="M30 25 L70 25 L68 55 C68 65 50 70 50 70 C50 70 32 65 32 55 Z" fill="#FBBF24" stroke="#D97706" strokeWidth="4" strokeLinejoin="round" />
-                  {/* Trophy Shine Highlight */}
-                  <path d="M35 29 L45 29 L40 58 C38 58 36 54 36 52 Z" fill="#FFF" opacity="0.4" />
-                  
-                  {/* Stem / Stand connection */}
-                  <path d="M50 70 L50 82" stroke="#D97706" strokeWidth="8" strokeLinecap="round" />
-                  <path d="M50 70 L50 82" stroke="#FBBF24" strokeWidth="4" strokeLinecap="round" />
-                  
-                  {/* Base */}
-                  <path d="M32 82 L68 82 L64 92 L36 92 Z" fill="#78350F" stroke="#451A03" strokeWidth="4" strokeLinejoin="round" />
-                  <rect x="42" y="85" width="16" height="5" rx="1" fill="#FBBF24" />
-                  
-                  {/* Star on Cup */}
-                  <path d="M50 35 L53 41 L60 42 L55 47 L56 54 L50 50 L44 54 L45 47 L40 42 L47 41 Z" fill="#D97706" />
-                </svg>
-              </motion.div>
+              <div className="w-36 h-36 mx-auto relative z-10 flex items-center justify-center">
+                <Model3D 
+                  src={goldTrophyModel} 
+                  autoRotate={true}
+                  rotationSpeed={0.02}
+                  className="w-full h-full"
+                  scaleAdjustment={1.2}
+                />
+              </div>
             </div>
 
             <div className="flex flex-col items-center justify-center gap-1 mb-3">

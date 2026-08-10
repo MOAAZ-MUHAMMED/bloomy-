@@ -1,48 +1,55 @@
 const fs = require('fs');
+const path = require('path');
 
 function inspectGlb(filePath) {
-  const buffer = fs.readFileSync(filePath);
-  
-  // Read GLB header
-  const magic = buffer.toString('utf8', 0, 4);
-  if (magic !== 'glTF') {
-    console.error('Not a valid glTF/GLB file');
-    return;
-  }
-  
-  const version = buffer.readUInt32LE(4);
-  const length = buffer.readUInt32LE(8);
-  console.log(`GLB Version: ${version}, Length: ${length} bytes`);
-  
-  // Read Chunk 0 (JSON)
-  const chunkLength = buffer.readUInt32LE(12);
-  const chunkType = buffer.toString('utf8', 16, 20);
-  
-  if (chunkType !== 'JSON') {
-    console.error('First chunk is not JSON');
-    return;
-  }
-  
-  const jsonString = buffer.toString('utf8', 20, 20 + chunkLength);
-  const gltf = JSON.parse(jsonString);
-  
-  console.log('\n--- ANIMATIONS ---');
-  if (gltf.animations) {
-    gltf.animations.forEach((anim, idx) => {
-      console.log(`Animation ${idx}: "${anim.name}"`);
-    });
-  } else {
-    console.log('No animations found!');
-  }
-  
-  console.log('\n--- MATERIALS ---');
-  if (gltf.materials) {
-    gltf.materials.forEach((mat, idx) => {
-      console.log(`Material ${idx}: name="${mat.name}", pbrMetallicRoughness=${JSON.stringify(mat.pbrMetallicRoughness)}`);
-    });
-  } else {
-    console.log('No materials found!');
+  try {
+    const buffer = fs.readFileSync(filePath);
+    
+    // Read GLB header
+    const magic = buffer.toString('utf8', 0, 4);
+    if (magic !== 'glTF') {
+      return null;
+    }
+    
+    const chunkLength = buffer.readUInt32LE(12);
+    const chunkType = buffer.toString('utf8', 16, 20);
+    
+    if (chunkType !== 'JSON') {
+      return null;
+    }
+    
+    const jsonString = buffer.toString('utf8', 20, 20 + chunkLength);
+    const gltf = JSON.parse(jsonString);
+    
+    const animations = gltf.animations ? gltf.animations.map(a => a.name) : [];
+    const materials = gltf.materials ? gltf.materials.map(m => m.name || 'unnamed') : [];
+    
+    return { animations, materials };
+  } catch (e) {
+    return null;
   }
 }
 
-inspectGlb('public/Rainbow_animation.glb');
+const assetsDir = 'c:\\Users\\omar\\Desktop\\bloomy_assets 3d';
+const files = fs.readdirSync(assetsDir);
+
+console.log('Inspecting animations in GLB files...\n');
+files.forEach(file => {
+  if (file.toLowerCase().endsWith('.glb')) {
+    const filePath = path.join(assetsDir, file);
+    const result = inspectGlb(filePath);
+    if (result) {
+      console.log(`=== File: ${file} ===`);
+      if (result.animations.length > 0) {
+        console.log('Animations found:');
+        result.animations.forEach((name, idx) => {
+          console.log(`  - [${idx}] ${name}`);
+        });
+      } else {
+        console.log('  (No animations found)');
+      }
+      console.log('');
+    }
+  }
+});
+

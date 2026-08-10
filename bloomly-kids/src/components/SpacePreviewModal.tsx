@@ -1,11 +1,32 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import Model3D from './Model3D';
+// @ts-ignore
+import solarSystemModel from './orbiting_solar_system.glb?url';
+// @ts-ignore
+import astronautModel from './walking_astronaut.glb?url';
+// @ts-ignore
+import flyingSaucerModel from './flying_saucer.glb?url';
 
 interface Props {
   onBack: () => void;
 }
 
 export default function SpacePreviewModal({ onBack }: Props) {
+  const [astronautAnim, setAstronautAnim] = useState<'floating' | 'wave' | 'moon_walk'>('floating');
+
+  const triggerAstronautAction = () => {
+    if (astronautAnim !== 'floating') return;
+    
+    // Pick randomly between wave and moon_walk
+    const nextAnim = Math.random() > 0.5 ? 'wave' : 'moon_walk';
+    setAstronautAnim(nextAnim);
+    
+    // Reset to floating after 3.5 seconds
+    setTimeout(() => {
+      setAstronautAnim('floating');
+    }, 3500);
+  };
   // Play click sound
   const playPopSound = () => {
     try {
@@ -32,71 +53,51 @@ export default function SpacePreviewModal({ onBack }: Props) {
       <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#ffffff_1.5px,transparent_1.5px)] [background-size:48px_48px] animate-pulse pointer-events-none" />
 
       {/* 2. SOLAR SYSTEM PREVIEW AREA */}
-      <div className="relative w-[360px] h-[360px] md:w-[480px] md:h-[480px] flex items-center justify-center">
+      <div className="relative w-[360px] h-[360px] md:w-[500px] md:h-[500px] flex items-center justify-center">
         
-        {/* Glow behind Sun */}
-        <div className="absolute w-44 h-44 bg-amber-400/20 rounded-full blur-2xl animate-pulse" />
+        {/* Glow behind Solar System */}
+        <div className="absolute w-[300px] h-[300px] bg-purple-500/10 rounded-full blur-3xl animate-pulse" />
         
-        {/* Sun (Center) */}
-        <motion.div
-          animate={{ scale: [1, 1.05, 1] }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute w-20 h-20 bg-gradient-to-b from-yellow-300 to-amber-500 rounded-full border-4 border-white shadow-[0_0_30px_#f59e0b] z-20 flex items-center justify-center text-4xl"
-        >
-          ☀️
-        </motion.div>
+        {/* 3D Orbiting Solar System */}
+        <Model3D 
+          src={solarSystemModel} 
+          animationName="natural_orbit" 
+          className="w-full h-full z-10"
+          scaleAdjustment={1.1}
+          colorMapping={false} // Preserve beautiful real planetary textures!
+        />
 
-        {/* Orbit 1: Earth */}
-        <div className="absolute w-[180px] h-[180px] border-2 border-white/10 rounded-full z-10" />
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-          className="absolute w-[180px] h-[180px] z-10"
-        >
-          <div className="absolute -top-3 left-[calc(50%-12px)] w-7 h-7 bg-gradient-to-b from-blue-400 to-sky-600 rounded-full border-2 border-white shadow-md flex items-center justify-center text-xs">
-            🌍
+        {/* 3D Flying Saucer UFO hovering in upper right */}
+        <div className="absolute top-[5%] right-[5%] z-20 w-36 h-36 flex flex-col items-center">
+          <Model3D 
+            src={flyingSaucerModel} 
+            animationName="hover" 
+            className="w-full h-full"
+            scaleAdjustment={1.25}
+            autoRotate={true}
+            rotationSpeed={0.006}
+            colorMapping={true} // Add vibrant unlit emission
+          />
+          <div className="text-[10px] font-black text-center text-emerald-300 bg-black/50 px-2 py-0.5 rounded-full mt-1 border border-emerald-500/30 shadow-md">
+            🛸 زائر فضائي
           </div>
-        </motion.div>
+        </div>
 
-        {/* Orbit 2: Mars */}
-        <div className="absolute w-[270px] h-[270px] border-2 border-white/5 rounded-full z-10" />
-        <motion.div
-          animate={{ rotate: -360 }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute w-[270px] h-[270px] z-10"
-        >
-          <div className="absolute -top-2.5 left-[calc(50%-10px)] w-6 h-6 bg-gradient-to-b from-red-400 to-rose-600 rounded-full border-2 border-white shadow-md flex items-center justify-center text-xs">
-            🔴
+        {/* 3D Interactive Astronaut floating in lower left */}
+        <div className="absolute bottom-[2%] left-[2%] z-20 w-40 h-40 flex flex-col items-center select-none">
+          <Model3D 
+            src={astronautModel} 
+            animationName={astronautAnim} 
+            className="w-full h-full"
+            scaleAdjustment={1.3}
+            onClick={triggerAstronautAction}
+            colorMapping={false} // Preserve detailed spacesuit texture!
+          />
+          <div className="text-[10px] font-black text-center text-purple-200 bg-purple-950/75 px-3 py-1 rounded-full border border-purple-500/30 shadow-lg animate-bounce select-none">
+            {astronautAnim === 'floating' ? 'اضغط عليّ! 🧑‍🚀' : astronautAnim === 'wave' ? 'أهلاً بك! 👋' : 'أمشي على القمر! 🌙'}
           </div>
-        </motion.div>
+        </div>
 
-        {/* Orbit 3: Saturn */}
-        <div className="absolute w-[360px] h-[360px] border-2 border-white/5 rounded-full z-10" />
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 32, repeat: Infinity, ease: "linear" }}
-          className="absolute w-[360px] h-[360px] z-10"
-        >
-          <div className="absolute -top-4 left-[calc(50%-16px)] w-9 h-9 flex items-center justify-center">
-            {/* Saturn Sphere */}
-            <div className="absolute w-6 h-6 bg-gradient-to-b from-amber-400 to-yellow-600 rounded-full border border-white shadow-sm" />
-            {/* Saturn Ring */}
-            <div className="absolute w-10 h-2.5 border-[2px] border-amber-300 rounded-full transform rotate-[20deg]" />
-          </div>
-        </motion.div>
-
-        {/* 3. ANIMATED ROCKET DRIFTING */}
-        <motion.div
-          animate={{
-            x: [-120, 120, -120],
-            y: [-60, 60, -60],
-            rotate: [15, 45, 15]
-          }}
-          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute w-16 h-16 z-30 text-5xl pointer-events-none drop-shadow-[0_4px_10px_rgba(255,255,255,0.15)]"
-        >
-          🚀
-        </motion.div>
       </div>
 
       {/* 4. TITLE & SUBTITLE HEADER */}

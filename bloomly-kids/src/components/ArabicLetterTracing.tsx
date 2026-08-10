@@ -4,6 +4,9 @@ import { ArrowLeft, ArrowRight, Play, X, Star, Home } from 'lucide-react';
 import DogMascot from './DogMascot';
 import MascotCharacter from './MascotCharacter';
 import Rainbow3D from './Rainbow3D';
+import Model3D from './Model3D';
+// @ts-ignore
+import owlModel from './owl.glb?url';
 
 const VectorTree = ({ className = "w-20 h-28" }: { className?: string }) => (
   <svg viewBox="0 0 100 120" className={`${className} filter drop-shadow-md select-none pointer-events-none`}>
@@ -631,17 +634,22 @@ export default function ArabicLetterTracing({ onComplete, onBack }: Props) {
               </p>
             </div>
 
-            {/* Dog Mascot standing firmly on the grass */}
-            <div className="hidden md:flex absolute bottom-[-24px] right-0 flex-col items-center z-20 w-56 select-none">
-              <DogMascot pose={traced ? "happy" : "waving"} className="w-52 h-52" />
-              <div className="w-32 h-2.5 bg-black/15 rounded-full blur-[2px] mt-1"></div>
+            {/* Floating 3D Owl Mascot */}
+            <div className="hidden md:flex absolute bottom-[10px] right-0 flex-col items-center z-20 w-56 h-56 select-none pointer-events-none">
+              <Model3D 
+                src={owlModel} 
+                customAnimation={traced ? "spin" : "float"} 
+                className="w-full h-full" 
+                scaleAdjustment={1.2}
+              />
+              <div className="w-24 h-2 bg-black/10 rounded-full blur-[3px] mt-0.5 animate-pulse"></div>
             </div>
 
             {/* Far Right Sidebar with mascot cards (exactly like in photo) */}
             <div className="hidden lg:flex flex-col gap-3.5 bg-white/40 backdrop-blur-md border border-white/60 p-3 rounded-[32px] shadow-lg">
-              {/* Card 1: Dog */}
+              {/* Card 1: Owl */}
               <div className="w-16 h-16 bg-[#e0f2fe] border-3 border-[#3b82f6] rounded-[20px] flex items-center justify-center p-1.5 shadow-md">
-                <DogMascot pose="idle" className="w-full h-full" />
+                <Model3D src={owlModel} customAnimation="float" className="w-full h-full" />
               </div>
               {/* Card 2: Apple */}
               <div className="w-16 h-16 bg-[#fee2e2] border-3 border-[#ef4444] rounded-[20px] flex items-center justify-center p-1 shadow-md">
