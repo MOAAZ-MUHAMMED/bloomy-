@@ -18,7 +18,7 @@ export const categoriesData: CategoryData[] = [
     bgGradient: "from-[#ff9a9e]/90 to-[#fecfef]/90",
     textColor: "text-pink-700",
     borderColor: "border-pink-300",
-    games: ["arrowRacer", "tapRacer", "safari", "catcher", "spaceCatcher", "maze", "ninja", "space", "train", "funWhackAMole", "funHiddenCup", "sciencePlantLife", "scienceBodyPuzzle"]
+    games: ["arrowRacer", "tapRacer", "safari", "catcher", "spaceCatcher", "maze", "ninja", "spacePreview", "train", "funWhackAMole", "funHiddenCup", "sciencePlantLife", "scienceBodyPuzzle"]
   },
   {
     id: "arabic",

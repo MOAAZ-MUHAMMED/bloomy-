@@ -1083,7 +1083,7 @@ export function GameZone({
             "mathNumberTrain", "mathSpaceTower", "englishLetterTracing", 
             "englishColorCloud", "kitchenPizzaMaker", "kitchenJuiceBar", 
             "drawingSymmetry", "funWhackAMole", "funHiddenCup", "kitchenMarketList", "mathHungryCrocodile",
-            "englishSpaceDecoder", "drawingNeonArt", "coloring"
+            "englishSpaceDecoder", "drawingNeonArt", "coloring", "spacePreview"
           ];
           
           if (!directLaunchGames.includes(gameName)) {

@@ -470,7 +470,7 @@ export const GameGridMenu: React.FC<GameGridMenuProps> = ({
     { id: 'coloring', title: 'لوّن وارسم', englishTitle: 'COLORING', action: () => onSelectCategory?.('coloring'), bgGradient: 'from-[#A7F3D0] to-[#0D9488]', color: 'text-teal-950', shadowColor: '#115e59' },
     { id: 'habits', title: 'عادات صحية', englishTitle: 'HABITS', action: () => onSelectGame('dailyHabits'), bgGradient: 'from-[#E0F2FE] to-[#0284C7]', color: 'text-sky-900', shadowColor: '#075985' },
     { id: 'iq', title: 'ألعاب الذكاء', englishTitle: 'IQ GAMES', action: () => onSelectCategory?.('iq'), bgGradient: 'from-[#FBCFE8] to-[#7C3AED]', color: 'text-purple-950', shadowColor: '#6d28d9' },
-    { id: 'space', title: 'عالم الفضاء', englishTitle: 'SPACE WORLD', action: () => onSelectGame('spacePreview'), bgGradient: 'from-[#1E1B4B] to-[#311042]', color: 'text-purple-300', shadowColor: '#16133a', isLocked: true }
+    { id: 'space', title: 'عالم الفضاء', englishTitle: 'SPACE WORLD', action: () => onSelectGame('spacePreview'), bgGradient: 'from-[#1E1B4B] to-[#311042]', color: 'text-purple-300', shadowColor: '#16133a', isLocked: false }
   ];
 
   const getSubcategories = (catId: string) => {
