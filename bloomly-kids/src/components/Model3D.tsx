@@ -14,8 +14,9 @@ interface Model3DProps {
   rotationSpeed?: number;
   customAnimation?: 'none' | 'jump' | 'float' | 'spin' | 'sway';
   scaleAdjustment?: number;
-  onClick?: () => void;
+  onClick?: (clickedNodeName?: string) => void;
   colorMapping?: boolean;
+  focusTarget?: string | null;
 }
 
 export default function Model3D({
@@ -28,10 +29,13 @@ export default function Model3D({
   customAnimation = 'none',
   scaleAdjustment = 1.0,
   onClick,
-  colorMapping = false
+  colorMapping = false,
+  focusTarget = null
 }: Model3DProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const clickRef = useRef<(() => void) | undefined>(onClick);
+  const clickRef = useRef<((name?: string) => void) | undefined>(onClick);
+  const modelRef = useRef<THREE.Group | null>(null);
+  const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
 
   useEffect(() => {
     clickRef.current = onClick;
@@ -182,6 +186,8 @@ export default function Model3D({
         }
 
         model = loadedModel;
+        modelRef.current = loadedModel;
+        cameraRef.current = camera;
       },
       undefined,
       (err: any) => {
@@ -202,7 +208,18 @@ export default function Model3D({
       const intersects = raycaster.intersectObjects(model.children, true);
 
       if (intersects.length > 0) {
-        clickRef.current();
+        let clickedObj: THREE.Object3D | null = intersects[0].object;
+        let clickedName = clickedObj.name || "";
+        
+        while (clickedObj && clickedObj !== model) {
+          if (clickedObj.name) {
+            clickedName = clickedObj.name;
+          }
+          clickedObj = clickedObj.parent;
+        }
+        
+        console.log("Clicked 3D object name:", clickedName);
+        clickRef.current(clickedName);
       }
     };
 
@@ -268,6 +285,46 @@ export default function Model3D({
       dracoLoader.dispose();
     };
   }, [src, animationName, autoRotate, rotationSpeed, customAnimation, scaleAdjustment, colorMapping]);
+
+  useEffect(() => {
+    const model = modelRef.current;
+    const camera = cameraRef.current;
+    if (!model || !camera) return;
+
+    if (focusTarget) {
+      console.log("Focusing on target planet:", focusTarget);
+      
+      // Find the child matching focusTarget by name
+      let foundTarget: THREE.Object3D | null = null;
+      model.traverse((child: any) => {
+        if (child.name && child.name.toLowerCase().includes(focusTarget.toLowerCase())) {
+          foundTarget = child;
+        }
+      });
+
+      if (foundTarget) {
+        // Hide all top-level elements of model except the parent chain of foundTarget
+        model.children.forEach((child) => {
+          let isParent = false;
+          child.traverse((sub) => {
+            if (sub === foundTarget) isParent = true;
+          });
+          child.visible = isParent;
+        });
+
+        // Set camera closer to target
+        camera.position.set(0, 0, 1.8);
+        camera.lookAt(new THREE.Vector3(0, 0, 0));
+      }
+    } else {
+      // Restore default visibility and default camera position
+      model.children.forEach((child) => {
+        child.visible = true;
+      });
+      camera.position.set(0, 0, 4);
+      camera.lookAt(new THREE.Vector3(0, 0, 0));
+    }
+  }, [focusTarget]);
 
   return (
     <div 
