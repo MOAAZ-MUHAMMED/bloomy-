@@ -889,12 +889,12 @@ export default function QuranIsland({ onClose, globalStars, setGlobalStars }: Qu
             </div>
 
             {/* 3D Merlin Wizard Character standing on the floor (Right side) */}
-            <div className="absolute bottom-[4%] right-[3%] z-30 w-[28%] h-[56%] flex flex-col items-center select-none pointer-events-auto">
+            <div className="absolute bottom-[4%] right-[3%] z-30 w-[18%] h-[35%] flex flex-col items-center select-none pointer-events-auto">
               <Model3D 
                 src={merlinModel} 
                 animationName="Idle3_1" 
                 className="w-full h-full"
-                scaleAdjustment={1.85}
+                scaleAdjustment={1.45}
                 colorMapping={false} // Preserve detailed wizard textures!
               />
               <div className="text-[8px] md:text-[10px] font-black text-center text-amber-200 bg-amber-950/75 px-2.5 py-0.5 rounded-full border border-amber-500/30 shadow-md select-none pointer-events-none -mt-2">

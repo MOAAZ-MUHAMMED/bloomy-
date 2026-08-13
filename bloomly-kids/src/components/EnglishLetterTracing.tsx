@@ -627,14 +627,14 @@ export default function EnglishLetterTracing({ onComplete, onBack }: Props) {
             </div>
 
             {/* Floating 3D Owl Mascot */}
-            <div className="hidden md:flex absolute bottom-[10px] right-[-30px] flex-col items-center z-20 w-72 h-72 md:w-80 md:h-80 select-none pointer-events-none">
+            <div className="hidden md:flex absolute bottom-[10px] right-0 flex-col items-center z-20 w-56 h-56 select-none pointer-events-none">
               <Model3D 
                 src={owlModel} 
                 customAnimation={traced ? "spin" : "float"} 
                 className="w-full h-full" 
-                scaleAdjustment={1.8}
+                scaleAdjustment={1.5}
               />
-              <div className="w-32 h-2.5 bg-black/10 rounded-full blur-[4px] mt-0.5 animate-pulse"></div>
+              <div className="w-24 h-2 bg-black/10 rounded-full blur-[3px] mt-0.5 animate-pulse"></div>
             </div>
 
             {/* Far Right Sidebar with mascot cards (exactly like in photo) */}
