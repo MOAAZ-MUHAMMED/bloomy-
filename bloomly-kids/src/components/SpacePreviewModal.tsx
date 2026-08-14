@@ -102,18 +102,27 @@ export default function SpacePreviewModal({ onBack }: Props) {
     setStars(starArr);
   }, []);
 
-  // Periodic Walking Animation every 5 seconds
+  // Stable Animation Timer (runs walking animation every 5s without state loop lag)
+  const activeModeRef = React.useRef(activeMode);
+  useEffect(() => {
+    activeModeRef.current = activeMode;
+  }, [activeMode]);
+
   useEffect(() => {
     const interval = setInterval(() => {
-      if (astronautAnim === 'floating' && !activeMode) {
-        setAstronautAnim('moon_walk');
-        setTimeout(() => {
-          setAstronautAnim('floating');
-        }, 2000);
-      }
+      if (activeModeRef.current) return;
+      setAstronautAnim(prev => {
+        if (prev === 'floating') {
+          setTimeout(() => {
+            setAstronautAnim(p => p === 'moon_walk' ? 'floating' : p);
+          }, 2000);
+          return 'moon_walk';
+        }
+        return prev;
+      });
     }, 5000);
     return () => clearInterval(interval);
-  }, [astronautAnim, activeMode]);
+  }, []);
 
   const triggerAstronautAction = () => {
     if (astronautAnim !== 'floating') return;
@@ -179,7 +188,7 @@ export default function SpacePreviewModal({ onBack }: Props) {
           }}
         />
       ))}
-      <div className="absolute inset-0 opacity-20 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:32px_32px] animate-pulse pointer-events-none" />
+      {/* Grid background removed to show clean space and scattered stars */}
 
       {/* 2. SOLAR SYSTEM PREVIEW AREA */}
       <div className="relative w-full h-full max-w-5xl flex items-center justify-center">
@@ -223,21 +232,21 @@ export default function SpacePreviewModal({ onBack }: Props) {
           />
         </div>
 
-        {/* 3. PREMIUM FLOATING SPACE HOME BUTTON */}
-        <div className="absolute bottom-[5%] right-[5%] z-30 w-24 h-24 flex items-center justify-center">
+        {/* 3. PREMIUM TOP-LEFT SPACE HOME BUTTON */}
+        <div className="absolute top-[4%] left-[4%] z-30 w-16 h-16 flex items-center justify-center">
           <button
             onClick={() => {
               playPopSound();
               onBack();
             }}
-            className="w-full h-full hover:scale-105 active:translate-y-[4px] active:scale-95 transition-all cursor-pointer select-none"
+            className="w-full h-full hover:scale-105 active:translate-y-[2px] active:scale-95 transition-all cursor-pointer select-none"
           >
             <svg viewBox="0 0 200 228" fill="none" className="w-full h-full">
               <defs>
                 <linearGradient id="btnGradSpaceBack" x1="48" y1="38" x2="152" y2="168" gradientUnits="userSpaceOnUse">
-                  <stop offset="0%" stopColor="#FFE04A"></stop>
-                  <stop offset="44%" stopColor="#FFAA00"></stop>
-                  <stop offset="100%" stopColor="#FF7800"></stop>
+                  <stop offset="0%" stopColor="#00F2FE"></stop>
+                  <stop offset="50%" stopColor="#00A2FE"></stop>
+                  <stop offset="100%" stopColor="#0052FE"></stop>
                 </linearGradient>
                 <radialGradient id="glossSpaceBack" cx="34%" cy="26%" r="50%" fx="25%" fy="17%">
                   <stop offset="0%" stopColor="#ffffff" stopOpacity="0.90"></stop>
@@ -252,7 +261,7 @@ export default function SpacePreviewModal({ onBack }: Props) {
                   <circle cx="100" cy="104" r="58"></circle>
                 </clipPath>
               </defs>
-              <circle cx="100" cy="112" r="58" fill="#C04800" opacity="0.9"></circle>
+              <circle cx="100" cy="112" r="58" fill="#002577" opacity="0.9"></circle>
               <circle cx="100" cy="104" r="58" fill="url(#btnGradSpaceBack)" stroke="white" strokeWidth="6"></circle>
               <circle cx="100" cy="104" r="58" fill="url(#rimSpaceBack)" clipPath="url(#ccSpaceBack)"></circle>
               <ellipse cx="78" cy="74" rx="36" ry="25" fill="url(#glossSpaceBack)" clipPath="url(#ccSpaceBack)"></ellipse>
