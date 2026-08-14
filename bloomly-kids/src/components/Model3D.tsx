@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 // @ts-ignore
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+// @ts-ignore
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 
 interface Model3DProps {
   src: string;
@@ -79,6 +81,10 @@ export default function Model3D({
     let animationFrameId: number;
 
     const loader = new GLTFLoader();
+    const dracoLoader = new DRACOLoader();
+    dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.7/');
+    loader.setDRACOLoader(dracoLoader);
+
     loader.load(
       src,
       (gltf: any) => {
